@@ -29,13 +29,25 @@ export const Features = () => {
     {
       icon: Search,
       title: "Syllabus-Based Q&A",
-      description: "Ask questions and get precise, syllabus-aligned answers directly from your uploaded materials.",
+      description: "Get 2, 5, & 10-mark answers generated directly from your uploaded class materials.",
       iconColor: "text-purple-600",
       iconBgColor: "bg-purple-50",
       steps: [
-        "Ask any question related to your course",
-        "AI fetches accurate answers from your materials",
-        "Get contextual information with source references"
+        "Upload class notes & question banks",
+        "Ask any question related to your syllabus",
+        "Receive precisely formatted 2, 5, or 10-mark answers from your materials"
+      ],
+      subFeatures: [
+        {
+          icon: FileText,
+          title: "Syllabus-Aligned Responses",
+          description: "No more random internet answers—only content from your approved materials"
+        },
+        {
+          icon: Search,
+          title: "Exam-Ready Formatting",
+          description: "Get answers formatted specifically for different mark weightages"
+        }
       ]
     },
     {
