@@ -3,6 +3,12 @@ import { motion } from 'framer-motion';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+interface SubFeature {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
+
 interface FeatureCardProps {
   icon: LucideIcon;
   title: string;
@@ -11,6 +17,7 @@ interface FeatureCardProps {
   iconColor?: string;
   iconBgColor?: string;
   steps?: string[];
+  subFeatures?: SubFeature[];
 }
 
 export const FeatureCard = ({
@@ -21,6 +28,7 @@ export const FeatureCard = ({
   iconColor = "text-blue-600",
   iconBgColor = "bg-blue-50",
   steps,
+  subFeatures,
 }: FeatureCardProps) => {
   return (
     <motion.div
@@ -35,6 +43,29 @@ export const FeatureCard = ({
       </div>
       <h3 className="text-xl font-semibold mb-3 text-gray-900">{title}</h3>
       <p className="text-gray-600 mb-4">{description}</p>
+      
+      {subFeatures && subFeatures.length > 0 && (
+        <div className="mt-4 mb-6">
+          <div className="h-px w-full bg-gray-100 mb-4"></div>
+          <h4 className="font-medium text-gray-900 mb-3">Key Capabilities</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {subFeatures.map((subFeature, index) => {
+              const SubIcon = subFeature.icon;
+              return (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="flex-shrink-0 mt-1 h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center">
+                    <SubIcon className="h-4 w-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <h5 className="text-sm font-medium text-gray-900">{subFeature.title}</h5>
+                    <p className="text-xs text-gray-600">{subFeature.description}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
       
       {steps && steps.length > 0 && (
         <div className="mt-auto">

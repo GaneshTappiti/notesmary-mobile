@@ -2,11 +2,13 @@
 import { motion } from 'framer-motion';
 import { 
   FileText, 
-  BrainCircuit, 
   Search, 
   MessageSquare,
   Youtube,
-  Users
+  Users,
+  Video,
+  ScreenShare,
+  Mic
 } from 'lucide-react';
 import { FeatureCard } from './FeatureCard';
 
@@ -39,13 +41,35 @@ export const Features = () => {
     {
       icon: Users,
       title: "Real-time Study Rooms",
-      description: "Create or join virtual study rooms for group discussions with AI-generated summaries.",
+      description: "Join interactive study sessions with video calls, screen sharing, and collaborative discussions.",
       iconColor: "text-green-600",
       iconBgColor: "bg-green-50",
       steps: [
-        "Create a study room or join existing ones",
-        "Collaborate with peers in real-time",
-        "Get AI-generated summaries of discussions"
+        "Create or join virtual study rooms",
+        "Participate in group video calls and screen sharing",
+        "Review notes together in real-time with AI summaries"
+      ],
+      subFeatures: [
+        {
+          icon: Video,
+          title: "Group Video Calls",
+          description: "Connect face-to-face with classmates for better collaboration"
+        },
+        {
+          icon: ScreenShare,
+          title: "Live Screen Sharing",
+          description: "Host can share notes for everyone to view and discuss in real-time"
+        },
+        {
+          icon: MessageSquare,
+          title: "Collaborative Chat",
+          description: "Text-based discussions alongside video for sharing links and quick notes"
+        },
+        {
+          icon: Mic,
+          title: "Clear Audio",
+          description: "High-quality audio ensures everyone can hear explanations clearly"
+        }
       ]
     },
     {
@@ -96,6 +120,7 @@ export const Features = () => {
               delay={0.1 * index}
               iconColor={feature.iconColor}
               iconBgColor={feature.iconBgColor}
+              subFeatures={feature.subFeatures}
             />
           ))}
         </div>
