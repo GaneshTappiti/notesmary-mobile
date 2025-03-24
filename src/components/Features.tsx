@@ -4,9 +4,9 @@ import {
   FileText, 
   BrainCircuit, 
   Search, 
-  Download, 
-  FlaskConical, 
-  Users 
+  MessageSquare,
+  Youtube,
+  Users
 } from 'lucide-react';
 import { FeatureCard } from './FeatureCard';
 
@@ -14,45 +14,51 @@ export const Features = () => {
   const features = [
     {
       icon: FileText,
-      title: "Toppers' Notes Collection",
-      description: "Upload handwritten notes or input them directly. Our platform preserves the quality while making them digital.",
+      title: "AI-Powered Notes Processing",
+      description: "Upload PDFs of notes and question banks for instant AI processing and smart organization.",
       iconColor: "text-blue-600",
-      iconBgColor: "bg-blue-50"
-    },
-    {
-      icon: BrainCircuit,
-      title: "AI-Powered Summarization",
-      description: "Our AI extracts key points and generates structured, easy-to-read notes with bullet points and mind maps.",
-      iconColor: "text-purple-600",
-      iconBgColor: "bg-purple-50"
+      iconBgColor: "bg-blue-50",
+      steps: [
+        "Upload your PDF notes and question banks",
+        "AI processes and indexes all content",
+        "Access your enhanced notes from any device"
+      ]
     },
     {
       icon: Search,
-      title: "Intelligent Search",
-      description: "AI categorizes notes by subject, topic, and exam type with smart search and keyword recommendations.",
-      iconColor: "text-green-600",
-      iconBgColor: "bg-green-50"
-    },
-    {
-      icon: Download,
-      title: "Multiformat Exports",
-      description: "Download your notes in PDF, DOCX, and Notion-compatible formats or listen with text-to-speech.",
-      iconColor: "text-amber-600",
-      iconBgColor: "bg-amber-50"
-    },
-    {
-      icon: FlaskConical,
-      title: "Interactive Learning",
-      description: "Study with AI-powered flashcards and auto-generated quizzes created from your notes.",
-      iconColor: "text-rose-600",
-      iconBgColor: "bg-rose-50"
+      title: "Syllabus-Based Q&A",
+      description: "Ask questions and get precise, syllabus-aligned answers directly from your uploaded materials.",
+      iconColor: "text-purple-600",
+      iconBgColor: "bg-purple-50",
+      steps: [
+        "Ask any question related to your course",
+        "AI fetches accurate answers from your materials",
+        "Get contextual information with source references"
+      ]
     },
     {
       icon: Users,
-      title: "Collaboration & Community",
-      description: "Share notes, discuss topics, and benefit from AI that refines and combines the best content.",
-      iconColor: "text-indigo-600",
-      iconBgColor: "bg-indigo-50"
+      title: "Real-time Study Rooms",
+      description: "Create or join virtual study rooms for group discussions with AI-generated summaries.",
+      iconColor: "text-green-600",
+      iconBgColor: "bg-green-50",
+      steps: [
+        "Create a study room or join existing ones",
+        "Collaborate with peers in real-time",
+        "Get AI-generated summaries of discussions"
+      ]
+    },
+    {
+      icon: Youtube,
+      title: "YouTube Video Summarization",
+      description: "Input YouTube educational videos and get AI-extracted key topics, concepts, and formulas.",
+      iconColor: "text-red-600",
+      iconBgColor: "bg-red-50",
+      steps: [
+        "Paste any educational YouTube video link",
+        "AI watches and processes the content",
+        "Get structured notes with key points and formulas"
+      ]
     }
   ];
 
@@ -68,24 +74,25 @@ export const Features = () => {
         >
           <div className="inline-flex items-center px-4 py-1.5 mb-4 rounded-full bg-blue-50 border border-blue-100">
             <span className="text-xs font-semibold tracking-wide text-blue-600 uppercase">
-              Smart Features
+              Core Features
             </span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-            AI-Powered Tools for Students
+            AI-Powered Learning Platform
           </h2>
           <p className="max-w-2xl mx-auto text-xl text-gray-600">
-            Transform how you study with powerful features designed to save time and improve learning
+            Transform how you study with our comprehensive AI-driven tools designed for modern students
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {features.map((feature, index) => (
             <FeatureCard
               key={index}
               icon={feature.icon}
               title={feature.title}
               description={feature.description}
+              steps={feature.steps}
               delay={0.1 * index}
               iconColor={feature.iconColor}
               iconBgColor={feature.iconBgColor}
@@ -101,36 +108,63 @@ export const Features = () => {
           className="mt-16 flex justify-center"
         >
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-4xl">
-            <h3 className="text-2xl font-bold mb-4 text-gray-900">How NOTES4U Works</h3>
-            <div className="relative">
-              <div className="hidden sm:block absolute top-0 left-[15%] h-full w-0.5 bg-blue-100"></div>
-              <div className="space-y-8">
-                <div className="relative flex items-start">
-                  <div className="flex-shrink-0 inline-flex items-center justify-center h-10 w-10 rounded-full bg-blue-600 text-white shadow-md z-10">1</div>
-                  <div className="ml-6">
-                    <h4 className="text-lg font-medium text-gray-900">Upload Your Notes</h4>
-                    <p className="mt-1 text-gray-600">Take a photo of your handwritten notes or upload digital files. Our system supports various formats.</p>
+            <h3 className="text-2xl font-bold mb-6 text-gray-900">Tech Stack</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <BrainCircuit className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">AI Model</h4>
+                    <p className="text-sm text-gray-600">OpenAI GPT-4 (fine-tuned)</p>
                   </div>
                 </div>
-                <div className="relative flex items-start">
-                  <div className="flex-shrink-0 inline-flex items-center justify-center h-10 w-10 rounded-full bg-blue-600 text-white shadow-md z-10">2</div>
-                  <div className="ml-6">
-                    <h4 className="text-lg font-medium text-gray-900">AI Processing</h4>
-                    <p className="mt-1 text-gray-600">Our advanced AI analyzes your notes, identifies key concepts, and organizes them into a structured format.</p>
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                    <FileText className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">OCR & Text Extraction</h4>
+                    <p className="text-sm text-gray-600">Google Cloud Vision / Tesseract</p>
                   </div>
                 </div>
-                <div className="relative flex items-start">
-                  <div className="flex-shrink-0 inline-flex items-center justify-center h-10 w-10 rounded-full bg-blue-600 text-white shadow-md z-10">3</div>
-                  <div className="ml-6">
-                    <h4 className="text-lg font-medium text-gray-900">Access Anywhere</h4>
-                    <p className="mt-1 text-gray-600">Your enhanced notes are available on all your devices. Study on the go with our mobile-friendly interface.</p>
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                    <Search className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">Backend</h4>
+                    <p className="text-sm text-gray-600">Node.js + Express.js</p>
                   </div>
                 </div>
-                <div className="relative flex items-start">
-                  <div className="flex-shrink-0 inline-flex items-center justify-center h-10 w-10 rounded-full bg-blue-600 text-white shadow-md z-10">4</div>
-                  <div className="ml-6">
-                    <h4 className="text-lg font-medium text-gray-900">Study Smart</h4>
-                    <p className="mt-1 text-gray-600">Use AI-generated flashcards, quizzes, and summaries to reinforce your learning and prepare for exams.</p>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
+                    <MessageSquare className="h-5 w-5 text-amber-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">Real-time Chat</h4>
+                    <p className="text-sm text-gray-600">Firebase Firestore / WebSockets</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <Youtube className="h-5 w-5 text-red-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">Video Analysis</h4>
+                    <p className="text-sm text-gray-600">YouTube API + AI processing</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <Users className="h-5 w-5 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">Database</h4>
+                    <p className="text-sm text-gray-600">Firebase / Supabase</p>
                   </div>
                 </div>
               </div>
