@@ -24,6 +24,18 @@ export const Features = () => {
         "Upload your PDF notes and question banks",
         "AI processes and indexes all content",
         "Access your enhanced notes from any device"
+      ],
+      subFeatures: [
+        {
+          icon: FileText,
+          title: "AI-Powered Answer Retrieval",
+          description: "Upload a question bank → AI matches answers from your study materials"
+        },
+        {
+          icon: Search,
+          title: "Instant Access",
+          description: "No need to manually search—just get the exact answer instantly"
+        }
       ]
     },
     {
