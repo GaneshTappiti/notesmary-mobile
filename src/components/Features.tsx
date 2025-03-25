@@ -8,14 +8,18 @@ import {
   Users,
   Video,
   ScreenShare,
-  Mic
+  Mic,
+  User,
+  Book,
+  Upload,
+  Settings
 } from 'lucide-react';
 import { FeatureCard } from './FeatureCard';
 
 export const Features = () => {
   const features = [
     {
-      icon: FileText,
+      icon: Upload,
       title: "AI-Powered Notes Processing",
       description: "Upload PDFs of notes and question banks for instant AI processing and smart organization.",
       iconColor: "text-blue-600",
@@ -64,7 +68,7 @@ export const Features = () => {
     },
     {
       icon: Users,
-      title: "Real-time Study Rooms",
+      title: "Collaborative Study Rooms",
       description: "Join interactive study sessions with video calls, screen sharing, and collaborative discussions.",
       iconColor: "text-green-600",
       iconBgColor: "bg-green-50",
@@ -106,6 +110,30 @@ export const Features = () => {
         "Paste any educational YouTube video link",
         "AI watches and processes the content",
         "Get structured notes with key points and formulas"
+      ]
+    },
+    {
+      icon: User,
+      title: "Authentication & Profiles",
+      description: "Secure login options and customizable student profiles for a personalized experience.",
+      iconColor: "text-indigo-600",
+      iconBgColor: "bg-indigo-50",
+      steps: [
+        "Sign up with Google, Email, or College ID",
+        "Create your profile with college details and study preferences",
+        "Access your personalized dashboard and study materials"
+      ],
+      subFeatures: [
+        {
+          icon: Book,
+          title: "Academic Information",
+          description: "Specify your branch, year of study, and courses for tailored content"
+        },
+        {
+          icon: Settings,
+          title: "Customizable Experience",
+          description: "Set your study preferences and notification settings"
+        }
       ]
     }
   ];
