@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { UploadModal } from './UploadModal';
 
@@ -35,9 +36,9 @@ export const Navbar = () => {
               transition={{ duration: 0.5 }}
               className="flex items-center"
             >
-              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
+              <Link to="/" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
                 NOTES4U
-              </span>
+              </Link>
             </motion.div>
             
             {/* Desktop Navigation */}
@@ -65,8 +66,8 @@ export const Navbar = () => {
               >
                 Upload Notes
               </Button>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg">
-                Get Started
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg" asChild>
+                <Link to="/login">Sign In</Link>
               </Button>
             </motion.div>
             
@@ -125,8 +126,13 @@ export const Navbar = () => {
                 >
                   Upload Notes
                 </Button>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                  Get Started
+                <Button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  asChild
+                >
+                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                    Sign In
+                  </Link>
                 </Button>
               </div>
             </div>
