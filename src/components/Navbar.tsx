@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { UploadModal } from './UploadModal';
@@ -66,8 +66,11 @@ export const Navbar = () => {
               >
                 Upload Notes
               </Button>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg" asChild>
-                <Link to="/login">Sign In</Link>
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2" asChild>
+                <Link to="/login">
+                  <LogIn size={18} />
+                  <span>Sign In</span>
+                </Link>
               </Button>
             </motion.div>
             
@@ -127,11 +130,12 @@ export const Navbar = () => {
                   Upload Notes
                 </Button>
                 <Button 
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
                   asChild
                 >
                   <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                    Sign In
+                    <LogIn size={18} />
+                    <span>Sign In</span>
                   </Link>
                 </Button>
               </div>
