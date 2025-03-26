@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, LogIn } from 'lucide-react';
+import { Menu, X, LogIn, BrainCircuit } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { UploadModal } from './UploadModal';
@@ -51,6 +51,10 @@ export const Navbar = () => {
               <a href="#features" className="text-gray-700 hover:text-blue-600 font-medium">Features</a>
               <a href="#pricing" className="text-gray-700 hover:text-blue-600 font-medium">Pricing</a>
               <a href="#about" className="text-gray-700 hover:text-blue-600 font-medium">About</a>
+              <Link to="/ai-answers" className="text-gray-700 hover:text-blue-600 font-medium flex items-center">
+                <BrainCircuit size={18} className="mr-1" />
+                AI Answers
+              </Link>
             </motion.div>
             
             <motion.div 
@@ -118,6 +122,14 @@ export const Navbar = () => {
               >
                 About
               </a>
+              <Link
+                to="/ai-answers"
+                className="block text-gray-700 hover:text-blue-600 font-medium flex items-center"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <BrainCircuit size={18} className="mr-1" />
+                AI Answers
+              </Link>
               <div className="pt-4 flex flex-col space-y-3">
                 <Button 
                   variant="outline" 
