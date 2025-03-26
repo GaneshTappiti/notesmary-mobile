@@ -13,7 +13,7 @@ const Index = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
   
   useEffect(() => {
-    document.title = "NOTES4U - AI-Powered Learning Platform for Students";
+    document.title = "Notex - AI-Powered Learning Platform for Students";
   }, []);
 
   return (

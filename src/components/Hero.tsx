@@ -72,7 +72,7 @@ export const Hero = () => {
                 </div>
                 <div className="text-sm text-gray-500 flex flex-col">
                   <span className="font-medium text-gray-900">4,500+ students</span>
-                  <span>Trust NOTES4U daily</span>
+                  <span>Trust Notex daily</span>
                 </div>
               </motion.div>
             </div>

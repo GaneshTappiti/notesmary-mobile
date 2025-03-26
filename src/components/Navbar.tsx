@@ -37,7 +37,7 @@ export const Navbar = () => {
               className="flex items-center"
             >
               <Link to="/" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
-                NOTES4U
+                Notex
               </Link>
             </motion.div>
             
