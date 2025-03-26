@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Search, 
@@ -24,9 +23,10 @@ import {
   Calendar,
   Bell,
   Settings,
-  Plus
+  Plus,
+  LogOut
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,10 +34,41 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  // Check authentication on load
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (!isLoggedIn) {
+      toast({
+        title: "Authentication Required",
+        description: "Please login to access your dashboard",
+      });
+      navigate('/login');
+    }
+  }, [navigate, toast]);
+  
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    toast({
+      title: "Logged Out Successfully",
+      description: "You have been logged out of your account",
+    });
+    navigate('/');
+  };
   
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -238,10 +269,30 @@ const Dashboard = () => {
             <Button variant="ghost" size="icon" className="hidden sm:flex">
               <Settings className="h-5 w-5" />
             </Button>
-            <Avatar className="cursor-pointer">
-              <AvatarImage src="" />
-              <AvatarFallback className="bg-blue-500 text-white">ST</AvatarFallback>
-            </Avatar>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer">
+                  <AvatarImage src="" />
+                  <AvatarFallback className="bg-blue-500 text-white">ST</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>

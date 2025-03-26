@@ -2,14 +2,17 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X, LogIn, BrainCircuit } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { UploadModal } from './UploadModal';
+import { useToast } from "@/hooks/use-toast";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +21,36 @@ export const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const checkAuthAndProceed = (action: 'upload' | 'dashboard') => {
+    // Check if user is logged in (using localStorage as a simple approach)
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    
+    if (!isLoggedIn) {
+      // Redirect to login page with a toast notification
+      toast({
+        title: "Authentication Required",
+        description: action === 'upload' 
+          ? "Please login to upload notes" 
+          : "Please login to access your dashboard",
+      });
+      navigate('/login');
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleUploadClick = () => {
+    if (checkAuthAndProceed('upload')) {
+      setShowUploadModal(true);
+    }
+  };
+
+  const handleDashboardClick = () => {
+    checkAuthAndProceed('dashboard');
+    // If checkAuthAndProceed returns true, the navigation will happen with Link
+  };
 
   return (
     <>
@@ -65,16 +98,27 @@ export const Navbar = () => {
             >
               <Button 
                 variant="outline" 
-                onClick={() => setShowUploadModal(true)}
+                onClick={handleUploadClick}
                 className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300"
               >
                 Upload Notes
               </Button>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2" asChild>
-                <Link to="/dashboard">
-                  <LogIn size={18} />
-                  <span>Go to Dashboard</span>
-                </Link>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2" 
+                onClick={handleDashboardClick}
+                asChild={localStorage.getItem('isLoggedIn') === 'true'}
+              >
+                {localStorage.getItem('isLoggedIn') === 'true' ? (
+                  <Link to="/dashboard">
+                    <LogIn size={18} />
+                    <span>Go to Dashboard</span>
+                  </Link>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <LogIn size={18} />
+                    <span>Go to Dashboard</span>
+                  </div>
+                )}
               </Button>
             </motion.div>
             
@@ -134,8 +178,8 @@ export const Navbar = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => {
-                    setShowUploadModal(true);
                     setIsMobileMenuOpen(false);
+                    handleUploadClick();
                   }}
                   className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                 >
@@ -143,12 +187,23 @@ export const Navbar = () => {
                 </Button>
                 <Button 
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
-                  asChild
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleDashboardClick();
+                  }}
+                  asChild={localStorage.getItem('isLoggedIn') === 'true'}
                 >
-                  <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                    <LogIn size={18} />
-                    <span>Go to Dashboard</span>
-                  </Link>
+                  {localStorage.getItem('isLoggedIn') === 'true' ? (
+                    <Link to="/dashboard">
+                      <LogIn size={18} />
+                      <span>Go to Dashboard</span>
+                    </Link>
+                  ) : (
+                    <div className="flex items-center justify-center gap-2">
+                      <LogIn size={18} />
+                      <span>Go to Dashboard</span>
+                    </div>
+                  )}
                 </Button>
               </div>
             </div>

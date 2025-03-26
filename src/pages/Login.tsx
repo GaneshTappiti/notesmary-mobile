@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
@@ -108,6 +107,9 @@ const Login = () => {
     // This would normally call an authentication API
     console.log("Login form values:", values);
     
+    // Set login state in localStorage (in a real app, this would be a token or session)
+    localStorage.setItem('isLoggedIn', 'true');
+    
     toast({
       title: "Login Successful",
       description: "Welcome back to Notex!",
@@ -123,6 +125,9 @@ const Login = () => {
   const onSignupSubmit = (values: z.infer<typeof signupSchema>) => {
     // This would normally call an API to register the user
     console.log("Signup form values:", values);
+    
+    // Set login state in localStorage (in a real app, this would be a token or session)
+    localStorage.setItem('isLoggedIn', 'true');
     
     toast({
       title: "Account Created Successfully",
