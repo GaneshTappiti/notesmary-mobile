@@ -67,9 +67,9 @@ export const Navbar = () => {
                 Upload Notes
               </Button>
               <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2" asChild>
-                <Link to="/login">
+                <Link to="/dashboard">
                   <LogIn size={18} />
-                  <span>Sign In</span>
+                  <span>Go to Dashboard</span>
                 </Link>
               </Button>
             </motion.div>
@@ -133,9 +133,9 @@ export const Navbar = () => {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
                   asChild
                 >
-                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
                     <LogIn size={18} />
-                    <span>Sign In</span>
+                    <span>Go to Dashboard</span>
                   </Link>
                 </Button>
               </div>

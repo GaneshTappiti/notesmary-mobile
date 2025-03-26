@@ -14,7 +14,6 @@ import {
   Upload,
   Settings,
   Home,
-  LogIn,
   CreditCard,
   Bookmark,
   Filter,
@@ -30,35 +29,6 @@ import { FeatureCard } from './FeatureCard';
 
 export const Features = () => {
   const features = [
-    {
-      icon: LogIn,
-      title: "Authentication & User Profiles",
-      description: "Secure login options and customizable student profiles for a personalized experience.",
-      iconColor: "text-indigo-600",
-      iconBgColor: "bg-indigo-50",
-      steps: [
-        "Sign up with Google, Email, or College ID",
-        "Create your profile with college details and study preferences",
-        "Access your personalized dashboard and study materials"
-      ],
-      subFeatures: [
-        {
-          icon: User,
-          title: "Complete Student Profile",
-          description: "Add your full name, college name, branch, and year of study"
-        },
-        {
-          icon: Lock,
-          title: "Secure Authentication",
-          description: "Multiple login options with password recovery system"
-        },
-        {
-          icon: Settings,
-          title: "Customizable Experience",
-          description: "Set your study preferences and notification settings"
-        }
-      ]
-    },
     {
       icon: Home,
       title: "Smart Dashboard Access",
