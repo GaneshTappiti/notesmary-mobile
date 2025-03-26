@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Lock, User, School, BookOpen, ArrowRight, Check, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, School, BookOpen, ArrowRight, Check, Eye, EyeOff, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 import {
@@ -23,18 +23,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Login form schema
 const loginSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  collegeEmail: z.string()
+    .email({ message: "Please enter a valid college email address" })
+    .refine(email => email.endsWith('.edu') || email.includes('ac.') || email.includes('.edu.') || email.includes('university'), {
+      message: "Please use your college email address"
+    }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  phoneNumber: z.string().optional(),
+  rememberMe: z.boolean().optional(),
 });
 
 // Signup form schema
 const signupSchema = z.object({
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  collegeEmail: z.string()
+    .email({ message: "Please enter a valid college email address" })
+    .refine(email => email.endsWith('.edu') || email.includes('ac.') || email.includes('.edu.') || email.includes('university'), {
+      message: "Please use your college email address"
+    }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  phoneNumber: z.string().optional(),
   collegeName: z.string().min(2, { message: "College name is required" }),
   branch: z.string().min(1, { message: "Branch is required" }),
   yearOfStudy: z.string().min(1, { message: "Year of study is required" }),
@@ -42,7 +54,11 @@ const signupSchema = z.object({
 
 // Reset password schema
 const resetSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  collegeEmail: z.string()
+    .email({ message: "Please enter a valid college email address" })
+    .refine(email => email.endsWith('.edu') || email.includes('ac.') || email.includes('.edu.') || email.includes('university'), {
+      message: "Please use your college email address"
+    }),
 });
 
 const Login = () => {
@@ -50,7 +66,7 @@ const Login = () => {
   const [isPasswordResetOpen, setIsPasswordResetOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [loginMethod, setLoginMethod] = useState<"email" | "college" | null>(null);
+  const [loginMethod, setLoginMethod] = useState<"email" | "collegeId" | null>("email");
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -58,8 +74,10 @@ const Login = () => {
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      collegeEmail: "",
       password: "",
+      phoneNumber: "",
+      rememberMe: false,
     },
   });
   
@@ -68,8 +86,9 @@ const Login = () => {
     resolver: zodResolver(signupSchema),
     defaultValues: {
       fullName: "",
-      email: "",
+      collegeEmail: "",
       password: "",
+      phoneNumber: "",
       collegeName: "",
       branch: "",
       yearOfStudy: "",
@@ -80,7 +99,7 @@ const Login = () => {
   const resetForm = useForm<z.infer<typeof resetSchema>>({
     resolver: zodResolver(resetSchema),
     defaultValues: {
-      email: "",
+      collegeEmail: "",
     },
   });
 
@@ -91,7 +110,7 @@ const Login = () => {
     
     toast({
       title: "Login Successful",
-      description: "Welcome back to NOTES4U!",
+      description: "Welcome back to Notex!",
     });
     
     // Redirect to dashboard after successful login
@@ -107,7 +126,7 @@ const Login = () => {
     
     toast({
       title: "Account Created Successfully",
-      description: "Welcome to NOTES4U! You can now log in with your credentials.",
+      description: "Welcome to Notex! You can now log in with your credentials.",
       variant: "default",
     });
     
@@ -122,7 +141,7 @@ const Login = () => {
     
     toast({
       title: "Password Reset Email Sent",
-      description: "Please check your email to reset your password.",
+      description: "Please check your college email to reset your password.",
     });
     
     setIsPasswordResetOpen(false);
@@ -144,27 +163,11 @@ const Login = () => {
     }, 1500);
   };
 
-  // Handle College ID login
-  const handleCollegeIdLogin = () => {
-    // This would normally handle college ID authentication
-    setLoginMethod("college");
-  };
-
   // Toggle dark mode
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     // In a real implementation, this would set a class on the document body or use a theme context
     document.documentElement.classList.toggle('dark', !isDarkMode);
-  };
-
-  // Handle email login selection
-  const handleEmailLogin = () => {
-    setLoginMethod("email");
-  };
-
-  // Handle back to login methods
-  const handleBackToMethods = () => {
-    setLoginMethod(null);
   };
 
   // Page transition animation
@@ -186,10 +189,10 @@ const Login = () => {
       
       <Button 
         className="w-full flex items-center justify-start gap-3 h-12 mb-3"
-        onClick={handleEmailLogin}
+        onClick={() => setLoginMethod("email")}
       >
-        <Mail className="h-5 w-5" />
-        <span>Continue with Email</span>
+        <School className="h-5 w-5" />
+        <span>Continue with College Email</span>
       </Button>
       
       <Button 
@@ -209,7 +212,7 @@ const Login = () => {
       <Button 
         variant="outline" 
         className="w-full flex items-center justify-start gap-3 h-12"
-        onClick={handleCollegeIdLogin}
+        onClick={() => setLoginMethod("collegeId")}
       >
         <School className="h-5 w-5" />
         <span>Continue with College ID</span>
@@ -233,28 +236,31 @@ const Login = () => {
   // Render email login form
   const renderEmailLoginForm = () => (
     <div className="space-y-4">
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="mb-2 -ml-2"
-        onClick={handleBackToMethods}
-      >
-        <ArrowRight className="h-4 w-4 mr-1 rotate-180" />
-        Back
-      </Button>
+      <div className="flex justify-between items-center mb-2">
+        <Button 
+          variant="ghost" 
+          size="sm"
+          onClick={() => setLoginMethod(null)}
+          className="-ml-2"
+        >
+          <ArrowRight className="h-4 w-4 mr-1 rotate-180" />
+          Back
+        </Button>
+        <h3 className="text-lg font-medium">Login with College Email</h3>
+      </div>
       
       <Form {...loginForm}>
         <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
           <FormField
             control={loginForm.control}
-            name="email"
+            name="collegeEmail"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>College Email</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
-                    <Input className="pl-10" placeholder="Enter your email" {...field} />
+                    <Input className="pl-10" placeholder="your.name@college.edu" {...field} />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -293,7 +299,40 @@ const Login = () => {
             )}
           />
           
-          <div className="text-right">
+          <FormField
+            control={loginForm.control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number <span className="text-xs text-gray-500">(Optional)</span></FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                    <Input className="pl-10" placeholder="Your phone number" {...field} />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <div className="flex items-center justify-between">
+            <FormField
+              control={loginForm.control}
+              name="rememberMe"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                  <FormControl>
+                    <Checkbox 
+                      checked={field.value} 
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel className="text-sm cursor-pointer">Remember me</FormLabel>
+                </FormItem>
+              )}
+            />
+            
             <Dialog open={isPasswordResetOpen} onOpenChange={setIsPasswordResetOpen}>
               <DialogTrigger asChild>
                 <button type="button" className="text-sm text-blue-600 hover:text-blue-700">
@@ -304,19 +343,19 @@ const Login = () => {
                 <DialogHeader>
                   <DialogTitle>Reset your password</DialogTitle>
                   <DialogDescription>
-                    Enter your email address and we'll send you a link to reset your password.
+                    Enter your college email address and we'll send you a link to reset your password.
                   </DialogDescription>
                 </DialogHeader>
                 <Form {...resetForm}>
                   <form onSubmit={resetForm.handleSubmit(onResetSubmit)} className="space-y-4">
                     <FormField
                       control={resetForm.control}
-                      name="email"
+                      name="collegeEmail"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>College Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your email" {...field} />
+                            <Input placeholder="your.name@college.edu" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -345,21 +384,17 @@ const Login = () => {
   // Render college ID login form
   const renderCollegeIdLogin = () => (
     <div className="space-y-4">
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="mb-2 -ml-2"
-        onClick={handleBackToMethods}
-      >
-        <ArrowRight className="h-4 w-4 mr-1 rotate-180" />
-        Back
-      </Button>
-      
-      <div className="text-center mb-4">
+      <div className="flex justify-between items-center mb-2">
+        <Button 
+          variant="ghost" 
+          size="sm"
+          onClick={() => setLoginMethod(null)}
+          className="-ml-2"
+        >
+          <ArrowRight className="h-4 w-4 mr-1 rotate-180" />
+          Back
+        </Button>
         <h3 className="text-lg font-medium">Login with College ID</h3>
-        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-          Enter your college credentials to continue
-        </p>
       </div>
       
       <div className="space-y-4">
@@ -386,9 +421,14 @@ const Login = () => {
           </button>
         </div>
         
+        <div className="relative">
+          <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+          <Input className="pl-10" placeholder="Phone Number (Optional)" />
+        </div>
+        
         <Alert className="bg-blue-50 text-blue-800 border-blue-200">
           <AlertDescription className="text-xs">
-            This will authenticate through your college portal. No credentials are stored by NOTES4U.
+            This will authenticate through your college portal. No credentials are stored by Notex.
           </AlertDescription>
         </Alert>
         
@@ -419,7 +459,7 @@ const Login = () => {
               className="mx-auto mb-4"
             >
               <span className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
-                NOTES4U
+                Notex
               </span>
             </motion.div>
             <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
@@ -432,7 +472,7 @@ const Login = () => {
               <div>
                 {loginMethod === null && renderLoginMethods()}
                 {loginMethod === "email" && renderEmailLoginForm()}
-                {loginMethod === "college" && renderCollegeIdLogin()}
+                {loginMethod === "collegeId" && renderCollegeIdLogin()}
               </div>
             ) : (
               <Tabs defaultValue="signup" value={activeTab} onValueChange={setActiveTab}>
@@ -475,14 +515,14 @@ const Login = () => {
                       />
                       <FormField
                         control={signupForm.control}
-                        name="email"
+                        name="collegeEmail"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>College Email</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
-                                <Input className="pl-10" placeholder="Enter your email" {...field} />
+                                <Input className="pl-10" placeholder="your.name@college.edu" {...field} />
                               </div>
                             </FormControl>
                             <FormMessage />
@@ -514,6 +554,22 @@ const Login = () => {
                                     <Eye className="h-4 w-4 text-gray-500" />
                                   }
                                 </button>
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={signupForm.control}
+                        name="phoneNumber"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phone Number <span className="text-xs text-gray-500">(Optional)</span></FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                                <Input className="pl-10" placeholder="Your phone number" {...field} />
                               </div>
                             </FormControl>
                             <FormMessage />
