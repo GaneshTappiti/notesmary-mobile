@@ -1,27 +1,12 @@
-
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
 import { LogOut, Upload, Search, BrainCircuit, Users, BookOpen } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  useEffect(() => {
-    // Check if user is logged in
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    
-    if (!isLoggedIn) {
-      toast({
-        title: "Authentication Required",
-        description: "Please login to access your dashboard",
-      });
-      navigate('/authentication');
-    }
-  }, [navigate, toast]);
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
