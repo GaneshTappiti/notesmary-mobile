@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, LogIn, BrainCircuit } from 'lucide-react';
+import { Menu, X, LogIn, BrainCircuit, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { UploadModal } from './UploadModal';
@@ -11,6 +11,7 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -18,23 +19,38 @@ export const Navbar = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
+    
+    // Check login status whenever the component mounts or localStorage changes
+    const checkLoginStatus = () => {
+      const loginStatus = localStorage.getItem('isLoggedIn') === 'true';
+      setIsLoggedIn(loginStatus);
+    };
+    
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    // Initial check
+    checkLoginStatus();
+    
+    // Setup storage event listener to update login status if it changes in another tab
+    window.addEventListener('storage', checkLoginStatus);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('storage', checkLoginStatus);
+    };
   }, []);
 
   const checkAuthAndProceed = (action: 'upload' | 'dashboard') => {
     // Check if user is logged in (using localStorage as a simple approach)
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    
     if (!isLoggedIn) {
-      // Redirect to login page with a toast notification
+      // Redirect to authentication page with a toast notification
       toast({
         title: "Authentication Required",
         description: action === 'upload' 
           ? "Please login to upload notes" 
           : "Please login to access your dashboard",
       });
-      navigate('/login');
+      navigate('/authentication');
       return false;
     }
     
@@ -48,8 +64,19 @@ export const Navbar = () => {
   };
 
   const handleDashboardClick = () => {
-    checkAuthAndProceed('dashboard');
-    // If checkAuthAndProceed returns true, the navigation will happen with Link
+    if (checkAuthAndProceed('dashboard')) {
+      navigate('/dashboard');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    setIsLoggedIn(false);
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out",
+    });
+    navigate('/');
   };
 
   return (
@@ -103,23 +130,33 @@ export const Navbar = () => {
               >
                 Upload Notes
               </Button>
-              <Button 
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2" 
-                onClick={handleDashboardClick}
-                asChild={localStorage.getItem('isLoggedIn') === 'true'}
-              >
-                {localStorage.getItem('isLoggedIn') === 'true' ? (
-                  <Link to="/dashboard">
-                    <LogIn size={18} />
-                    <span>Go to Dashboard</span>
-                  </Link>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <LogIn size={18} />
-                    <span>Go to Dashboard</span>
-                  </div>
-                )}
-              </Button>
+              
+              {isLoggedIn ? (
+                <div className="flex space-x-3">
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2"
+                    onClick={handleDashboardClick}
+                  >
+                    Go to Dashboard
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    onClick={handleLogout}
+                    className="text-gray-700 hover:text-red-600 hover:bg-red-50 flex items-center gap-2"
+                  >
+                    <LogOut size={18} />
+                    Logout
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2"
+                  onClick={() => navigate('/authentication')}
+                >
+                  <LogIn size={18} />
+                  <span>Login / Sign Up</span>
+                </Button>
+              )}
             </motion.div>
             
             {/* Mobile Menu Button */}
@@ -185,26 +222,42 @@ export const Navbar = () => {
                 >
                   Upload Notes
                 </Button>
-                <Button 
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    handleDashboardClick();
-                  }}
-                  asChild={localStorage.getItem('isLoggedIn') === 'true'}
-                >
-                  {localStorage.getItem('isLoggedIn') === 'true' ? (
-                    <Link to="/dashboard">
-                      <LogIn size={18} />
-                      <span>Go to Dashboard</span>
-                    </Link>
-                  ) : (
-                    <div className="flex items-center justify-center gap-2">
-                      <LogIn size={18} />
-                      <span>Go to Dashboard</span>
-                    </div>
-                  )}
-                </Button>
+                
+                {isLoggedIn ? (
+                  <>
+                    <Button 
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        handleDashboardClick();
+                      }}
+                    >
+                      Go to Dashboard
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full text-gray-700 hover:text-red-600 hover:bg-red-50 flex items-center justify-center gap-2"
+                    >
+                      <LogOut size={18} />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      navigate('/authentication');
+                    }}
+                  >
+                    <LogIn size={18} />
+                    <span>Login / Sign Up</span>
+                  </Button>
+                )}
               </div>
             </div>
           </motion.div>
