@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Authentication from "./pages/Authentication";
 import AIAnswers from "./pages/AIAnswers";
 import UploadNotes from "./pages/UploadNotes";
+import FindNotes from "./pages/FindNotes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/authentication" element={<Authentication />} />
           <Route path="/ai-answers" element={<AIAnswers />} />
           <Route path="/upload-notes" element={<UploadNotes />} />
+          <Route path="/find-notes" element={<FindNotes />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,3 +1,4 @@
+
 import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -130,7 +131,13 @@ const Dashboard = () => {
               </CardDescription>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant="outline">Search Notes</Button>
+              <Button 
+                className="w-full" 
+                variant="outline" 
+                onClick={() => navigate('/find-notes')}
+              >
+                Search Notes
+              </Button>
             </CardFooter>
           </Card>
           

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, LogIn, BrainCircuit, LogOut } from 'lucide-react';
+import { Menu, X, LogIn, BrainCircuit, LogOut, Search } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { UploadModal } from './UploadModal';
@@ -36,12 +36,14 @@ export const Navbar = () => {
     };
   }, []);
 
-  const checkAuthAndProceed = (action: 'upload' | 'dashboard') => {
+  const checkAuthAndProceed = (action: 'upload' | 'dashboard' | 'find') => {
     if (!isLoggedIn) {
       toast({
         title: "Authentication Required",
         description: action === 'upload' 
           ? "Please login to upload notes" 
+          : action === 'find'
+          ? "Please login to search notes"
           : "Please login to access your dashboard",
       });
       navigate('/authentication');
@@ -60,6 +62,12 @@ export const Navbar = () => {
   const handleDashboardClick = () => {
     if (checkAuthAndProceed('dashboard')) {
       navigate('/dashboard');
+    }
+  };
+
+  const handleFindNotesClick = () => {
+    if (checkAuthAndProceed('find')) {
+      navigate('/find-notes');
     }
   };
 
@@ -108,6 +116,13 @@ export const Navbar = () => {
                 <BrainCircuit size={18} className="mr-1" />
                 AI Answers
               </Link>
+              <div 
+                onClick={handleFindNotesClick}
+                className="text-gray-700 hover:text-blue-600 font-medium flex items-center cursor-pointer"
+              >
+                <Search size={18} className="mr-1" />
+                Find Notes
+              </div>
             </motion.div>
             
             <motion.div 
@@ -202,6 +217,16 @@ export const Navbar = () => {
                 <BrainCircuit size={18} className="mr-1" />
                 AI Answers
               </Link>
+              <div
+                className="block text-gray-700 hover:text-blue-600 font-medium flex items-center"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  handleFindNotesClick();
+                }}
+              >
+                <Search size={18} className="mr-1" />
+                Find Notes
+              </div>
               <div className="pt-4 flex flex-col space-y-3">
                 <Button 
                   variant="outline" 
