@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X, LogIn, BrainCircuit, LogOut } from 'lucide-react';
@@ -20,7 +19,6 @@ export const Navbar = () => {
       setIsScrolled(window.scrollY > 10);
     };
     
-    // Check login status whenever the component mounts or localStorage changes
     const checkLoginStatus = () => {
       const loginStatus = localStorage.getItem('isLoggedIn') === 'true';
       setIsLoggedIn(loginStatus);
@@ -28,10 +26,8 @@ export const Navbar = () => {
     
     window.addEventListener('scroll', handleScroll);
     
-    // Initial check
     checkLoginStatus();
     
-    // Setup storage event listener to update login status if it changes in another tab
     window.addEventListener('storage', checkLoginStatus);
     
     return () => {
@@ -41,9 +37,7 @@ export const Navbar = () => {
   }, []);
 
   const checkAuthAndProceed = (action: 'upload' | 'dashboard') => {
-    // Check if user is logged in (using localStorage as a simple approach)
     if (!isLoggedIn) {
-      // Redirect to authentication page with a toast notification
       toast({
         title: "Authentication Required",
         description: action === 'upload' 
@@ -101,7 +95,6 @@ export const Navbar = () => {
               </Link>
             </motion.div>
             
-            {/* Desktop Navigation */}
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -159,7 +152,6 @@ export const Navbar = () => {
               )}
             </motion.div>
             
-            {/* Mobile Menu Button */}
             <div className="md:hidden">
               <Button 
                 variant="ghost" 
@@ -172,7 +164,6 @@ export const Navbar = () => {
           </nav>
         </div>
         
-        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <motion.div 
             initial={{ opacity: 0, height: 0 }}
@@ -237,7 +228,7 @@ export const Navbar = () => {
                     <Button 
                       variant="ghost" 
                       onClick={() => {
-                        setMobileMenuOpen(false);
+                        setIsMobileMenuOpen(false);
                         handleLogout();
                       }}
                       className="w-full text-gray-700 hover:text-red-600 hover:bg-red-50 flex items-center justify-center gap-2"
