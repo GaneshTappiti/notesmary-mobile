@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Authentication from "./pages/Authentication";
 import AIAnswers from "./pages/AIAnswers";
+import UploadNotes from "./pages/UploadNotes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/authentication" element={<Authentication />} />
           <Route path="/ai-answers" element={<AIAnswers />} />
+          <Route path="/upload-notes" element={<UploadNotes />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

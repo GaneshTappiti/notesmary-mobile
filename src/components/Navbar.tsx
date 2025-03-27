@@ -53,7 +53,7 @@ export const Navbar = () => {
 
   const handleUploadClick = () => {
     if (checkAuthAndProceed('upload')) {
-      setShowUploadModal(true);
+      navigate('/upload-notes');
     }
   };
 

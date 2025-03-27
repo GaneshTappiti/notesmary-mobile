@@ -1,4 +1,3 @@
-
 import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -107,7 +106,12 @@ const Dashboard = () => {
               </CardDescription>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700">Upload Now</Button>
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-700" 
+                onClick={() => navigate('/upload-notes')}
+              >
+                Upload Now
+              </Button>
             </CardFooter>
           </Card>
           
