@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Input } from '@/components/ui/input';
@@ -7,6 +6,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { useNavigate } from 'react-router-dom';
 import {
   Search,
   BookOpen,
@@ -48,6 +48,7 @@ const FindNotes = () => {
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   // Mock data for demonstration
   const mockNotes: NoteItem[] = [
@@ -169,18 +170,8 @@ const FindNotes = () => {
   const semesters = ['1', '2', '3', '4', '5', '6', '7', '8'];
   const subjects = Array.from(new Set(mockNotes.map(note => note.subject)));
   
-  const handleDownload = (noteId: string) => {
-    toast({
-      title: "Download started",
-      description: "Your notes will be downloaded shortly.",
-    });
-  };
-  
   const handleViewNote = (noteId: string) => {
-    toast({
-      title: "Viewing note",
-      description: "Opening note preview...",
-    });
+    navigate(`/view-notes/${noteId}`);
   };
   
   const handleSaveNote = (noteId: string) => {
@@ -197,7 +188,7 @@ const FindNotes = () => {
       <div className="pt-28 pb-12 px-4 max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Find Notes</h1>
-          <p className="text-gray-600">Discover and download notes from peers across different subjects and topics</p>
+          <p className="text-gray-600">Discover and view notes from peers across different subjects and topics</p>
         </div>
         
         {/* Search and Filter Section */}
@@ -400,19 +391,11 @@ const FindNotes = () => {
                   </CardContent>
                   <CardFooter className="p-4 pt-0 flex justify-between gap-2">
                     <Button 
-                      variant="outline" 
                       className="w-full flex items-center gap-2"
                       onClick={() => handleViewNote(note.id)}
                     >
                       <Eye size={16} />
                       View
-                    </Button>
-                    <Button 
-                      className="w-full flex items-center gap-2"
-                      onClick={() => handleDownload(note.id)}
-                    >
-                      <Download size={16} />
-                      Download
                     </Button>
                   </CardFooter>
                 </Card>
@@ -459,21 +442,12 @@ const FindNotes = () => {
                         </div>
                         <div className="flex gap-2">
                           <Button 
-                            variant="outline" 
-                            size="sm"
                             className="flex items-center gap-1"
+                            size="sm"
                             onClick={() => handleViewNote(note.id)}
                           >
                             <Eye size={14} />
                             View
-                          </Button>
-                          <Button 
-                            size="sm"
-                            className="flex items-center gap-1"
-                            onClick={() => handleDownload(note.id)}
-                          >
-                            <Download size={14} />
-                            Download
                           </Button>
                         </div>
                       </div>
