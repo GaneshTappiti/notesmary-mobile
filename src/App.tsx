@@ -13,6 +13,7 @@ import UploadNotes from "./pages/UploadNotes";
 import FindNotes from "./pages/FindNotes";
 import ViewNotes from "./pages/ViewNotes";
 import NotFound from "./pages/NotFound";
+import Notifications from "./pages/Notifications";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/upload-notes" element={<UploadNotes />} />
           <Route path="/find-notes" element={<FindNotes />} />
           <Route path="/view-notes/:noteId" element={<ViewNotes />} />
+          <Route path="/notifications" element={<Notifications />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -25,10 +25,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { CreateRoomModal } from '@/components/CreateRoomModal';
 import { BrowseRoomsModal } from '@/components/BrowseRoomsModal';
 import { YourRoomsSection } from '@/components/YourRoomsSection';
+import { Badge } from '@/components/ui/badge';
 
 const Dashboard = () => {
   const [createRoomModalOpen, setCreateRoomModalOpen] = useState(false);
   const [browseRoomsModalOpen, setBrowseRoomsModalOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(3); // Mock unread count
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -71,9 +73,18 @@ const Dashboard = () => {
             <p className="text-gray-600 mt-1">Track your progress, manage notes, and collaborate with others</p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2 relative"
+              onClick={() => navigate('/notifications')}
+            >
               <Bell size={16} />
               Notifications
+              {unreadNotifications > 0 && (
+                <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                  {unreadNotifications}
+                </Badge>
+              )}
             </Button>
             <Button variant="outline" onClick={handleLogout} className="flex items-center gap-2">
               <LogOut size={16} />

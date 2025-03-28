@@ -1,16 +1,19 @@
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, LogIn, BrainCircuit, LogOut, Search } from 'lucide-react';
+import { Menu, X, LogIn, BrainCircuit, LogOut, Search, Bell } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { UploadModal } from './UploadModal';
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(3); // Mock unread count - would come from your backend
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -36,7 +39,7 @@ export const Navbar = () => {
     };
   }, []);
 
-  const checkAuthAndProceed = (action: 'upload' | 'dashboard' | 'find') => {
+  const checkAuthAndProceed = (action: 'upload' | 'dashboard' | 'find' | 'notifications') => {
     if (!isLoggedIn) {
       toast({
         title: "Authentication Required",
@@ -44,6 +47,8 @@ export const Navbar = () => {
           ? "Please login to upload notes" 
           : action === 'find'
           ? "Please login to search notes"
+          : action === 'notifications'
+          ? "Please login to view notifications"
           : "Please login to access your dashboard",
       });
       navigate('/authentication');
@@ -68,6 +73,12 @@ export const Navbar = () => {
   const handleFindNotesClick = () => {
     if (checkAuthAndProceed('find')) {
       navigate('/find-notes');
+    }
+  };
+
+  const handleNotificationsClick = () => {
+    if (checkAuthAndProceed('notifications')) {
+      navigate('/notifications');
     }
   };
 
@@ -123,6 +134,20 @@ export const Navbar = () => {
                 <Search size={18} className="mr-1" />
                 Find Notes
               </div>
+              {isLoggedIn && (
+                <div 
+                  onClick={handleNotificationsClick}
+                  className="text-gray-700 hover:text-blue-600 font-medium flex items-center cursor-pointer relative"
+                >
+                  <Bell size={18} className="mr-1" />
+                  Notifications
+                  {unreadNotifications > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {unreadNotifications}
+                    </span>
+                  )}
+                </div>
+              )}
             </motion.div>
             
             <motion.div 
@@ -227,6 +252,23 @@ export const Navbar = () => {
                 <Search size={18} className="mr-1" />
                 Find Notes
               </div>
+              {isLoggedIn && (
+                <div
+                  className="block text-gray-700 hover:text-blue-600 font-medium flex items-center relative"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleNotificationsClick();
+                  }}
+                >
+                  <Bell size={18} className="mr-1" />
+                  Notifications
+                  {unreadNotifications > 0 && (
+                    <span className="ml-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {unreadNotifications}
+                    </span>
+                  )}
+                </div>
+              )}
               <div className="pt-4 flex flex-col space-y-3">
                 <Button 
                   variant="outline" 
