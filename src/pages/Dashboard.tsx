@@ -1,4 +1,5 @@
 
+import { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,12 +15,20 @@ import {
   Clock, 
   Star,
   CheckCircle,
-  Calendar
+  Calendar,
+  Plus,
+  HelpCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { CreateRoomModal } from '@/components/CreateRoomModal';
+import { BrowseRoomsModal } from '@/components/BrowseRoomsModal';
+import { YourRoomsSection } from '@/components/YourRoomsSection';
 
 const Dashboard = () => {
+  const [createRoomModalOpen, setCreateRoomModalOpen] = useState(false);
+  const [browseRoomsModalOpen, setBrowseRoomsModalOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -230,36 +239,72 @@ const Dashboard = () => {
           </Card>
         </div>
         
-        {/* Group Study Rooms */}
+        {/* Enhanced Group Study Rooms */}
         <Card className="border-none shadow-md mb-8">
           <CardHeader className="pb-2">
-            <div className="flex items-center gap-3">
-              <div className="bg-yellow-100 p-3 rounded-full">
-                <Users className="h-6 w-6 text-yellow-600" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-yellow-100 p-3 rounded-full">
+                  <Users className="h-6 w-6 text-yellow-600" />
+                </div>
+                <CardTitle className="text-xl">Group Study Rooms</CardTitle>
               </div>
-              <CardTitle className="text-xl">Group Study Rooms</CardTitle>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Create or join virtual study rooms with peers</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-              <div className="border border-gray-200 p-4 rounded-lg hover:border-blue-300 hover:shadow-md transition-all">
-                <h3 className="font-medium mb-2 flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Create a Study Room
-                </h3>
-                <p className="text-gray-600 text-sm mb-3">Start a new collaborative study session with friends.</p>
-                <Button size="sm" className="w-full">Create Room</Button>
+              <div className="border border-gray-200 p-5 rounded-lg hover:border-blue-300 hover:shadow-md transition-all bg-gradient-to-br from-blue-50 to-white">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="bg-blue-100 p-2 rounded-full">
+                    <Plus className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <h3 className="font-medium text-lg">Create a Study Room</h3>
+                </div>
+                <p className="text-gray-600 text-sm mb-4">Start a new collaborative study session with classmates. Set room preferences and invite participants.</p>
+                <Button 
+                  size="lg"
+                  className="w-full bg-blue-600 hover:bg-blue-700 transition-all hover:shadow-md flex items-center justify-center gap-2"
+                  onClick={() => setCreateRoomModalOpen(true)}
+                >
+                  <Plus className="h-4 w-4" />
+                  Create Room
+                </Button>
               </div>
               
-              <div className="border border-gray-200 p-4 rounded-lg hover:border-purple-300 hover:shadow-md transition-all">
-                <h3 className="font-medium mb-2 flex items-center gap-2">
-                  <Search className="h-4 w-4" /> 
-                  Join Existing Room
-                </h3>
-                <p className="text-gray-600 text-sm mb-3">Participate in ongoing study groups and discussions.</p>
-                <Button size="sm" variant="outline" className="w-full">Browse Rooms</Button>
+              <div className="border border-gray-200 p-5 rounded-lg hover:border-purple-300 hover:shadow-md transition-all bg-gradient-to-br from-purple-50 to-white">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="bg-purple-100 p-2 rounded-full">
+                    <Search className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <h3 className="font-medium text-lg">Join Existing Room</h3>
+                </div>
+                <p className="text-gray-600 text-sm mb-4">Find and participate in ongoing study groups. Filter by subject, topic, or created by your peers.</p>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="w-full border-purple-300 text-purple-700 hover:bg-purple-50 transition-all hover:shadow-md flex items-center justify-center gap-2"
+                  onClick={() => setBrowseRoomsModalOpen(true)}
+                >
+                  <Users className="h-4 w-4" />
+                  Browse Rooms
+                </Button>
               </div>
             </div>
+            
+            {/* Rooms created by the user */}
+            <YourRoomsSection />
           </CardContent>
         </Card>
         
@@ -282,6 +327,17 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modals */}
+      <CreateRoomModal 
+        open={createRoomModalOpen} 
+        onClose={() => setCreateRoomModalOpen(false)} 
+      />
+      
+      <BrowseRoomsModal 
+        open={browseRoomsModalOpen} 
+        onClose={() => setBrowseRoomsModalOpen(false)} 
+      />
     </div>
   );
 };
