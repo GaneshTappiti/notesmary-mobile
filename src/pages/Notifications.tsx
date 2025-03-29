@@ -23,84 +23,87 @@ import { Card, CardContent } from '@/components/ui/card';
 import { NotificationCard } from '@/components/NotificationCard';
 import { useToast } from '@/hooks/use-toast';
 
+// Import the types from NotificationCard
+import type { NotificationType, ActionType } from '@/components/NotificationCard';
+
 // Mock notification data - this would come from your Supabase database in a real implementation
 const mockNotifications = [
   {
     id: '1',
-    type: 'studyRoom',
+    type: 'studyRoom' as NotificationType,
     title: 'Study Room Invite',
     description: 'You have been invited to the "AI & ML Study Group" by Sarah.',
     timestamp: '30 minutes ago',
     isRead: false,
-    actionType: 'join',
+    actionType: 'join' as ActionType,
     actionUrl: '/room/123',
     actionText: 'Join Now'
   },
   {
     id: '2',
-    type: 'notes',
+    type: 'notes' as NotificationType,
     title: 'New Notes Available',
     description: 'New notes for "Data Structures" have been uploaded.',
     timestamp: '1 hour ago',
     isRead: false,
-    actionType: 'view',
+    actionType: 'view' as ActionType,
     actionUrl: '/view-notes/456',
     actionText: 'View Notes'
   },
   {
     id: '3',
-    type: 'collaboration',
+    type: 'collaboration' as NotificationType,
     title: 'Collaboration Request',
     description: 'Alex wants to add you to their study team.',
     timestamp: '3 hours ago',
     isRead: true,
-    actionType: 'accept',
-    secondaryActionType: 'decline',
+    actionType: 'accept' as ActionType,
+    secondaryActionType: 'decline' as ActionType,
     actionUrl: '/profile/789',
     actionText: 'Accept',
     secondaryActionText: 'Decline'
   },
   {
     id: '4',
-    type: 'system',
+    type: 'system' as NotificationType,
     title: 'AI Study Suggestion',
     description: 'Based on your recent activity, we recommend reviewing "Neural Networks".',
     timestamp: '5 hours ago',
     isRead: true,
-    actionType: 'view',
+    actionType: 'view' as ActionType,
     actionUrl: '/ai-answers?topic=neural-networks',
     actionText: 'View Suggestion'
   },
   {
     id: '5',
-    type: 'payment',
+    type: 'payment' as NotificationType,
     title: 'Subscription Expiring',
     description: 'Your team study subscription expires in 3 days.',
     timestamp: '1 day ago',
     isRead: false,
-    actionType: 'renew',
+    actionType: 'renew' as ActionType,
     actionUrl: '/subscriptions',
     actionText: 'Renew Now'
   },
   {
     id: '6',
-    type: 'notes',
+    type: 'notes' as NotificationType,
     title: 'AI-Generated Insights',
     description: 'AI has analyzed your "Physics" notes and has suggestions.',
     timestamp: '2 days ago',
     isRead: true,
-    actionType: 'view',
+    actionType: 'view' as ActionType,
     actionUrl: '/view-notes/678?ai=true',
     actionText: 'View Insights'
   },
   {
     id: '7',
-    type: 'studyRoom',
+    type: 'studyRoom' as NotificationType,
     title: 'Study Room Activity',
     description: 'New discussion in "Chemistry Group" requires your attention.',
     timestamp: '3 days ago',
     isRead: true,
-    actionType: 'join',
+    actionType: 'join' as ActionType,
     actionUrl: '/room/234',
     actionText: 'Join Discussion'
   }
@@ -127,8 +130,10 @@ const Notifications = () => {
     }
     
     // Apply type filter
-    if (activeFilter !== 'all') {
+    if (activeFilter !== 'all' && activeFilter !== 'unread') {
       filtered = filtered.filter(notification => notification.type === activeFilter);
+    } else if (activeFilter === 'unread') {
+      filtered = filtered.filter(notification => !notification.isRead);
     }
     
     setFilteredNotifications(filtered);
@@ -171,7 +176,7 @@ const Notifications = () => {
     }, 1500);
   };
 
-  const handleNotificationAction = (id: string, actionType: string, url?: string) => {
+  const handleNotificationAction = (id: string, actionType: ActionType, url?: string) => {
     // Mark the notification as read
     setNotifications(notifications.map(notification => 
       notification.id === id ? { ...notification, isRead: true } : notification
@@ -191,7 +196,7 @@ const Notifications = () => {
     }
   };
 
-  const getTypeIcon = (type: string) => {
+  const getTypeIcon = (type: NotificationType) => {
     switch (type) {
       case 'studyRoom':
         return <Bell className="h-5 w-5 text-blue-500" />;
@@ -344,7 +349,7 @@ const Notifications = () => {
                 <div className="mt-6 pt-4 border-t border-gray-100">
                   <h3 className="font-medium text-sm text-gray-500 mb-2">FILTER BY STATUS</h3>
                   <Button 
-                    variant="outline"
+                    variant={activeFilter === 'unread' ? 'default' : 'outline'}
                     className="w-full justify-start"
                     onClick={() => setActiveFilter('unread')}
                   >
