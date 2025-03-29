@@ -11,17 +11,17 @@ import {
   RefreshCw,
   Check,
   X,
-  ArrowRight,
-  FileText
+  MessageSquare,
+  Calendar
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { NotificationCard } from '@/components/NotificationCard';
 import { useToast } from '@/hooks/use-toast';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Import the types from NotificationCard
 import type { NotificationType, ActionType } from '@/components/NotificationCard';
@@ -36,7 +36,7 @@ const mockNotifications = [
     timestamp: '30 minutes ago',
     isRead: false,
     actionType: 'join' as ActionType,
-    actionUrl: '/room/123',
+    actionUrl: '/study-room/123',
     actionText: 'Join Now'
   },
   {
@@ -59,7 +59,7 @@ const mockNotifications = [
     isRead: true,
     actionType: 'accept' as ActionType,
     secondaryActionType: 'decline' as ActionType,
-    actionUrl: '/profile/789',
+    actionUrl: '/team',
     actionText: 'Accept',
     secondaryActionText: 'Decline'
   },
@@ -71,7 +71,7 @@ const mockNotifications = [
     timestamp: '5 hours ago',
     isRead: true,
     actionType: 'view' as ActionType,
-    actionUrl: '/ai-answers?topic=neural-networks',
+    actionUrl: '/ai-study-tips',
     actionText: 'View Suggestion'
   },
   {
@@ -82,7 +82,7 @@ const mockNotifications = [
     timestamp: '1 day ago',
     isRead: false,
     actionType: 'renew' as ActionType,
-    actionUrl: '/subscriptions',
+    actionUrl: '/subscription',
     actionText: 'Renew Now'
   },
   {
@@ -93,7 +93,7 @@ const mockNotifications = [
     timestamp: '2 days ago',
     isRead: true,
     actionType: 'view' as ActionType,
-    actionUrl: '/view-notes/678?ai=true',
+    actionUrl: '/ai-insights',
     actionText: 'View Insights'
   },
   {
@@ -104,7 +104,7 @@ const mockNotifications = [
     timestamp: '3 days ago',
     isRead: true,
     actionType: 'join' as ActionType,
-    actionUrl: '/room/234',
+    actionUrl: '/study-room/234/chat',
     actionText: 'Join Discussion'
   }
 ];
@@ -185,6 +185,10 @@ const Notifications = () => {
     // Handle different action types
     if (actionType === 'join' || actionType === 'view' || actionType === 'renew' || actionType === 'accept') {
       if (url) {
+        toast({
+          title: "Redirecting",
+          description: `Taking you to ${url}`,
+        });
         navigate(url);
       }
     } else if (actionType === 'decline') {
@@ -223,7 +227,7 @@ const Notifications = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              Notifications
+              Notifications Center
               {unreadCount > 0 && (
                 <Badge variant="destructive" className="text-xs">
                   {unreadCount} new
@@ -290,7 +294,7 @@ const Notifications = () => {
                     className="w-full justify-start"
                     onClick={() => setActiveFilter('studyRoom')}
                   >
-                    <Bell className="mr-2 h-4 w-4 text-blue-500" />
+                    <MessageSquare className="mr-2 h-4 w-4 text-blue-500" />
                     Study Rooms
                     <Badge className="ml-auto">
                       {notifications.filter(n => n.type === 'studyRoom').length}
@@ -377,16 +381,18 @@ const Notifications = () => {
             <Card className="border-none shadow-md">
               <CardContent className="p-6">
                 {filteredNotifications.length > 0 ? (
-                  <div className="space-y-4">
-                    {filteredNotifications.map((notification) => (
-                      <NotificationCard
-                        key={notification.id}
-                        notification={notification}
-                        onAction={handleNotificationAction}
-                        icon={getTypeIcon(notification.type)}
-                      />
-                    ))}
-                  </div>
+                  <ScrollArea className="h-[70vh] pr-4">
+                    <div className="space-y-4">
+                      {filteredNotifications.map((notification) => (
+                        <NotificationCard
+                          key={notification.id}
+                          notification={notification}
+                          onAction={handleNotificationAction}
+                          icon={getTypeIcon(notification.type)}
+                        />
+                      ))}
+                    </div>
+                  </ScrollArea>
                 ) : (
                   <div className="text-center py-12">
                     <Bell className="mx-auto h-12 w-12 text-gray-300" />

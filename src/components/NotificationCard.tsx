@@ -74,7 +74,7 @@ export const NotificationCard: React.FC<NotificationProps> = ({
       } hover:shadow-md transition-all`}
     >
       <CardContent className="p-4 flex items-start">
-        <div className="mr-4 mt-1">
+        <div className="mr-4 mt-1 relative">
           {icon}
           {!notification.isRead && (
             <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 transform -translate-y-1/2 translate-x-1/2"></span>
