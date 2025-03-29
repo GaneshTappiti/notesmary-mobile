@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Check, X, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-type NotificationType = 'studyRoom' | 'notes' | 'collaboration' | 'system' | 'payment';
-type ActionType = 'join' | 'view' | 'accept' | 'decline' | 'renew';
+export type NotificationType = 'studyRoom' | 'notes' | 'collaboration' | 'system' | 'payment';
+export type ActionType = 'join' | 'view' | 'accept' | 'decline' | 'renew';
 
 interface NotificationProps {
   notification: {
