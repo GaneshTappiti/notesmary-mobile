@@ -1,10 +1,8 @@
-
 import { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  LogOut, 
   Upload, 
   Search, 
   BrainCircuit, 
@@ -35,15 +33,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-
-  const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out",
-    });
-    navigate('/');
-  };
 
   const stats = [
     { label: 'Notes Uploaded', value: '12', icon: <Upload className="h-5 w-5 text-blue-500" /> },
@@ -122,15 +111,6 @@ const Dashboard = () => {
                   {unreadNotifications}
                 </Badge>
               )}
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={handleLogout} 
-              className="flex items-center gap-1.5"
-              size={isMobile ? "sm" : "default"}
-            >
-              <LogOut size={16} />
-              {!isMobile && "Logout"}
             </Button>
           </div>
         </div>
