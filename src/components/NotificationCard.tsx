@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Check, X, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-export type NotificationType = 'studyRoom' | 'notes' | 'collaboration' | 'system' | 'payment';
-export type ActionType = 'join' | 'view' | 'accept' | 'decline' | 'renew';
+export type NotificationType = 'studyRoom' | 'notes' | 'collaboration' | 'system' | 'payment' | 'aiInsights' | 'studyTips';
+export type ActionType = 'join' | 'view' | 'accept' | 'decline' | 'renew' | 'joinDiscussion';
 
 interface NotificationProps {
   notification: {
@@ -34,6 +34,7 @@ export const NotificationCard: React.FC<NotificationProps> = ({
   const getActionIcon = (actionType: ActionType) => {
     switch (actionType) {
       case 'join':
+      case 'joinDiscussion':
         return <ArrowRight size={16} />;
       case 'view':
         return <FileText size={16} />;
@@ -51,6 +52,7 @@ export const NotificationCard: React.FC<NotificationProps> = ({
   const getActionButtonVariant = (actionType: ActionType) => {
     switch (actionType) {
       case 'join':
+      case 'joinDiscussion':
         return 'default';
       case 'view':
         return 'outline';
@@ -63,6 +65,40 @@ export const NotificationCard: React.FC<NotificationProps> = ({
       default:
         return 'default';
     }
+  };
+
+  // Determine the correct redirect URL based on notification type and action
+  const getActionUrl = (type: NotificationType, actionType: ActionType) => {
+    if (notification.actionUrl) {
+      return notification.actionUrl;
+    }
+    
+    // Default redirects based on notification type
+    switch (type) {
+      case 'studyRoom':
+        return actionType === 'joinDiscussion' 
+          ? `/study-room/${notification.id}/chat` 
+          : `/study-room/${notification.id}`;
+      case 'notes':
+        return `/view-notes/${notification.id}`;
+      case 'collaboration':
+        return '/team';
+      case 'studyTips':
+        return '/ai-study-tips';
+      case 'payment':
+        return '/subscription';
+      case 'aiInsights':
+        return '/ai-insights';
+      case 'system':
+        return actionType === 'view' ? '/ai-study-tips' : '/dashboard';
+      default:
+        return '/dashboard';
+    }
+  };
+
+  const handleAction = (actionType: ActionType) => {
+    const redirectUrl = getActionUrl(notification.type, actionType);
+    onAction(notification.id, actionType, redirectUrl);
   };
 
   return (
@@ -100,7 +136,7 @@ export const NotificationCard: React.FC<NotificationProps> = ({
               <Button 
                 variant={getActionButtonVariant(notification.secondaryActionType)}
                 size="sm"
-                onClick={() => onAction(notification.id, notification.secondaryActionType!, notification.actionUrl)}
+                onClick={() => handleAction(notification.secondaryActionType!)}
                 className="flex items-center gap-1"
               >
                 {getActionIcon(notification.secondaryActionType)}
@@ -111,7 +147,7 @@ export const NotificationCard: React.FC<NotificationProps> = ({
             <Button 
               variant={getActionButtonVariant(notification.actionType)}
               size="sm"
-              onClick={() => onAction(notification.id, notification.actionType, notification.actionUrl)}
+              onClick={() => handleAction(notification.actionType)}
               className="flex items-center gap-1"
             >
               {getActionIcon(notification.actionType)}

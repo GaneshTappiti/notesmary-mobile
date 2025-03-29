@@ -35,6 +35,15 @@ const App = () => (
           <Route path="/view-notes/:noteId" element={<ViewNotes />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/study-analytics" element={<StudyAnalytics />} />
+          
+          {/* Placeholder routes for the new pages - these will redirect to dashboard for now */}
+          <Route path="/study-room/:id" element={<Dashboard />} />
+          <Route path="/study-room/:id/chat" element={<Dashboard />} />
+          <Route path="/team" element={<Dashboard />} />
+          <Route path="/ai-study-tips" element={<Dashboard />} />
+          <Route path="/subscription" element={<Dashboard />} />
+          <Route path="/ai-insights" element={<Dashboard />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

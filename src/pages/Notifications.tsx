@@ -12,7 +12,8 @@ import {
   Check,
   X,
   MessageSquare,
-  Calendar
+  Calendar,
+  Lightbulb
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -36,7 +37,6 @@ const mockNotifications = [
     timestamp: '30 minutes ago',
     isRead: false,
     actionType: 'join' as ActionType,
-    actionUrl: '/study-room/123',
     actionText: 'Join Now'
   },
   {
@@ -47,7 +47,6 @@ const mockNotifications = [
     timestamp: '1 hour ago',
     isRead: false,
     actionType: 'view' as ActionType,
-    actionUrl: '/view-notes/456',
     actionText: 'View Notes'
   },
   {
@@ -59,19 +58,17 @@ const mockNotifications = [
     isRead: true,
     actionType: 'accept' as ActionType,
     secondaryActionType: 'decline' as ActionType,
-    actionUrl: '/team',
     actionText: 'Accept',
     secondaryActionText: 'Decline'
   },
   {
     id: '4',
-    type: 'system' as NotificationType,
+    type: 'studyTips' as NotificationType,
     title: 'AI Study Suggestion',
     description: 'Based on your recent activity, we recommend reviewing "Neural Networks".',
     timestamp: '5 hours ago',
     isRead: true,
     actionType: 'view' as ActionType,
-    actionUrl: '/ai-study-tips',
     actionText: 'View Suggestion'
   },
   {
@@ -82,18 +79,16 @@ const mockNotifications = [
     timestamp: '1 day ago',
     isRead: false,
     actionType: 'renew' as ActionType,
-    actionUrl: '/subscription',
     actionText: 'Renew Now'
   },
   {
     id: '6',
-    type: 'notes' as NotificationType,
+    type: 'aiInsights' as NotificationType,
     title: 'AI-Generated Insights',
     description: 'AI has analyzed your "Physics" notes and has suggestions.',
     timestamp: '2 days ago',
     isRead: true,
     actionType: 'view' as ActionType,
-    actionUrl: '/ai-insights',
     actionText: 'View Insights'
   },
   {
@@ -103,8 +98,7 @@ const mockNotifications = [
     description: 'New discussion in "Chemistry Group" requires your attention.',
     timestamp: '3 days ago',
     isRead: true,
-    actionType: 'join' as ActionType,
-    actionUrl: '/study-room/234/chat',
+    actionType: 'joinDiscussion' as ActionType,
     actionText: 'Join Discussion'
   }
 ];
@@ -183,13 +177,36 @@ const Notifications = () => {
     ));
     
     // Handle different action types
-    if (actionType === 'join' || actionType === 'view' || actionType === 'renew' || actionType === 'accept') {
+    if (actionType === 'join' || actionType === 'view' || actionType === 'renew' || actionType === 'accept' || actionType === 'joinDiscussion') {
       if (url) {
+        const actionMap: Record<ActionType, string> = {
+          'join': 'joining study room',
+          'joinDiscussion': 'joining discussion',
+          'view': 'viewing content',
+          'renew': 'subscription page',
+          'accept': 'team collaboration', 
+          'decline': ''
+        };
+        
         toast({
           title: "Redirecting",
-          description: `Taking you to ${url}`,
+          description: `Taking you to ${actionMap[actionType] || url}`,
         });
-        navigate(url);
+        
+        // Check if the route exists in App.tsx before navigating
+        // For now, we'll redirect to the dashboard for routes that don't exist yet
+        const existingRoutes = ['/view-notes', '/notifications', '/dashboard', '/study-analytics'];
+        const routeExists = existingRoutes.some(route => url?.startsWith(route));
+        
+        if (routeExists) {
+          navigate(url);
+        } else {
+          toast({
+            title: "Page Under Construction",
+            description: `The ${url} page is currently being built. Redirecting to dashboard.`,
+          });
+          setTimeout(() => navigate('/dashboard'), 1500);
+        }
       }
     } else if (actionType === 'decline') {
       setNotifications(notifications.filter(notification => notification.id !== id));
@@ -203,13 +220,17 @@ const Notifications = () => {
   const getTypeIcon = (type: NotificationType) => {
     switch (type) {
       case 'studyRoom':
-        return <Bell className="h-5 w-5 text-blue-500" />;
+        return <MessageSquare className="h-5 w-5 text-blue-500" />;
       case 'notes':
         return <BookOpen className="h-5 w-5 text-green-500" />;
       case 'collaboration':
         return <Users className="h-5 w-5 text-purple-500" />;
+      case 'studyTips':
+        return <Lightbulb className="h-5 w-5 text-amber-500" />;
+      case 'aiInsights':
+        return <BrainCircuit className="h-5 w-5 text-indigo-500" />;
       case 'system':
-        return <BrainCircuit className="h-5 w-5 text-amber-500" />;
+        return <Bell className="h-5 w-5 text-gray-500" />;
       case 'payment':
         return <DollarSign className="h-5 w-5 text-red-500" />;
       default:
@@ -326,14 +347,26 @@ const Notifications = () => {
                   </Button>
                   
                   <Button 
-                    variant={activeFilter === 'system' ? 'default' : 'ghost'}
+                    variant={activeFilter === 'studyTips' ? 'default' : 'ghost'}
                     className="w-full justify-start"
-                    onClick={() => setActiveFilter('system')}
+                    onClick={() => setActiveFilter('studyTips')}
                   >
-                    <BrainCircuit className="mr-2 h-4 w-4 text-amber-500" />
-                    AI & System
+                    <Lightbulb className="mr-2 h-4 w-4 text-amber-500" />
+                    Study Tips
                     <Badge className="ml-auto">
-                      {notifications.filter(n => n.type === 'system').length}
+                      {notifications.filter(n => n.type === 'studyTips').length}
+                    </Badge>
+                  </Button>
+                  
+                  <Button 
+                    variant={activeFilter === 'aiInsights' ? 'default' : 'ghost'}
+                    className="w-full justify-start"
+                    onClick={() => setActiveFilter('aiInsights')}
+                  >
+                    <BrainCircuit className="mr-2 h-4 w-4 text-indigo-500" />
+                    AI Insights
+                    <Badge className="ml-auto">
+                      {notifications.filter(n => n.type === 'aiInsights').length}
                     </Badge>
                   </Button>
                   
