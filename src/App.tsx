@@ -14,6 +14,7 @@ import FindNotes from "./pages/FindNotes";
 import ViewNotes from "./pages/ViewNotes";
 import NotFound from "./pages/NotFound";
 import Notifications from "./pages/Notifications";
+import StudyAnalytics from "./pages/StudyAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/find-notes" element={<FindNotes />} />
           <Route path="/view-notes/:noteId" element={<ViewNotes />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/study-analytics" element={<StudyAnalytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

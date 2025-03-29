@@ -326,18 +326,40 @@ const Dashboard = () => {
         {/* Analytics */}
         <Card className="border-none shadow-sm">
           <CardHeader className="pb-2 pt-4">
-            <div className="flex items-center gap-2">
-              <div className="bg-blue-100 p-2 rounded-full">
-                <BarChart3 className="h-5 w-5 text-blue-600" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="bg-blue-100 p-2 rounded-full">
+                  <BarChart3 className="h-5 w-5 text-blue-600" />
+                </div>
+                <CardTitle className="text-lg">Study Analytics</CardTitle>
               </div>
-              <CardTitle className="text-lg">Study Analytics</CardTitle>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">Track your study patterns and get personalized insights</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-5">
-              <BarChart3 className="h-12 w-12 mx-auto mb-2 text-gray-300" />
-              <p className="text-gray-500 text-sm mb-2">Analytics will track your study patterns and progress.</p>
-              <Button variant="outline" size="sm">Set Up Analytics</Button>
+            <div className="flex flex-col justify-center items-center py-4">
+              <BarChart3 className="h-12 w-12 mb-3 text-blue-300" />
+              <p className="text-gray-600 text-sm mb-3">
+                Visualize your study habits and get personalized recommendations to improve your learning.
+              </p>
+              <Button 
+                onClick={() => navigate('/study-analytics')} 
+                variant="outline" 
+                className="border-blue-300 text-blue-600 hover:bg-blue-50"
+              >
+                View Analytics
+              </Button>
             </div>
           </CardContent>
         </Card>
