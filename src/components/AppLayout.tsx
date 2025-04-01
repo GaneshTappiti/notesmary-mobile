@@ -23,32 +23,36 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   
   if (!showSidebar) {
     return (
-      <div className="min-h-screen">
-        <Navbar />
-        <main className="pt-20">{children}</main>
-      </div>
+      <TooltipProvider>
+        <div className="min-h-screen">
+          <Navbar />
+          <main className="pt-20">{children}</main>
+        </div>
+      </TooltipProvider>
     );
   }
   
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <SidebarInset>
-          <div className="flex flex-col min-h-full">
-            <div className="flex items-center p-4 border-b">
-              <SidebarTrigger className="mr-2" />
-              <h1 className="text-xl font-semibold">
-                {getPageTitle(location.pathname)}
-              </h1>
+    <TooltipProvider>
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar />
+          <SidebarInset>
+            <div className="flex flex-col min-h-full">
+              <div className="flex items-center p-4 border-b">
+                <SidebarTrigger className="mr-2" />
+                <h1 className="text-xl font-semibold">
+                  {getPageTitle(location.pathname)}
+                </h1>
+              </div>
+              <main className="flex-1 p-4">
+                {children}
+              </main>
             </div>
-            <main className="flex-1 p-4">
-              {children}
-            </main>
-          </div>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 };
 

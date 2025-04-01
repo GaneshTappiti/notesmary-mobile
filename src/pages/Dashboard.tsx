@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -145,14 +144,6 @@ const Dashboard = () => {
     }
   ];
 
-  // Filter cards based on search query
-  const filteredQuickAccess = searchQuery 
-    ? quickAccessCards.filter(card => 
-        card.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        card.description.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : quickAccessCards;
-
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     toast({
@@ -166,7 +157,6 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white">      
       <div className="pb-8 px-4 max-w-7xl mx-auto">
-        {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Quick Access</h1>
@@ -198,7 +188,6 @@ const Dashboard = () => {
           </div>
         </div>
         
-        {/* Search bar for Quick Access */}
         <div className="mb-6 relative">
           <Input
             type="text"
@@ -222,7 +211,6 @@ const Dashboard = () => {
           )}
         </div>
         
-        {/* Stats Row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {stats.map((stat, index) => (
             <Card key={index} className="border-none shadow-sm hover:shadow-md transition-shadow">
@@ -242,7 +230,6 @@ const Dashboard = () => {
           ))}
         </div>
         
-        {/* Personalized Recommendations */}
         <Card className="border-none shadow-sm mb-6">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
@@ -286,7 +273,6 @@ const Dashboard = () => {
           </CardContent>
         </Card>
         
-        {/* Quick Access Cards */}
         <h2 className="text-xl font-semibold mb-4 text-gray-800 flex items-center gap-2">
           <span>Quick Access</span>
           {searchQuery && <Badge variant="outline" className="ml-2">{filteredQuickAccess.length} results</Badge>}
@@ -331,7 +317,6 @@ const Dashboard = () => {
           </div>
         )}
         
-        {/* Recent Activity and Upcoming Events */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
           <Card className="border-none shadow-sm">
             <CardHeader className="pb-2 pt-4">
@@ -362,7 +347,7 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <div className="text-gray-500 text-center py-8">
-                  <BookOpen className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                  <BookText className="h-12 w-12 mx-auto mb-3 text-gray-300" />
                   <p className="text-sm">No recent activity yet.</p>
                 </div>
               )}
@@ -400,7 +385,6 @@ const Dashboard = () => {
           </Card>
         </div>
         
-        {/* Group Study Rooms */}
         <Card className="border-none shadow-sm mb-6">
           <CardHeader className="pb-2 pt-4">
             <div className="flex items-center justify-between">
@@ -410,18 +394,16 @@ const Dashboard = () => {
                 </div>
                 <CardTitle className="text-lg">Group Study Rooms</CardTitle>
               </div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-xs">Create or join virtual study rooms with peers</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                    <HelpCircle className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">Create or join virtual study rooms with peers</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </CardHeader>
           <CardContent>
@@ -464,12 +446,10 @@ const Dashboard = () => {
               </div>
             </div>
             
-            {/* Rooms created by the user */}
             <YourRoomsSection />
           </CardContent>
         </Card>
         
-        {/* Modals */}
         <CreateRoomModal 
           open={createRoomModalOpen} 
           onClose={() => setCreateRoomModalOpen(false)} 
