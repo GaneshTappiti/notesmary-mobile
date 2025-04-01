@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +15,8 @@ import ViewNotes from "./pages/ViewNotes";
 import NotFound from "./pages/NotFound";
 import Notifications from "./pages/Notifications";
 import StudyAnalytics from "./pages/StudyAnalytics";
+import StudyRoom from "./pages/StudyRoom";
+import StudyRoomChat from "./pages/StudyRoomChat";
 
 const queryClient = new QueryClient();
 
@@ -39,9 +40,11 @@ const App = () => (
           <Route path="/notifications" element={<AppLayout><Notifications /></AppLayout>} />
           <Route path="/study-analytics" element={<AppLayout><StudyAnalytics /></AppLayout>} />
           
-          {/* Improved navigation paths with clear names */}
-          <Route path="/study-room/:id" element={<AppLayout><Dashboard /></AppLayout>} />
-          <Route path="/study-room/:id/chat" element={<AppLayout><Dashboard /></AppLayout>} />
+          {/* Implemented Pages */}
+          <Route path="/study-room/:id" element={<AppLayout><StudyRoom /></AppLayout>} />
+          <Route path="/study-room/:id/chat" element={<AppLayout><StudyRoomChat /></AppLayout>} />
+          
+          {/* Other pages (to be implemented in future iterations) */}
           <Route path="/team" element={<AppLayout><Dashboard /></AppLayout>} />
           <Route path="/ai-study-tips" element={<AppLayout><Dashboard /></AppLayout>} />
           <Route path="/subscription" element={<AppLayout><Dashboard /></AppLayout>} />

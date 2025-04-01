@@ -1,36 +1,42 @@
 
 import { useState } from 'react';
-import { Navbar } from '@/components/Navbar';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Upload, 
-  Search, 
-  BrainCircuit, 
-  Users, 
-  BookOpen, 
-  Bell, 
-  BarChart3, 
-  Clock, 
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import {
+  Upload,
+  Search,
+  BrainCircuit,
+  Users,
+  Lightbulb,
+  Bell,
+  BarChart3,
+  Clock,
   Star,
   CheckCircle,
   Calendar,
   Plus,
-  HelpCircle
+  HelpCircle,
+  CreditCard,
+  MessageSquare,
+  SunMoon,
+  Sparkles
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CreateRoomModal } from '@/components/CreateRoomModal';
 import { BrowseRoomsModal } from '@/components/BrowseRoomsModal';
 import { YourRoomsSection } from '@/components/YourRoomsSection';
-import { Badge } from '@/components/ui/badge';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 const Dashboard = () => {
   const [createRoomModalOpen, setCreateRoomModalOpen] = useState(false);
   const [browseRoomsModalOpen, setBrowseRoomsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [unreadNotifications, setUnreadNotifications] = useState(3); // Mock unread count
+  const [isDarkMode, setIsDarkMode] = useState(false); // Mock dark mode state
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -87,18 +93,93 @@ const Dashboard = () => {
     }
   ];
 
+  const quickAccessCards = [
+    {
+      title: 'Study Room',
+      description: 'Collaborative space for group learning.',
+      icon: <Users className="h-6 w-6 text-indigo-600" />,
+      bgColor: 'bg-indigo-100',
+      buttonText: 'Join Room',
+      onClick: () => navigate('/study-room/1')
+    },
+    {
+      title: 'Study Room Chat',
+      description: 'Real-time messaging for study groups.',
+      icon: <MessageSquare className="h-6 w-6 text-cyan-600" />,
+      bgColor: 'bg-cyan-100',
+      buttonText: 'Open Chat',
+      onClick: () => navigate('/study-room/1/chat')
+    },
+    {
+      title: 'Team Collaboration',
+      description: 'Manage study projects and tasks.',
+      icon: <Users className="h-6 w-6 text-emerald-600" />,
+      bgColor: 'bg-emerald-100',
+      buttonText: 'View Teams',
+      onClick: () => navigate('/team')
+    },
+    {
+      title: 'AI Study Tips',
+      description: 'Personalized learning recommendations.',
+      icon: <Lightbulb className="h-6 w-6 text-amber-600" />,
+      bgColor: 'bg-amber-100',
+      buttonText: 'Get Tips',
+      onClick: () => navigate('/ai-study-tips')
+    },
+    {
+      title: 'Subscription',
+      description: 'Manage your account and payments.',
+      icon: <CreditCard className="h-6 w-6 text-rose-600" />,
+      bgColor: 'bg-rose-100',
+      buttonText: 'Manage Plan',
+      onClick: () => navigate('/subscription')
+    },
+    {
+      title: 'AI Insights',
+      description: 'Analytics and performance tracking.',
+      icon: <BrainCircuit className="h-6 w-6 text-violet-600" />,
+      bgColor: 'bg-violet-100',
+      buttonText: 'View Insights',
+      onClick: () => navigate('/ai-insights')
+    }
+  ];
+
+  // Filter cards based on search query
+  const filteredQuickAccess = searchQuery 
+    ? quickAccessCards.filter(card => 
+        card.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        card.description.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : quickAccessCards;
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+    toast({
+      title: isDarkMode ? "Light mode activated" : "Dark mode activated",
+      description: `You've switched to ${isDarkMode ? "light" : "dark"} mode.`,
+      duration: 2000,
+    });
+    // In a real implementation, you would change the theme here
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white">
-      <Navbar />
-      
-      <div className="pt-20 pb-8 px-4 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white">      
+      <div className="pb-8 px-4 max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Your Dashboard</h1>
-            <p className="text-gray-600 mt-1 text-sm md:text-base">Track your progress, manage notes, and collaborate</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Quick Access</h1>
+            <p className="text-gray-600 mt-1 text-sm md:text-base">Manage your notes, study groups, and learning tools</p>
           </div>
           <div className="flex gap-2 self-end sm:self-auto">
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={toggleDarkMode}
+              className="rounded-full"
+            >
+              <SunMoon size={18} />
+            </Button>
             <Button 
               variant="outline" 
               className="flex items-center gap-1.5 relative"
@@ -114,6 +195,30 @@ const Dashboard = () => {
               )}
             </Button>
           </div>
+        </div>
+        
+        {/* Search bar for Quick Access */}
+        <div className="mb-6 relative">
+          <Input
+            type="text"
+            placeholder="Search for features, tools or study resources..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+          />
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          {searchQuery && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute inset-y-0 right-0 pr-3"
+              onClick={() => setSearchQuery('')}
+            >
+              Clear
+            </Button>
+          )}
         </div>
         
         {/* Stats Row */}
@@ -136,35 +241,94 @@ const Dashboard = () => {
           ))}
         </div>
         
-        {/* Main Actions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {mainActions.map((action, index) => (
-            <Card key={index} className="border-none shadow-sm hover:shadow-md transition-all duration-200 hover:translate-y-[-2px]">
-              <CardHeader className="pb-2 pt-4">
-                <div className="flex items-center gap-3">
-                  <div className={`${action.bgColor} p-2.5 rounded-full`}>
-                    {action.icon}
-                  </div>
-                  <CardTitle className="text-lg">{action.title}</CardTitle>
+        {/* Personalized Recommendations */}
+        <Card className="border-none shadow-sm mb-6">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="bg-purple-100 p-2 rounded-full">
+                  <Sparkles className="h-5 w-5 text-purple-600" />
                 </div>
-              </CardHeader>
-              <CardContent className="pb-3">
-                <CardDescription className="text-gray-600 text-sm">
-                  {action.description}
-                </CardDescription>
-              </CardContent>
-              <CardFooter className="pb-4">
-                <Button 
-                  className="w-full" 
-                  variant={action.buttonVariant as "default" | "outline"} 
-                  onClick={action.onClick}
-                >
-                  {action.buttonText}
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+                <CardTitle className="text-lg">Recommended for You</CardTitle>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {mainActions.map((action, index) => (
+                <Card key={index} className="border shadow-sm hover:shadow-md transition-all duration-200 hover:translate-y-[-2px]">
+                  <CardHeader className="pb-2 pt-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`${action.bgColor} p-2.5 rounded-full`}>
+                        {action.icon}
+                      </div>
+                      <CardTitle className="text-lg">{action.title}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pb-3">
+                    <CardDescription className="text-gray-600 text-sm">
+                      {action.description}
+                    </CardDescription>
+                  </CardContent>
+                  <CardFooter className="pb-4">
+                    <Button 
+                      className="w-full" 
+                      variant={action.buttonVariant as "default" | "outline"} 
+                      onClick={action.onClick}
+                    >
+                      {action.buttonText}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Quick Access Cards */}
+        <h2 className="text-xl font-semibold mb-4 text-gray-800 flex items-center gap-2">
+          <span>Quick Access</span>
+          {searchQuery && <Badge variant="outline" className="ml-2">{filteredQuickAccess.length} results</Badge>}
+        </h2>
+        
+        {filteredQuickAccess.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {filteredQuickAccess.map((card, index) => (
+              <Card key={index} className="border shadow-sm hover:shadow-md transition-all duration-200 hover:translate-y-[-2px]">
+                <CardContent className="pt-6 pb-4">
+                  <div className="flex flex-col items-center text-center">
+                    <div className={`${card.bgColor} p-3 rounded-full mb-4`}>
+                      {card.icon}
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1">{card.title}</h3>
+                    <p className="text-gray-500 text-sm mb-4">{card.description}</p>
+                    <Button 
+                      onClick={card.onClick}
+                      className="w-full"
+                    >
+                      {card.buttonText}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-10">
+            <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <Search className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">No results found</h3>
+            <p className="text-gray-500 mt-1">Try adjusting your search terms</p>
+            <Button 
+              onClick={() => setSearchQuery('')} 
+              variant="outline" 
+              className="mt-4"
+            >
+              Clear Search
+            </Button>
+          </div>
+        )}
         
         {/* Recent Activity and Upcoming Events */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
@@ -304,58 +468,17 @@ const Dashboard = () => {
           </CardContent>
         </Card>
         
-        {/* Analytics */}
-        <Card className="border-none shadow-sm">
-          <CardHeader className="pb-2 pt-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="bg-blue-100 p-2 rounded-full">
-                  <BarChart3 className="h-5 w-5 text-blue-600" />
-                </div>
-                <CardTitle className="text-lg">Study Analytics</CardTitle>
-              </div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-xs">Track your study patterns and get personalized insights</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col justify-center items-center py-4">
-              <BarChart3 className="h-12 w-12 mb-3 text-blue-300" />
-              <p className="text-gray-600 text-sm mb-3">
-                Visualize your study habits and get personalized recommendations to improve your learning.
-              </p>
-              <Button 
-                onClick={() => navigate('/study-analytics')} 
-                variant="outline" 
-                className="border-blue-300 text-blue-600 hover:bg-blue-50"
-              >
-                View Analytics
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Modals */}
+        <CreateRoomModal 
+          open={createRoomModalOpen} 
+          onClose={() => setCreateRoomModalOpen(false)} 
+        />
+        
+        <BrowseRoomsModal 
+          open={browseRoomsModalOpen} 
+          onClose={() => setBrowseRoomsModalOpen(false)} 
+        />
       </div>
-
-      {/* Modals */}
-      <CreateRoomModal 
-        open={createRoomModalOpen} 
-        onClose={() => setCreateRoomModalOpen(false)} 
-      />
-      
-      <BrowseRoomsModal 
-        open={browseRoomsModalOpen} 
-        onClose={() => setBrowseRoomsModalOpen(false)} 
-      />
     </div>
   );
 };
