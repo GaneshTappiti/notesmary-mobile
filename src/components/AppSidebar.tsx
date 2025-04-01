@@ -1,4 +1,3 @@
-
 import { useLocation, Link } from 'react-router-dom';
 import { 
   Users, 
@@ -43,11 +42,6 @@ export const AppSidebar = () => {
   };
   
   const menuItems = [
-    {
-      title: "Home",
-      path: "/",
-      icon: <Home size={18} />,
-    },
     {
       title: "Dashboard",
       path: "/dashboard",
