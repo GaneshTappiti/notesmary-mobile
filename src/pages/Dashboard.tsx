@@ -154,6 +154,13 @@ const Dashboard = () => {
     // In a real implementation, you would change the theme here
   };
 
+  const filteredQuickAccess = quickAccessCards.filter(card => 
+    searchQuery ? 
+    (card.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+     card.description.toLowerCase().includes(searchQuery.toLowerCase())) : 
+    quickAccessCards
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white">      
       <div className="pb-8 px-4 max-w-7xl mx-auto">
