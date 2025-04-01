@@ -24,9 +24,10 @@ import {
   CreditCard,
   MessageSquare,
   SunMoon,
-  Sparkles
+  Sparkles,
+  BookText
 } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CreateRoomModal } from '@/components/CreateRoomModal';
 import { BrowseRoomsModal } from '@/components/BrowseRoomsModal';
 import { YourRoomsSection } from '@/components/YourRoomsSection';

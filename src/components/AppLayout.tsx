@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from '@/components/AppSidebar';
 import { Navbar } from '@/components/Navbar';
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface AppLayoutProps {
   children: React.ReactNode;
