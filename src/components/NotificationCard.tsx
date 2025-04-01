@@ -19,6 +19,7 @@ interface NotificationProps {
     actionType: ActionType;
     secondaryActionType?: ActionType;
     actionUrl?: string;
+    secondaryActionUrl?: string;
     actionText: string;
     secondaryActionText?: string;
   };
@@ -73,31 +74,18 @@ export const NotificationCard: React.FC<NotificationProps> = ({
       return notification.actionUrl;
     }
     
-    // Default redirects based on notification type
-    switch (type) {
-      case 'studyRoom':
-        return actionType === 'joinDiscussion' 
-          ? `/study-room/${notification.id}/chat` 
-          : `/study-room/${notification.id}`;
-      case 'notes':
-        return `/view-notes/${notification.id}`;
-      case 'collaboration':
-        return '/team';
-      case 'studyTips':
-        return '/ai-study-tips';
-      case 'payment':
-        return '/subscription';
-      case 'aiInsights':
-        return '/ai-insights';
-      case 'system':
-        return actionType === 'view' ? '/ai-study-tips' : '/dashboard';
-      default:
-        return '/dashboard';
-    }
+    // All notification types now redirect to dashboard for simplicity
+    // In a real implementation, you would customize these redirects
+    // based on your app's navigation flow
+    return '/dashboard';
   };
 
   const handleAction = (actionType: ActionType) => {
-    const redirectUrl = getActionUrl(notification.type, actionType);
+    const redirectUrl = notification.actionUrl || (
+      actionType === notification.secondaryActionType && notification.secondaryActionUrl
+        ? notification.secondaryActionUrl
+        : getActionUrl(notification.type, actionType)
+    );
     onAction(notification.id, actionType, redirectUrl);
   };
 

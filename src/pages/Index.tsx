@@ -48,7 +48,7 @@ const Index = () => {
         }}
       />
       
-      {/* Main content */}
+      {/* Main content with all required sections */}
       <Navbar />
       <Hero />
       <Features />

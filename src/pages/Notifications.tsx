@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { 
@@ -37,7 +36,8 @@ const mockNotifications = [
     timestamp: '30 minutes ago',
     isRead: false,
     actionType: 'join' as ActionType,
-    actionText: 'Join Now'
+    actionText: 'Join Now',
+    actionUrl: '/dashboard' // All redirects go to dashboard for now
   },
   {
     id: '2',
@@ -47,7 +47,8 @@ const mockNotifications = [
     timestamp: '1 hour ago',
     isRead: false,
     actionType: 'view' as ActionType,
-    actionText: 'View Notes'
+    actionText: 'View Notes',
+    actionUrl: '/dashboard'
   },
   {
     id: '3',
@@ -59,7 +60,8 @@ const mockNotifications = [
     actionType: 'accept' as ActionType,
     secondaryActionType: 'decline' as ActionType,
     actionText: 'Accept',
-    secondaryActionText: 'Decline'
+    secondaryActionText: 'Decline',
+    actionUrl: '/dashboard'
   },
   {
     id: '4',
@@ -69,7 +71,8 @@ const mockNotifications = [
     timestamp: '5 hours ago',
     isRead: true,
     actionType: 'view' as ActionType,
-    actionText: 'View Suggestion'
+    actionText: 'View Suggestion',
+    actionUrl: '/dashboard'
   },
   {
     id: '5',
@@ -79,7 +82,8 @@ const mockNotifications = [
     timestamp: '1 day ago',
     isRead: false,
     actionType: 'renew' as ActionType,
-    actionText: 'Renew Now'
+    actionText: 'Renew Now',
+    actionUrl: '/dashboard'
   },
   {
     id: '6',
@@ -89,7 +93,8 @@ const mockNotifications = [
     timestamp: '2 days ago',
     isRead: true,
     actionType: 'view' as ActionType,
-    actionText: 'View Insights'
+    actionText: 'View Insights',
+    actionUrl: '/dashboard'
   },
   {
     id: '7',
@@ -99,7 +104,8 @@ const mockNotifications = [
     timestamp: '3 days ago',
     isRead: true,
     actionType: 'joinDiscussion' as ActionType,
-    actionText: 'Join Discussion'
+    actionText: 'Join Discussion',
+    actionUrl: '/dashboard'
   }
 ];
 
@@ -179,34 +185,22 @@ const Notifications = () => {
     // Handle different action types
     if (actionType === 'join' || actionType === 'view' || actionType === 'renew' || actionType === 'accept' || actionType === 'joinDiscussion') {
       if (url) {
-        const actionMap: Record<ActionType, string> = {
-          'join': 'joining study room',
-          'joinDiscussion': 'joining discussion',
-          'view': 'viewing content',
-          'renew': 'subscription page',
-          'accept': 'team collaboration', 
-          'decline': ''
-        };
+        // Simplified action description mapping
+        const actionDescription = 
+          actionType === 'join' ? 'the dashboard' :
+          actionType === 'view' ? 'the dashboard' : 
+          actionType === 'renew' ? 'the dashboard' :
+          actionType === 'accept' ? 'the dashboard' :
+          actionType === 'joinDiscussion' ? 'the dashboard' :
+          'the dashboard';
         
         toast({
           title: "Redirecting",
-          description: `Taking you to ${actionMap[actionType] || url}`,
+          description: `Taking you to ${actionDescription}`,
         });
         
-        // Check if the route exists in App.tsx before navigating
-        // For now, we'll redirect to the dashboard for routes that don't exist yet
-        const existingRoutes = ['/view-notes', '/notifications', '/dashboard', '/study-analytics'];
-        const routeExists = existingRoutes.some(route => url?.startsWith(route));
-        
-        if (routeExists) {
-          navigate(url);
-        } else {
-          toast({
-            title: "Page Under Construction",
-            description: `The ${url} page is currently being built. Redirecting to dashboard.`,
-          });
-          setTimeout(() => navigate('/dashboard'), 1500);
-        }
+        // Redirect to dashboard for all actions for now
+        navigate(url);
       }
     } else if (actionType === 'decline') {
       setNotifications(notifications.filter(notification => notification.id !== id));
