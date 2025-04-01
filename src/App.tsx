@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AppLayout from "./components/AppLayout";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -27,22 +28,24 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/authentication" element={<Authentication />} />
-          <Route path="/ai-answers" element={<AIAnswers />} />
-          <Route path="/upload-notes" element={<UploadNotes />} />
-          <Route path="/find-notes" element={<FindNotes />} />
-          <Route path="/view-notes/:noteId" element={<ViewNotes />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/study-analytics" element={<StudyAnalytics />} />
           
-          {/* All notification actions redirect to dashboard for now */}
-          <Route path="/study-room/:id" element={<Dashboard />} />
-          <Route path="/study-room/:id/chat" element={<Dashboard />} />
-          <Route path="/team" element={<Dashboard />} />
-          <Route path="/ai-study-tips" element={<Dashboard />} />
-          <Route path="/subscription" element={<Dashboard />} />
-          <Route path="/ai-insights" element={<Dashboard />} />
+          {/* Routes with AppLayout */}
+          <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
+          <Route path="/ai-answers" element={<AppLayout><AIAnswers /></AppLayout>} />
+          <Route path="/upload-notes" element={<AppLayout><UploadNotes /></AppLayout>} />
+          <Route path="/find-notes" element={<AppLayout><FindNotes /></AppLayout>} />
+          <Route path="/view-notes/:noteId" element={<AppLayout><ViewNotes /></AppLayout>} />
+          <Route path="/notifications" element={<AppLayout><Notifications /></AppLayout>} />
+          <Route path="/study-analytics" element={<AppLayout><StudyAnalytics /></AppLayout>} />
+          
+          {/* Improved navigation paths with clear names */}
+          <Route path="/study-room/:id" element={<AppLayout><Dashboard /></AppLayout>} />
+          <Route path="/study-room/:id/chat" element={<AppLayout><Dashboard /></AppLayout>} />
+          <Route path="/team" element={<AppLayout><Dashboard /></AppLayout>} />
+          <Route path="/ai-study-tips" element={<AppLayout><Dashboard /></AppLayout>} />
+          <Route path="/subscription" element={<AppLayout><Dashboard /></AppLayout>} />
+          <Route path="/ai-insights" element={<AppLayout><Dashboard /></AppLayout>} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
