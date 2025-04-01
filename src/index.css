@@ -80,7 +80,11 @@
   }
 
   body {
-    @apply bg-background text-foreground font-['SF_Pro_Display',sans-serif] overflow-x-hidden antialiased;
+    @apply bg-background text-foreground font-['SF_Pro_Display',sans-serif] antialiased;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -92,7 +96,7 @@
   }
 
   .section-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24;
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16;
   }
 
   button, a {
@@ -135,5 +139,13 @@
   
   .text-balance {
     text-wrap: balance;
+  }
+  
+  .responsive-container {
+    @apply w-full max-w-full px-3 sm:px-4 md:px-6;
+  }
+  
+  .content-container {
+    @apply mx-auto w-full max-w-7xl;
   }
 }
