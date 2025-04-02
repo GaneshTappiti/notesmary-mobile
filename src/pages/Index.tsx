@@ -7,6 +7,9 @@ import { Hero } from '@/components/Hero';
 import { Features } from '@/components/Features';
 import { Pricing } from '@/components/Pricing';
 import { Footer } from '@/components/Footer';
+import { YoutubeSection } from '@/components/YoutubeSection';
+import { AIExamQuestions } from '@/components/AIExamQuestions';
+import { StudyAnalytics } from '@/components/StudyAnalytics';
 
 const Index = () => {
   // Initialize framer-motion scroll animations
@@ -61,6 +64,9 @@ const Index = () => {
       <Navbar />
       <Hero />
       <Features />
+      <YoutubeSection />
+      <AIExamQuestions />
+      <StudyAnalytics />
       <Pricing />
       <Footer />
     </div>
