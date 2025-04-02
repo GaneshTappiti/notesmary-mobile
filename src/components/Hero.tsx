@@ -1,3 +1,4 @@
+
 import { motion } from 'framer-motion';
 import { HeroActions } from '@/components/HeroActions';
 import { FileUp, BookOpen, BrainCircuit } from 'lucide-react';
@@ -38,7 +39,7 @@ export const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                Transform your handwritten notes into beautifully organized digital study materials with the power of AI. Get summaries, flashcards, and quizzes—all from your own notes.
+                Transform your handwritten notes into beautifully organized digital study materials with the power of AI. Get summaries and collaborative study features—all from your own notes.
               </motion.p>
               
               <motion.div 

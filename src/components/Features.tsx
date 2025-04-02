@@ -2,8 +2,6 @@
 import React from 'react';
 import { FeatureCard } from '@/components/FeatureCard';
 import { 
-  FileUp, 
-  BookOpen, 
   BrainCircuit, 
   FolderKanban, 
   Smartphone, 
@@ -22,21 +20,11 @@ export const Features = () => {
             Unlock the full potential of your study notes with our AI-powered platform.
           </p>
         </div>
-        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <FeatureCard
             title="AI-Powered Summaries"
             description="Get instant summaries of your notes, highlighting key concepts and ideas."
             icon={BrainCircuit}
-          />
-          <FeatureCard
-            title="Smart Flashcards"
-            description="Automatically generate flashcards from your notes for effective memorization."
-            icon={FileUp}
-          />
-          <FeatureCard
-            title="Custom Quizzes"
-            description="Create quizzes tailored to your notes, reinforcing your understanding of the material."
-            icon={BookOpen}
           />
           <FeatureCard
             title="Note Organization"
