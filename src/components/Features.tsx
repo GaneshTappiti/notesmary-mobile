@@ -1,5 +1,14 @@
+
 import React from 'react';
 import { FeatureCard } from '@/components/FeatureCard';
+import { 
+  FileUp, 
+  BookOpen, 
+  BrainCircuit, 
+  FolderKanban, 
+  Smartphone, 
+  Users 
+} from 'lucide-react';
 
 export const Features = () => {
   return (
@@ -17,32 +26,32 @@ export const Features = () => {
           <FeatureCard
             title="AI-Powered Summaries"
             description="Get instant summaries of your notes, highlighting key concepts and ideas."
-            icon="summarize"
+            icon={BrainCircuit}
           />
           <FeatureCard
             title="Smart Flashcards"
             description="Automatically generate flashcards from your notes for effective memorization."
-            icon="flashcards"
+            icon={FileUp}
           />
           <FeatureCard
             title="Custom Quizzes"
             description="Create quizzes tailored to your notes, reinforcing your understanding of the material."
-            icon="quizzes"
+            icon={BookOpen}
           />
           <FeatureCard
             title="Note Organization"
             description="Effortlessly organize your notes into a structured digital format."
-            icon="organize"
+            icon={FolderKanban}
           />
           <FeatureCard
             title="Cross-Device Access"
             description="Access your notes and study materials from any device, anywhere."
-            icon="devices"
+            icon={Smartphone}
           />
           <FeatureCard
             title="Collaborative Study"
             description="Share your notes with classmates and study together in real-time."
-            icon="collaborate"
+            icon={Users}
           />
         </div>
       </div>
