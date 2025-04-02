@@ -5,16 +5,19 @@ type Theme = 'light' | 'dark';
 
 export function useThemePreference() {
   const [theme, setTheme] = useState<Theme>(() => {
-    // Check if theme exists in localStorage
-    const storedTheme = localStorage.getItem('theme') as Theme;
-    
-    if (storedTheme) {
-      return storedTheme;
-    }
-    
-    // Check if user prefers dark mode
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
+    // For SSR/First render - always initially check localStorage
+    if (typeof window !== 'undefined') {
+      // Check if theme exists in localStorage
+      const storedTheme = localStorage.getItem('theme') as Theme;
+      
+      if (storedTheme) {
+        return storedTheme;
+      }
+      
+      // Check if user prefers dark mode
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
     }
     
     // Default to light
