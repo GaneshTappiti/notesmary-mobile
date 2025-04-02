@@ -1,7 +1,8 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
@@ -19,34 +20,136 @@ import StudyRoomChat from "./pages/StudyRoomChat";
 
 const queryClient = new QueryClient();
 
+// Authentication guard component
+const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  return isLoggedIn ? <>{children}</> : <Navigate to="/authentication" />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <Toaster />
     <Sonner />
     <BrowserRouter>
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<Index />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Navigate to="/authentication" />} />
         <Route path="/authentication" element={<Authentication />} />
         
-        {/* Routes with AppLayout */}
-        <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
-        <Route path="/ai-answers" element={<AppLayout><AIAnswers /></AppLayout>} />
-        <Route path="/upload-notes" element={<AppLayout><UploadNotes /></AppLayout>} />
-        <Route path="/find-notes" element={<AppLayout><FindNotes /></AppLayout>} />
-        <Route path="/view-notes/:noteId" element={<AppLayout><ViewNotes /></AppLayout>} />
-        <Route path="/notifications" element={<AppLayout><Notifications /></AppLayout>} />
-        <Route path="/study-analytics" element={<AppLayout><StudyAnalytics /></AppLayout>} />
+        {/* Protected routes with AppLayout */}
+        <Route 
+          path="/dashboard" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/ai-answers" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <AIAnswers />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/upload-notes" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <UploadNotes />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/find-notes" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <FindNotes />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/view-notes/:noteId" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <ViewNotes />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/notifications" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Notifications />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/study-analytics" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <StudyAnalytics />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/study-room/:id" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <StudyRoom />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/study-room/:id/chat" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <StudyRoomChat />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/team" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/subscription" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
         
-        {/* Implemented Pages */}
-        <Route path="/study-room/:id" element={<AppLayout><StudyRoom /></AppLayout>} />
-        <Route path="/study-room/:id/chat" element={<AppLayout><StudyRoomChat /></AppLayout>} />
-        
-        {/* Other pages */}
-        <Route path="/team" element={<AppLayout><Dashboard /></AppLayout>} />
-        <Route path="/subscription" element={<AppLayout><Dashboard /></AppLayout>} />
-        
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        {/* Catch-all route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

@@ -1,6 +1,7 @@
 
 import { useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
 import { Features } from '@/components/Features';
@@ -11,10 +12,18 @@ const Index = () => {
   // Initialize framer-motion scroll animations
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+  const navigate = useNavigate();
   
   useEffect(() => {
     document.title = "Notex - AI-Powered Learning Platform for Students";
-  }, []);
+    
+    // Check if user is already logged in
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (isLoggedIn) {
+      // Redirect to dashboard if already logged in
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   return (
     <div className="min-h-screen relative overflow-hidden">

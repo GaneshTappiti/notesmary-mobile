@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,15 +12,16 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, BookOpen, Mail, Lock, User, School, GraduationCap, CalendarRange } from 'lucide-react';
+import { Eye, EyeOff, BookOpen, Mail, Lock, User, School, GraduationCap, CalendarRange, AlertCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { Navbar } from '@/components/Navbar';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Define validation schemas
 const loginSchema = z.object({
   email: z.string().email("Invalid email address").refine(
-    (email) => email.includes(".edu") || email.includes("ac.in") || email.includes("college"),
-    { message: "Must be a valid college email address" }
+    (email) => email.includes(".edu") || email.includes("ac.in") || email.includes("college") || email.includes("gmail"),
+    { message: "Must be a valid college or Gmail email address" }
   ),
   password: z.string().min(8, "Password must be at least 8 characters"),
   rememberMe: z.boolean().optional(),
@@ -29,8 +30,8 @@ const loginSchema = z.object({
 const signupSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
   email: z.string().email("Invalid email address").refine(
-    (email) => email.includes(".edu") || email.includes("ac.in") || email.includes("college"),
-    { message: "Must be a valid college email address" }
+    (email) => email.includes(".edu") || email.includes("ac.in") || email.includes("college") || email.includes("gmail"),
+    { message: "Must be a valid college or Gmail email address" }
   ),
   branch: z.string().min(1, "Branch selection is required"),
   yearOfEntry: z.string().min(4, "Valid year required"),
@@ -56,8 +57,17 @@ const Authentication = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (isLoggedIn) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   // Login form setup
   const loginForm = useForm<z.infer<typeof loginSchema>>({
@@ -87,36 +97,83 @@ const Authentication = () => {
 
   const handleLogin = (values: z.infer<typeof loginSchema>) => {
     console.log("Login values:", values);
-    // Simulate successful login
-    toast({
-      title: "Login Successful",
-      description: "Welcome back to Notex!",
-    });
+    setError(null);
     
-    // Set login status in localStorage
-    localStorage.setItem("isLoggedIn", "true");
-    
-    // Redirect to dashboard
-    navigate("/dashboard");
+    try {
+      // Simulate successful login
+      toast({
+        title: "Login Successful",
+        description: `Welcome back to Notex!`,
+      });
+      
+      // Set login status in localStorage
+      localStorage.setItem("isLoggedIn", "true");
+      
+      // Store user info if "Remember Me" is checked
+      if (values.rememberMe) {
+        localStorage.setItem("userEmail", values.email);
+      }
+      
+      // Redirect to dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Invalid email or password. Please try again.");
+      console.error("Login error:", err);
+    }
   };
 
   const handleSignup = (values: z.infer<typeof signupSchema>) => {
     console.log("Signup values:", values);
-    // Simulate successful signup
-    toast({
-      title: "Signup Successful",
-      description: "Welcome to Notex! Please verify your email.",
-    });
+    setError(null);
     
-    // Set login status in localStorage
-    localStorage.setItem("isLoggedIn", "true");
+    try {
+      // Simulate successful signup
+      toast({
+        title: "Signup Successful",
+        description: "Welcome to Notex! Please verify your email.",
+      });
+      
+      // Store user name for welcome message
+      localStorage.setItem("userName", values.fullName);
+      
+      // Set login status in localStorage
+      localStorage.setItem("isLoggedIn", "true");
+      
+      // Redirect to dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      setError("There was a problem creating your account. Please try again.");
+      console.error("Signup error:", err);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    setError(null);
     
-    // Redirect to dashboard
-    navigate("/dashboard");
+    try {
+      // In a real implementation, this would trigger Google OAuth
+      console.log("Logging in with Google...");
+      
+      // Simulate successful Google login
+      toast({
+        title: "Google Login Successful",
+        description: "Welcome to Notex!",
+      });
+      
+      // Set login status in localStorage
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("userName", "Google User");
+      
+      // Redirect to dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Google login failed. Please try again.");
+      console.error("Google login error:", err);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
       <Navbar />
       
       <div className="pt-28 pb-12 px-4">
@@ -126,10 +183,10 @@ const Authentication = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Card className="shadow-lg border-blue-100">
+            <Card className="shadow-lg border-blue-100 dark:border-gray-700">
               <CardHeader className="space-y-1">
                 <div className="flex justify-center mb-2">
-                  <BookOpen className="h-12 w-12 text-blue-600" />
+                  <BookOpen className="h-12 w-12 text-blue-600 dark:text-blue-400" />
                 </div>
                 <CardTitle className="text-2xl text-center font-bold">
                   {activeTab === "login" ? "Welcome back!" : "Join Notex"}
@@ -139,6 +196,13 @@ const Authentication = () => {
                     ? "Enter your college credentials to access your account" 
                     : "Create an account using your college email"}
                 </CardDescription>
+                
+                {error && (
+                  <Alert variant="destructive" className="mt-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
               </CardHeader>
               
               <CardContent>
@@ -152,6 +216,28 @@ const Authentication = () => {
                     <TabsTrigger value="login">Login</TabsTrigger>
                     <TabsTrigger value="signup">Signup</TabsTrigger>
                   </TabsList>
+                  
+                  <Button 
+                    onClick={handleGoogleLogin} 
+                    variant="outline" 
+                    className="w-full mb-4 flex items-center justify-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M8 12 h8"></path>
+                      <path d="M12 8 v8"></path>
+                    </svg>
+                    Sign in with Google
+                  </Button>
+                  
+                  <div className="relative mb-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-gray-300 dark:border-gray-600"></span>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white dark:bg-gray-800 px-2 text-gray-500 dark:text-gray-400">Or continue with</span>
+                    </div>
+                  </div>
                   
                   <TabsContent value="login">
                     <Form {...loginForm}>
@@ -223,12 +309,12 @@ const Authentication = () => {
                               </FormItem>
                             )}
                           />
-                          <a href="#" className="text-sm text-blue-600 hover:underline">
+                          <a href="#" className="text-sm text-blue-600 hover:underline dark:text-blue-400">
                             Forgot password?
                           </a>
                         </div>
                         
-                        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 mt-6">
+                        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 mt-6">
                           Log in
                         </Button>
                       </form>
@@ -447,11 +533,11 @@ const Authentication = () => {
                               <div className="space-y-1 leading-none">
                                 <FormLabel className="text-sm cursor-pointer">
                                   I agree to the{" "}
-                                  <a href="#" className="text-blue-600 hover:underline">
+                                  <a href="#" className="text-blue-600 hover:underline dark:text-blue-400">
                                     terms of service
                                   </a>{" "}
                                   and{" "}
-                                  <a href="#" className="text-blue-600 hover:underline">
+                                  <a href="#" className="text-blue-600 hover:underline dark:text-blue-400">
                                     privacy policy
                                   </a>
                                 </FormLabel>
@@ -461,7 +547,7 @@ const Authentication = () => {
                           )}
                         />
                         
-                        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 mt-2">
+                        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 mt-2">
                           Create Account
                         </Button>
                       </form>
@@ -471,14 +557,14 @@ const Authentication = () => {
               </CardContent>
               
               <CardFooter className="flex justify-center border-t pt-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {activeTab === "login" ? (
                     <>
                       Don't have an account?{" "}
                       <button
                         type="button"
                         onClick={() => setActiveTab("signup")}
-                        className="text-blue-600 hover:underline font-medium"
+                        className="text-blue-600 hover:underline font-medium dark:text-blue-400"
                       >
                         Sign up
                       </button>
@@ -489,7 +575,7 @@ const Authentication = () => {
                       <button
                         type="button"
                         onClick={() => setActiveTab("login")}
-                        className="text-blue-600 hover:underline font-medium"
+                        className="text-blue-600 hover:underline font-medium dark:text-blue-400"
                       >
                         Log in
                       </button>

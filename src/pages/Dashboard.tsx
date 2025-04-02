@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -22,7 +22,8 @@ import {
   HelpCircle,
   CreditCard,
   MessageSquare,
-  BookText
+  BookText,
+  LogOut
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CreateRoomModal } from '@/components/CreateRoomModal';
