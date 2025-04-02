@@ -2,10 +2,9 @@
 import { useLocation, Link } from 'react-router-dom';
 import { 
   Users, 
-  BookOpen, 
+  BookText, 
   BrainCircuit, 
   MessageSquare, 
-  Lightbulb, 
   CreditCard, 
   BarChart, 
   Upload, 
@@ -24,8 +23,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
   useSidebar
 } from "@/components/ui/sidebar";
 
@@ -75,7 +72,7 @@ export const AppSidebar = () => {
     },
   ];
   
-  const notificationItems = [
+  const quickAccessItems = [
     {
       title: "Study Room",
       path: "/study-room/1",
@@ -92,19 +89,9 @@ export const AppSidebar = () => {
       icon: <Users size={18} />,
     },
     {
-      title: "AI Study Tips",
-      path: "/ai-study-tips",
-      icon: <Lightbulb size={18} />,
-    },
-    {
       title: "Subscription",
       path: "/subscription",
       icon: <CreditCard size={18} />,
-    },
-    {
-      title: "AI Insights",
-      path: "/ai-insights",
-      icon: <BrainCircuit size={18} />,
     },
   ];
 
@@ -143,7 +130,7 @@ export const AppSidebar = () => {
           <SidebarGroupLabel>Quick Access</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {notificationItems.map((item) => (
+              {quickAccessItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton 
                     asChild 
@@ -163,7 +150,7 @@ export const AppSidebar = () => {
       </SidebarContent>
       
       <SidebarFooter>
-        <div className="px-4 py-2 text-xs text-gray-500">
+        <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">
           © 2025 Notex
         </div>
       </SidebarFooter>

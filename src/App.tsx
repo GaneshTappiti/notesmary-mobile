@@ -42,11 +42,9 @@ const App = () => (
         <Route path="/study-room/:id" element={<AppLayout><StudyRoom /></AppLayout>} />
         <Route path="/study-room/:id/chat" element={<AppLayout><StudyRoomChat /></AppLayout>} />
         
-        {/* Other pages (to be implemented in future iterations) */}
+        {/* Other pages */}
         <Route path="/team" element={<AppLayout><Dashboard /></AppLayout>} />
-        <Route path="/ai-study-tips" element={<AppLayout><Dashboard /></AppLayout>} />
         <Route path="/subscription" element={<AppLayout><Dashboard /></AppLayout>} />
-        <Route path="/ai-insights" element={<AppLayout><Dashboard /></AppLayout>} />
         
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />

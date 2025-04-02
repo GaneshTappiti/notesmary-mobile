@@ -7,13 +7,23 @@ import { Button } from '@/components/ui/button';
 import { UploadModal } from './UploadModal';
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from './ThemeToggle';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle
+} from "@/components/ui/navigation-menu";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [unreadNotifications, setUnreadNotifications] = useState(3); // Mock unread count - would come from your backend
+  const [unreadNotifications, setUnreadNotifications] = useState(3); // Mock unread count
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -97,7 +107,7 @@ export const Navbar = () => {
       <header 
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
           isScrolled 
-            ? 'bg-white/90 backdrop-blur-md border-b border-gray-200/50 py-3' 
+            ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 py-3' 
             : 'bg-transparent py-5'
         }`}
       >
@@ -118,44 +128,81 @@ export const Navbar = () => {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="hidden md:flex items-center space-x-8"
+              className="hidden md:flex items-center space-x-4"
             >
-              <a href="#features" className="text-gray-700 hover:text-blue-600 font-medium">Features</a>
-              <a href="#pricing" className="text-gray-700 hover:text-blue-600 font-medium">Pricing</a>
-              <a href="#about" className="text-gray-700 hover:text-blue-600 font-medium">About</a>
-              <Link to="/ai-answers" className="text-gray-700 hover:text-blue-600 font-medium flex items-center">
-                <BrainCircuit size={18} className="mr-1" />
-                AI Answers
-              </Link>
-              <div 
-                onClick={handleFindNotesClick}
-                className="text-gray-700 hover:text-blue-600 font-medium flex items-center cursor-pointer"
-              >
-                <Search size={18} className="mr-1" />
-                Find Notes
-              </div>
-              {isLoggedIn && (
-                <div 
-                  onClick={handleNotificationsClick}
-                  className="text-gray-700 hover:text-blue-600 font-medium flex items-center cursor-pointer relative"
-                >
-                  <Bell size={18} className="mr-1" />
-                  Notifications
-                  {unreadNotifications > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {unreadNotifications}
-                    </span>
-                  )}
-                </div>
-              )}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <Link to="/" className="text-foreground hover:text-blue-600 font-medium px-3 py-2">
+                      Home
+                    </Link>
+                  </NavigationMenuItem>
+                  
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-foreground hover:text-blue-600 font-medium">
+                      Features
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <div className="grid grid-cols-2 gap-3 p-4 w-[400px]">
+                        <Link to="/ai-answers" className="flex items-start gap-2 p-2 hover:bg-accent rounded-md">
+                          <BrainCircuit size={18} className="mt-0.5 text-blue-600" />
+                          <div>
+                            <div className="font-medium">AI Answers</div>
+                            <div className="text-sm text-muted-foreground">Get instant help with your questions</div>
+                          </div>
+                        </Link>
+                        <div 
+                          onClick={handleFindNotesClick}
+                          className="flex items-start gap-2 p-2 hover:bg-accent rounded-md cursor-pointer"
+                        >
+                          <Search size={18} className="mt-0.5 text-purple-600" />
+                          <div>
+                            <div className="font-medium">Find Notes</div>
+                            <div className="text-sm text-muted-foreground">Browse shared study materials</div>
+                          </div>
+                        </div>
+                      </div>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                  
+                  <NavigationMenuItem>
+                    <a href="#pricing" className="text-foreground hover:text-blue-600 font-medium px-3 py-2">
+                      Pricing
+                    </a>
+                  </NavigationMenuItem>
+                  
+                  <NavigationMenuItem>
+                    <a href="#about" className="text-foreground hover:text-blue-600 font-medium px-3 py-2">
+                      About
+                    </a>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
             </motion.div>
             
             <motion.div 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="hidden md:flex items-center space-x-4"
+              className="hidden md:flex items-center space-x-3"
             >
+              <ThemeToggle variant="ghost" className="rounded-full" />
+              
+              {isLoggedIn && (
+                <Button 
+                  variant="ghost" 
+                  className="relative"
+                  onClick={handleNotificationsClick}
+                >
+                  <Bell size={18} />
+                  {unreadNotifications > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {unreadNotifications}
+                    </span>
+                  )}
+                </Button>
+              )}
+              
               <Button 
                 variant="outline" 
                 onClick={handleUploadClick}
@@ -175,7 +222,7 @@ export const Navbar = () => {
                   <Button 
                     variant="ghost" 
                     onClick={handleLogout}
-                    className="text-gray-700 hover:text-red-600 hover:bg-red-50 flex items-center gap-2"
+                    className="text-gray-700 dark:text-gray-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950 flex items-center gap-2"
                   >
                     <LogOut size={18} />
                     Logout
@@ -192,7 +239,9 @@ export const Navbar = () => {
               )}
             </motion.div>
             
-            <div className="md:hidden">
+            <div className="md:hidden flex items-center gap-2">
+              <ThemeToggle variant="ghost" className="rounded-full" />
+              
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -210,40 +259,47 @@ export const Navbar = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-white border-t border-gray-200"
+            className="md:hidden bg-background border-t border-gray-200 dark:border-gray-800"
           >
             <div className="px-4 py-5 space-y-4">
               <a 
+                href="/"
+                className="block text-foreground hover:text-blue-600 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Home
+              </a>
+              <a 
                 href="#features" 
-                className="block text-gray-700 hover:text-blue-600 font-medium"
+                className="block text-foreground hover:text-blue-600 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Features
               </a>
               <a 
                 href="#pricing" 
-                className="block text-gray-700 hover:text-blue-600 font-medium"
+                className="block text-foreground hover:text-blue-600 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Pricing
               </a>
               <a 
                 href="#about" 
-                className="block text-gray-700 hover:text-blue-600 font-medium"
+                className="block text-foreground hover:text-blue-600 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 About
               </a>
               <Link
                 to="/ai-answers"
-                className="block text-gray-700 hover:text-blue-600 font-medium flex items-center"
+                className="block text-foreground hover:text-blue-600 font-medium flex items-center"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <BrainCircuit size={18} className="mr-1" />
                 AI Answers
               </Link>
               <div
-                className="block text-gray-700 hover:text-blue-600 font-medium flex items-center"
+                className="block text-foreground hover:text-blue-600 font-medium flex items-center"
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   handleFindNotesClick();
@@ -254,7 +310,7 @@ export const Navbar = () => {
               </div>
               {isLoggedIn && (
                 <div
-                  className="block text-gray-700 hover:text-blue-600 font-medium flex items-center relative"
+                  className="block text-foreground hover:text-blue-600 font-medium flex items-center relative"
                   onClick={() => {
                     setIsMobileMenuOpen(false);
                     handleNotificationsClick();
@@ -298,7 +354,7 @@ export const Navbar = () => {
                         setIsMobileMenuOpen(false);
                         handleLogout();
                       }}
-                      className="w-full text-gray-700 hover:text-red-600 hover:bg-red-50 flex items-center justify-center gap-2"
+                      className="w-full text-gray-700 dark:text-gray-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950 flex items-center justify-center gap-2"
                     >
                       <LogOut size={18} />
                       Logout
