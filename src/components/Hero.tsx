@@ -1,6 +1,5 @@
-
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { HeroActions } from '@/components/HeroActions';
 import { FileUp, BookOpen, BrainCircuit } from 'lucide-react';
 
 export const Hero = () => {
@@ -43,17 +42,11 @@ export const Hero = () => {
               </motion.p>
               
               <motion.div 
-                className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg">
-                  Get Started Free
-                </Button>
-                <Button size="lg" variant="outline" className="border-gray-300">
-                  See How It Works
-                </Button>
+                <HeroActions />
               </motion.div>
               
               <motion.div 

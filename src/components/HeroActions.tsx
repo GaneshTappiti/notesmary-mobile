@@ -10,7 +10,7 @@ export const HeroActions = () => {
     navigate('/authentication');
   };
 
-  const scrollToHowItWorks = () => {
+  const scrollToFeatures = () => {
     const element = document.getElementById('features');
     if (element) {
       element.scrollIntoView({ 
@@ -35,7 +35,7 @@ export const HeroActions = () => {
         variant="outline" 
         size="lg" 
         className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 font-medium rounded-lg px-8 py-3 flex items-center gap-2"
-        onClick={scrollToHowItWorks}
+        onClick={scrollToFeatures}
       >
         <Play className="h-4 w-4" />
         See How It Works
