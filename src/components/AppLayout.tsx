@@ -6,7 +6,7 @@ import { AppSidebar } from '@/components/AppSidebar';
 import { Navbar } from '@/components/Navbar';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Menu, LogOut } from 'lucide-react';
+import { Menu, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';

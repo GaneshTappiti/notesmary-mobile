@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -114,11 +113,11 @@ const StudyRoomChat = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-70px)] flex overflow-hidden bg-white">
+    <div className="h-[calc(100vh-70px)] flex overflow-hidden bg-white dark:bg-gray-900 rounded-lg shadow-sm border">
       {/* Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Chat Header */}
-        <div className="border-b px-4 py-2">
+        <div className="border-b px-4 py-2 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button variant="ghost" size="icon" className="md:hidden" onClick={goToRoom}>
@@ -129,7 +128,7 @@ const StudyRoomChat = () => {
                   {roomName}
                   <Badge variant="outline" className="ml-2">Study Group</Badge>
                 </h2>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   {onlineMembers.filter(m => m.status === 'online').length} online • {onlineMembers.length} members
                 </p>
               </div>
@@ -226,23 +225,23 @@ const StudyRoomChat = () => {
         <div className="flex-1 overflow-y-auto px-4 py-3">
           <div className="space-y-6">
             {/* AI Suggestion */}
-            <Card className="mb-6 bg-purple-50 border-purple-200">
+            <Card className="mb-6 bg-purple-50 border-purple-200 dark:bg-purple-900/20 dark:border-purple-800">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  <div className="bg-purple-100 p-2 rounded-full">
-                    <BrainCircuit className="h-5 w-5 text-purple-600" />
+                  <div className="bg-purple-100 dark:bg-purple-800 p-2 rounded-full">
+                    <BrainCircuit className="h-5 w-5 text-purple-600 dark:text-purple-300" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-purple-900">AI Study Assistant</h3>
-                    <p className="text-sm text-purple-800 mt-1">I noticed you're discussing quantum mechanics. Would you like me to:</p>
+                    <h3 className="text-sm font-medium text-purple-900 dark:text-purple-300">AI Study Assistant</h3>
+                    <p className="text-sm text-purple-800 dark:text-purple-200 mt-1">I noticed you're discussing quantum mechanics. Would you like me to:</p>
                     <div className="flex flex-wrap gap-2 mt-3">
-                      <Button size="sm" variant="outline" className="bg-white text-purple-700 border-purple-300">
+                      <Button size="sm" variant="outline" className="bg-white dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700">
                         Generate practice questions
                       </Button>
-                      <Button size="sm" variant="outline" className="bg-white text-purple-700 border-purple-300">
+                      <Button size="sm" variant="outline" className="bg-white dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700">
                         Summarize key concepts
                       </Button>
-                      <Button size="sm" variant="outline" className="bg-white text-purple-700 border-purple-300">
+                      <Button size="sm" variant="outline" className="bg-white dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700">
                         Find relevant resources
                       </Button>
                     </div>
@@ -253,7 +252,7 @@ const StudyRoomChat = () => {
             
             {/* Date Separator */}
             <div className="flex items-center justify-center py-2">
-              <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Today</span>
+              <span className="text-xs font-medium text-gray-500 bg-gray-100 dark:bg-gray-800 dark:text-gray-400 px-2 py-1 rounded-full">Today</span>
             </div>
             
             {/* Chat Messages */}
@@ -298,7 +297,7 @@ const StudyRoomChat = () => {
                 <Avatar className="h-8 w-8">
                   <AvatarFallback>SC</AvatarFallback>
                 </Avatar>
-                <div className="bg-gray-100 rounded-lg px-4 py-2">
+                <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-2">
                   <div className="flex items-center gap-1">
                     <div className="h-2 w-2 rounded-full bg-gray-500 animate-pulse"></div>
                     <div className="h-2 w-2 rounded-full bg-gray-500 animate-pulse animation-delay-200"></div>
@@ -313,7 +312,7 @@ const StudyRoomChat = () => {
         </div>
         
         {/* Message Input */}
-        <div className="border-t px-4 py-3">
+        <div className="border-t px-4 py-3 dark:border-gray-700">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon">
               <Paperclip size={18} />
@@ -331,7 +330,7 @@ const StudyRoomChat = () => {
             <Button variant="ghost" size="icon">
               <Mic size={18} />
             </Button>
-            <Button size="icon" disabled={!message.trim()} onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700">
+            <Button size="icon" disabled={!message.trim()} onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800">
               <Send size={18} />
             </Button>
           </div>
@@ -340,7 +339,7 @@ const StudyRoomChat = () => {
       
       {/* Members Sidebar */}
       {showMembers && (
-        <div className="w-72 border-l overflow-y-auto hidden md:block">
+        <div className="w-72 border-l overflow-y-auto hidden md:block dark:border-gray-700">
           <div className="p-4">
             <div className="relative">
               <Input 
