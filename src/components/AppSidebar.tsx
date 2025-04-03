@@ -13,7 +13,9 @@ import {
   Home,
   LogOut,
   ChevronDown,
-  Settings
+  Settings,
+  User,
+  FileText
 } from 'lucide-react';
 import {
   Sidebar,
@@ -30,7 +32,6 @@ import {
   SidebarRail
 } from "@/components/ui/sidebar";
 import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './ThemeToggle';
 import {
   Collapsible,
@@ -87,6 +88,11 @@ export const AppSidebar = () => {
       icon: <Search size={18} />,
     },
     {
+      title: "My Notes",
+      path: "/view-notes",
+      icon: <FileText size={18} />,
+    },
+    {
       title: "AI Answers",
       path: "/ai-answers",
       icon: <BrainCircuit size={18} />,
@@ -106,11 +112,6 @@ export const AppSidebar = () => {
       path: "/team",
       icon: <Users size={18} />,
     },
-    {
-      title: "Settings",
-      path: "/settings",
-      icon: <Settings size={18} />,
-    },
   ];
   
   // Study room submenu items
@@ -126,11 +127,26 @@ export const AppSidebar = () => {
       icon: <MessageSquare size={18} />,
     },
   ];
+  
+  // Settings submenu items (including subscription)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const settingsItems = [
+    {
+      title: "Account Settings",
+      path: "/settings",
+      icon: <User size={18} />,
+    },
+    {
+      title: "Subscription",
+      path: "/subscription",
+      icon: <CreditCard size={18} />,
+    },
+  ];
 
   return (
     <Sidebar data-state={state} className="z-50 shadow-lg border-r border-gray-200 dark:border-gray-800">
       <SidebarHeader className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800">
-        <Link to="/" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
+        <Link to="/dashboard" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
           Notex
         </Link>
         <ThemeToggle variant="ghost" size="sm" className="rounded-full" />
@@ -182,6 +198,48 @@ export const AppSidebar = () => {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pl-7 pt-1 space-y-1">
                     {studyRoomItems.map((item) => (
+                      <Link 
+                        key={item.path}
+                        to={item.path}
+                        className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
+                          isActive(item.path) 
+                            ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium' 
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                        }`}
+                      >
+                        {item.icon}
+                        <span>{item.title}</span>
+                      </Link>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              </SidebarMenuItem>
+              
+              {/* Collapsible Settings section with Subscription */}
+              <SidebarMenuItem>
+                <Collapsible
+                  open={isSettingsOpen}
+                  onOpenChange={setIsSettingsOpen}
+                  className="w-full"
+                >
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton 
+                      isActive={location.pathname.includes('settings') || location.pathname.includes('subscription')}
+                      tooltip={state === "collapsed" ? "Settings" : undefined}
+                      className="transition-all duration-200 hover:translate-x-1 w-full justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Settings size={18} />
+                        <span>Settings</span>
+                      </div>
+                      <ChevronDown 
+                        size={16} 
+                        className={`transition-transform duration-200 ${isSettingsOpen ? 'rotate-180' : ''}`}
+                      />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pl-7 pt-1 space-y-1">
+                    {settingsItems.map((item) => (
                       <Link 
                         key={item.path}
                         to={item.path}

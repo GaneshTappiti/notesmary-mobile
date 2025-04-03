@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X, LogIn, BrainCircuit, LogOut, Search, Bell } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { UploadModal } from './UploadModal';
 import { useToast } from "@/hooks/use-toast";
@@ -11,7 +12,6 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle
@@ -24,7 +24,11 @@ export const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(3); // Mock unread count
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  // Check if we're in dashboard mode (showing the sidebar)
+  const isDashboardMode = !['/', '/login', '/authentication'].includes(location.pathname);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,6 +51,11 @@ export const Navbar = () => {
       window.removeEventListener('storage', checkLoginStatus);
     };
   }, []);
+
+  // If we're in dashboard mode, don't show the marketing navbar
+  if (isDashboardMode) {
+    return null;
+  }
 
   const checkAuthAndProceed = (action: 'upload' | 'dashboard' | 'find' | 'notifications') => {
     if (!isLoggedIn) {
@@ -211,22 +220,12 @@ export const Navbar = () => {
               </Button>
               
               {isLoggedIn ? (
-                <div className="flex space-x-3">
-                  <Button 
-                    className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2"
-                    onClick={handleDashboardClick}
-                  >
-                    Go to Dashboard
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    onClick={handleLogout}
-                    className="text-gray-700 dark:text-gray-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950 flex items-center gap-2"
-                  >
-                    <LogOut size={18} />
-                    Logout
-                  </Button>
-                </div>
+                <Button 
+                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2"
+                  onClick={handleDashboardClick}
+                >
+                  Go to Dashboard
+                </Button>
               ) : (
                 <Button 
                   className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2"
@@ -337,28 +336,15 @@ export const Navbar = () => {
                 </Button>
                 
                 {isLoggedIn ? (
-                  <>
-                    <Button 
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        handleDashboardClick();
-                      }}
-                    >
-                      Go to Dashboard
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        handleLogout();
-                      }}
-                      className="w-full text-gray-700 dark:text-gray-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950 flex items-center justify-center gap-2"
-                    >
-                      <LogOut size={18} />
-                      Logout
-                    </Button>
-                  </>
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleDashboardClick();
+                    }}
+                  >
+                    Go to Dashboard
+                  </Button>
                 ) : (
                   <Button 
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"

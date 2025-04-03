@@ -99,7 +99,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                   </div>
                   
                   {/* Only show Sign out button in top navigation - removed redundant buttons */}
-                  <div className="flex items-center">
+                  <div className="flex items-center gap-2">
                     <Button 
                       variant="ghost" 
                       size="sm" 
@@ -111,7 +111,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                     </Button>
                   </div>
                 </header>
-                <main className="flex-1 p-3 overflow-auto">
+                <main className="flex-1 p-4 md:p-6 overflow-auto">
                   {children}
                 </main>
               </div>
@@ -138,6 +138,7 @@ const getPageTitle = (pathname: string) => {
     'study-room': 'Study Room',
     'team': 'Team Collaboration',
     'subscription': 'Subscription Management',
+    'settings': 'Settings',
   };
   
   return titles[path] || 'Notex';
