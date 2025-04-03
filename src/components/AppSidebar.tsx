@@ -1,5 +1,5 @@
 
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { 
   Users, 
   BookText, 
@@ -10,7 +10,8 @@ import {
   Upload, 
   Search,
   Bell,
-  Home
+  Home,
+  LogOut
 } from 'lucide-react';
 import {
   Sidebar,
@@ -25,10 +26,13 @@ import {
   SidebarMenuItem,
   useSidebar
 } from "@/components/ui/sidebar";
+import { useToast } from '@/hooks/use-toast';
 
 export const AppSidebar = () => {
   const location = useLocation();
   const { state } = useSidebar();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   
   const isActive = (path: string) => {
     // Match exact path or path pattern with parameters
@@ -37,6 +41,21 @@ export const AppSidebar = () => {
       return location.pathname.startsWith(basePath);
     }
     return location.pathname === path;
+  };
+  
+  const handleSignOut = () => {
+    // Clear authentication data
+    localStorage.removeItem("isLoggedIn");
+    
+    // Show toast notification
+    toast({
+      title: "Signed out successfully",
+      description: "You have been logged out of your account.",
+      duration: 3000,
+    });
+    
+    // Redirect to home page
+    navigate('/');
   };
   
   const menuItems = [
@@ -150,6 +169,16 @@ export const AppSidebar = () => {
       </SidebarContent>
       
       <SidebarFooter>
+        <div className="px-4 py-2">
+          <SidebarMenuButton 
+            onClick={handleSignOut}
+            tooltip={state === "collapsed" ? "Sign Out" : undefined}
+            className="w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+          >
+            <LogOut size={18} />
+            <span>Sign Out</span>
+          </SidebarMenuButton>
+        </div>
         <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">
           © 2025 Notex
         </div>

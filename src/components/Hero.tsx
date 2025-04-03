@@ -1,7 +1,7 @@
 
 import { motion } from 'framer-motion';
 import { HeroActions } from '@/components/HeroActions';
-import { FileUp, BookOpen, BrainCircuit, Users, Youtube } from 'lucide-react';
+import { FileUp, BookOpen, BrainCircuit, Users } from 'lucide-react';
 
 export const Hero = () => {
   return (
@@ -39,7 +39,7 @@ export const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                Transform your handwritten notes into beautifully organized digital study materials with the power of AI. Get summaries, exam questions, and YouTube lecture insights—all from your own materials.
+                Transform your handwritten notes into beautifully organized digital study materials with the power of AI. Get summaries, exam questions, and study insights—all from your own materials.
               </motion.p>
               
               <motion.div 
@@ -114,12 +114,12 @@ export const Hero = () => {
                   </div>
                   
                   <div className="flex items-center gap-4">
-                    <div className="bg-red-100 p-3 rounded-xl">
-                      <Youtube className="h-6 w-6 text-red-600" />
+                    <div className="bg-indigo-100 p-3 rounded-xl">
+                      <Users className="h-6 w-6 text-indigo-600" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900">YouTube Insights</h3>
-                      <p className="text-sm text-gray-500">Get summaries of lecture videos</p>
+                      <h3 className="text-lg font-medium text-gray-900">Collaborative Study</h3>
+                      <p className="text-sm text-gray-500">Join study rooms with peers</p>
                     </div>
                   </div>
                   
