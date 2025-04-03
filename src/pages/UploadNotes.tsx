@@ -1,7 +1,5 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -165,20 +163,18 @@ const UploadNotes = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white">
-      <Navbar />
-      
-      <div className="pt-28 pb-12 px-4 max-w-3xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Upload Notes</h1>
-          <p className="text-gray-600 mt-1">Share your knowledge with other students</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-950">
+      <div className="pb-12 px-4 w-full max-w-5xl mx-auto">
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Upload Notes</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Share your knowledge with other students</p>
         </div>
         
         <Card className="border-none shadow-md">
-          <CardHeader>
+          <CardHeader className="pb-2">
             <div className="flex items-center gap-3">
-              <div className="bg-blue-100 p-3 rounded-full">
-                <Upload className="h-6 w-6 text-blue-600" />
+              <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
+                <Upload className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <CardTitle className="text-xl">Upload Your Notes</CardTitle>
@@ -189,9 +185,52 @@ const UploadNotes = () => {
           
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Branch Selection */}
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                <div className="mt-1 mb-4">
+                  <Label htmlFor="file-upload">Upload File (PDF or DOCX, max 10MB)</Label>
+                  <div
+                    className={`mt-2 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors
+                      ${isDragging ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600'}
+                      ${fileError ? 'border-red-300 dark:border-red-800' : ''}`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => document.getElementById('file-upload')?.click()}
+                  >
+                    <input
+                      id="file-upload"
+                      type="file"
+                      className="hidden"
+                      accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      onChange={handleFileChange}
+                    />
+                    
+                    {file ? (
+                      <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                        <FileText className="h-8 w-8" />
+                        <div>
+                          <p className="font-medium">{file.name}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <FileText className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-2" />
+                        <p className="text-gray-700 dark:text-gray-300 font-medium">Drag and drop your file here or click to browse</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Only PDF or DOCX files are supported</p>
+                      </>
+                    )}
+                  </div>
+                  
+                  {fileError && (
+                    <p className="mt-2 text-sm text-red-500 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      {fileError}
+                    </p>
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <FormField
                     control={form.control}
                     name="branch"
@@ -220,7 +259,6 @@ const UploadNotes = () => {
                     )}
                   />
                   
-                  {/* Year Selection */}
                   <FormField
                     control={form.control}
                     name="year"
@@ -249,7 +287,6 @@ const UploadNotes = () => {
                     )}
                   />
                   
-                  {/* Semester Selection */}
                   <FormField
                     control={form.control}
                     name="semester"
@@ -277,8 +314,9 @@ const UploadNotes = () => {
                       </FormItem>
                     )}
                   />
-                  
-                  {/* Subject Name */}
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <FormField
                     control={form.control}
                     name="subject"
@@ -293,7 +331,6 @@ const UploadNotes = () => {
                     )}
                   />
                   
-                  {/* Chapter Number */}
                   <FormField
                     control={form.control}
                     name="chapterNumber"
@@ -308,7 +345,6 @@ const UploadNotes = () => {
                     )}
                   />
                   
-                  {/* Chapter Name */}
                   <FormField
                     control={form.control}
                     name="chapterName"
@@ -324,52 +360,6 @@ const UploadNotes = () => {
                   />
                 </div>
                 
-                {/* File Upload */}
-                <div className="mt-6">
-                  <Label htmlFor="file-upload">Upload File (PDF or DOCX, max 10MB)</Label>
-                  <div
-                    className={`mt-2 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors
-                      ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400'}
-                      ${fileError ? 'border-red-300' : ''}`}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    onClick={() => document.getElementById('file-upload')?.click()}
-                  >
-                    <input
-                      id="file-upload"
-                      type="file"
-                      className="hidden"
-                      accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                      onChange={handleFileChange}
-                    />
-                    
-                    {file ? (
-                      <div className="flex items-center gap-2 text-blue-600">
-                        <FileText className="h-8 w-8" />
-                        <div>
-                          <p className="font-medium">{file.name}</p>
-                          <p className="text-sm text-gray-500">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <FileText className="h-12 w-12 text-gray-400 mb-2" />
-                        <p className="text-gray-700 font-medium">Drag and drop your file here or click to browse</p>
-                        <p className="text-sm text-gray-500 mt-1">Only PDF or DOCX files are supported</p>
-                      </>
-                    )}
-                  </div>
-                  
-                  {fileError && (
-                    <p className="mt-2 text-sm text-red-500 flex items-center gap-1">
-                      <AlertCircle className="h-4 w-4" />
-                      {fileError}
-                    </p>
-                  )}
-                </div>
-                
-                {/* Description */}
                 <FormField
                   control={form.control}
                   name="description"
@@ -391,11 +381,10 @@ const UploadNotes = () => {
                   )}
                 />
                 
-                {/* Submit Button */}
-                <div>
+                <div className="pt-2">
                   <Button 
                     type="submit" 
-                    className="w-full md:w-auto bg-blue-600 hover:bg-blue-700"
+                    className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
                     disabled={uploadStatus === 'uploading'}
                   >
                     {uploadStatus === 'uploading' ? (
@@ -420,7 +409,7 @@ const UploadNotes = () => {
             </Form>
           </CardContent>
           
-          <CardFooter className="flex flex-col items-start text-sm text-gray-600 border-t mt-6 pt-6">
+          <CardFooter className="flex flex-col items-start text-sm text-gray-600 dark:text-gray-400 border-t mt-4 pt-4">
             <p className="flex items-center mb-2">
               <CheckCircle className="text-green-500 mr-2 h-4 w-4" />
               Your uploaded notes will be accessible to other verified students

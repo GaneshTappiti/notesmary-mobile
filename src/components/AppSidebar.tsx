@@ -12,8 +12,8 @@ import {
   Bell,
   Home,
   LogOut,
-  ChevronLeft,
-  ChevronRight
+  ChevronDown,
+  Settings
 } from 'lucide-react';
 import {
   Sidebar,
@@ -31,13 +31,20 @@ import {
 } from "@/components/ui/sidebar";
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
+import { ThemeToggle } from './ThemeToggle';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { useState } from 'react';
 
 export const AppSidebar = () => {
   const location = useLocation();
   const { state, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isStudyRoomOpen, setIsStudyRoomOpen] = useState(false);
   
   const isActive = (path: string) => {
     // Match exact path or path pattern with parameters
@@ -63,7 +70,7 @@ export const AppSidebar = () => {
     navigate('/');
   };
   
-  const menuItems = [
+  const mainMenuItems = [
     {
       title: "Dashboard",
       path: "/dashboard",
@@ -94,9 +101,20 @@ export const AppSidebar = () => {
       path: "/study-analytics",
       icon: <BarChart size={18} />,
     },
+    {
+      title: "Team Collaboration",
+      path: "/team",
+      icon: <Users size={18} />,
+    },
+    {
+      title: "Settings",
+      path: "/settings",
+      icon: <Settings size={18} />,
+    },
   ];
   
-  const quickAccessItems = [
+  // Study room submenu items
+  const studyRoomItems = [
     {
       title: "Study Room",
       path: "/study-room/1",
@@ -107,16 +125,6 @@ export const AppSidebar = () => {
       path: "/study-room/1/chat",
       icon: <MessageSquare size={18} />,
     },
-    {
-      title: "Team Collaboration",
-      path: "/team",
-      icon: <Users size={18} />,
-    },
-    {
-      title: "Subscription",
-      path: "/subscription",
-      icon: <CreditCard size={18} />,
-    },
   ];
 
   return (
@@ -125,14 +133,7 @@ export const AppSidebar = () => {
         <Link to="/" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
           Notex
         </Link>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={toggleSidebar} 
-          className="md:hidden"
-        >
-          {state === "expanded" ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
-        </Button>
+        <ThemeToggle variant="ghost" size="sm" className="rounded-full" />
       </SidebarHeader>
       
       <SidebarContent>
@@ -140,7 +141,7 @@ export const AppSidebar = () => {
           <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
+              {mainMenuItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton 
                     asChild 
@@ -155,29 +156,48 @@ export const AppSidebar = () => {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        
-        <SidebarGroup>
-          <SidebarGroupLabel>Quick Access</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {quickAccessItems.map((item) => (
-                <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton 
-                    asChild 
-                    isActive={isActive(item.path)}
-                    tooltip={state === "collapsed" ? item.title : undefined}
-                    className="transition-all duration-200 hover:translate-x-1"
-                  >
-                    <Link to={item.path} className="flex items-center gap-3">
-                      {item.icon}
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              
+              {/* Collapsible Study Room section */}
+              <SidebarMenuItem>
+                <Collapsible
+                  open={isStudyRoomOpen}
+                  onOpenChange={setIsStudyRoomOpen}
+                  className="w-full"
+                >
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton 
+                      isActive={location.pathname.includes('study-room')}
+                      tooltip={state === "collapsed" ? "Study Rooms" : undefined}
+                      className="transition-all duration-200 hover:translate-x-1 w-full justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Users size={18} />
+                        <span>Study Rooms</span>
+                      </div>
+                      <ChevronDown 
+                        size={16} 
+                        className={`transition-transform duration-200 ${isStudyRoomOpen ? 'rotate-180' : ''}`}
+                      />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pl-7 pt-1 space-y-1">
+                    {studyRoomItems.map((item) => (
+                      <Link 
+                        key={item.path}
+                        to={item.path}
+                        className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
+                          isActive(item.path) 
+                            ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium' 
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                        }`}
+                      >
+                        {item.icon}
+                        <span>{item.title}</span>
+                      </Link>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

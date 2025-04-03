@@ -6,10 +6,9 @@ import { AppSidebar } from '@/components/AppSidebar';
 import { Navbar } from '@/components/Navbar';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Menu, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
 interface AppLayoutProps {
@@ -99,7 +98,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                     </h1>
                   </div>
                   
-                  {/* Sign out button in top navigation */}
+                  {/* Only show Sign out button in top navigation - removed redundant buttons */}
                   <div className="flex items-center">
                     <Button 
                       variant="ghost" 
