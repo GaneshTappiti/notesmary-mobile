@@ -66,7 +66,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           <Menu className="h-5 w-5" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent side="left" className="p-0 max-h-screen h-screen">
+      <DrawerContent className="p-0 max-h-screen h-screen">
         <div className="h-full overflow-y-auto">
           <AppSidebar />
         </div>
