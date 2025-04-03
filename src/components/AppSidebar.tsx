@@ -11,7 +11,9 @@ import {
   Search,
   Bell,
   Home,
-  LogOut
+  LogOut,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import {
   Sidebar,
@@ -24,13 +26,16 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar
+  useSidebar,
+  SidebarRail
 } from "@/components/ui/sidebar";
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 
 export const AppSidebar = () => {
   const location = useLocation();
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -115,11 +120,19 @@ export const AppSidebar = () => {
   ];
 
   return (
-    <Sidebar>
-      <SidebarHeader className="flex items-center px-4 py-2">
+    <Sidebar data-state={state} className="z-50 shadow-lg border-r border-gray-200 dark:border-gray-800">
+      <SidebarHeader className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800">
         <Link to="/" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
           Notex
         </Link>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={toggleSidebar} 
+          className="md:hidden"
+        >
+          {state === "expanded" ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+        </Button>
       </SidebarHeader>
       
       <SidebarContent>
@@ -133,6 +146,7 @@ export const AppSidebar = () => {
                     asChild 
                     isActive={isActive(item.path)}
                     tooltip={state === "collapsed" ? item.title : undefined}
+                    className="transition-all duration-200 hover:translate-x-1"
                   >
                     <Link to={item.path} className="flex items-center gap-3">
                       {item.icon}
@@ -155,6 +169,7 @@ export const AppSidebar = () => {
                     asChild 
                     isActive={isActive(item.path)}
                     tooltip={state === "collapsed" ? item.title : undefined}
+                    className="transition-all duration-200 hover:translate-x-1"
                   >
                     <Link to={item.path} className="flex items-center gap-3">
                       {item.icon}
@@ -168,12 +183,12 @@ export const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter>
+      <SidebarFooter className="border-t border-gray-200 dark:border-gray-800 mt-auto">
         <div className="px-4 py-2">
           <SidebarMenuButton 
             onClick={handleSignOut}
             tooltip={state === "collapsed" ? "Sign Out" : undefined}
-            className="w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+            className="w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
           >
             <LogOut size={18} />
             <span>Sign Out</span>
@@ -183,6 +198,9 @@ export const AppSidebar = () => {
           © 2025 Notex
         </div>
       </SidebarFooter>
+      
+      {/* Add sidebar rail to make it draggable */}
+      <SidebarRail className="hidden md:flex" />
     </Sidebar>
   );
 };
