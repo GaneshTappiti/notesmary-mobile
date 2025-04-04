@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -41,10 +40,10 @@ const Dashboard = () => {
   const isMobile = useIsMobile();
 
   const stats = [
-    { label: 'Notes Uploaded', value: '12', icon: <Upload className="h-5 w-5 text-blue-500" /> },
-    { label: 'Notes Saved', value: '45', icon: <Star className="h-5 w-5 text-yellow-500" /> },
-    { label: 'AI Answers', value: '28', icon: <BrainCircuit className="h-5 w-5 text-purple-500" /> },
-    { label: 'Study Groups', value: '4', icon: <Users className="h-5 w-5 text-green-500" /> },
+    { label: 'Notes Uploaded', value: '12', icon: <Upload className="h-5 w-5 text-blue-500" />, link: '/view-notes' },
+    { label: 'Notes Saved', value: '45', icon: <Star className="h-5 w-5 text-yellow-500" />, link: '/view-notes?tab=saved' },
+    { label: 'AI Answers', value: '28', icon: <BrainCircuit className="h-5 w-5 text-purple-500" />, link: '/ai-answers' },
+    { label: 'Study Groups', value: '4', icon: <Users className="h-5 w-5 text-green-500" />, link: '/study-room/1' },
   ];
 
   const upcomingEvents = [
@@ -110,12 +109,12 @@ const Dashboard = () => {
       onClick: () => navigate('/study-room/1/chat')
     },
     {
-      title: 'Team Collaboration',
-      description: 'Manage study projects and tasks.',
-      icon: <Users className="h-6 w-6 text-emerald-600" />,
+      title: 'Study Analytics',
+      description: 'Track your progress and study habits.',
+      icon: <BarChart3 className="h-6 w-6 text-emerald-600" />,
       bgColor: 'bg-emerald-100',
-      buttonText: 'View Teams',
-      onClick: () => navigate('/team')
+      buttonText: 'View Analytics',
+      onClick: () => navigate('/study-analytics')
     },
     {
       title: 'Subscription',
@@ -189,7 +188,11 @@ const Dashboard = () => {
         
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {stats.map((stat, index) => (
-            <Card key={index} className="border-none shadow-sm hover:shadow-md transition-shadow">
+            <Card 
+              key={index} 
+              className="border-none shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => navigate(stat.link)}
+            >
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
                   <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">{stat.label}</p>

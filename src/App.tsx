@@ -17,6 +17,9 @@ import Notifications from "./pages/Notifications";
 import StudyAnalytics from "./pages/StudyAnalytics";
 import StudyRoom from "./pages/StudyRoom";
 import StudyRoomChat from "./pages/StudyRoomChat";
+import Settings from "./pages/Settings";
+import Subscription from "./pages/Subscription";
+import MyNotes from "./pages/MyNotes";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +92,16 @@ const App = () => (
           } 
         />
         <Route 
+          path="/view-notes" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <MyNotes />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
           path="/notifications" 
           element={
             <PrivateRoute>
@@ -129,21 +142,11 @@ const App = () => (
           } 
         />
         <Route 
-          path="/team" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <Dashboard />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
           path="/subscription" 
           element={
             <PrivateRoute>
               <AppLayout>
-                <Dashboard />
+                <Subscription />
               </AppLayout>
             </PrivateRoute>
           } 
@@ -153,7 +156,7 @@ const App = () => (
           element={
             <PrivateRoute>
               <AppLayout>
-                <Dashboard />
+                <Settings />
               </AppLayout>
             </PrivateRoute>
           } 

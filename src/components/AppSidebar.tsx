@@ -1,7 +1,5 @@
-
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { 
-  Users, 
   BookText, 
   BrainCircuit, 
   MessageSquare, 
@@ -15,7 +13,8 @@ import {
   ChevronDown,
   Settings,
   User,
-  FileText
+  FileText,
+  Users
 } from 'lucide-react';
 import {
   Sidebar,
@@ -106,11 +105,6 @@ export const AppSidebar = () => {
       title: "Study Analytics",
       path: "/study-analytics",
       icon: <BarChart size={18} />,
-    },
-    {
-      title: "Team Collaboration",
-      path: "/team",
-      icon: <Users size={18} />,
     },
   ];
   
