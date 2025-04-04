@@ -20,6 +20,7 @@ import StudyRoomChat from "./pages/StudyRoomChat";
 import Settings from "./pages/Settings";
 import Subscription from "./pages/Subscription";
 import MyNotes from "./pages/MyNotes";
+import AIMarkAnswers from "./pages/AIMarkAnswers";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,16 @@ const App = () => (
             <PrivateRoute>
               <AppLayout>
                 <AIAnswers />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/ai-mark-answers" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <AIMarkAnswers />
               </AppLayout>
             </PrivateRoute>
           } 
