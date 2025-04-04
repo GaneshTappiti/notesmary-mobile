@@ -221,7 +221,7 @@ export const Navbar = () => {
               
               {isLoggedIn ? (
                 <Button 
-                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2"
+                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
                   onClick={handleDashboardClick}
                 >
                   Go to Dashboard

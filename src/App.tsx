@@ -148,6 +148,16 @@ const App = () => (
             </PrivateRoute>
           } 
         />
+        <Route 
+          path="/settings" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
         
         {/* Catch-all route */}
         <Route path="*" element={<NotFound />} />
