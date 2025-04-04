@@ -1,3 +1,4 @@
+
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { 
   BookText, 
@@ -14,7 +15,8 @@ import {
   Settings,
   User,
   FileText,
-  Users
+  Users,
+  GraduationCap
 } from 'lucide-react';
 import {
   Sidebar,
@@ -95,6 +97,11 @@ export const AppSidebar = () => {
       title: "AI Answers",
       path: "/ai-answers",
       icon: <BrainCircuit size={18} />,
+    },
+    {
+      title: "Mark Answers",
+      path: "/ai-mark-answers",
+      icon: <GraduationCap size={18} />,
     },
     {
       title: "Notifications",

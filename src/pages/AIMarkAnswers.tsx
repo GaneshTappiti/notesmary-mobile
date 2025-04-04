@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FileText, Copy, Download, Upload, X, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -17,7 +16,6 @@ type GeneratedAnswer = {
 const AIMarkAnswers = () => {
   const { toast } = useToast();
   const [file, setFile] = useState<File | null>(null);
-  const [question, setQuestion] = useState('');
   const [answerType, setAnswerType] = useState<AnswerType>('all');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedAnswer, setGeneratedAnswer] = useState<GeneratedAnswer | null>(null);
@@ -56,7 +54,7 @@ const AIMarkAnswers = () => {
   };
 
   const generateAnswer = () => {
-    if (!file || !question) return;
+    if (!file) return;
     
     setIsGenerating(true);
     
@@ -71,7 +69,7 @@ const AIMarkAnswers = () => {
       
       toast({
         title: "Answer generated successfully",
-        description: "We've generated answers based on your material and question",
+        description: "We've generated answers based on your material",
       });
     }, 2000);
   };
@@ -139,22 +137,6 @@ const AIMarkAnswers = () => {
           </CardContent>
         </Card>
 
-        {/* Question Input Section */}
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle>Enter Your Question</CardTitle>
-            <CardDescription>Type the topic or question you want answers for</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Input 
-              placeholder="E.g., Explain the working of a transformer" 
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              className="w-full"
-            />
-          </CardContent>
-        </Card>
-
         {/* Answer Type Selection */}
         <Card className="shadow-md">
           <CardHeader>
@@ -179,7 +161,7 @@ const AIMarkAnswers = () => {
 
             <Button 
               className="w-full mt-6 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
-              disabled={!file || !question || isGenerating}
+              disabled={!file || isGenerating}
               onClick={generateAnswer}
             >
               {isGenerating ? (
