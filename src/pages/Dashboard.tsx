@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -22,13 +23,13 @@ import {
   CreditCard,
   MessageSquare,
   BookText,
-  LogOut
+  GraduationCap,
+  X
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CreateRoomModal } from '@/components/CreateRoomModal';
 import { BrowseRoomsModal } from '@/components/BrowseRoomsModal';
 import { YourRoomsSection } from '@/components/YourRoomsSection';
-import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Dashboard = () => {
   const [createRoomModalOpen, setCreateRoomModalOpen] = useState(false);
@@ -88,6 +89,16 @@ const Dashboard = () => {
       buttonText: 'Ask AI',
       buttonVariant: 'outline',
       onClick: () => navigate('/ai-answers')
+    },
+    {
+      title: 'Mark Answers',
+      description: 'Convert your study material into structured answers based on mark distribution.',
+      icon: <GraduationCap className="h-6 w-6 text-amber-600" />,
+      bgColor: 'bg-amber-100',
+      iconColor: 'text-amber-600',
+      buttonText: 'Generate Answers',
+      buttonVariant: 'outline',
+      onClick: () => navigate('/ai-mark-answers')
     }
   ];
 
@@ -136,72 +147,49 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">      
       <div className="pb-8 px-4 max-w-7xl mx-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Quick Access</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm md:text-base">Manage your notes, study groups, and learning tools</p>
-          </div>
-          <div className="flex gap-2 self-end sm:self-auto">
-            <ThemeToggle 
-              variant="outline" 
-              className="rounded-full"
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">Search</h2>
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Search for notes, study materials, topics, or features..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-10 py-2.5 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500"
             />
-            <Button 
-              variant="outline" 
-              className="flex items-center gap-1.5 relative"
-              size={isMobile ? "sm" : "default"}
-              onClick={() => navigate('/notifications')}
-            >
-              <Bell size={16} />
-              {!isMobile && "Notifications"}
-              {unreadNotifications > 0 && (
-                <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                  {unreadNotifications}
-                </Badge>
-              )}
-            </Button>
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            {searchQuery && (
+              <button
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                onClick={() => setSearchQuery('')}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            )}
           </div>
         </div>
         
-        <div className="mb-6 relative">
-          <Input
-            type="text"
-            placeholder="Search for features, tools or study resources..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-          />
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
-          </div>
-          {searchQuery && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="absolute inset-y-0 right-0 pr-3"
-              onClick={() => setSearchQuery('')}
-            >
-              Clear
-            </Button>
-          )}
-        </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {stats.map((stat, index) => (
             <Card 
               key={index} 
-              className="border-none shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              className="border-none shadow-sm hover:shadow-md transition-all duration-200 hover:translate-y-[-2px] cursor-pointer overflow-hidden"
               onClick={() => navigate(stat.link)}
             >
-              <CardContent className="p-4 flex items-center justify-between">
+              <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div>
-                  <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">{stat.label}</p>
-                  <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">{stat.value}</p>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{stat.label}</p>
+                  <p className="text-2xl md:text-3xl font-bold mt-1 bg-gradient-to-br from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                    {stat.value}
+                  </p>
                 </div>
-                <div className={`p-2.5 rounded-full ${stat.icon.props.className.includes('blue') ? 'bg-blue-50 dark:bg-blue-900/30' : 
-                                                     stat.icon.props.className.includes('yellow') ? 'bg-yellow-50 dark:bg-yellow-900/30' : 
-                                                     stat.icon.props.className.includes('purple') ? 'bg-purple-50 dark:bg-purple-900/30' : 
-                                                     'bg-green-50 dark:bg-green-900/30'}`}>
+                <div className={`p-3 rounded-full ${
+                  stat.icon.props.className.includes('blue') ? 'bg-blue-50 dark:bg-blue-900/30' : 
+                  stat.icon.props.className.includes('yellow') ? 'bg-yellow-50 dark:bg-yellow-900/30' : 
+                  stat.icon.props.className.includes('purple') ? 'bg-purple-50 dark:bg-purple-900/30' : 
+                  'bg-green-50 dark:bg-green-900/30'}`}>
                   {stat.icon}
                 </div>
               </CardContent>
@@ -209,27 +197,30 @@ const Dashboard = () => {
           ))}
         </div>
         
-        <Card className="border-none shadow-sm mb-6 dark:bg-gray-800/50">
+        <Card className="border-none shadow-sm mb-8 dark:bg-gray-800/50 overflow-hidden">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-full">
                   <BrainCircuit className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                 </div>
-                <CardTitle className="text-lg">Recommended for You</CardTitle>
+                <CardTitle className="text-lg">Quick Access</CardTitle>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {mainActions.map((action, index) => (
-                <Card key={index} className="border shadow-sm hover:shadow-md transition-all duration-200 hover:translate-y-[-2px] dark:bg-gray-800">
+                <Card 
+                  key={index} 
+                  className="border shadow-sm hover:shadow-md transition-all duration-200 hover:translate-y-[-2px] dark:bg-gray-800 group"
+                >
                   <CardHeader className="pb-2 pt-4">
                     <div className="flex items-center gap-3">
-                      <div className={`${action.bgColor} dark:bg-opacity-20 p-2.5 rounded-full`}>
+                      <div className={`${action.bgColor} dark:bg-opacity-20 p-2.5 rounded-full transition-all duration-300 group-hover:scale-110`}>
                         {action.icon}
                       </div>
-                      <CardTitle className="text-lg">{action.title}</CardTitle>
+                      <CardTitle className="text-base">{action.title}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="pb-3">
@@ -242,6 +233,7 @@ const Dashboard = () => {
                       className="w-full" 
                       variant={action.buttonVariant as "default" | "outline"} 
                       onClick={action.onClick}
+                      size="sm"
                     >
                       {action.buttonText}
                     </Button>
@@ -253,24 +245,28 @@ const Dashboard = () => {
         </Card>
         
         <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 flex items-center gap-2">
-          <span>Quick Access</span>
+          <span>Additional Resources</span>
           {searchQuery && <Badge variant="outline" className="ml-2">{filteredQuickAccess.length} results</Badge>}
         </h2>
         
         {filteredQuickAccess.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {filteredQuickAccess.map((card, index) => (
-              <Card key={index} className="border shadow-sm hover:shadow-md transition-all duration-200 hover:translate-y-[-2px] dark:bg-gray-800">
-                <CardContent className="pt-6 pb-4">
+              <Card 
+                key={index} 
+                className="border shadow-sm hover:shadow-md transition-all duration-200 hover:translate-y-[-2px] dark:bg-gray-800 group overflow-hidden"
+              >
+                <CardContent className="pt-5 pb-3">
                   <div className="flex flex-col items-center text-center">
-                    <div className={`${card.bgColor} dark:bg-opacity-20 p-3 rounded-full mb-4`}>
+                    <div className={`${card.bgColor} dark:bg-opacity-20 p-3 rounded-full mb-3 transition-all duration-300 group-hover:scale-110`}>
                       {card.icon}
                     </div>
-                    <h3 className="text-lg font-semibold mb-1">{card.title}</h3>
+                    <h3 className="text-base font-semibold mb-1">{card.title}</h3>
                     <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{card.description}</p>
                     <Button 
                       onClick={card.onClick}
                       className="w-full"
+                      size="sm"
                     >
                       {card.buttonText}
                     </Button>
@@ -296,8 +292,8 @@ const Dashboard = () => {
           </div>
         )}
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-          <Card className="border-none shadow-sm dark:bg-gray-800/50">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <Card className="border-none shadow-sm dark:bg-gray-800/50 overflow-hidden">
             <CardHeader className="pb-2 pt-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -333,7 +329,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           
-          <Card className="border-none shadow-sm dark:bg-gray-800/50">
+          <Card className="border-none shadow-sm dark:bg-gray-800/50 overflow-hidden">
             <CardHeader className="pb-2 pt-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -364,7 +360,7 @@ const Dashboard = () => {
           </Card>
         </div>
         
-        <Card className="border-none shadow-sm mb-6 dark:bg-gray-800/50">
+        <Card className="border-none shadow-sm mb-6 dark:bg-gray-800/50 overflow-hidden">
           <CardHeader className="pb-2 pt-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">

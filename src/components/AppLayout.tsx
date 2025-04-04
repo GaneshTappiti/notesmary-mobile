@@ -4,9 +4,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from '@/components/AppSidebar';
 import { Navbar } from '@/components/Navbar';
+import { HeaderNav } from '@/components/HeaderNav';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Menu, LogOut } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
@@ -28,21 +29,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     const noSidebarPaths = ['/', '/login', '/authentication'];
     setShowSidebar(!noSidebarPaths.includes(location.pathname));
   }, [location.pathname]);
-  
-  const handleSignOut = () => {
-    // Clear authentication data
-    localStorage.removeItem("isLoggedIn");
-    
-    // Show toast notification
-    toast({
-      title: "Signed out successfully",
-      description: "You have been logged out of your account.",
-      duration: 3000,
-    });
-    
-    // Redirect to home page
-    navigate('/');
-  };
   
   if (!showSidebar) {
     return (
@@ -88,29 +74,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             
             <SidebarInset>
               <div className="flex flex-col min-h-full max-w-full">
-                <header className="sticky top-0 z-40 flex justify-between items-center p-3 border-b h-14 bg-background/95 backdrop-blur-sm">
-                  <div className="flex items-center gap-2">
-                    <SidebarTrigger className="hidden md:flex mr-2 transition-all hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-1">
-                      <Menu className="h-5 w-5" />
-                    </SidebarTrigger>
-                    <h1 className="text-lg font-semibold truncate">
-                      {getPageTitle(location.pathname)}
-                    </h1>
-                  </div>
-                  
-                  {/* Only show Sign out button in top navigation - removed redundant buttons */}
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={handleSignOut}
-                      className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-1"
-                    >
-                      <LogOut size={16} />
-                      <span className="hidden sm:inline">Sign Out</span>
-                    </Button>
-                  </div>
-                </header>
+                {/* New HeaderNav component */}
+                <HeaderNav />
+                
                 <main className="flex-1 p-4 md:p-6 overflow-auto">
                   {children}
                 </main>
@@ -121,27 +87,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       </TooltipProvider>
     </ThemeProvider>
   );
-};
-
-// Helper function to get page title based on current path
-const getPageTitle = (pathname: string) => {
-  const path = pathname.split('/')[1];
-  
-  const titles: Record<string, string> = {
-    'dashboard': 'Dashboard',
-    'upload-notes': 'Upload Notes',
-    'find-notes': 'Find Notes',
-    'view-notes': 'View Notes', 
-    'ai-answers': 'AI Answers',
-    'notifications': 'Notifications',
-    'study-analytics': 'Study Analytics',
-    'study-room': 'Study Room',
-    'team': 'Team Collaboration',
-    'subscription': 'Subscription Management',
-    'settings': 'Settings',
-  };
-  
-  return titles[path] || 'Notex';
 };
 
 export default AppLayout;
