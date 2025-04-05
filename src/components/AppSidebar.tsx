@@ -33,7 +33,6 @@ import {
   SidebarRail
 } from "@/components/ui/sidebar";
 import { useToast } from '@/hooks/use-toast';
-import { ThemeToggle } from './ThemeToggle';
 import {
   Collapsible,
   CollapsibleContent,
@@ -150,7 +149,7 @@ export const AppSidebar = () => {
         <Link to="/dashboard" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
           Notex
         </Link>
-        <ThemeToggle variant="ghost" size="sm" className="rounded-full" />
+        {/* Dark mode toggle removed from here */}
       </SidebarHeader>
       
       <SidebarContent>

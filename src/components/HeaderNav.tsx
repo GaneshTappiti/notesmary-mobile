@@ -13,13 +13,22 @@ import {
   Settings,
   LogOut,
   GraduationCap,
-  Menu
+  Menu,
+  ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from './ThemeToggle';
 import { Badge } from '@/components/ui/badge';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,6 +73,7 @@ export const HeaderNav = () => {
       'ai-answers': 'AI Answers',
       'notifications': 'Notifications',
       'study-analytics': 'Study Analytics',
+      'study-rooms': 'Study Rooms',
       'study-room': 'Study Room',
       'subscription': 'Subscription Management',
       'settings': 'Settings',
@@ -71,6 +81,93 @@ export const HeaderNav = () => {
     };
     
     return titles[path] || 'Notex';
+  };
+
+  // Function to generate breadcrumbs based on the current path
+  const generateBreadcrumbs = () => {
+    const paths = location.pathname.split('/').filter(x => x);
+    
+    if (paths.length === 0) {
+      return null;
+    }
+    
+    // For study room routes with IDs, we need special handling
+    if (paths[0] === 'study-room' && paths.length > 1) {
+      if (paths.length === 2) {
+        return (
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink as={Link} to="/dashboard">Dashboard</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink as={Link} to="/study-rooms">Study Rooms</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Room Details</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        );
+      } else if (paths.length === 3 && paths[2] === 'chat') {
+        return (
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink as={Link} to="/dashboard">Dashboard</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink as={Link} to="/study-rooms">Study Rooms</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink as={Link} to={`/study-room/${paths[1]}`}>Room Details</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Chat</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        );
+      } else if (paths.length === 3 && paths[2] === 'info') {
+        return (
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink as={Link} to="/dashboard">Dashboard</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink as={Link} to="/study-rooms">Study Rooms</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Room Info</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        );
+      }
+    }
+    
+    // Standard breadcrumbs for other routes
+    return (
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink as={Link} to="/dashboard">Dashboard</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{getPageTitle(location.pathname)}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    );
   };
 
   // Main navigation items
@@ -102,7 +199,7 @@ export const HeaderNav = () => {
     },
     { 
       title: 'Study Rooms', 
-      path: '/study-room/1', 
+      path: '/study-rooms', 
       icon: <Users size={18} />
     }
   ];
@@ -113,90 +210,99 @@ export const HeaderNav = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b h-16 px-4 flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <SidebarTrigger className="hidden md:flex mr-2 transition-all hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-1">
-          <Menu className="h-5 w-5" />
-        </SidebarTrigger>
-        
-        <h1 className="text-lg font-semibold mr-6">
-          {getPageTitle(location.pathname)}
-        </h1>
-        
-        {/* Navigation links - desktop only */}
-        <nav className="hidden md:flex items-center space-x-1">
-          {navItems.map((item) => (
-            <Button
-              key={item.path}
-              variant={isActive(item.path) ? "default" : "ghost"}
+    <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b h-16 px-4">
+      <div className="h-full flex flex-col justify-center">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="hidden md:flex mr-2 transition-all hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-1">
+              <Menu className="h-5 w-5" />
+            </SidebarTrigger>
+            
+            <h1 className="text-lg font-semibold mr-6">
+              {getPageTitle(location.pathname)}
+            </h1>
+            
+            {/* Navigation links - desktop only */}
+            <nav className="hidden md:flex items-center space-x-1">
+              {navItems.map((item) => (
+                <Button
+                  key={item.path}
+                  variant={isActive(item.path) ? "default" : "ghost"}
+                  size="sm"
+                  className={`gap-1.5 ${isActive(item.path) ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  onClick={() => navigate(item.path)}
+                >
+                  {item.icon}
+                  <span className="hidden lg:inline">{item.title}</span>
+                </Button>
+              ))}
+            </nav>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {/* Theme toggle */}
+            <ThemeToggle 
+              variant="ghost" 
               size="sm"
-              className={`gap-1.5 ${isActive(item.path) ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-              onClick={() => navigate(item.path)}
+              className="rounded-full" 
+            />
+            
+            {/* Notifications */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="relative rounded-full"
+              onClick={handleNotificationsClick}
             >
-              {item.icon}
-              <span className="hidden lg:inline">{item.title}</span>
+              <Bell size={18} />
+              {unreadNotifications > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                >
+                  {unreadNotifications}
+                </Badge>
+              )}
             </Button>
-          ))}
-        </nav>
-      </div>
-      
-      <div className="flex items-center gap-2">
-        {/* Theme toggle */}
-        <ThemeToggle 
-          variant="ghost" 
-          size="sm"
-          className="rounded-full" 
-        />
+            
+            {/* User profile dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="relative rounded-full h-8 w-8 ml-1 border"
+                >
+                  <User size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => navigate('/view-notes')}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>My Notes</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/settings')}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-red-500" onClick={handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
         
-        {/* Notifications */}
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="relative rounded-full"
-          onClick={handleNotificationsClick}
-        >
-          <Bell size={18} />
-          {unreadNotifications > 0 && (
-            <Badge 
-              variant="destructive" 
-              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-            >
-              {unreadNotifications}
-            </Badge>
-          )}
-        </Button>
-        
-        {/* User profile dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative rounded-full h-8 w-8 ml-1 border"
-            >
-              <User size={16} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => navigate('/view-notes')}>
-                <User className="mr-2 h-4 w-4" />
-                <span>My Notes</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/settings')}>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500" onClick={handleSignOut}>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Sign out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* Add breadcrumbs below the main header content */}
+        <div className="hidden md:flex items-center mt-1 ml-10 text-sm text-muted-foreground">
+          {generateBreadcrumbs()}
+        </div>
       </div>
     </header>
   );
