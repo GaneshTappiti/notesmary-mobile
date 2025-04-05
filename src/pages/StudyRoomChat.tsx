@@ -28,7 +28,8 @@ import {
   CheckCheck,
   FileText,
   Image as ImageIcon,
-  UserPlus
+  UserPlus,
+  X
 } from 'lucide-react';
 import { 
   DropdownMenu,
@@ -38,13 +39,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
 
 const StudyRoomChat = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [message, setMessage] = useState('');
   const [showSidebar, setShowSidebar] = useState(true);
   const [showInfoSheet, setShowInfoSheet] = useState(false);
+  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Mock data
@@ -92,6 +96,19 @@ const StudyRoomChat = () => {
     navigate(`/study-room/${id}`);
   };
   
+  const goToStudyRooms = () => {
+    navigate('/study-rooms');
+  };
+  
+  const leaveRoom = () => {
+    // In a real app, this would make an API call to remove the user from the room
+    toast({
+      title: "Left Study Room",
+      description: `You have left the "${roomName}" study room.`
+    });
+    navigate('/study-rooms');
+  };
+  
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -122,27 +139,31 @@ const StudyRoomChat = () => {
         {/* Chat Header - WhatsApp Style */}
         <div className="border-b px-4 py-3 bg-background flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={goToRoom}>
-              <ChevronLeft size={18} />
+            <Button variant="ghost" size="icon" onClick={goToStudyRooms} className="md:flex">
+              <ChevronLeft size={20} />
             </Button>
-            <Avatar className="h-10 w-10 border">
-              <AvatarFallback className="bg-primary/10 text-primary">AP</AvatarFallback>
-            </Avatar>
-            <div className="cursor-pointer" onClick={() => setShowInfoSheet(true)}>
-              <h2 className="font-medium text-base flex items-center">
-                {roomName}
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                {onlineMembers.filter(m => m.status === 'online').length} online • {onlineMembers.length} members
-              </p>
+            <div className="flex items-center gap-3">
+              <Avatar className="h-12 w-12 border">
+                <AvatarFallback className="bg-primary/10 text-primary text-lg">AP</AvatarFallback>
+              </Avatar>
+              <div className="cursor-pointer" onClick={() => setShowInfoSheet(true)}>
+                <h2 className="text-xl font-semibold text-foreground">{roomName}</h2>
+                <p className="text-sm text-muted-foreground">
+                  {onlineMembers.filter(m => m.status === 'online').length} online • {onlineMembers.length} members
+                </p>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex gap-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Phone size={18} />
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="text-muted-foreground"
+                  >
+                    <Phone size={20} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -154,8 +175,12 @@ const StudyRoomChat = () => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Video size={18} />
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="text-muted-foreground"
+                  >
+                    <Video size={20} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -174,7 +199,7 @@ const StudyRoomChat = () => {
                     className="hidden md:flex" 
                     onClick={() => setShowSidebar(!showSidebar)}
                   >
-                    <Info size={18} />
+                    <Info size={20} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -187,7 +212,7 @@ const StudyRoomChat = () => {
             <Sheet open={showInfoSheet} onOpenChange={setShowInfoSheet}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
-                  <Info size={18} />
+                  <Info size={20} />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="p-0 w-full sm:max-w-sm overflow-y-auto">
@@ -287,7 +312,14 @@ const StudyRoomChat = () => {
                       <Info size={16} />
                       Go to Room Overview
                     </Button>
-                    <Button variant="destructive" className="w-full">Leave Group</Button>
+                    <Button 
+                      variant="destructive" 
+                      className="w-full"
+                      onClick={leaveRoom}
+                    >
+                      <X size={16} className="mr-2" />
+                      Leave Group
+                    </Button>
                   </div>
                 </div>
               </SheetContent>
@@ -296,7 +328,7 @@ const StudyRoomChat = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
-                  <MoreVertical size={18} />
+                  <MoreVertical size={20} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -315,8 +347,9 @@ const StudyRoomChat = () => {
                   <span>AI Chat Summary</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive">
-                  Leave Chat
+                <DropdownMenuItem onClick={leaveRoom} className="text-destructive">
+                  <X size={16} className="mr-2" />
+                  <span>Leave Group</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -327,7 +360,7 @@ const StudyRoomChat = () => {
         <div 
           className="flex-1 overflow-y-auto px-4 py-3 relative"
           style={{ 
-            backgroundImage: 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFMSURBVEiJ7dVLKwVhGMfxz3Eu5JZQIjtbK1sLKVllYcnadVlY2FnZ2intFFkppGyVKBsrOzs7IbksFDnHceYsiPN/F854NWbOfCzUpqfezlPf3/M+z/uegmmrLqLNQgZpCw+oB+/r3wCRPLxE7B9ZCLrwbsxRSS8+UJvBToNo7exmVaJRMul4Ry/uEznopx9rOEEbShPZyQQiuMAmrrCBT9TjCYdoxz7OQ4DVuMNWKnFA+ZjEK5pQ36996o8tYzee0Yg5lMUCg+qGQ1TgGqX4wlBMvzhk+ToOccF0wEZpGheowgmuMJIKCAKWMItOHGM9DgSZQzmaMYRTdAQBYxtS03/fsRJnIf/OeQ3r2EFtUIlvMYZn1MQDpguOhpG4YBCQOAe9jTwE/cIw2x2byrnbZCe2pNGEnUtjnv4WyXXmvBcTictM9jKC9GK+MeU+72+tu0lrPfkdQwAAAABJRU5ErkJggg==")',
+            backgroundImage: 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFMSURBVEiJ7dVLKwVhGMfxz3Eu5JZQIjtbK1sLKVllYcnadVlYcUzL0AAAIABJREFUeOzr0S8sLCwsLCwsLCwsLCwsbGxs2NjdXV3d3VwwMDAwMDAwMDAwMDAwMDAwMDA8PDw8PDw8PDw8PDw8PDw83NzV1d3d3d3Ly8vLy8vLy8vLy8vLy8vLy8vLw8PDw8Pw8PDw8PDw8PDw8PDw8PDw8PDw8PDw8PDw8PDw8PDw8PDw8PDw8nfesX1dGwgAAAABJRU5ErkJggg==")',
             backgroundRepeat: 'repeat',
             backgroundSize: '25px 25px',
             backgroundColor: 'rgba(240, 240, 240, 0.6)'
@@ -559,7 +592,14 @@ const StudyRoomChat = () => {
                 <Info size={16} />
                 Go to Room Overview
               </Button>
-              <Button variant="destructive" className="w-full">Leave Group</Button>
+              <Button 
+                variant="destructive" 
+                className="w-full"
+                onClick={leaveRoom}
+              >
+                <X size={16} className="mr-2" />
+                Leave Group
+              </Button>
             </div>
           </div>
         </div>

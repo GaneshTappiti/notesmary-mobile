@@ -31,7 +31,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     setShowSidebar(!noSidebarPaths.includes(location.pathname));
     
     // Check if current page is a study room page
-    setIsStudyRoomPage(location.pathname.includes('/study-room'));
+    setIsStudyRoomPage(location.pathname.includes('/study-room/'));
   }, [location.pathname]);
   
   if (!showSidebar) {

@@ -28,7 +28,8 @@ import {
   Search,
   UserPlus,
   Settings,
-  LogOut
+  LogOut,
+  X
 } from 'lucide-react';
 import { 
   DropdownMenu,
@@ -38,10 +39,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
 
 const StudyRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   const [message, setMessage] = useState('');
   
@@ -62,20 +65,21 @@ const StudyRoom = () => {
     ]
   };
   
-  const handleSendMessage = () => {
-    if (!message.trim()) return;
-    // Handle message sending
-    console.log('Sending message:', message);
-    setMessage('');
-    // In a real application, you would send this to your backend
-  };
-  
   const goToChat = () => {
     navigate(`/study-room/${id}/chat`);
   };
   
-  const goBack = () => {
-    navigate('/dashboard');
+  const goToStudyRooms = () => {
+    navigate('/study-rooms');
+  };
+  
+  const leaveRoom = () => {
+    // In a real app, this would make an API call to remove the user from the room
+    toast({
+      title: "Left Study Room",
+      description: `You have left the "${roomDetails.name}" study room.`
+    });
+    navigate('/study-rooms');
   };
   
   const getInitials = (name: string) => {
@@ -91,7 +95,7 @@ const StudyRoom = () => {
       {/* WhatsApp Style Header */}
       <div className="flex justify-between items-center mb-6 bg-background sticky top-0 z-10 py-2">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={goBack} className="md:flex">
+          <Button variant="ghost" size="icon" onClick={goToStudyRooms} className="md:flex">
             <ChevronLeft size={20} />
           </Button>
           <div className="flex items-center gap-3">
@@ -151,8 +155,11 @@ const StudyRoom = () => {
                 <span>Invite Members</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive">
-                <LogOut size={16} className="mr-2" />
+              <DropdownMenuItem 
+                className="text-destructive"
+                onClick={leaveRoom}
+              >
+                <X size={16} className="mr-2" />
                 <span>Leave Room</span>
               </DropdownMenuItem>
             </DropdownMenuContent>

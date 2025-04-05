@@ -15,6 +15,7 @@ import ViewNotes from "./pages/ViewNotes";
 import NotFound from "./pages/NotFound";
 import Notifications from "./pages/Notifications";
 import StudyAnalytics from "./pages/StudyAnalytics";
+import StudyRooms from "./pages/StudyRooms";
 import StudyRoom from "./pages/StudyRoom";
 import StudyRoomChat from "./pages/StudyRoomChat";
 import Settings from "./pages/Settings";
@@ -128,6 +129,16 @@ const App = () => (
             <PrivateRoute>
               <AppLayout>
                 <StudyAnalytics />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/study-rooms" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <StudyRooms />
               </AppLayout>
             </PrivateRoute>
           } 
