@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -264,121 +265,121 @@ const Dashboard = () => {
         <Card className="border-none shadow-sm mb-6 dark:bg-gray-800/50 overflow-hidden">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">Activity & Planning</CardTitle>
-            <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="mt-2">
+            <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-3 mb-1">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
                 <TabsTrigger value="activity">Recent Activity</TabsTrigger>
               </TabsList>
+              <TabsContent value="overview" className="mt-0">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Recent Activity Summary */}
+                  <div className="space-y-2.5">
+                    <h3 className="text-base font-medium mb-2 flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-amber-600" />
+                      Recent Activity
+                    </h3>
+                    {recentActivities.length > 0 ? (
+                      recentActivities.slice(0, 2).map((activity, index) => (
+                        <div key={index} className="flex items-start gap-2.5 py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                          <div className="bg-blue-100 dark:bg-blue-900/30 p-1.5 rounded-full">
+                            <CheckCircle className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">{activity.action}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-gray-500 dark:text-gray-400 text-center py-4">
+                        <BookText className="h-8 w-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" />
+                        <p className="text-sm">No recent activity yet.</p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Upcoming Events Preview */}
+                  <div className="space-y-2.5">
+                    <h3 className="text-base font-medium mb-2 flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-indigo-600" />
+                      Upcoming Events
+                    </h3>
+                    {upcomingEvents.length > 0 ? (
+                      upcomingEvents.slice(0, 2).map((event, index) => (
+                        <div key={index} className="flex items-start gap-2.5 py-2.5 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                          <div className="bg-indigo-100 dark:bg-indigo-900/30 p-1.5 rounded-full">
+                            <Calendar className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">{event.title}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{event.date}</p>
+                          </div>
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 font-medium">
+                            {event.status}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-gray-500 dark:text-gray-400 text-center py-4">
+                        <Calendar className="h-8 w-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" />
+                        <p className="text-sm">No upcoming events.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="upcoming" className="mt-0">
+                {upcomingEvents.length > 0 ? (
+                  upcomingEvents.map((event, index) => (
+                    <div key={index} className="flex items-start gap-2.5 py-2.5 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                      <div className="bg-indigo-100 dark:bg-indigo-900/30 p-1.5 rounded-full">
+                        <Calendar className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{event.title}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{event.date}</p>
+                      </div>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 font-medium">
+                        {event.status}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <Calendar className="h-12 w-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No upcoming events</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">You don't have any events scheduled</p>
+                  </div>
+                )}
+              </TabsContent>
+              
+              <TabsContent value="activity" className="mt-0">
+                {recentActivities.length > 0 ? (
+                  recentActivities.map((activity, index) => (
+                    <div key={index} className="flex items-start gap-2.5 py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                      <div className="bg-blue-100 dark:bg-blue-900/30 p-1.5 rounded-full">
+                        <CheckCircle className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">{activity.action}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <BookText className="h-12 w-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No recent activity</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">You haven't done anything yet</p>
+                  </div>
+                )}
+              </TabsContent>
             </Tabs>
           </CardHeader>
-          
           <CardContent>
-            <TabsContent value="overview" className="mt-0">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Recent Activity Summary */}
-                <div className="space-y-2.5">
-                  <h3 className="text-base font-medium mb-2 flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-amber-600" />
-                    Recent Activity
-                  </h3>
-                  {recentActivities.length > 0 ? (
-                    recentActivities.slice(0, 2).map((activity, index) => (
-                      <div key={index} className="flex items-start gap-2.5 py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
-                        <div className="bg-blue-100 dark:bg-blue-900/30 p-1.5 rounded-full">
-                          <CheckCircle className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">{activity.action}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-gray-500 dark:text-gray-400 text-center py-4">
-                      <BookText className="h-8 w-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" />
-                      <p className="text-sm">No recent activity yet.</p>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Upcoming Events Preview */}
-                <div className="space-y-2.5">
-                  <h3 className="text-base font-medium mb-2 flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-indigo-600" />
-                    Upcoming Events
-                  </h3>
-                  {upcomingEvents.length > 0 ? (
-                    upcomingEvents.slice(0, 2).map((event, index) => (
-                      <div key={index} className="flex items-start gap-2.5 py-2.5 border-b border-gray-100 dark:border-gray-700 last:border-0">
-                        <div className="bg-indigo-100 dark:bg-indigo-900/30 p-1.5 rounded-full">
-                          <Calendar className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium">{event.title}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{event.date}</p>
-                        </div>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 font-medium">
-                          {event.status}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-gray-500 dark:text-gray-400 text-center py-4">
-                      <Calendar className="h-8 w-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" />
-                      <p className="text-sm">No upcoming events.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="upcoming" className="mt-0">
-              {upcomingEvents.length > 0 ? (
-                upcomingEvents.map((event, index) => (
-                  <div key={index} className="flex items-start gap-2.5 py-2.5 border-b border-gray-100 dark:border-gray-700 last:border-0">
-                    <div className="bg-indigo-100 dark:bg-indigo-900/30 p-1.5 rounded-full">
-                      <Calendar className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{event.title}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{event.date}</p>
-                    </div>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 font-medium">
-                      {event.status}
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-8">
-                  <Calendar className="h-12 w-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No upcoming events</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-1">You don't have any events scheduled</p>
-                </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="activity" className="mt-0">
-              {recentActivities.length > 0 ? (
-                recentActivities.map((activity, index) => (
-                  <div key={index} className="flex items-start gap-2.5 py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
-                    <div className="bg-blue-100 dark:bg-blue-900/30 p-1.5 rounded-full">
-                      <CheckCircle className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">{activity.action}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-8">
-                  <BookText className="h-12 w-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No recent activity</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-1">You haven't done anything yet</p>
-                </div>
-              )}
-            </TabsContent>
+            {/* No content needed here since we moved it inside the Tabs component */}
           </CardContent>
         </Card>
         
