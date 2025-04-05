@@ -1,17 +1,12 @@
+
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { 
-  Home, 
-  Upload, 
-  Search, 
-  BrainCircuit, 
-  Users, 
   Bell, 
   ChevronDown,
   User,
   Settings,
   LogOut,
-  GraduationCap,
   Menu,
   ChevronRight
 } from 'lucide-react';
@@ -53,11 +48,6 @@ export const HeaderNav = () => {
       duration: 3000,
     });
     navigate('/');
-  };
-  
-  // Check if current path is active
-  const isActive = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(path + '/');
   };
   
   // Function to get page title
@@ -185,40 +175,6 @@ export const HeaderNav = () => {
     );
   };
 
-  // Main navigation items
-  const navItems = [
-    { 
-      title: 'Dashboard', 
-      path: '/dashboard', 
-      icon: <Home size={18} />
-    },
-    { 
-      title: 'Upload Notes', 
-      path: '/upload-notes', 
-      icon: <Upload size={18} />
-    },
-    { 
-      title: 'Find Notes', 
-      path: '/find-notes', 
-      icon: <Search size={18} />
-    },
-    { 
-      title: 'AI Answers', 
-      path: '/ai-answers', 
-      icon: <BrainCircuit size={18} />
-    },
-    { 
-      title: 'Mark Answers', 
-      path: '/ai-mark-answers', 
-      icon: <GraduationCap size={18} />
-    },
-    { 
-      title: 'Study Rooms', 
-      path: '/study-rooms', 
-      icon: <Users size={18} />
-    }
-  ];
-
   // Handle notifications click
   const handleNotificationsClick = () => {
     navigate('/notifications');
@@ -236,26 +192,10 @@ export const HeaderNav = () => {
             <h1 className="text-lg font-semibold mr-6">
               {getPageTitle(location.pathname)}
             </h1>
-            
-            {/* Navigation links - desktop only */}
-            <nav className="hidden md:flex items-center space-x-1">
-              {navItems.map((item) => (
-                <Button
-                  key={item.path}
-                  variant={isActive(item.path) ? "default" : "ghost"}
-                  size="sm"
-                  className={`gap-1.5 ${isActive(item.path) ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                  onClick={() => navigate(item.path)}
-                >
-                  {item.icon}
-                  <span className="hidden lg:inline">{item.title}</span>
-                </Button>
-              ))}
-            </nav>
           </div>
           
           <div className="flex items-center gap-2">
-            {/* Theme toggle */}
+            {/* Theme toggle - ONLY kept here, removed from sidebar */}
             <ThemeToggle 
               variant="ghost" 
               size="sm"
