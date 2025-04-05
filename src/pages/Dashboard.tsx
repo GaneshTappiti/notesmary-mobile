@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -44,7 +43,7 @@ const Dashboard = () => {
     { label: 'Notes Uploaded', value: '12', icon: <Upload className="h-5 w-5 text-blue-500" />, link: '/view-notes' },
     { label: 'Notes Saved', value: '45', icon: <Star className="h-5 w-5 text-yellow-500" />, link: '/view-notes?tab=saved' },
     { label: 'AI Answers', value: '28', icon: <BrainCircuit className="h-5 w-5 text-purple-500" />, link: '/ai-answers' },
-    { label: 'Study Groups', value: '4', icon: <Users className="h-5 w-5 text-green-500" />, link: '/study-room/1' },
+    { label: 'Study Groups', value: '4', icon: <Users className="h-5 w-5 text-green-500" />, link: '/study-rooms' },
   ];
 
   const upcomingEvents = [
@@ -59,10 +58,11 @@ const Dashboard = () => {
     { action: 'Asked AI about Chemical Bonds', time: 'Yesterday' },
   ];
 
+  // Updated main actions to match the specified layout
   const mainActions = [
     {
       title: 'Upload Notes',
-      description: 'Share your notes with classmates and earn rewards for quality content.',
+      description: 'Share your notes with classmates',
       icon: <Upload className="h-6 w-6 text-blue-600" />,
       bgColor: 'bg-blue-100',
       iconColor: 'text-blue-600',
@@ -72,7 +72,7 @@ const Dashboard = () => {
     },
     {
       title: 'Find Notes',
-      description: 'Discover comprehensive notes for your subjects and topics from peers.',
+      description: 'Discover comprehensive notes from peers',
       icon: <Search className="h-6 w-6 text-purple-600" />,
       bgColor: 'bg-purple-100',
       iconColor: 'text-purple-600',
@@ -82,7 +82,7 @@ const Dashboard = () => {
     },
     {
       title: 'AI Answers',
-      description: 'Get smart answers to your questions using our AI-powered learning assistant.',
+      description: 'Get smart answers to your questions',
       icon: <BrainCircuit className="h-6 w-6 text-green-600" />,
       bgColor: 'bg-green-100',
       iconColor: 'text-green-600',
@@ -92,56 +92,32 @@ const Dashboard = () => {
     },
     {
       title: 'Mark Answers',
-      description: 'Convert your study material into structured answers based on mark distribution.',
+      description: 'Generate structured 2, 5, 10-mark answers',
       icon: <GraduationCap className="h-6 w-6 text-amber-600" />,
       bgColor: 'bg-amber-100',
       iconColor: 'text-amber-600',
       buttonText: 'Generate Answers',
       buttonVariant: 'outline',
       onClick: () => navigate('/ai-mark-answers')
-    }
-  ];
-
-  const quickAccessCards = [
+    },
     {
-      title: 'Study Room',
-      description: 'Collaborative space for group learning.',
+      title: 'Study Rooms',
+      description: 'Create or join collaborative study groups',
       icon: <Users className="h-6 w-6 text-indigo-600" />,
       bgColor: 'bg-indigo-100',
-      buttonText: 'Join Room',
-      onClick: () => navigate('/study-room/1')
-    },
-    {
-      title: 'Study Room Chat',
-      description: 'Real-time messaging for study groups.',
-      icon: <MessageSquare className="h-6 w-6 text-cyan-600" />,
-      bgColor: 'bg-cyan-100',
-      buttonText: 'Open Chat',
-      onClick: () => navigate('/study-room/1/chat')
-    },
-    {
-      title: 'Study Analytics',
-      description: 'Track your progress and study habits.',
-      icon: <BarChart3 className="h-6 w-6 text-emerald-600" />,
-      bgColor: 'bg-emerald-100',
-      buttonText: 'View Analytics',
-      onClick: () => navigate('/study-analytics')
-    },
-    {
-      title: 'Subscription',
-      description: 'Manage your account and payments.',
-      icon: <CreditCard className="h-6 w-6 text-rose-600" />,
-      bgColor: 'bg-rose-100',
-      buttonText: 'Manage Plan',
-      onClick: () => navigate('/subscription')
+      iconColor: 'text-indigo-600',
+      buttonText: 'View Rooms',
+      buttonVariant: 'outline',
+      onClick: () => navigate('/study-rooms')
     }
   ];
 
-  const filteredQuickAccess = quickAccessCards.filter(card => 
+  // Filter the quickAccessCards based on the search query
+  const filteredQuickAccess = mainActions.filter(card => 
     searchQuery ? 
     (card.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
      card.description.toLowerCase().includes(searchQuery.toLowerCase())) : 
-    quickAccessCards
+    mainActions
   );
 
   return (
@@ -209,7 +185,7 @@ const Dashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               {mainActions.map((action, index) => (
                 <Card 
                   key={index} 

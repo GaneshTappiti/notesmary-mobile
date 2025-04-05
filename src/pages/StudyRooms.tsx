@@ -6,14 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Users, Plus, Search, ArrowRight, Clock, BookOpen } from 'lucide-react';
+import { Users, Plus, Search, ArrowRight, BookOpen } from 'lucide-react';
 import { CreateRoomModal } from '@/components/CreateRoomModal';
-import { BrowseRoomsModal } from '@/components/BrowseRoomsModal';
 
 const StudyRooms = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showBrowseModal, setShowBrowseModal] = useState(false);
   const navigate = useNavigate();
   
   // Mock data for study rooms
@@ -57,7 +55,8 @@ const StudyRooms = () => {
   );
   
   const enterRoom = (roomId: string) => {
-    navigate(`/study-room/${roomId}`);
+    // Update to navigate to room info page instead of directly to the room
+    navigate(`/study-room/${roomId}/info`);
   };
   
   return (
@@ -67,21 +66,13 @@ const StudyRooms = () => {
           <h1 className="text-2xl font-bold mb-1">Study Rooms</h1>
           <p className="text-muted-foreground">Join or create collaborative study spaces</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-2 mt-4 md:mt-0 w-full sm:w-auto">
-          <Button 
-            onClick={() => setShowBrowseModal(true)} 
-            variant="outline" 
-            className="gap-2"
-          >
-            <BookOpen size={16} />
-            Browse Rooms
-          </Button>
+        <div className="mt-4 md:mt-0">
           <Button 
             onClick={() => setShowCreateModal(true)} 
             className="gap-2"
           >
             <Plus size={16} />
-            Create Room
+            Create New Room
           </Button>
         </div>
       </div>
@@ -125,7 +116,7 @@ const StudyRooms = () => {
                 <div className="flex items-center gap-2">
                   <div className="flex items-center">
                     <Users className="h-4 w-4 mr-1 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">{room.memberCount}</span>
+                    <span className="text-sm text-muted-foreground">{room.memberCount} members</span>
                   </div>
                   <div className="text-xs bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full">
                     {room.onlineCount > 0 ? `${room.onlineCount} online` : 'No one online'}
@@ -149,24 +140,14 @@ const StudyRooms = () => {
             <Users className="h-6 w-6 text-primary" />
           </div>
           <h3 className="text-lg font-medium mb-2">No study rooms yet</h3>
-          <p className="text-muted-foreground mb-4">Create or join a room to start collaborating</p>
-          <div className="flex flex-col sm:flex-row justify-center gap-2">
-            <Button 
-              onClick={() => setShowBrowseModal(true)} 
-              variant="outline"
-              className="gap-2"
-            >
-              <BookOpen size={16} />
-              Browse Rooms
-            </Button>
-            <Button 
-              onClick={() => setShowCreateModal(true)} 
-              className="gap-2"
-            >
-              <Plus size={16} />
-              Create Room
-            </Button>
-          </div>
+          <p className="text-muted-foreground mb-4">Create a room to start collaborating</p>
+          <Button 
+            onClick={() => setShowCreateModal(true)} 
+            className="gap-2"
+          >
+            <Plus size={16} />
+            Create New Room
+          </Button>
         </div>
       )}
       
@@ -174,12 +155,6 @@ const StudyRooms = () => {
       <CreateRoomModal 
         open={showCreateModal} 
         onClose={() => setShowCreateModal(false)} 
-      />
-      
-      {/* Browse Rooms Modal */}
-      <BrowseRoomsModal
-        open={showBrowseModal}
-        onClose={() => setShowBrowseModal(false)}
       />
     </div>
   );

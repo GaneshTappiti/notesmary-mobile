@@ -14,8 +14,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle, Users, Lock, Unlock, BookOpen, CheckCircle } from "lucide-react";
+import { HelpCircle, Users, Lock, Unlock, BookOpen, CheckCircle, Copy, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 interface CreateRoomModalProps {
   open: boolean;
@@ -26,9 +28,12 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
-  const [inviteEmails, setInviteEmails] = useState("");
+  const [inviteEmails, setInviteEmails] = useState<string[]>([]);
+  const [currentEmail, setCurrentEmail] = useState("");
+  const [enableShareLink, setEnableShareLink] = useState(false);
   const [step, setStep] = useState<"form" | "preview">("form");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const suggestedTopics = [
     "Advanced Calculus Study",
@@ -44,20 +49,37 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
       title: "Study Room Created",
       description: `"${roomName}" room has been created successfully.`,
     });
+    
+    // Navigate to the new room (in a real app, we'd use the ID returned from API)
+    const mockNewRoomId = Math.floor(Math.random() * 1000).toString();
     resetForm();
     onClose();
+    navigate(`/study-room/${mockNewRoomId}/info`);
   };
 
   const resetForm = () => {
     setRoomName("");
     setDescription("");
     setIsPrivate(false);
-    setInviteEmails("");
+    setInviteEmails([]);
+    setCurrentEmail("");
+    setEnableShareLink(false);
     setStep("form");
   };
 
   const useSuggestion = (topic: string) => {
     setRoomName(topic);
+  };
+  
+  const addEmail = () => {
+    if (currentEmail && !inviteEmails.includes(currentEmail)) {
+      setInviteEmails([...inviteEmails, currentEmail]);
+      setCurrentEmail("");
+    }
+  };
+  
+  const removeEmail = (email: string) => {
+    setInviteEmails(inviteEmails.filter(e => e !== email));
   };
 
   return (
@@ -83,7 +105,7 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
         {step === "form" ? (
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label htmlFor="roomName">Room Name</Label>
+              <Label htmlFor="roomName">Room Name <span className="text-red-500">*</span></Label>
               <Input 
                 id="roomName" 
                 value={roomName} 
@@ -149,19 +171,72 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="inviteEmails">
-                Invite Participants (optional)
-              </Label>
-              <Textarea 
-                id="inviteEmails" 
-                value={inviteEmails} 
-                onChange={(e) => setInviteEmails(e.target.value)}
-                placeholder="Enter email addresses separated by commas..."
-                className="resize-none"
-              />
-              <p className="text-xs text-muted-foreground">
-                Separate multiple email addresses with commas
-              </p>
+              <Label>Email Invitations (optional)</Label>
+              <div className="flex gap-2">
+                <Input 
+                  placeholder="Enter email address"
+                  value={currentEmail}
+                  onChange={(e) => setCurrentEmail(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addEmail();
+                    }
+                  }}
+                  className="flex-1"
+                />
+                <Button type="button" onClick={addEmail}>Add</Button>
+              </div>
+              
+              {inviteEmails.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {inviteEmails.map((email, index) => (
+                    <Badge key={index} variant="secondary" className="px-2 py-1">
+                      {email}
+                      <Button 
+                        variant="ghost"
+                        size="icon"
+                        className="h-4 w-4 ml-1 hover:bg-transparent"
+                        onClick={() => removeEmail(email)}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2 border-t pt-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="sharelink-toggle" className="font-medium">Enable Shareable Link</Label>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    Allow others to join via link
+                  </span>
+                </div>
+                <Switch
+                  id="sharelink-toggle"
+                  checked={enableShareLink}
+                  onCheckedChange={setEnableShareLink}
+                />
+              </div>
+              
+              {enableShareLink && (
+                <div className="flex items-center gap-2 mt-2">
+                  <Input 
+                    value="https://study.app/join/room/abc123" 
+                    readOnly
+                    className="flex-1 bg-muted"
+                  />
+                  <Button variant="outline" size="sm">
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copy
+                  </Button>
+                </div>
+              )}
             </div>
 
             <DialogFooter className="pt-4">
@@ -209,17 +284,24 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
                 </div>
               </div>
               
-              {inviteEmails && (
+              {inviteEmails.length > 0 && (
                 <div className="space-y-1">
                   <p className="text-sm font-medium">Invited Participants</p>
                   <div className="bg-muted p-2 rounded text-sm">
-                    {inviteEmails.split(',').map((email, i) => (
+                    {inviteEmails.map((email, i) => (
                       <div key={i} className="flex items-center gap-2 py-1">
                         <Users className="h-3 w-3 text-muted-foreground" />
-                        <span>{email.trim()}</span>
+                        <span>{email}</span>
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+              
+              {enableShareLink && (
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Shareable Link</p>
+                  <p className="text-sm">Enabled - others can join using a link</p>
                 </div>
               )}
             </div>

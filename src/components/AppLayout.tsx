@@ -23,6 +23,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isStudyRoomPage, setIsStudyRoomPage] = useState(false);
+  const [isStudyRoomChatPage, setIsStudyRoomChatPage] = useState(false);
   
   // Determine if sidebar should be shown based on the current path
   useEffect(() => {
@@ -31,7 +32,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     setShowSidebar(!noSidebarPaths.includes(location.pathname));
     
     // Check if current page is a study room page
-    setIsStudyRoomPage(location.pathname.includes('/study-room/'));
+    setIsStudyRoomPage(location.pathname.includes('/study-room/') && !location.pathname.includes('/chat'));
+    
+    // Check if current page is a study room chat page
+    setIsStudyRoomChatPage(location.pathname.includes('/study-room/') && location.pathname.includes('/chat'));
   }, [location.pathname]);
   
   if (!showSidebar) {
@@ -63,13 +67,12 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     </Drawer>
   );
   
-  // For study room pages, we want a different layout without the header nav
-  if (isStudyRoomPage) {
+  // For study room chat, we want a clean layout to maximize chat space
+  if (isStudyRoomChatPage) {
     return (
       <ThemeProvider>
         <TooltipProvider>
           <div className="min-h-screen w-full max-w-full overflow-x-hidden">
-            {/* For StudyRoom, we don't need the regular header */}
             <main className="w-full h-screen">{children}</main>
             
             {/* Mobile sidebar for study room */}
@@ -80,6 +83,24 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     );
   }
   
+  // For study room pages (but not chat), we want a simpler layout without the sidebar
+  if (isStudyRoomPage) {
+    return (
+      <ThemeProvider>
+        <TooltipProvider>
+          <div className="min-h-screen w-full max-w-full overflow-x-hidden">
+            <HeaderNav />
+            <main className="pt-16 px-4 max-w-full overflow-x-auto">{children}</main>
+            
+            {/* Mobile sidebar for study room */}
+            <MobileSidebar />
+          </div>
+        </TooltipProvider>
+      </ThemeProvider>
+    );
+  }
+  
+  // Default layout with sidebar for most pages
   return (
     <ThemeProvider>
       <TooltipProvider>

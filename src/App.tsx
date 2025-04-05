@@ -18,6 +18,7 @@ import StudyAnalytics from "./pages/StudyAnalytics";
 import StudyRooms from "./pages/StudyRooms";
 import StudyRoom from "./pages/StudyRoom";
 import StudyRoomChat from "./pages/StudyRoomChat";
+import StudyRoomInfo from "./pages/StudyRoomInfo";
 import Settings from "./pages/Settings";
 import Subscription from "./pages/Subscription";
 import MyNotes from "./pages/MyNotes";
@@ -149,6 +150,17 @@ const App = () => (
             <PrivateRoute>
               <AppLayout>
                 <StudyRoom />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        {/* New route for study room info page */}
+        <Route 
+          path="/study-room/:id/info" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <StudyRoomInfo />
               </AppLayout>
             </PrivateRoute>
           } 
