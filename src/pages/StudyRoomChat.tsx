@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   MoreVertical,
@@ -41,7 +43,8 @@ const StudyRoomChat = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [message, setMessage] = useState('');
-  const [showMembers, setShowMembers] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [showInfoSheet, setShowInfoSheet] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Mock data
@@ -113,117 +116,224 @@ const StudyRoomChat = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-70px)] flex overflow-hidden bg-white dark:bg-gray-900 rounded-lg shadow-sm border">
+    <div className="h-[calc(100vh-70px)] flex overflow-hidden bg-background rounded-lg shadow-sm">
       {/* Chat Area */}
       <div className="flex-1 flex flex-col">
-        {/* Chat Header */}
-        <div className="border-b px-4 py-2 dark:border-gray-700">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="md:hidden" onClick={goToRoom}>
-                <ChevronLeft size={18} />
-              </Button>
-              <div>
-                <h2 className="font-semibold flex items-center gap-2">
-                  {roomName}
-                  <Badge variant="outline" className="ml-2">Study Group</Badge>
-                </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {onlineMembers.filter(m => m.status === 'online').length} online • {onlineMembers.length} members
-                </p>
-              </div>
+        {/* Chat Header - WhatsApp Style */}
+        <div className="border-b px-4 py-3 bg-background flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" className="md:hidden" onClick={goToRoom}>
+              <ChevronLeft size={18} />
+            </Button>
+            <Avatar className="h-10 w-10 border">
+              <AvatarFallback className="bg-primary/10 text-primary">AP</AvatarFallback>
+            </Avatar>
+            <div className="cursor-pointer" onClick={() => setShowInfoSheet(true)}>
+              <h2 className="font-medium text-base flex items-center">
+                {roomName}
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                {onlineMembers.filter(m => m.status === 'online').length} online • {onlineMembers.length} members
+              </p>
             </div>
-            <div className="flex items-center gap-1">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" onClick={() => setShowMembers(!showMembers)}>
-                      <Users size={18} />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-xs">{showMembers ? 'Hide' : 'Show'} Members</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Phone size={18} />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-xs">Voice Call</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Video size={18} />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-xs">Video Call</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" onClick={goToRoom}>
-                      <Info size={18} />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-xs">Room Info</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+          </div>
+          <div className="flex items-center gap-1">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
                   <Button variant="ghost" size="icon">
-                    <MoreVertical size={18} />
+                    <Phone size={18} />
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Chat Options</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Search size={16} className="mr-2" />
-                    <span>Search in Chat</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Pin size={16} className="mr-2" />
-                    <span>View Pinned Messages</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <UserPlus size={16} className="mr-2" />
-                    <span>Add Members</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <BrainCircuit size={16} className="mr-2" />
-                    <span>AI Chat Summary</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-red-600">
-                    Leave Chat
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">Voice Call</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Video size={18} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">Video Call</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            {/* Info button that toggles sidebar on desktop */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="hidden md:flex" 
+                    onClick={() => setShowSidebar(!showSidebar)}
+                  >
+                    <Info size={18} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">{showSidebar ? 'Hide' : 'Show'} Group Info</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            {/* Info button that opens sheet on mobile */}
+            <Sheet open={showInfoSheet} onOpenChange={setShowInfoSheet}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Info size={18} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="p-0 w-full sm:max-w-sm overflow-y-auto">
+                <div className="p-4 space-y-4">
+                  <div className="flex justify-center pt-4 pb-2">
+                    <Avatar className="h-20 w-20 border">
+                      <AvatarFallback className="text-2xl bg-primary/10 text-primary">AP</AvatarFallback>
+                    </Avatar>
+                  </div>
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold">{roomName}</h3>
+                    <p className="text-sm text-muted-foreground">Created on April 2, 2025</p>
+                  </div>
+                  
+                  <div className="pt-2">
+                    <h4 className="text-sm font-medium mb-2">Description</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Collaborative study space for Advanced Physics concepts and problem-solving.
+                    </p>
+                  </div>
+                  
+                  {/* Members section */}
+                  <div>
+                    <h4 className="text-sm font-medium mb-2 flex justify-between items-center">
+                      <span>Members • {onlineMembers.length}</span>
+                      <Button variant="ghost" size="sm" className="h-8 gap-1">
+                        <UserPlus size={14} />
+                        <span className="text-xs">Add</span>
+                      </Button>
+                    </h4>
+                    <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+                      {onlineMembers.map(member => (
+                        <div key={member.id} className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="relative">
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                              </Avatar>
+                              <span className={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ${getStatusColor(member.status)} ring-1 ring-white`} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">{member.name}</p>
+                              <p className="text-xs text-muted-foreground capitalize">
+                                {member.isTyping ? 'typing...' : member.status}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Pinned Messages */}
+                  <div>
+                    <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
+                      <Pin size={14} />
+                      <span>Pinned Messages</span>
+                    </h4>
+                    <div className="space-y-2">
+                      {pinnedMessages.map(pinned => (
+                        <div key={pinned.id} className="p-2 bg-amber-50 dark:bg-amber-950/30 rounded-md border border-amber-100 dark:border-amber-900/30">
+                          <p className="text-xs font-medium text-amber-800 dark:text-amber-300">{pinned.sender}</p>
+                          <p className="text-sm text-amber-900 dark:text-amber-200 mt-1">{pinned.text}</p>
+                          <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 text-right">{pinned.time}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Shared Files */}
+                  <div>
+                    <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
+                      <FileText size={14} />
+                      <span>Shared Files</span>
+                    </h4>
+                    <div className="space-y-2">
+                      {sharedFiles.map(file => (
+                        <div key={file.id} className="p-2 bg-background rounded-md border flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {getFileIcon(file.type)}
+                            <div>
+                              <p className="text-xs font-medium">{file.name}</p>
+                              <p className="text-xs text-muted-foreground">{file.size}</p>
+                            </div>
+                          </div>
+                          <Button variant="ghost" size="icon" className="h-6 w-6">
+                            <MoreVertical size={12} />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Buttons */}
+                  <div className="space-y-2 pt-2">
+                    <Button onClick={goToRoom} className="w-full flex items-center gap-2">
+                      <Info size={16} />
+                      Go to Room Overview
+                    </Button>
+                    <Button variant="destructive" className="w-full">Leave Group</Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreVertical size={18} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Chat Options</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Search size={16} className="mr-2" />
+                  <span>Search in Chat</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={goToRoom}>
+                  <Info size={16} className="mr-2" />
+                  <span>Group Details</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <BrainCircuit size={16} className="mr-2" />
+                  <span>AI Chat Summary</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-destructive">
+                  Leave Chat
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-3">
-          <div className="space-y-6">
+        {/* Messages Area - WhatsApp Style */}
+        <div 
+          className="flex-1 overflow-y-auto px-4 py-3 relative"
+          style={{ 
+            backgroundImage: 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFMSURBVEiJ7dVLKwVhGMfxz3Eu5JZQIjtbK1sLKVllYcnadVlY2FnZ2intFFkppGyVKBsrOzs7IbksFDnHceYsiPN/F854NWbOfCzUpqfezlPf3/M+z/uegmmrLqLNQgZpCw+oB+/r3wCRPLxE7B9ZCLrwbsxRSS8+UJvBToNo7exmVaJRMul4Ry/uEznopx9rOEEbShPZyQQiuMAmrrCBT9TjCYdoxz7OQ4DVuMNWKnFA+ZjEK5pQ36996o8tYzee0Yg5lMUCg+qGQ1TgGqX4wlBMvzhk+ToOccF0wEZpGheowgmuMJIKCAKWMItOHGM9DgSZQzmaMYRTdAQBYxtS03/fsRJnIf/OeQ3r2EFtUIlvMYZn1MQDpguOhpG4YBCQOAe9jTwE/cIw2x2byrnbZCe2pNGEnUtjnv4WyXXmvBcTictM9jKC9GK+MeU+72+tu0lrPfkdQwAAAABJRU5ErkJggg==")',
+            backgroundRepeat: 'repeat',
+            backgroundSize: '25px 25px',
+            backgroundColor: 'rgba(240, 240, 240, 0.6)'
+          }}
+        >
+          <div className="space-y-3 max-w-4xl mx-auto">
             {/* AI Suggestion */}
             <Card className="mb-6 bg-purple-50 border-purple-200 dark:bg-purple-900/20 dark:border-purple-800">
               <CardContent className="p-4">
@@ -252,52 +362,47 @@ const StudyRoomChat = () => {
             
             {/* Date Separator */}
             <div className="flex items-center justify-center py-2">
-              <span className="text-xs font-medium text-gray-500 bg-gray-100 dark:bg-gray-800 dark:text-gray-400 px-2 py-1 rounded-full">Today</span>
+              <span className="text-xs font-medium text-gray-500 bg-white dark:bg-gray-800 dark:text-gray-400 px-2 py-1 rounded-full shadow-sm">Today</span>
             </div>
             
-            {/* Chat Messages */}
+            {/* Chat Messages - WhatsApp Style */}
             {messages.map(msg => (
-              <div key={msg.id} className={`flex items-start gap-3 ${msg.isSelf ? 'justify-end' : ''}`}>
+              <div key={msg.id} className={`flex items-end gap-2 ${msg.isSelf ? 'justify-end' : ''}`}>
                 {!msg.isSelf && (
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-8 w-8 mb-1">
                     <AvatarFallback>{msg.senderInitials}</AvatarFallback>
                   </Avatar>
                 )}
                 <div 
-                  className={`rounded-lg p-3 max-w-[80%] ${
+                  className={`rounded-2xl p-3 max-w-[80%] ${
                     msg.isSelf 
-                      ? 'bg-blue-100 text-blue-700' 
-                      : 'bg-gray-100 text-gray-700'
+                      ? 'bg-blue-500 text-white rounded-tr-none' 
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-100 rounded-tl-none shadow-sm'
                   }`}
                 >
                   {!msg.isSelf && (
-                    <p className="text-sm font-medium mb-1">{msg.sender}</p>
+                    <p className="text-xs font-medium mb-1 text-blue-600 dark:text-blue-400">{msg.sender}</p>
                   )}
                   <p className="text-sm">{msg.text}</p>
                   <div className="flex items-center justify-end gap-1 mt-1">
-                    <span className={`text-xs ${msg.isSelf ? 'text-blue-500' : 'text-gray-500'}`}>
+                    <span className={`text-xs ${msg.isSelf ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'}`}>
                       {msg.time}
                     </span>
                     {msg.isSelf && (
-                      <CheckCheck size={12} className="text-blue-500" />
+                      <CheckCheck size={12} className="text-blue-100" />
                     )}
                   </div>
                 </div>
-                {msg.isSelf && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>{msg.senderInitials}</AvatarFallback>
-                  </Avatar>
-                )}
               </div>
             ))}
             
-            {/* Typing Indicator */}
+            {/* Typing Indicator - WhatsApp Style */}
             {onlineMembers.some(m => m.isTyping) && (
-              <div className="flex items-start gap-3">
-                <Avatar className="h-8 w-8">
+              <div className="flex items-end gap-2">
+                <Avatar className="h-8 w-8 mb-1">
                   <AvatarFallback>SC</AvatarFallback>
                 </Avatar>
-                <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-2">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-none px-4 py-4 shadow-sm">
                   <div className="flex items-center gap-1">
                     <div className="h-2 w-2 rounded-full bg-gray-500 animate-pulse"></div>
                     <div className="h-2 w-2 rounded-full bg-gray-500 animate-pulse animation-delay-200"></div>
@@ -311,36 +416,60 @@ const StudyRoomChat = () => {
           </div>
         </div>
         
-        {/* Message Input */}
-        <div className="border-t px-4 py-3 dark:border-gray-700">
+        {/* Message Input - WhatsApp Style */}
+        <div className="px-4 py-3 border-t bg-background">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon">
-              <Paperclip size={18} />
+            <Button variant="ghost" size="icon" className="text-muted-foreground">
+              <Smile size={20} />
             </Button>
-            <Input 
-              placeholder="Type a message..." 
-              value={message} 
-              onChange={e => setMessage(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
-              className="flex-1"
-            />
-            <Button variant="ghost" size="icon">
-              <Smile size={18} />
+            <Button variant="ghost" size="icon" className="text-muted-foreground">
+              <Paperclip size={20} />
             </Button>
-            <Button variant="ghost" size="icon">
-              <Mic size={18} />
-            </Button>
-            <Button size="icon" disabled={!message.trim()} onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800">
-              <Send size={18} />
+            <div className="flex-1 relative">
+              <Input 
+                placeholder="Type a message..." 
+                value={message} 
+                onChange={e => setMessage(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
+                className="rounded-full bg-background pr-12"
+              />
+              <Button 
+                size="icon" 
+                disabled={!message.trim()} 
+                onClick={handleSendMessage} 
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 bg-primary rounded-full"
+              >
+                <Send size={16} />
+              </Button>
+            </div>
+            <Button variant="ghost" size="icon" className="text-muted-foreground">
+              <Mic size={20} />
             </Button>
           </div>
         </div>
       </div>
       
-      {/* Members Sidebar */}
-      {showMembers && (
-        <div className="w-72 border-l overflow-y-auto hidden md:block dark:border-gray-700">
-          <div className="p-4">
+      {/* Members Sidebar - WhatsApp Style */}
+      {showSidebar && (
+        <div className="w-80 border-l overflow-y-auto hidden md:block">
+          <div className="p-4 space-y-5">
+            <div className="flex justify-center pt-4 pb-2">
+              <Avatar className="h-20 w-20 border">
+                <AvatarFallback className="text-2xl bg-primary/10 text-primary">AP</AvatarFallback>
+              </Avatar>
+            </div>
+            <div className="text-center">
+              <h3 className="text-lg font-semibold">{roomName}</h3>
+              <p className="text-sm text-muted-foreground">Created on April 2, 2025</p>
+            </div>
+            
+            <div className="pt-2">
+              <h4 className="text-sm font-medium mb-2">Description</h4>
+              <p className="text-sm text-muted-foreground">
+                Collaborative study space for Advanced Physics concepts and problem-solving.
+              </p>
+            </div>
+            
             <div className="relative">
               <Input 
                 placeholder="Search members..." 
@@ -349,9 +478,15 @@ const StudyRoomChat = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
             </div>
             
-            <div className="mt-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Online Members ({onlineMembers.filter(m => m.status === 'online').length})</h3>
-              <div className="space-y-3">
+            <div>
+              <h4 className="text-sm font-medium mb-2 flex justify-between items-center">
+                <span>Members • {onlineMembers.length}</span>
+                <Button variant="ghost" size="sm" className="h-8 gap-1">
+                  <UserPlus size={14} />
+                  <span className="text-xs">Add</span>
+                </Button>
+              </h4>
+              <div className="space-y-3 max-h-[200px] overflow-y-auto pr-1">
                 {onlineMembers.map(member => (
                   <div key={member.id} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -363,7 +498,7 @@ const StudyRoomChat = () => {
                       </div>
                       <div>
                         <p className="text-sm font-medium">{member.name}</p>
-                        <p className="text-xs text-gray-500 capitalize">
+                        <p className="text-xs text-muted-foreground capitalize">
                           {member.isTyping ? 'typing...' : member.status}
                         </p>
                       </div>
@@ -376,39 +511,39 @@ const StudyRoomChat = () => {
               </div>
             </div>
             
-            <Separator className="my-4" />
+            <Separator />
             
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
                 <Pin size={14} />
-                Pinned Messages
-              </h3>
-              <div className="space-y-3">
+                <span>Pinned Messages</span>
+              </h4>
+              <div className="space-y-2">
                 {pinnedMessages.map(pinned => (
-                  <div key={pinned.id} className="p-2 bg-amber-50 rounded-md border border-amber-100">
-                    <p className="text-xs font-medium text-amber-800">{pinned.sender}</p>
-                    <p className="text-sm text-amber-900 mt-1">{pinned.text}</p>
-                    <p className="text-xs text-amber-600 mt-1 text-right">{pinned.time}</p>
+                  <div key={pinned.id} className="p-2 bg-amber-50 dark:bg-amber-950/30 rounded-md border border-amber-100 dark:border-amber-900/30">
+                    <p className="text-xs font-medium text-amber-800 dark:text-amber-300">{pinned.sender}</p>
+                    <p className="text-sm text-amber-900 dark:text-amber-200 mt-1">{pinned.text}</p>
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 text-right">{pinned.time}</p>
                   </div>
                 ))}
               </div>
             </div>
             
-            <Separator className="my-4" />
+            <Separator />
             
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
                 <FileText size={14} />
-                Shared Files
-              </h3>
+                <span>Shared Files</span>
+              </h4>
               <div className="space-y-2">
                 {sharedFiles.map(file => (
-                  <div key={file.id} className="p-2 bg-gray-50 rounded-md border border-gray-200 flex items-center justify-between">
+                  <div key={file.id} className="p-2 bg-background rounded-md border flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {getFileIcon(file.type)}
                       <div>
                         <p className="text-xs font-medium">{file.name}</p>
-                        <p className="text-xs text-gray-500">{file.size}</p>
+                        <p className="text-xs text-muted-foreground">{file.size}</p>
                       </div>
                     </div>
                     <Button variant="ghost" size="icon" className="h-6 w-6">
@@ -417,6 +552,14 @@ const StudyRoomChat = () => {
                   </div>
                 ))}
               </div>
+            </div>
+            
+            <div className="space-y-2 pt-4">
+              <Button onClick={goToRoom} className="w-full flex items-center gap-2">
+                <Info size={16} />
+                Go to Room Overview
+              </Button>
+              <Button variant="destructive" className="w-full">Leave Group</Button>
             </div>
           </div>
         </div>

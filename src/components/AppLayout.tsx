@@ -22,12 +22,16 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const { toast } = useToast();
   const [showSidebar, setShowSidebar] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isStudyRoomPage, setIsStudyRoomPage] = useState(false);
   
   // Determine if sidebar should be shown based on the current path
   useEffect(() => {
     // Don't show sidebar on landing page, login, or authentication
     const noSidebarPaths = ['/', '/login', '/authentication'];
     setShowSidebar(!noSidebarPaths.includes(location.pathname));
+    
+    // Check if current page is a study room page
+    setIsStudyRoomPage(location.pathname.includes('/study-room'));
   }, [location.pathname]);
   
   if (!showSidebar) {
@@ -58,6 +62,23 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       </DrawerContent>
     </Drawer>
   );
+  
+  // For study room pages, we want a different layout without the header nav
+  if (isStudyRoomPage) {
+    return (
+      <ThemeProvider>
+        <TooltipProvider>
+          <div className="min-h-screen w-full max-w-full overflow-x-hidden">
+            {/* For StudyRoom, we don't need the regular header */}
+            <main className="w-full h-screen">{children}</main>
+            
+            {/* Mobile sidebar for study room */}
+            <MobileSidebar />
+          </div>
+        </TooltipProvider>
+      </ThemeProvider>
+    );
+  }
   
   return (
     <ThemeProvider>

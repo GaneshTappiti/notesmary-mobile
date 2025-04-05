@@ -21,7 +21,14 @@ import {
   Pin,
   Upload,
   BrainCircuit,
-  Clock
+  Clock,
+  Calendar,
+  ChevronLeft,
+  Phone,
+  Search,
+  UserPlus,
+  Settings,
+  LogOut
 } from 'lucide-react';
 import { 
   DropdownMenu,
@@ -67,6 +74,10 @@ const StudyRoom = () => {
     navigate(`/study-room/${id}/chat`);
   };
   
+  const goBack = () => {
+    navigate('/dashboard');
+  };
+  
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -76,61 +87,82 @@ const StudyRoom = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{roomDetails.name}</h1>
-          <p className="text-gray-600 text-sm mt-1">{roomDetails.description}</p>
+    <div className="container mx-auto px-4 py-0 sm:py-4 max-w-5xl">
+      {/* WhatsApp Style Header */}
+      <div className="flex justify-between items-center mb-6 bg-background sticky top-0 z-10 py-2">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={goBack} className="md:flex">
+            <ChevronLeft size={20} />
+          </Button>
+          <div className="flex items-center gap-3">
+            <Avatar className="h-12 w-12 border">
+              <AvatarFallback className="bg-primary/10 text-primary text-lg">AP</AvatarFallback>
+            </Avatar>
+            <div>
+              <h1 className="text-xl font-semibold text-foreground">{roomDetails.name}</h1>
+              <p className="text-sm text-muted-foreground">
+                {roomDetails.members.filter(m => m.online).length} online • {roomDetails.members.length} members
+              </p>
+            </div>
+          </div>
         </div>
         <div className="flex gap-2">
           <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex items-center gap-1.5"
-            onClick={goToChat}
+            variant="ghost" 
+            size="icon"
+            className="text-muted-foreground"
           >
-            <MessageSquare size={16} />
-            Open Chat
+            <Phone size={20} />
           </Button>
           <Button 
-            size="sm" 
-            className="flex items-center gap-1.5"
+            variant="ghost" 
+            size="icon"
+            className="text-muted-foreground"
           >
-            <Video size={16} />
-            Start Call
+            <Video size={20} />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={goToChat}
+            className="text-muted-foreground"
+          >
+            <MessageSquare size={20} />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <MoreVertical size={16} />
+              <Button variant="ghost" size="icon" className="text-muted-foreground">
+                <MoreVertical size={20} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Room Options</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <Users size={16} className="mr-2" />
+                <Search size={16} className="mr-2" />
+                <span>Search in Room</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings size={16} className="mr-2" />
+                <span>Room Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <UserPlus size={16} className="mr-2" />
                 <span>Invite Members</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <FileText size={16} className="mr-2" />
-                <span>View Files</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BrainCircuit size={16} className="mr-2" />
-                <span>Ask AI for Help</span>
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600">
-                Leave Room
+              <DropdownMenuItem className="text-destructive">
+                <LogOut size={16} className="mr-2" />
+                <span>Leave Room</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
       
+      {/* WhatsApp Style Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-3 w-full max-w-md mb-6">
+        <TabsList className="grid grid-cols-3 w-full mb-6">
           <TabsTrigger value="overview" className="flex items-center gap-1.5">
             <Users size={16} />
             <span>Overview</span>
@@ -139,32 +171,44 @@ const StudyRoom = () => {
             <FileText size={16} />
             <span>Resources</span>
           </TabsTrigger>
-          <TabsTrigger value="quickchat" className="flex items-center gap-1.5">
-            <MessageSquare size={16} />
-            <span>Quick Chat</span>
+          <TabsTrigger value="schedule" className="flex items-center gap-1.5">
+            <Calendar size={16} />
+            <span>Schedule</span>
           </TabsTrigger>
         </TabsList>
         
+        {/* Overview Tab - WhatsApp Style */}
         <TabsContent value="overview" className="space-y-6">
-          {/* Members Section */}
+          {/* Group Description */}
+          <Card>
+            <CardContent className="pt-6">
+              <h3 className="font-medium text-base mb-2">About this group</h3>
+              <p className="text-muted-foreground text-sm">{roomDetails.description}</p>
+              <p className="text-xs text-muted-foreground mt-2">Created on April 2, 2025</p>
+            </CardContent>
+          </Card>
+        
+          {/* Members Section - WhatsApp Style */}
           <Card>
             <CardHeader className="pb-3">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-lg">Members ({roomDetails.members.length})</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Users size={18} />
+                  <span>Members ({roomDetails.members.length})</span>
+                </CardTitle>
                 <Button variant="outline" size="sm" className="flex items-center gap-1.5">
-                  <Users size={14} />
+                  <UserPlus size={14} />
                   Invite
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {roomDetails.members.map(member => (
                   <div key={member.id} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="relative">
                         <Avatar>
-                          <AvatarImage src={member.avatar} />
                           <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
                         </Avatar>
                         {member.online && (
@@ -177,7 +221,7 @@ const StudyRoom = () => {
                           <Badge variant={member.role === 'Admin' ? "default" : "outline"} className="text-xs py-0 px-1.5">
                             {member.role}
                           </Badge>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-muted-foreground">
                             {member.online ? 'Online' : 'Offline'}
                           </span>
                         </div>
@@ -196,24 +240,27 @@ const StudyRoom = () => {
           <Card>
             <CardHeader className="pb-3">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-lg">Upcoming Sessions</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Clock size={18} />
+                  <span>Upcoming Sessions</span>
+                </CardTitle>
                 <Button variant="outline" size="sm" className="flex items-center gap-1.5">
-                  <Clock size={14} />
+                  <Calendar size={14} />
                   Schedule
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-4">
-                <div className="bg-amber-100 p-2 rounded-full">
-                  <Clock className="h-6 w-6 text-amber-600" />
+              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-lg p-4 flex items-start gap-4">
+                <div className="bg-amber-100 dark:bg-amber-900/50 p-2 rounded-full">
+                  <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-amber-900">Next Study Session</h3>
-                  <p className="text-amber-800 text-sm mt-1">Tomorrow, 4:00 PM - Problem Solving Practice</p>
+                  <h3 className="font-medium text-amber-900 dark:text-amber-200">Next Study Session</h3>
+                  <p className="text-amber-800 dark:text-amber-300 text-sm mt-1">Tomorrow, 4:00 PM - Problem Solving Practice</p>
                   <div className="flex gap-2 mt-3">
-                    <Button size="sm" variant="default" className="bg-amber-600 hover:bg-amber-700">Join</Button>
-                    <Button size="sm" variant="outline" className="border-amber-300 text-amber-700">Set Reminder</Button>
+                    <Button size="sm" variant="default" className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600">Join</Button>
+                    <Button size="sm" variant="outline" className="border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300">Set Reminder</Button>
                   </div>
                 </div>
               </div>
@@ -223,36 +270,40 @@ const StudyRoom = () => {
           {/* AI Study Assistant */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg">AI Study Assistant</CardTitle>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BrainCircuit size={18} />
+                <span>AI Study Assistant</span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <div className="bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800/50 rounded-lg p-4">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="bg-purple-100 p-2 rounded-full">
-                    <BrainCircuit className="h-6 w-6 text-purple-600" />
+                  <div className="bg-purple-100 dark:bg-purple-900/50 p-2 rounded-full">
+                    <BrainCircuit className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-purple-900">Study Assistant</h3>
-                    <p className="text-purple-800 text-sm mt-1">Get AI-powered study recommendations, summaries, and answers for this group.</p>
+                    <h3 className="font-medium text-purple-900 dark:text-purple-200">Study Assistant</h3>
+                    <p className="text-purple-800 dark:text-purple-300 text-sm mt-1">Get AI-powered study recommendations, summaries, and answers for this group.</p>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700">Ask a Question</Button>
-                  <Button variant="outline" className="w-full border-purple-300 text-purple-700">Summarize Recent Materials</Button>
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600">Ask a Question</Button>
+                  <Button variant="outline" className="w-full border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300">Summarize Recent Materials</Button>
                 </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
         
+        {/* Resources Tab - WhatsApp Style */}
         <TabsContent value="resources" className="space-y-6">
           {/* Upload New Resource */}
           <Card>
             <CardContent className="pt-6">
-              <div className="border-2 border-dashed border-gray-200 rounded-lg py-8 px-4 text-center">
+              <div className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg py-8 px-4 text-center">
                 <Upload className="h-10 w-10 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-1">Upload Study Materials</h3>
-                <p className="text-gray-500 text-sm mb-4">Drag and drop files or click to browse</p>
+                <h3 className="text-lg font-medium text-foreground mb-1">Upload Study Materials</h3>
+                <p className="text-muted-foreground text-sm mb-4">Drag and drop files or click to browse</p>
                 <Button>Upload Files</Button>
               </div>
             </CardContent>
@@ -263,18 +314,18 @@ const StudyRoom = () => {
             <CardHeader className="pb-3">
               <div className="flex justify-between items-center">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Pin size={16} className="text-red-500" />
-                  Pinned Resources
+                  <Pin size={18} />
+                  <span>Pinned Resources</span>
                 </CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {roomDetails.pinnedResources.map(resource => (
-                  <div key={resource.id} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                  <div key={resource.id} className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="bg-blue-100 p-2 rounded-full">
-                        <FileText className="h-5 w-5 text-blue-600" />
+                      <div className="bg-blue-100 dark:bg-blue-900/50 p-2 rounded-full">
+                        <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div>
                         <p className="font-medium text-sm">{resource.title}</p>
@@ -282,7 +333,7 @@ const StudyRoom = () => {
                           <Badge variant="outline" className="text-xs">
                             {resource.type}
                           </Badge>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-muted-foreground">
                             Uploaded by {resource.uploadedBy} · {resource.date}
                           </span>
                         </div>
@@ -300,98 +351,163 @@ const StudyRoom = () => {
           {/* AI Document Analysis */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg">AI Document Analysis</CardTitle>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BrainCircuit size={18} />
+                <span>AI Document Analysis</span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/50 rounded-lg p-4">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="bg-green-100 p-2 rounded-full">
-                    <BrainCircuit className="h-6 w-6 text-green-600" />
+                  <div className="bg-green-100 dark:bg-green-900/50 p-2 rounded-full">
+                    <BrainCircuit className="h-6 w-6 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-green-900">Document Assistant</h3>
-                    <p className="text-green-800 text-sm mt-1">Get AI summaries, key points, and insights from your study materials.</p>
+                    <h3 className="font-medium text-green-900 dark:text-green-200">Document Assistant</h3>
+                    <p className="text-green-800 dark:text-green-300 text-sm mt-1">Get AI summaries, key points, and insights from your study materials.</p>
                   </div>
                 </div>
-                <Button className="w-full bg-green-600 hover:bg-green-700">Analyze Documents</Button>
+                <Button className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">Analyze Documents</Button>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
         
-        <TabsContent value="quickchat" className="space-y-4">
-          <Card className="relative h-[400px] flex flex-col overflow-hidden">
-            <CardHeader className="pb-3 border-b">
-              <CardTitle className="text-lg">Quick Chat</CardTitle>
+        {/* Schedule Tab - WhatsApp Style */}
+        <TabsContent value="schedule" className="space-y-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Calendar size={18} /> 
+                  <span>Study Sessions</span>
+                </CardTitle>
+                <Button className="flex items-center gap-1.5">
+                  <Calendar size={14} />
+                  New Session
+                </Button>
+              </div>
             </CardHeader>
-            <CardContent className="overflow-y-auto flex-1 py-4">
+            <CardContent>
               <div className="space-y-4">
-                {/* Example messages */}
-                <div className="flex items-start gap-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>AJ</AvatarFallback>
-                  </Avatar>
-                  <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
-                    <p className="text-sm font-medium text-gray-900">Alex Johnson</p>
-                    <p className="text-sm text-gray-700">Has everyone reviewed the notes for tomorrow's session?</p>
-                    <p className="text-xs text-gray-500 mt-1">10:30 AM</p>
+                {/* Upcoming session */}
+                <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-lg p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-medium text-amber-900 dark:text-amber-200">Problem Solving Practice</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                        <span className="text-sm text-amber-800 dark:text-amber-300">Tomorrow, 4:00 PM</span>
+                      </div>
+                      <p className="text-sm text-amber-700 dark:text-amber-400 mt-2">
+                        Practice problems from Chapter 5: Quantum Mechanics
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Users className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                        <span className="text-sm text-amber-800 dark:text-amber-300">4 attendees</span>
+                      </div>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-amber-600 dark:text-amber-400">
+                          <MoreVertical size={16} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>Set Reminder</DropdownMenuItem>
+                        <DropdownMenuItem>Share</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive">Cancel</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  <div className="flex gap-2 mt-3">
+                    <Button size="sm" className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600">Join</Button>
+                    <Button size="sm" variant="outline" className="border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300">Set Reminder</Button>
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3 justify-end">
-                  <div className="bg-blue-100 rounded-lg p-3 max-w-[80%]">
-                    <p className="text-sm text-blue-700">I've gone through most of it. Still have questions about the quantum tunneling section.</p>
-                    <p className="text-xs text-blue-500 mt-1">10:32 AM</p>
+                {/* Future session */}
+                <div className="bg-background border rounded-lg p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-medium">Exam Preparation</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Friday, April 9, 2:00 PM</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Final review before the midterm exam
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">3 attendees</span>
+                      </div>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-muted-foreground">
+                          <MoreVertical size={16} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>Set Reminder</DropdownMenuItem>
+                        <DropdownMenuItem>Share</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive">Cancel</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>You</AvatarFallback>
-                  </Avatar>
+                  <div className="flex gap-2 mt-3">
+                    <Button size="sm" variant="outline">Set Reminder</Button>
+                  </div>
                 </div>
                 
-                <div className="flex items-start gap-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>SC</AvatarFallback>
-                  </Avatar>
-                  <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
-                    <p className="text-sm font-medium text-gray-900">Sarah Chen</p>
-                    <p className="text-sm text-gray-700">I can help with that section. Let's discuss it tomorrow.</p>
-                    <p className="text-xs text-gray-500 mt-1">10:35 AM</p>
+                {/* Past session */}
+                <div className="bg-muted/30 border rounded-lg p-4 opacity-75">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-medium">Concept Discussion</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Monday, April 1, 3:00 PM</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Discussed core concepts from Chapter 4
+                      </p>
+                      <Badge variant="outline" className="mt-2">Completed</Badge>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-muted-foreground">
+                          <MoreVertical size={16} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>View Notes</DropdownMenuItem>
+                        <DropdownMenuItem>View Recording</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               </div>
             </CardContent>
-            
-            <div className="p-3 border-t mt-auto">
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon">
-                  <Paperclip size={18} />
-                </Button>
-                <Input 
-                  placeholder="Type a message..." 
-                  value={message} 
-                  onChange={e => setMessage(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
-                  className="flex-1"
-                />
-                <Button variant="ghost" size="icon">
-                  <Smile size={18} />
-                </Button>
-                <Button variant="ghost" size="icon">
-                  <Mic size={18} />
-                </Button>
-                <Button size="icon" disabled={!message.trim()} onClick={handleSendMessage}>
-                  <Send size={18} />
-                </Button>
-              </div>
-              <div className="text-xs text-gray-500 mt-2 text-center">
-                <Button variant="link" size="sm" className="p-0 h-auto text-xs" onClick={goToChat}>
-                  Go to full chat
-                </Button>
-              </div>
-            </div>
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Quick Chat Button - Fixed to Bottom Right */}
+      <div className="fixed bottom-6 right-6">
+        <Button 
+          onClick={goToChat} 
+          size="lg"
+          className="rounded-full h-14 w-14 shadow-lg" 
+        >
+          <MessageSquare size={24} />
+        </Button>
+      </div>
     </div>
   );
 };
