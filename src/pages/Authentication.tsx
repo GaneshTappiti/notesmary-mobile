@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,6 +23,26 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info } from "lucide-react";
+
+const isEducationalEmail = (email: string) => {
+  const domain = email.split('@')[1];
+  if (!domain) return false;
+  
+  const eduPatterns = [
+    /\.edu$/,
+    /\.ac\.[a-z]{2,}$/,
+    /\.edu\.[a-z]{2,}$/,
+    /\.college$/,
+    /\.university$/,
+    /\.org$/,
+    /\.school$/,
+    /\.(ca|de|fr|it|es|br|cn|in|uk|ng|jp|au|my|sg)$/
+  ];
+  
+  return eduPatterns.some(pattern => pattern.test(domain));
+};
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -32,7 +51,12 @@ const loginSchema = z.object({
 
 const signupSchema = z.object({
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  email: z
+    .string()
+    .email({ message: "Please enter a valid email address" })
+    .refine(isEducationalEmail, {
+      message: "Please use an academic institution email (e.g., .edu, .ac.xx)",
+    }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   confirmPassword: z.string(),
 }).refine(data => data.password === data.confirmPassword, {
@@ -45,7 +69,6 @@ const Authentication = () => {
   const { login, signup, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if already authenticated
   if (isAuthenticated) {
     navigate("/dashboard");
     return null;
@@ -74,8 +97,12 @@ const Authentication = () => {
   };
 
   const onSignupSubmit = async (values: z.infer<typeof signupSchema>) => {
-    await signup(values.email, values.password, values.fullName);
-    setActiveTab("login");
+    try {
+      await signup(values.email, values.password, values.fullName);
+      setActiveTab("login");
+    } catch (error: any) {
+      console.error("Signup error:", error);
+    }
   };
 
   return (
@@ -175,9 +202,15 @@ const Authentication = () => {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your email" {...field} />
+                            <Input placeholder="Enter your college email" {...field} />
                           </FormControl>
                           <FormMessage />
+                          <Alert className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 p-2 mt-1">
+                            <Info className="h-4 w-4 inline-block mr-1 text-blue-500" />
+                            <AlertDescription className="text-xs text-blue-600 dark:text-blue-400 inline">
+                              We only accept academic institution email addresses (.edu, .ac.xx, etc.)
+                            </AlertDescription>
+                          </Alert>
                         </FormItem>
                       )}
                     />

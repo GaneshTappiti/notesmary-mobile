@@ -20,11 +20,42 @@ export type UserProfile = {
   id: string;
   full_name: string | null;
   email: string | null;
+  email_domain?: string | null;
   branch: string | null;
   year_of_entry: string | null;
   year_of_completion: string | null;
   phone: string | null;
   avatar_url: string | null;
+};
+
+// Educational domain patterns
+const EDUCATIONAL_DOMAINS = [
+  /\.edu$/,                // .edu
+  /\.ac\.[a-z]{2,}$/,      // .ac.xx
+  /\.edu\.[a-z]{2,}$/,     // .edu.xx
+  /\.college$/,            // .college
+  /\.university$/,         // .university
+  /\.org$/,                // .org
+  /\.school$/,             // .school
+  // Common country-specific academic domains
+  /\.(ca|de|fr|it|es|br|cn|in|uk|ng|jp|au|my|sg)$/ 
+];
+
+/**
+ * Check if an email domain is from an educational institution
+ */
+const isEducationalEmail = (email: string): boolean => {
+  const domain = email.split('@')[1];
+  if (!domain) return false;
+  
+  return EDUCATIONAL_DOMAINS.some(pattern => pattern.test(domain));
+};
+
+/**
+ * Extract domain from email
+ */
+const extractEmailDomain = (email: string): string => {
+  return email.split('@')[1] || '';
 };
 
 export const AuthService = {
@@ -33,6 +64,13 @@ export const AuthService = {
    */
   async signUp(credentials: SignUpCredentials) {
     try {
+      // Verify email domain is educational
+      if (!isEducationalEmail(credentials.email)) {
+        throw new Error('Access is limited to academic institution emails. Please sign up with your official college email address.');
+      }
+      
+      const emailDomain = extractEmailDomain(credentials.email);
+      
       // Sign up with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: credentials.email,
@@ -40,6 +78,7 @@ export const AuthService = {
         options: {
           data: {
             full_name: credentials.fullName || '',
+            email_domain: emailDomain,
           },
         },
       });
