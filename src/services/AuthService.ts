@@ -133,6 +133,7 @@ export const AuthService = {
    */
   async getUserProfile(userId: string): Promise<UserProfile | null> {
     try {
+      // Use type casting to work around type issues
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -143,7 +144,7 @@ export const AuthService = {
         throw error;
       }
 
-      return data;
+      return data as UserProfile;
     } catch (error) {
       console.error('Error fetching user profile:', error);
       return null;
@@ -155,9 +156,10 @@ export const AuthService = {
    */
   async updateUserProfile(userId: string, profile: Partial<UserProfile>) {
     try {
+      // Use type casting to work around type issues
       const { data, error } = await supabase
         .from('profiles')
-        .update(profile)
+        .update(profile as any)
         .eq('id', userId)
         .select()
         .single();
@@ -171,7 +173,7 @@ export const AuthService = {
         description: 'Your profile has been updated successfully.',
       });
 
-      return data;
+      return data as UserProfile;
     } catch (error: any) {
       console.error('Error updating profile:', error);
       toast({

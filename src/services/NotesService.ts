@@ -5,13 +5,13 @@ import { toast } from '@/hooks/use-toast';
 export type Note = {
   id: string;
   title: string;
-  subject?: string;
-  branch?: string;
-  chapter_name?: string;
-  chapter_no?: string;
-  regulation?: string;
-  content?: string;
-  file_url?: string;
+  subject?: string | null;
+  branch?: string | null;
+  chapter_name?: string | null;
+  chapter_no?: string | null;
+  regulation?: string | null;
+  content?: string | null;
+  file_url?: string | null;
   uploaded_at: string;
   user_id: string;
 };
@@ -63,7 +63,7 @@ export const NotesService = {
         fileUrl = urlData.publicUrl;
       }
 
-      // Insert the note into the database
+      // Insert the note into the database with type casting to work around type issues
       const { data, error } = await supabase.from('notes').insert({
         title: note.title,
         subject: note.subject || null,
@@ -74,7 +74,7 @@ export const NotesService = {
         content: note.content || null,
         file_url: fileUrl,
         user_id: userId,
-      }).select().single();
+      } as any).select().single();
 
       if (error) {
         throw error;
@@ -85,7 +85,7 @@ export const NotesService = {
         description: 'Your note has been uploaded successfully.',
       });
 
-      return data;
+      return data as Note;
     } catch (error: any) {
       console.error('Error uploading note:', error);
       toast({
@@ -111,7 +111,7 @@ export const NotesService = {
         throw error;
       }
 
-      return data;
+      return data as Note[];
     } catch (error) {
       console.error('Error fetching user notes:', error);
       return [];
@@ -133,7 +133,7 @@ export const NotesService = {
         throw error;
       }
 
-      return data;
+      return data as Note;
     } catch (error) {
       console.error('Error fetching note:', error);
       return null;
@@ -175,13 +175,13 @@ export const NotesService = {
         fileUrl = urlData.publicUrl;
       }
 
-      // Update the note in the database
+      // Update the note in the database with type casting
       const { data, error } = await supabase
         .from('notes')
         .update({
           ...updates,
           file_url: fileUrl,
-        })
+        } as any)
         .eq('id', noteId)
         .select()
         .single();
@@ -195,7 +195,7 @@ export const NotesService = {
         description: 'Your note has been updated successfully.',
       });
 
-      return data;
+      return data as Note;
     } catch (error: any) {
       console.error('Error updating note:', error);
       toast({
@@ -224,7 +224,7 @@ export const NotesService = {
       }
 
       // If the note has a file, delete it from storage
-      if (note.file_url) {
+      if (note && note.file_url) {
         const filePath = note.file_url.split('/').pop();
         const userId = (await supabase.auth.getUser()).data.user?.id;
         
@@ -272,7 +272,8 @@ export const NotesService = {
     chapter?: string;
   }) {
     try {
-      let query = supabase.from('notes').select('*');
+      // Start with a base query and use type casting
+      let query = supabase.from('notes').select('*') as any;
 
       if (params.title) {
         query = query.ilike('title', `%${params.title}%`);
@@ -296,7 +297,7 @@ export const NotesService = {
         throw error;
       }
 
-      return data;
+      return data as Note[];
     } catch (error) {
       console.error('Error searching notes:', error);
       return [];

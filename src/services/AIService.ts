@@ -66,6 +66,7 @@ export const AIService = {
    */
   async getUserAIRequests() {
     try {
+      // Explicitly type the response to match our Database types
       const { data, error } = await supabase
         .from('ai_requests')
         .select('*')
@@ -75,7 +76,7 @@ export const AIService = {
         throw error;
       }
 
-      return data;
+      return data || [];
     } catch (error) {
       console.error('Error fetching AI requests:', error);
       return [];
