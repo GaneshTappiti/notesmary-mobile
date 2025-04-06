@@ -1,4 +1,9 @@
+
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from "@/hooks/use-toast";
+
+// Define the AIRequestType type
+export type AIRequestType = 'generate-answer' | 'generate-questions' | 'youtube-summary';
 
 export const AIService = {
   async saveAIRequest(userId: string, requestType: string, input: any, output: any, tokensUsed: number) {
