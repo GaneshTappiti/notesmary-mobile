@@ -1,4 +1,3 @@
-
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { 
   BookText, 
@@ -48,7 +47,6 @@ export const AppSidebar = () => {
   const [isStudyRoomOpen, setIsStudyRoomOpen] = useState(false);
   
   const isActive = (path: string) => {
-    // Match exact path or path pattern with parameters
     if (path.includes(':')) {
       const basePath = path.split('/:')[0];
       return location.pathname.startsWith(basePath);
@@ -57,17 +55,12 @@ export const AppSidebar = () => {
   };
   
   const handleSignOut = () => {
-    // Clear authentication data
     localStorage.removeItem("isLoggedIn");
-    
-    // Show toast notification
     toast({
       title: "Signed out successfully",
       description: "You have been logged out of your account.",
       duration: 3000,
     });
-    
-    // Redirect to home page
     navigate('/');
   };
   
@@ -114,7 +107,6 @@ export const AppSidebar = () => {
     },
   ];
   
-  // Study room submenu items
   const studyRoomItems = [
     {
       title: "Study Room",
@@ -128,7 +120,6 @@ export const AppSidebar = () => {
     },
   ];
   
-  // Settings submenu items (including subscription)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const settingsItems = [
     {
@@ -149,7 +140,6 @@ export const AppSidebar = () => {
         <Link to="/dashboard" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
           Notex
         </Link>
-        {/* Dark mode toggle removed from here */}
       </SidebarHeader>
       
       <SidebarContent>
@@ -173,7 +163,6 @@ export const AppSidebar = () => {
                 </SidebarMenuItem>
               ))}
               
-              {/* Collapsible Study Room section */}
               <SidebarMenuItem>
                 <Collapsible
                   open={isStudyRoomOpen}
@@ -215,7 +204,6 @@ export const AppSidebar = () => {
                 </Collapsible>
               </SidebarMenuItem>
               
-              {/* Collapsible Settings section with Subscription */}
               <SidebarMenuItem>
                 <Collapsible
                   open={isSettingsOpen}
@@ -277,7 +265,6 @@ export const AppSidebar = () => {
         </div>
       </SidebarFooter>
       
-      {/* Add sidebar rail to make it draggable */}
       <SidebarRail className="hidden md:flex" />
     </Sidebar>
   );

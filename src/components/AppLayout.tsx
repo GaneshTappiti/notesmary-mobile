@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from '@/components/AppSidebar';
 import { Navbar } from '@/components/Navbar';
 import { HeaderNav } from '@/components/HeaderNav';
@@ -104,28 +104,26 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   return (
     <ThemeProvider>
       <TooltipProvider>
-        <SidebarProvider>
-          <div className="min-h-screen flex w-full max-w-full overflow-x-hidden">
-            {/* Desktop sidebar */}
-            <div className="hidden md:block">
-              <AppSidebar />
-            </div>
-            
-            {/* Mobile sidebar drawer */}
-            <MobileSidebar />
-            
-            <SidebarInset>
-              <div className="flex flex-col min-h-full max-w-full">
-                {/* New HeaderNav component */}
-                <HeaderNav />
-                
-                <main className="flex-1 p-4 md:p-6 overflow-auto">
-                  {children}
-                </main>
-              </div>
-            </SidebarInset>
+        <div className="min-h-screen flex w-full max-w-full overflow-x-hidden">
+          {/* Desktop sidebar */}
+          <div className="hidden md:block">
+            <AppSidebar />
           </div>
-        </SidebarProvider>
+          
+          {/* Mobile sidebar drawer */}
+          <MobileSidebar />
+          
+          <SidebarInset>
+            <div className="flex flex-col min-h-full max-w-full">
+              {/* New HeaderNav component */}
+              <HeaderNav />
+              
+              <main className="flex-1 p-4 md:p-6 overflow-auto">
+                {children}
+              </main>
+            </div>
+          </SidebarInset>
+        </div>
       </TooltipProvider>
     </ThemeProvider>
   );
