@@ -1,13 +1,32 @@
-
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
-
-export type AIRequestType = 'generate-answer' | 'generate-questions' | 'youtube-summary';
 
 export const AIService = {
-  /**
-   * Send a request to the AI integration edge function
-   */
+  async saveAIRequest(userId: string, requestType: string, input: any, output: any, tokensUsed: number) {
+    try {
+      const { data, error } = await supabase
+        .from('ai_requests')
+        .insert({
+          user_id: userId,
+          request_type: requestType,
+          input,
+          output,
+          tokens_used: tokensUsed
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error saving AI request:', error);
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error in saveAIRequest:', error);
+      throw error;
+    }
+  },
+
   async sendRequest(requestType: AIRequestType, prompt: string, content?: string) {
     try {
       const user = await supabase.auth.getUser();
@@ -40,33 +59,20 @@ export const AIService = {
     }
   },
 
-  /**
-   * Get AI-generated answer to a question
-   */
   async getAnswer(question: string, noteContent?: string) {
     return this.sendRequest('generate-answer', question, noteContent);
   },
 
-  /**
-   * Generate questions from note content
-   */
   async generateQuestions(noteContent: string) {
     return this.sendRequest('generate-questions', '', noteContent);
   },
 
-  /**
-   * Generate a summary from YouTube content
-   */
   async getYouTubeSummary(videoUrl: string) {
     return this.sendRequest('youtube-summary', videoUrl);
   },
 
-  /**
-   * Get user's past AI requests
-   */
   async getUserAIRequests() {
     try {
-      // Explicitly type the response to match our Database types
       const { data, error } = await supabase
         .from('ai_requests')
         .select('*')

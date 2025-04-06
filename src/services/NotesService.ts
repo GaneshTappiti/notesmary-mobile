@@ -1,96 +1,57 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { Database } from '@/types/database.types';
 
-export type Note = {
-  id: string;
-  title: string;
-  subject?: string | null;
-  branch?: string | null;
-  chapter_name?: string | null;
-  chapter_no?: string | null;
-  regulation?: string | null;
-  content?: string | null;
-  file_url?: string | null;
-  uploaded_at: string;
-  user_id: string;
-};
+export type Note = Database['public']['Tables']['notes']['Row'];
 
-export type NoteUpload = {
+export type NoteInput = {
   title: string;
-  subject?: string;
-  branch?: string;
-  chapter_name?: string;
-  chapter_no?: string;
-  regulation?: string;
-  content?: string;
-  file?: File;
+  subject: string;
+  branch: string;
+  chapter_name: string;
+  chapter_no: string;
+  regulation: string;
+  content: string;
+  file_url?: string;
 };
 
 export const NotesService = {
   /**
-   * Upload a new note with optional file attachment
+   * Upload notes for a user
    */
-  async uploadNote(note: NoteUpload) {
+  async uploadNotes(note: NoteInput, userId: string) {
     try {
-      const user = await supabase.auth.getUser();
-      if (!user.data.user) {
-        throw new Error('You must be logged in to upload notes');
-      }
-
-      const userId = user.data.user.id;
-      let fileUrl = null;
-
-      // If a file was provided, upload it to storage
-      if (note.file) {
-        const fileExt = note.file.name.split('.').pop();
-        const filePath = `${userId}/${Date.now()}.${fileExt}`;
-
-        // Upload the file to Supabase storage
-        const { data: fileData, error: fileError } = await supabase.storage
-          .from('notes')
-          .upload(filePath, note.file, {
-            cacheControl: '3600',
-            upsert: false,
-          });
-
-        if (fileError) {
-          throw fileError;
-        }
-
-        // Get the public URL for the file
-        const { data: urlData } = supabase.storage.from('notes').getPublicUrl(filePath);
-        fileUrl = urlData.publicUrl;
-      }
-
-      // Insert the note into the database with type casting to work around type issues
-      const { data, error } = await supabase.from('notes').insert({
-        title: note.title,
-        subject: note.subject || null,
-        branch: note.branch || null,
-        chapter_name: note.chapter_name || null,
-        chapter_no: note.chapter_no || null,
-        regulation: note.regulation || null,
-        content: note.content || null,
-        file_url: fileUrl,
-        user_id: userId,
-      } as any).select().single();
+      const { data, error } = await supabase
+        .from('notes')
+        .insert({
+          user_id: userId,
+          title: note.title,
+          subject: note.subject,
+          branch: note.branch,
+          chapter_name: note.chapter_name,
+          chapter_no: note.chapter_no,
+          regulation: note.regulation,
+          content: note.content,
+          file_url: note.file_url,
+        })
+        .select()
+        .single();
 
       if (error) {
         throw error;
       }
 
       toast({
-        title: 'Note Uploaded',
-        description: 'Your note has been uploaded successfully.',
+        title: 'Notes Uploaded',
+        description: 'Your notes have been uploaded successfully.',
       });
 
-      return data as Note;
+      return data;
     } catch (error: any) {
-      console.error('Error uploading note:', error);
+      console.error('Error uploading notes:', error);
       toast({
         title: 'Upload Failed',
-        description: error.message || 'Failed to upload note. Please try again.',
+        description: error.message || 'Failed to upload notes. Please try again.',
         variant: 'destructive',
       });
       throw error;
@@ -98,13 +59,14 @@ export const NotesService = {
   },
 
   /**
-   * Get all notes for the current user
+   * Get all notes for a user
    */
-  async getUserNotes() {
+  async getNotes(userId: string) {
     try {
       const { data, error } = await supabase
         .from('notes')
         .select('*')
+        .eq('user_id', userId)
         .order('uploaded_at', { ascending: false });
 
       if (error) {
@@ -113,15 +75,15 @@ export const NotesService = {
 
       return data as Note[];
     } catch (error) {
-      console.error('Error fetching user notes:', error);
+      console.error('Error fetching notes:', error);
       return [];
     }
   },
 
   /**
-   * Get a specific note by ID
+   * Get a note by ID
    */
-  async getNoteById(noteId: string) {
+  async getNote(noteId: string) {
     try {
       const { data, error } = await supabase
         .from('notes')
@@ -141,47 +103,13 @@ export const NotesService = {
   },
 
   /**
-   * Update an existing note
+   * Update a note
    */
-  async updateNote(noteId: string, updates: Partial<Note>, newFile?: File) {
+  async updateNote(noteId: string, note: Partial<NoteInput>) {
     try {
-      const user = await supabase.auth.getUser();
-      if (!user.data.user) {
-        throw new Error('You must be logged in to update notes');
-      }
-
-      let fileUrl = updates.file_url;
-
-      // If a new file was provided, upload it
-      if (newFile) {
-        const userId = user.data.user.id;
-        const fileExt = newFile.name.split('.').pop();
-        const filePath = `${userId}/${Date.now()}.${fileExt}`;
-
-        // Upload the file to Supabase storage
-        const { error: fileError } = await supabase.storage
-          .from('notes')
-          .upload(filePath, newFile, {
-            cacheControl: '3600',
-            upsert: false,
-          });
-
-        if (fileError) {
-          throw fileError;
-        }
-
-        // Get the public URL for the file
-        const { data: urlData } = supabase.storage.from('notes').getPublicUrl(filePath);
-        fileUrl = urlData.publicUrl;
-      }
-
-      // Update the note in the database with type casting
       const { data, error } = await supabase
         .from('notes')
-        .update({
-          ...updates,
-          file_url: fileUrl,
-        } as any)
+        .update(note)
         .eq('id', noteId)
         .select()
         .single();
@@ -212,31 +140,7 @@ export const NotesService = {
    */
   async deleteNote(noteId: string) {
     try {
-      // First get the note to check if it has a file
-      const { data: note, error: fetchError } = await supabase
-        .from('notes')
-        .select('file_url')
-        .eq('id', noteId)
-        .single();
-
-      if (fetchError) {
-        throw fetchError;
-      }
-
-      // If the note has a file, delete it from storage
-      if (note && note.file_url) {
-        const filePath = note.file_url.split('/').pop();
-        const userId = (await supabase.auth.getUser()).data.user?.id;
-        
-        if (userId && filePath) {
-          await supabase.storage
-            .from('notes')
-            .remove([`${userId}/${filePath}`]);
-        }
-      }
-
-      // Delete the note from the database
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('notes')
         .delete()
         .eq('id', noteId);
@@ -247,7 +151,7 @@ export const NotesService = {
 
       toast({
         title: 'Note Deleted',
-        description: 'The note has been deleted successfully.',
+        description: 'Your note has been deleted successfully.',
       });
 
       return true;
@@ -258,40 +162,69 @@ export const NotesService = {
         description: error.message || 'Failed to delete note. Please try again.',
         variant: 'destructive',
       });
+      return false;
+    }
+  },
+
+  async createNote(note: NoteInput, userId: string) {
+    try {
+      const { data, error } = await supabase
+        .from('notes')
+        .insert({
+          title: note.title,
+          subject: note.subject,
+          branch: note.branch,
+          chapter_name: note.chapter_name,
+          chapter_no: note.chapter_no,
+          regulation: note.regulation,
+          content: note.content,
+          file_url: note.file_url,
+          user_id: userId
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    } catch (error: any) {
+      console.error('Error creating note:', error);
       throw error;
     }
   },
 
-  /**
-   * Search notes by various criteria
-   */
-  async searchNotes(params: {
-    title?: string;
-    subject?: string;
-    branch?: string;
-    chapter?: string;
-  }) {
+  async getNoteById(id: string) {
     try {
-      // Start with a base query and use type casting
-      let query = supabase.from('notes').select('*') as any;
+      const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('id', id)
+        .single();
 
-      if (params.title) {
-        query = query.ilike('title', `%${params.title}%`);
+      if (error) {
+        throw error;
       }
-      
-      if (params.subject) {
-        query = query.eq('subject', params.subject);
-      }
-      
-      if (params.branch) {
-        query = query.eq('branch', params.branch);
-      }
-      
-      if (params.chapter) {
-        query = query.ilike('chapter_name', `%${params.chapter}%`);
-      }
-      
-      const { data, error } = await query.order('uploaded_at', { ascending: false });
+
+      return data;
+    } catch (error: any) {
+      console.error('Error getting note by ID:', error);
+      return null;
+    }
+  },
+
+  /**
+   * Find notes by keywords
+   */
+  async findNotes(userId: string, keywords: string) {
+    try {
+      const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('user_id', userId)
+        .ilike('title', `%${keywords}%`)
+        .order('uploaded_at', { ascending: false });
 
       if (error) {
         throw error;
@@ -299,7 +232,7 @@ export const NotesService = {
 
       return data as Note[];
     } catch (error) {
-      console.error('Error searching notes:', error);
+      console.error('Error finding notes:', error);
       return [];
     }
   },
