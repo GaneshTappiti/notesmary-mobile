@@ -9,7 +9,114 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      ai_requests: {
+        Row: {
+          created_at: string | null
+          id: string
+          input: Json | null
+          output: Json | null
+          request_type: string
+          tokens_used: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          input?: Json | null
+          output?: Json | null
+          request_type: string
+          tokens_used?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          input?: Json | null
+          output?: Json | null
+          request_type?: string
+          tokens_used?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notes: {
+        Row: {
+          branch: string | null
+          chapter_name: string | null
+          chapter_no: string | null
+          content: string | null
+          file_url: string | null
+          id: string
+          regulation: string | null
+          subject: string | null
+          title: string
+          uploaded_at: string | null
+          user_id: string
+        }
+        Insert: {
+          branch?: string | null
+          chapter_name?: string | null
+          chapter_no?: string | null
+          content?: string | null
+          file_url?: string | null
+          id?: string
+          regulation?: string | null
+          subject?: string | null
+          title: string
+          uploaded_at?: string | null
+          user_id: string
+        }
+        Update: {
+          branch?: string | null
+          chapter_name?: string | null
+          chapter_no?: string | null
+          content?: string | null
+          file_url?: string | null
+          id?: string
+          regulation?: string | null
+          subject?: string | null
+          title?: string
+          uploaded_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          branch: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string | null
+          year_of_completion: string | null
+          year_of_entry: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          branch?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string | null
+          year_of_completion?: string | null
+          year_of_entry?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          branch?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string | null
+          year_of_completion?: string | null
+          year_of_entry?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
