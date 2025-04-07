@@ -7,12 +7,11 @@ import { Navbar } from '@/components/Navbar';
 import { HeaderNav } from '@/components/HeaderNav';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Menu, Upload, Search, Plus } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { useIsMobile } from '@/hooks/use-mobile';
-import { UploadModal } from '@/components/UploadModal';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -26,7 +25,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isStudyRoomPage, setIsStudyRoomPage] = useState(false);
   const [isStudyRoomChatPage, setIsStudyRoomChatPage] = useState(false);
-  const [showUploadModal, setShowUploadModal] = useState(false);
   const isMobile = useIsMobile();
   
   // Determine if sidebar should be shown based on the current path
@@ -78,31 +76,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     </Drawer>
   );
   
-  // Floating action button for quick actions
-  const FloatingActionButton = () => (
-    <div className="fixed bottom-6 right-6 z-40">
-      <div className="flex flex-col items-end gap-3">
-        <Button
-          variant="default"
-          size="icon"
-          className="h-12 w-12 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700"
-          onClick={() => setShowUploadModal(true)}
-        >
-          <Upload className="h-5 w-5" />
-        </Button>
-        
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-12 w-12 rounded-full shadow-lg bg-background border-blue-200 hover:border-blue-300"
-          onClick={() => navigate('/ai-answers')}
-        >
-          <Search className="h-5 w-5 text-blue-600" />
-        </Button>
-      </div>
-    </div>
-  );
-  
   // For study room chat, we want a clean layout to maximize chat space
   if (isStudyRoomChatPage) {
     return (
@@ -113,8 +86,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             
             {/* Mobile sidebar for study room */}
             <MobileSidebar />
-            <FloatingActionButton />
-            <UploadModal open={showUploadModal} onClose={() => setShowUploadModal(false)} />
           </div>
         </TooltipProvider>
       </ThemeProvider>
@@ -134,8 +105,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             
             {/* Mobile sidebar for study room */}
             <MobileSidebar />
-            <FloatingActionButton />
-            <UploadModal open={showUploadModal} onClose={() => setShowUploadModal(false)} />
           </div>
         </TooltipProvider>
       </ThemeProvider>
@@ -165,9 +134,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               </main>
             </div>
           </SidebarInset>
-          
-          <FloatingActionButton />
-          <UploadModal open={showUploadModal} onClose={() => setShowUploadModal(false)} />
         </div>
       </TooltipProvider>
     </ThemeProvider>
