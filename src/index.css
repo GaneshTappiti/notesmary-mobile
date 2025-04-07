@@ -90,7 +90,6 @@
   src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
 }
 
 @font-face {
@@ -98,7 +97,6 @@
   src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-medium-webfont.woff');
   font-weight: 500;
   font-style: normal;
-  font-display: swap;
 }
 
 @font-face {
@@ -106,7 +104,6 @@
   src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-semibold-webfont.woff');
   font-weight: 600;
   font-style: normal;
-  font-display: swap;
 }
 
 @font-face {
@@ -114,17 +111,11 @@
   src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-bold-webfont.woff');
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
 }
 
 @layer base {
   * {
     @apply border-border;
-  }
-
-  html {
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
   }
 
   body {
@@ -133,47 +124,10 @@
     padding: 0;
     width: 100%;
     overflow-x: hidden;
-    min-height: 100vh;
-    /* For iOS Safari fixed position issues */
-    -webkit-overflow-scrolling: touch;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-medium tracking-tight;
-  }
-
-  /* Ensure images are responsive by default */
-  img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  /* Improved touch targets for mobile */
-  button, 
-  a, 
-  input, 
-  select, 
-  textarea {
-    @apply transition-all duration-300;
-    touch-action: manipulation;
-  }
-
-  input, 
-  textarea, 
-  select, 
-  button {
-    font-family: inherit;
-    font-size: 100%;
-  }
-
-  /* Enhanced focus styles for accessibility */
-  a:focus,
-  button:focus,
-  input:focus,
-  select:focus,
-  textarea:focus {
-    @apply outline-none ring-2 ring-primary/70;
   }
 
   .glass-card {
@@ -181,7 +135,11 @@
   }
 
   .section-container {
-    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16;
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16;
+  }
+
+  button, a {
+    @apply transition-all duration-300;
   }
 }
 
@@ -228,47 +186,5 @@
   
   .content-container {
     @apply mx-auto w-full max-w-7xl;
-  }
-
-  /* Improved visibility for small screens */
-  .text-mobile-adaptive {
-    @apply text-sm sm:text-base;
-  }
-
-  /* Safe area inset padding for modern mobile browsers */
-  .safe-padding-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 0);
-  }
-
-  .safe-padding-top {
-    padding-top: env(safe-area-inset-top, 0);
-  }
-  
-  /* Prevent text from being too small on mobile */
-  .min-text-size {
-    font-size: max(16px, 1rem);
-  }
-
-  /* Utility for proper vertical rhythm */
-  .vertical-rhythm > * + * {
-    @apply mt-4;
-  }
-
-  /* Improved overflow handling */
-  .overflow-x-auto-safe {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
-    scrollbar-width: thin;
-  }
-
-  /* Better card layouts at different breakpoints */
-  .responsive-grid {
-    @apply grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
-  }
-  
-  /* Responsive tables */
-  .responsive-table {
-    @apply w-full overflow-x-auto-safe whitespace-nowrap sm:whitespace-normal;
   }
 }

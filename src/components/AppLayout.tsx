@@ -11,7 +11,6 @@ import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -25,7 +24,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isStudyRoomPage, setIsStudyRoomPage] = useState(false);
   const [isStudyRoomChatPage, setIsStudyRoomChatPage] = useState(false);
-  const isMobile = useIsMobile();
   
   // Determine if sidebar should be shown based on the current path
   useEffect(() => {
@@ -40,20 +38,13 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     setIsStudyRoomChatPage(location.pathname.includes('/study-room/') && location.pathname.includes('/chat'));
   }, [location.pathname]);
   
-  // Close drawer when navigating or when screen size changes
-  useEffect(() => {
-    setIsDrawerOpen(false);
-  }, [location.pathname, isMobile]);
-  
   if (!showSidebar) {
     return (
       <ThemeProvider>
         <TooltipProvider>
-          <div className="min-h-screen w-full max-w-full overflow-hidden">
+          <div className="min-h-screen w-full max-w-full overflow-x-hidden">
             <Navbar />
-            <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
-              {children}
-            </main>
+            <main className="pt-16 px-4 max-w-full overflow-x-auto">{children}</main>
           </div>
         </TooltipProvider>
       </ThemeProvider>
@@ -68,7 +59,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           <Menu className="h-5 w-5" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="p-0 max-h-[90vh] h-[90vh] rounded-t-xl">
+      <DrawerContent className="p-0 max-h-screen h-screen">
         <div className="h-full overflow-y-auto">
           <AppSidebar />
         </div>
@@ -81,8 +72,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     return (
       <ThemeProvider>
         <TooltipProvider>
-          <div className="min-h-screen w-full max-w-full overflow-hidden">
-            <main className="w-full h-screen pb-safe-bottom">{children}</main>
+          <div className="min-h-screen w-full max-w-full overflow-x-hidden">
+            <main className="w-full h-screen">{children}</main>
             
             {/* Mobile sidebar for study room */}
             <MobileSidebar />
@@ -97,11 +88,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     return (
       <ThemeProvider>
         <TooltipProvider>
-          <div className="min-h-screen w-full max-w-full overflow-hidden">
+          <div className="min-h-screen w-full max-w-full overflow-x-hidden">
             <HeaderNav />
-            <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
-              {children}
-            </main>
+            <main className="pt-16 px-4 max-w-full overflow-x-auto">{children}</main>
             
             {/* Mobile sidebar for study room */}
             <MobileSidebar />
@@ -115,7 +104,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   return (
     <ThemeProvider>
       <TooltipProvider>
-        <div className="min-h-screen flex w-full max-w-full overflow-hidden">
+        <div className="min-h-screen flex w-full max-w-full overflow-x-hidden">
           {/* Desktop sidebar */}
           <div className="hidden md:block">
             <AppSidebar />
@@ -129,7 +118,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               {/* New HeaderNav component */}
               <HeaderNav />
               
-              <main className="flex-1 p-4 md:p-6 pb-safe-bottom overflow-auto">
+              <main className="flex-1 p-4 md:p-6 overflow-auto">
                 {children}
               </main>
             </div>
