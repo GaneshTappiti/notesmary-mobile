@@ -51,6 +51,19 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     setIsSheetOpen(false);
   }, [location.pathname, isMobile]);
   
+  const MobileSidebar = () => (
+    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+      <SheetTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
+        <Button variant="ghost" size="icon" className="rounded-full bg-background/90 backdrop-blur-sm shadow-sm border">
+          <Menu className="h-5 w-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="p-0 w-[80%] max-w-[300px]">
+        <AppSidebar />
+      </SheetContent>
+    </Sheet>
+  );
+  
   // Determine layout based on page type
   const renderLayout = () => {
     if (!showSidebar) {
@@ -70,7 +83,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           <main className="w-full h-[100dvh] pb-safe-bottom">
             {isLoading ? <Loading /> : children}
           </main>
-          <MobileSidebar isSheetOpen={isSheetOpen} setIsSheetOpen={setIsSheetOpen} />
+          <MobileSidebar />
         </div>
       );
     } 
@@ -82,7 +95,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
             {isLoading ? <Loading /> : children}
           </main>
-          <MobileSidebar isSheetOpen={isSheetOpen} setIsSheetOpen={setIsSheetOpen} />
+          <MobileSidebar />
         </div>
       );
     } 
@@ -93,7 +106,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           <AppSidebar />
         </div>
         
-        <MobileSidebar isSheetOpen={isSheetOpen} setIsSheetOpen={setIsSheetOpen} />
+        <MobileSidebar />
         
         <SidebarInset>
           <div className="flex flex-col min-h-full max-w-full">
@@ -116,18 +129,5 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     </ThemeProvider>
   );
 };
-
-const MobileSidebar = ({ isSheetOpen, setIsSheetOpen }: { isSheetOpen: boolean; setIsSheetOpen: (open: boolean) => void }) => (
-  <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-    <SheetTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
-      <Button variant="ghost" size="icon" className="rounded-full bg-background/90 backdrop-blur-sm shadow-sm border">
-        <Menu className="h-5 w-5" />
-      </Button>
-    </SheetTrigger>
-    <SheetContent side="left" className="p-0 w-[80%] max-w-[300px]">
-      <AppSidebar />
-    </SheetContent>
-  </Sheet>
-);
 
 export default AppLayout;

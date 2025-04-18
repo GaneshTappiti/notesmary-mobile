@@ -6,7 +6,11 @@ import './styles/loading.css'
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
-createRoot(document.getElementById("root")!).render(
+// Ensure we have a proper container to render into
+const rootElement = document.getElementById('root');
+if (!rootElement) throw new Error('Root element not found');
+
+createRoot(rootElement).render(
   <ThemeProvider>
     <SidebarProvider>
       <App />

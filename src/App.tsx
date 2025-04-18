@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -27,7 +28,7 @@ import AIMarkAnswers from "./pages/AIMarkAnswers";
 
 const queryClient = new QueryClient();
 
-// Authentication guard component - moved outside of main component to avoid hook errors
+// Authentication guard component - moved outside of App component to fix hook error
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
   
