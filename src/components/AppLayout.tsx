@@ -26,6 +26,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
 
+  // All hooks are now called unconditionally at the top level
   useEffect(() => {
     setIsLoading(true);
     // Simulate loading time
@@ -51,6 +52,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     setIsSheetOpen(false);
   }, [location.pathname, isMobile]);
   
+  // Extracted MobileSidebar to a separate component to avoid conditional hooks
   const MobileSidebar = () => (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
@@ -64,69 +66,63 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     </Sheet>
   );
   
-  // Determine layout based on page type
-  const renderLayout = () => {
-    if (!showSidebar) {
-      return (
-        <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
-          <Navbar />
-          <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
-            {isLoading ? <Loading /> : children}
-          </main>
-        </div>
-      );
-    } 
-    
-    if (isStudyRoomChatPage) {
-      return (
-        <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
-          <main className="w-full h-[100dvh] pb-safe-bottom">
-            {isLoading ? <Loading /> : children}
-          </main>
-          <MobileSidebar />
-        </div>
-      );
-    } 
-    
-    if (isStudyRoomPage) {
-      return (
-        <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
-          <HeaderNav />
-          <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
-            {isLoading ? <Loading /> : children}
-          </main>
-          <MobileSidebar />
-        </div>
-      );
-    } 
-    
+  // Content for standard layout
+  const renderStandardContent = () => (
+    <div className="flex flex-col min-h-full max-w-full">
+      <HeaderNav />
+      <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom overflow-auto">
+        {isLoading ? <Loading /> : children}
+      </main>
+    </div>
+  );
+
+  // Determine what to render based on page type, but avoid conditional hooks
+  if (!showSidebar) {
     return (
-      <div className="min-h-[100dvh] flex w-full max-w-full overflow-hidden">
-        <div className="hidden md:block">
-          <AppSidebar />
-        </div>
-        
-        <MobileSidebar />
-        
-        <SidebarInset>
-          <div className="flex flex-col min-h-full max-w-full">
-            <HeaderNav />
-            
-            <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom overflow-auto">
-              {isLoading ? <Loading /> : children}
-            </main>
-          </div>
-        </SidebarInset>
+      <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
+        <Navbar />
+        <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
+          {isLoading ? <Loading /> : children}
+        </main>
       </div>
     );
-  };
-
+  } 
+  
+  if (isStudyRoomChatPage) {
+    return (
+      <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
+        <main className="w-full h-[100dvh] pb-safe-bottom">
+          {isLoading ? <Loading /> : children}
+        </main>
+        <MobileSidebar />
+      </div>
+    );
+  } 
+  
+  if (isStudyRoomPage) {
+    return (
+      <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
+        <HeaderNav />
+        <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
+          {isLoading ? <Loading /> : children}
+        </main>
+        <MobileSidebar />
+      </div>
+    );
+  } 
+  
   return (
-    <ThemeProvider>
-      <TooltipProvider>
-        {renderLayout()}
-      </TooltipProvider>
-    </ThemeProvider>
+    <div className="min-h-[100dvh] flex w-full max-w-full overflow-hidden">
+      <div className="hidden md:block">
+        <AppSidebar />
+      </div>
+      
+      <MobileSidebar />
+      
+      <SidebarInset>
+        {renderStandardContent()}
+      </SidebarInset>
+    </div>
   );
 };
 
