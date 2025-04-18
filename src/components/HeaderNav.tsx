@@ -8,13 +8,16 @@ import {
   Settings,
   LogOut,
   Menu,
-  ChevronRight
+  ChevronRight,
+  Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from './ThemeToggle';
 import { Badge } from '@/components/ui/badge';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -181,21 +184,37 @@ export const HeaderNav = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b h-16 px-4">
+    <header className="sticky top-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800 h-[70px]">
       <div className="h-full flex flex-col justify-center">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between px-6">
+          <div className="flex items-center gap-4">
             <SidebarTrigger className="hidden md:flex mr-2 transition-all hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-1">
               <Menu className="h-5 w-5" />
             </SidebarTrigger>
             
-            <h1 className="text-lg font-semibold mr-6">
-              {getPageTitle(location.pathname)}
-            </h1>
+            <div>
+              <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
+                Hello, Student 👋
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Here's your study overview
+              </p>
+            </div>
           </div>
           
-          <div className="flex items-center gap-2">
-            {/* Theme toggle - ONLY kept here, removed from sidebar */}
+          {/* Search bar and actions */}
+          <div className="flex items-center gap-3">
+            {/* Search bar */}
+            <div className="relative hidden md:block">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input 
+                type="text" 
+                placeholder="Search anything..." 
+                className="w-[240px] pl-9 pr-4 py-2 rounded-full bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+              />
+            </div>
+            
+            {/* Theme toggle */}
             <ThemeToggle 
               variant="ghost" 
               size="sm"
@@ -211,12 +230,9 @@ export const HeaderNav = () => {
             >
               <Bell size={18} />
               {unreadNotifications > 0 && (
-                <Badge 
-                  variant="destructive" 
-                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                >
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
                   {unreadNotifications}
-                </Badge>
+                </span>
               )}
             </Button>
             
@@ -226,9 +242,12 @@ export const HeaderNav = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="relative rounded-full h-8 w-8 ml-1 border"
+                  className="relative rounded-full h-8 w-8 p-0"
                 >
-                  <User size={16} />
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src="https://ui-avatars.com/api/?name=Student&background=0D8ABC&color=fff" alt="Student" />
+                    <AvatarFallback>S</AvatarFallback>
+                  </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
@@ -252,11 +271,6 @@ export const HeaderNav = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        </div>
-        
-        {/* Add breadcrumbs below the main header content */}
-        <div className="hidden md:flex items-center mt-1 ml-10 text-sm text-muted-foreground">
-          {generateBreadcrumbs()}
         </div>
       </div>
     </header>
