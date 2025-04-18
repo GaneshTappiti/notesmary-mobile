@@ -12,6 +12,6 @@ export function ThemeToggle({
   size = "icon",
   className 
 }: ThemeToggleProps) {
-  // Return null since we don't need the theme toggle anymore
+  // Return null since we're using light mode only
   return null;
 }

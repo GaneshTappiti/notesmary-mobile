@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   LineChart as RechartsLineChart,
@@ -14,8 +15,12 @@ import {
 } from 'recharts';
 import { cn } from '@/lib/utils';
 
+// Define ValueType and NameType for TooltipProps
+type ValueType = number;
+type NameType = string;
+
 // Fix TS2314 error by providing proper type arguments to TooltipProps
-type CustomTooltipProps = TooltipProps<number, string> & { 
+type CustomTooltipProps = TooltipProps<ValueType, NameType> & { 
   valueFormatter?: (value: number) => string 
 };
 
@@ -45,15 +50,15 @@ const CustomTooltip = ({
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded-md shadow-md">
-        <p className="text-xs font-medium text-gray-600 dark:text-gray-300">{label}</p>
+      <div className="bg-white p-2 border border-gray-200 rounded-md shadow-md">
+        <p className="text-xs font-medium text-gray-600">{label}</p>
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center gap-1.5">
             <div 
               className="w-2 h-2 rounded-full" 
               style={{ backgroundColor: entry.color }}
             />
-            <p className="text-xs font-semibold text-gray-800 dark:text-gray-100">
+            <p className="text-xs font-semibold text-gray-800">
               {valueFormatter(entry.value as number)}
             </p>
           </div>

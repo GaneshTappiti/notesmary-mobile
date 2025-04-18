@@ -27,11 +27,14 @@ export function ThemeProvider({
   // Empty toggle function since we'll always stay in light mode
   const toggleTheme = () => {
     // Do nothing, we stay in light mode
+    console.log("Theme toggle requested, but staying in light mode as configured");
   };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      <div className="light">
+        {children}
+      </div>
     </ThemeContext.Provider>
   );
 }
