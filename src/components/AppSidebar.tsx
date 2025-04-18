@@ -3,9 +3,6 @@ import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { 
   BookText, 
   BrainCircuit, 
-  MessageSquare, 
-  CreditCard, 
-  BarChart, 
   Upload, 
   Search,
   Bell,
@@ -17,7 +14,8 @@ import {
   FileText,
   Users,
   GraduationCap,
-  Calendar
+  Calendar,
+  BarChart
 } from 'lucide-react';
 import {
   Sidebar,
@@ -45,10 +43,10 @@ import { cn } from "@/lib/utils";
 
 export const AppSidebar = () => {
   const location = useLocation();
-  const { state, toggleSidebar } = useSidebar();
+  const { state } = useSidebar();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isStudyRoomOpen, setIsStudyRoomOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   
   const isActive = (path: string) => {
     if (path.includes(':')) {
@@ -106,12 +104,11 @@ export const AppSidebar = () => {
     },
     {
       title: "Study Rooms",
-      path: "/study-room/1",
+      path: "/study-rooms",
       icon: <Users size={20} />,
     },
   ];
   
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const settingsItems = [
     {
       title: "Account Settings",
@@ -121,14 +118,14 @@ export const AppSidebar = () => {
     {
       title: "Subscription",
       path: "/subscription",
-      icon: <CreditCard size={18} />,
+      icon: <Calendar size={18} />,
     },
   ];
 
   return (
     <Sidebar 
       data-state={state} 
-      className="z-50 shadow-md border-r border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 rounded-tr-[30px] rounded-br-[30px] overflow-hidden w-[280px]"
+      className="z-50 shadow-md border-r border-gray-100 dark:border-gray-800 bg-white/90 backdrop-blur-md dark:bg-gray-900/90 rounded-tr-[30px] rounded-br-[30px] overflow-hidden w-[280px]"
     >
       <SidebarHeader className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-gray-800">
         <Link to="/dashboard" className="flex items-center gap-2">
@@ -144,7 +141,7 @@ export const AppSidebar = () => {
       <SidebarContent className="px-3 py-4">
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-medium text-gray-500 dark:text-gray-400 px-3 mb-2">
-            Main
+            Main Menu
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -313,3 +310,4 @@ export const AppSidebar = () => {
     </Sidebar>
   );
 };
+
