@@ -1,7 +1,7 @@
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 
-type Theme = "light" | "dark";
+type Theme = "light";
 
 interface ThemeProviderProps {
   children: React.ReactNode;
@@ -21,25 +21,12 @@ export function ThemeProvider({
   defaultTheme = "light",
   storageKey = "theme",
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    // Check if theme is stored in localStorage
-    const savedTheme = localStorage.getItem(storageKey) as Theme;
-    // Return saved theme or default
-    return savedTheme || defaultTheme;
-  });
-
-  useEffect(() => {
-    // Apply theme to document element
-    const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
-    
-    // Save theme to localStorage
-    localStorage.setItem(storageKey, theme);
-  }, [theme, storageKey]);
-
+  // Always use light theme
+  const theme: Theme = "light";
+  
+  // Empty toggle function since we'll always stay in light mode
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    // Do nothing, we stay in light mode
   };
 
   return (

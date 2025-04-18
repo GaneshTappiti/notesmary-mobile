@@ -1,8 +1,5 @@
 
-import { SunMoon, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "@/components/ThemeProvider";
-import { useToast } from "@/hooks/use-toast";
 
 interface ThemeToggleProps {
   variant?: "default" | "outline" | "ghost";
@@ -12,30 +9,9 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ 
   variant = "outline", 
-  size = "icon", 
+  size = "icon",
   className 
 }: ThemeToggleProps) {
-  const { theme, toggleTheme } = useTheme();
-  const { toast } = useToast();
-
-  const handleToggle = () => {
-    toggleTheme();
-    toast({
-      title: theme === "light" ? "Dark mode activated" : "Light mode activated",
-      description: `You've switched to ${theme === "light" ? "dark" : "light"} mode.`,
-      duration: 2000,
-    });
-  };
-
-  return (
-    <Button
-      variant={variant}
-      size={size}
-      onClick={handleToggle}
-      className={className}
-      aria-label="Toggle theme"
-    >
-      {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
-    </Button>
-  );
+  // Return null since we don't need the theme toggle anymore
+  return null;
 }
