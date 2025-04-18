@@ -5,7 +5,6 @@ import { SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from '@/components/AppSidebar';
 import { HeaderNav } from '@/components/HeaderNav';
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -33,16 +32,16 @@ const MobileSidebar = () => {
 };
 
 const StudyRoomLayout = ({ children }: AppLayoutProps) => (
-  <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
+  <div className="min-h-[100dvh] w-full max-w-full">
     <main className="w-full h-[100dvh] pb-safe-bottom">{children}</main>
     <MobileSidebar />
   </div>
 );
 
 const SimpleLayout = ({ children }: AppLayoutProps) => (
-  <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
+  <div className="min-h-[100dvh] w-full max-w-full">
     <HeaderNav />
-    <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
+    <main className="pt-16 px-4 pb-safe-bottom max-w-full">
       {children}
     </main>
     <MobileSidebar />
@@ -50,7 +49,7 @@ const SimpleLayout = ({ children }: AppLayoutProps) => (
 );
 
 const StandardLayout = ({ children }: AppLayoutProps) => (
-  <div className="min-h-[100dvh] flex w-full max-w-full overflow-hidden">
+  <div className="min-h-[100dvh] flex w-full max-w-full">
     <div className="hidden md:block">
       <AppSidebar />
     </div>
@@ -61,7 +60,7 @@ const StandardLayout = ({ children }: AppLayoutProps) => (
       <div className="flex flex-col min-h-full max-w-full">
         <HeaderNav />
         
-        <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom overflow-auto">
+        <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom">
           {children}
         </main>
       </div>
@@ -70,8 +69,8 @@ const StandardLayout = ({ children }: AppLayoutProps) => (
 );
 
 const BasicLayout = ({ children }: AppLayoutProps) => (
-  <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
-    <main className="px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
+  <div className="min-h-[100dvh] w-full max-w-full">
+    <main className="px-4 pb-safe-bottom max-w-full">
       {children}
     </main>
   </div>
@@ -98,17 +97,23 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   }, [location.pathname]);
   
   // Wrap each layout with TooltipProvider to ensure tooltips work
-  switch (layoutType) {
-    case 'study-room-chat':
-      return <TooltipProvider><StudyRoomLayout>{children}</StudyRoomLayout></TooltipProvider>;
-    case 'study-room':
-      return <TooltipProvider><SimpleLayout>{children}</SimpleLayout></TooltipProvider>;
-    case 'basic':
-      return <TooltipProvider><BasicLayout>{children}</BasicLayout></TooltipProvider>;
-    case 'standard':
-    default:
-      return <TooltipProvider><StandardLayout>{children}</StandardLayout></TooltipProvider>;
-  }
+  return (
+    <TooltipProvider>
+      {(() => {
+        switch (layoutType) {
+          case 'study-room-chat':
+            return <StudyRoomLayout>{children}</StudyRoomLayout>;
+          case 'study-room':
+            return <SimpleLayout>{children}</SimpleLayout>;
+          case 'basic':
+            return <BasicLayout>{children}</BasicLayout>;
+          case 'standard':
+          default:
+            return <StandardLayout>{children}</StandardLayout>;
+        }
+      })()}
+    </TooltipProvider>
+  );
 };
 
 export default AppLayout;

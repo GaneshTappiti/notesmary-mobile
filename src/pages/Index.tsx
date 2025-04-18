@@ -52,7 +52,7 @@ const Index = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 relative">
       {/* Animated Gradient Background */}
       <motion.div 
         className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-br from-blue-100 to-white dark:from-gray-900 dark:to-gray-800 opacity-50 -z-10"

@@ -70,10 +70,11 @@ const Authentication = () => {
   const { login, signup, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
 
-  if (isAuthenticated) {
-    navigate("/dashboard");
-    return null;
-  }
+  // Important: Don't navigate during render, move this to useEffect
+  // if (isAuthenticated) {
+  //  navigate("/dashboard");
+  //  return null;
+  // }
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -105,6 +106,15 @@ const Authentication = () => {
       console.error("Signup error:", error);
     }
   };
+  
+  // Use useEffect to handle redirection when authentication state changes
+  import { useEffect } from "react";
+  
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-[100dvh] w-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
@@ -130,7 +140,7 @@ const Authentication = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="px-4 sm:px-6 pb-2 sm:pb-4">
-            <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab}>
+            <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid grid-cols-2 mb-4 sm:mb-6 w-full">
                 <TabsTrigger value="login">Log In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
