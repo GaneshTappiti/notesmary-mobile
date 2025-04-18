@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -70,12 +69,6 @@ const Authentication = () => {
   const { login, signup, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
 
-  // Important: Don't navigate during render, move this to useEffect
-  // if (isAuthenticated) {
-  //  navigate("/dashboard");
-  //  return null;
-  // }
-
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -106,9 +99,6 @@ const Authentication = () => {
       console.error("Signup error:", error);
     }
   };
-  
-  // Use useEffect to handle redirection when authentication state changes
-  import { useEffect } from "react";
   
   useEffect(() => {
     if (isAuthenticated) {

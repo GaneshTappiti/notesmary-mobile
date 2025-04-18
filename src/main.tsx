@@ -12,7 +12,7 @@ if (container) {
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
-      <ThemeProvider defaultTheme="system" storageKey="notex-ui-theme">
+      <ThemeProvider defaultTheme="dark" storageKey="notex-ui-theme">
         <SidebarProvider>
           <App />
         </SidebarProvider>
