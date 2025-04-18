@@ -32,74 +32,50 @@ const MobileSidebar = () => {
   );
 };
 
-const StudyRoomLayout = ({ children }: AppLayoutProps) => {
-  return (
-    <ThemeProvider>
-      <TooltipProvider>
-        <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
-          <main className="w-full h-[100dvh] pb-safe-bottom">{children}</main>
-          <MobileSidebar />
-        </div>
-      </TooltipProvider>
-    </ThemeProvider>
-  );
-};
+const StudyRoomLayout = ({ children }: AppLayoutProps) => (
+  <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
+    <main className="w-full h-[100dvh] pb-safe-bottom">{children}</main>
+    <MobileSidebar />
+  </div>
+);
 
-const SimpleLayout = ({ children }: AppLayoutProps) => {
-  return (
-    <ThemeProvider>
-      <TooltipProvider>
-        <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
-          <HeaderNav />
-          <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
-            {children}
-          </main>
-          <MobileSidebar />
-        </div>
-      </TooltipProvider>
-    </ThemeProvider>
-  );
-};
+const SimpleLayout = ({ children }: AppLayoutProps) => (
+  <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
+    <HeaderNav />
+    <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
+      {children}
+    </main>
+    <MobileSidebar />
+  </div>
+);
 
-const StandardLayout = ({ children }: AppLayoutProps) => {
-  return (
-    <ThemeProvider>
-      <TooltipProvider>
-        <div className="min-h-[100dvh] flex w-full max-w-full overflow-hidden">
-          <div className="hidden md:block">
-            <AppSidebar />
-          </div>
-          
-          <MobileSidebar />
-          
-          <SidebarInset>
-            <div className="flex flex-col min-h-full max-w-full">
-              <HeaderNav />
-              
-              <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom overflow-auto">
-                {children}
-              </main>
-            </div>
-          </SidebarInset>
-        </div>
-      </TooltipProvider>
-    </ThemeProvider>
-  );
-};
+const StandardLayout = ({ children }: AppLayoutProps) => (
+  <div className="min-h-[100dvh] flex w-full max-w-full overflow-hidden">
+    <div className="hidden md:block">
+      <AppSidebar />
+    </div>
+    
+    <MobileSidebar />
+    
+    <SidebarInset>
+      <div className="flex flex-col min-h-full max-w-full">
+        <HeaderNav />
+        
+        <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom overflow-auto">
+          {children}
+        </main>
+      </div>
+    </SidebarInset>
+  </div>
+);
 
-const BasicLayout = ({ children }: AppLayoutProps) => {
-  return (
-    <ThemeProvider>
-      <TooltipProvider>
-        <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
-          <main className="px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
-            {children}
-          </main>
-        </div>
-      </TooltipProvider>
-    </ThemeProvider>
-  );
-};
+const BasicLayout = ({ children }: AppLayoutProps) => (
+  <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
+    <main className="px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
+      {children}
+    </main>
+  </div>
+);
 
 const AppLayout = ({ children }: AppLayoutProps) => {
   const location = useLocation();
@@ -121,17 +97,17 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     }
   }, [location.pathname]);
   
-  // Render the appropriate layout based on the determined type
+  // Wrap each layout with TooltipProvider to ensure tooltips work
   switch (layoutType) {
     case 'study-room-chat':
-      return <StudyRoomLayout>{children}</StudyRoomLayout>;
+      return <TooltipProvider><StudyRoomLayout>{children}</StudyRoomLayout></TooltipProvider>;
     case 'study-room':
-      return <SimpleLayout>{children}</SimpleLayout>;
+      return <TooltipProvider><SimpleLayout>{children}</SimpleLayout></TooltipProvider>;
     case 'basic':
-      return <BasicLayout>{children}</BasicLayout>;
+      return <TooltipProvider><BasicLayout>{children}</BasicLayout></TooltipProvider>;
     case 'standard':
     default:
-      return <StandardLayout>{children}</StandardLayout>;
+      return <TooltipProvider><StandardLayout>{children}</StandardLayout></TooltipProvider>;
   }
 };
 
