@@ -5,10 +5,15 @@ import './index.css'
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
-createRoot(document.getElementById("root")!).render(
-  <ThemeProvider>
-    <SidebarProvider>
-      <App />
-    </SidebarProvider>
-  </ThemeProvider>
-);
+const container = document.getElementById('root');
+
+if (container) {
+  const root = createRoot(container);
+  root.render(
+    <ThemeProvider>
+      <SidebarProvider>
+        <App />
+      </SidebarProvider>
+    </ThemeProvider>
+  );
+}

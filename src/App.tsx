@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import AppLayout from "./components/AppLayout";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
@@ -24,7 +24,6 @@ import Settings from "./pages/Settings";
 import Subscription from "./pages/Subscription";
 import MyNotes from "./pages/MyNotes";
 import AIMarkAnswers from "./pages/AIMarkAnswers";
-import { useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
@@ -159,7 +158,6 @@ const AppRoutes = () => {
           </PrivateRoute>
         } 
       />
-      {/* New route for study room info page */}
       <Route 
         path="/study-room/:id/info" 
         element={
