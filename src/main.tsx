@@ -5,7 +5,6 @@ import App from './App.tsx'
 import './index.css'
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { Toaster } from "@/components/ui/toaster";
 
 const container = document.getElementById('root');
 
@@ -16,7 +15,6 @@ if (container) {
       <ThemeProvider defaultTheme="dark" storageKey="notex-ui-theme">
         <SidebarProvider>
           <App />
-          <Toaster />
         </SidebarProvider>
       </ThemeProvider>
     </React.StrictMode>

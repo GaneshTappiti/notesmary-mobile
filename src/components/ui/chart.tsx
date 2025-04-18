@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   LineChart as RechartsLineChart,
@@ -8,15 +7,15 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  TooltipProps as RechartsTooltipProps,
+  TooltipProps,
   BarChart as RechartsBarChart,
   Bar,
   Legend,
 } from 'recharts';
 import { cn } from '@/lib/utils';
 
-// Use correct type for TooltipProps with appropriate type arguments
-type TooltipProps = RechartsTooltipProps<number, string> & { 
+// Fix TS2314 error by providing proper type arguments to TooltipProps
+type CustomTooltipProps = TooltipProps<number, string> & { 
   valueFormatter?: (value: number) => string 
 };
 
@@ -43,7 +42,7 @@ const CustomTooltip = ({
   payload, 
   label,
   valueFormatter = (value: number) => `${value}` 
-}: TooltipProps) => {
+}: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded-md shadow-md">
@@ -76,7 +75,7 @@ export const ChartContainer: React.FC<{
 export const ChartTooltip: React.FC<{ 
   content?: React.ReactNode 
 }> = ({ content }) => {
-  // Fixed: Instead of directly passing content, we return a properly typed Tooltip component
+  // Use type assertion to fix TS2769 error
   return <Tooltip content={content as any} />;
 };
 
