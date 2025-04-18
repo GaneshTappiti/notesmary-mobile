@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   LineChart as RechartsLineChart,
@@ -75,7 +76,8 @@ export const ChartContainer: React.FC<{
 export const ChartTooltip: React.FC<{ 
   content?: React.ReactNode 
 }> = ({ content }) => {
-  return <Tooltip content={content} />;
+  // Fixed: Instead of directly passing content, we return a properly typed Tooltip component
+  return <Tooltip content={content as any} />;
 };
 
 export const ChartTooltipContent: React.FC<{
