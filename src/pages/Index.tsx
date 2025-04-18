@@ -25,17 +25,17 @@ const FeatureCard = ({
   description: string 
 }) => (
   <motion.div 
-    className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group"
-    whileHover={{ scale: 1.05 }}
+    className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group h-full"
+    whileHover={{ scale: 1.03 }}
     transition={{ type: "spring", stiffness: 300 }}
   >
-    <div className="flex items-center mb-4">
-      <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-xl mr-4">
-        <Icon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+    <div className="flex flex-col sm:flex-row sm:items-center mb-4">
+      <div className="bg-blue-100 dark:bg-blue-900/30 p-2 sm:p-3 rounded-xl mb-3 sm:mb-0 sm:mr-4 w-12 h-12 flex items-center justify-center">
+        <Icon className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 dark:text-blue-400" />
       </div>
-      <h3 className="text-xl font-bold text-gray-800 dark:text-white">{title}</h3>
+      <h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white">{title}</h3>
     </div>
-    <p className="text-gray-600 dark:text-gray-300">{description}</p>
+    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">{description}</p>
   </motion.div>
 );
 
@@ -63,22 +63,22 @@ const Index = () => {
 
       <Navbar />
 
-      <div className="container mx-auto px-4 py-16 lg:py-24">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="container mx-auto px-4 py-8 sm:py-12 md:py-16 lg:py-24">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Hero Content */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <motion.h1 
-              className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white leading-tight"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              AI-Powered <br />
+              AI-Powered <br className="hidden sm:block" />
               <span className="text-blue-600">Learning Revolution</span>
             </motion.h1>
             
             <motion.p 
-              className="text-xl text-gray-600 dark:text-gray-300"
+              className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -87,14 +87,14 @@ const Index = () => {
             </motion.p>
             
             <motion.div 
-              className="flex space-x-4"
+              className="flex flex-col sm:flex-row gap-3 sm:space-x-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               <Button 
                 size="lg" 
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto"
                 onClick={() => navigate('/authentication')}
               >
                 Get Started
@@ -103,7 +103,7 @@ const Index = () => {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                className="border-blue-600 text-blue-600 hover:bg-blue-50 w-full sm:w-auto"
                 onClick={() => {
                   const featuresSection = document.getElementById('features');
                   featuresSection?.scrollIntoView({ behavior: 'smooth' });
@@ -121,23 +121,23 @@ const Index = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 space-y-6">
-              <div className="flex items-center space-x-4">
-                <Brain className="h-12 w-12 text-blue-600" />
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 lg:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-4">
+                <Brain className="h-10 w-10 sm:h-12 sm:w-12 text-blue-600 mb-3 sm:mb-0" />
                 <div>
-                  <h3 className="text-xl font-semibold">AI-Powered Learning</h3>
-                  <p className="text-gray-600 dark:text-gray-300">Intelligent study assistance</p>
+                  <h3 className="text-lg sm:text-xl font-semibold">AI-Powered Learning</h3>
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Intelligent study assistance</p>
                 </div>
               </div>
               <div className="border-t border-gray-200 dark:border-gray-700 my-4" />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                  <FileText className="h-8 w-8 text-blue-600 mb-2" />
-                  <p className="font-medium">Smart Notes</p>
+                  <FileText className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mb-2" />
+                  <p className="font-medium text-sm sm:text-base">Smart Notes</p>
                 </div>
                 <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                  <Users className="h-8 w-8 text-green-600 mb-2" />
-                  <p className="font-medium">Collaborative Study</p>
+                  <Users className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 mb-2" />
+                  <p className="font-medium text-sm sm:text-base">Collaborative Study</p>
                 </div>
               </div>
             </div>
@@ -145,17 +145,17 @@ const Index = () => {
         </div>
 
         {/* Features Section */}
-        <section id="features" className="py-16 lg:py-24">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <section id="features" className="py-10 sm:py-12 md:py-16 lg:py-24">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
               Revolutionize Your Study Experience
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
               Discover the power of AI-driven learning with NOTES4U's cutting-edge features
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 px-4 sm:px-0">
             <FeatureCard 
               icon={Brain}
               title="AI Answers"

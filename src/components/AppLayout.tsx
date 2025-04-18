@@ -52,7 +52,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     return (
       <ThemeProvider>
         <TooltipProvider>
-          <div className="min-h-screen w-full max-w-full overflow-hidden">
+          <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
             <Navbar />
             <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
               {children}
@@ -82,8 +82,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     return (
       <ThemeProvider>
         <TooltipProvider>
-          <div className="min-h-screen w-full max-w-full overflow-hidden">
-            <main className="w-full h-screen pb-safe-bottom">{children}</main>
+          <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
+            <main className="w-full h-[100dvh] pb-safe-bottom">{children}</main>
             
             {/* Mobile sidebar for study room */}
             <MobileSidebar />
@@ -98,7 +98,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     return (
       <ThemeProvider>
         <TooltipProvider>
-          <div className="min-h-screen w-full max-w-full overflow-hidden">
+          <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
             <HeaderNav />
             <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
               {children}
@@ -116,7 +116,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   return (
     <ThemeProvider>
       <TooltipProvider>
-        <div className="min-h-screen flex w-full max-w-full overflow-hidden">
+        <div className="min-h-[100dvh] flex w-full max-w-full overflow-hidden">
           {/* Desktop sidebar */}
           <div className="hidden md:block">
             <AppSidebar />
@@ -130,7 +130,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               {/* HeaderNav component */}
               <HeaderNav />
               
-              <main className="flex-1 p-4 md:p-6 pb-safe-bottom overflow-auto">
+              <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom overflow-auto">
                 {children}
               </main>
             </div>
