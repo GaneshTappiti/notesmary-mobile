@@ -5,6 +5,7 @@ import './index.css'
 import './styles/loading.css'
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Ensure we have a proper container to render into
 const rootElement = document.getElementById('root');
@@ -13,7 +14,9 @@ if (!rootElement) throw new Error('Root element not found');
 createRoot(rootElement).render(
   <ThemeProvider>
     <SidebarProvider>
-      <App />
+      <TooltipProvider>
+        <App />
+      </TooltipProvider>
     </SidebarProvider>
   </ThemeProvider>
 );
