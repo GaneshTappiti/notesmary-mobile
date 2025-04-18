@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X, LogIn, BrainCircuit, LogOut, Search, Bell } from 'lucide-react';
