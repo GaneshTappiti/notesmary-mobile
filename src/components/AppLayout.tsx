@@ -72,7 +72,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     <div className="flex flex-col min-h-full max-w-full">
       <HeaderNav />
       <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom overflow-auto">
-        {isLoading ? <Loading /> : children}
+        {isLoading ? (
+          <div className="max-w-xl mx-auto">
+            <Loading containerClassName="p-4" />
+          </div>
+        ) : children}
       </main>
     </div>
   );
@@ -84,7 +88,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
           <Navbar />
           <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
-            {isLoading ? <Loading /> : children}
+            {isLoading ? (
+              <div className="max-w-xl mx-auto">
+                <Loading containerClassName="p-4" />
+              </div>
+            ) : children}
           </main>
         </div>
       </TooltipProvider>
@@ -96,7 +104,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       <TooltipProvider>
         <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
           <main className="w-full h-[100dvh] pb-safe-bottom">
-            {isLoading ? <Loading /> : children}
+            {isLoading ? (
+              <div className="max-w-xl mx-auto">
+                <Loading containerClassName="p-4" />
+              </div>
+            ) : children}
           </main>
           <MobileSidebar />
         </div>
@@ -110,7 +122,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
           <HeaderNav />
           <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
-            {isLoading ? <Loading /> : children}
+            {isLoading ? (
+              <div className="max-w-xl mx-auto">
+                <Loading containerClassName="p-4" />
+              </div>
+            ) : children}
           </main>
           <MobileSidebar />
         </div>
