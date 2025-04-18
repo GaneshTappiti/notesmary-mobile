@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   LineChart as RechartsLineChart,
@@ -8,12 +7,17 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  TooltipProps,
+  TooltipProps as RechartsTooltipProps,
   BarChart as RechartsBarChart,
   Bar,
   Legend,
 } from 'recharts';
 import { cn } from '@/lib/utils';
+
+// Use correct type for TooltipProps with appropriate type arguments
+type TooltipProps = RechartsTooltipProps<number, string> & { 
+  valueFormatter?: (value: number) => string 
+};
 
 // Common props for all chart types
 interface CommonChartProps {
@@ -38,7 +42,7 @@ const CustomTooltip = ({
   payload, 
   label,
   valueFormatter = (value: number) => `${value}` 
-}: TooltipProps & { valueFormatter?: (value: number) => string }) => {
+}: TooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded-md shadow-md">
@@ -58,6 +62,27 @@ const CustomTooltip = ({
     );
   }
   return null;
+};
+
+// Export additional components needed by StudyAnalytics.tsx
+export const ChartContainer: React.FC<{ 
+  children: React.ReactNode; 
+  config?: Record<string, { color: string }>
+}> = ({ children, config = {} }) => {
+  return <div className="w-full h-full">{children}</div>;
+};
+
+export const ChartTooltip: React.FC<{ 
+  content?: React.ReactNode 
+}> = ({ content }) => {
+  return <Tooltip content={content} />;
+};
+
+export const ChartTooltipContent: React.FC<{
+  nameKey?: string;
+  formatter?: (value: any) => [string, string];
+}> = ({ nameKey, formatter }) => {
+  return <CustomTooltip valueFormatter={(val) => formatter ? formatter(val)[0] : `${val}`} />;
 };
 
 // Line Chart Component
