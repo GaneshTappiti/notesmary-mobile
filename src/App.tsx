@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -10,6 +9,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Authentication from "./pages/Authentication";
 import AIAnswers from "./pages/AIAnswers";
+import AIAnswerGenerator from "./pages/AIAnswerGenerator";
 import UploadNotes from "./pages/UploadNotes";
 import FindNotes from "./pages/FindNotes";
 import ViewNotes from "./pages/ViewNotes";
@@ -65,6 +65,16 @@ const AppRoutes = () => {
           <PrivateRoute>
             <AppLayout>
               <AIAnswers />
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/ai-answer-generator" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <AIAnswerGenerator />
             </AppLayout>
           </PrivateRoute>
         } 
