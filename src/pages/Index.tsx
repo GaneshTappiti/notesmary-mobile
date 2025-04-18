@@ -16,7 +16,7 @@ const Index = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    document.title = "NOTES4U - AI-Powered Learning Platform";
+    document.title = "Notex - AI-Powered Learning Platform";
     
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (isLoggedIn) {
