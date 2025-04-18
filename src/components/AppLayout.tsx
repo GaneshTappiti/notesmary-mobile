@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const { toast } = useToast();
   const [showSidebar, setShowSidebar] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isStudyRoomPage, setIsStudyRoomPage] = useState(false);
   const [isStudyRoomChatPage, setIsStudyRoomChatPage] = useState(false);
   const isMobile = useIsMobile();
@@ -40,9 +42,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     setIsStudyRoomChatPage(location.pathname.includes('/study-room/') && location.pathname.includes('/chat'));
   }, [location.pathname]);
   
-  // Close drawer when navigating or when screen size changes
+  // Close drawer/sheet when navigating or when screen size changes
   useEffect(() => {
     setIsDrawerOpen(false);
+    setIsSheetOpen(false);
   }, [location.pathname, isMobile]);
   
   if (!showSidebar) {
@@ -60,20 +63,18 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     );
   }
   
-  // Mobile drawer for sidebar on small screens
+  // Mobile sidebar with Sheet implementation (better UX than Drawer for this use case)
   const MobileSidebar = () => (
-    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-      <DrawerTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
+    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+      <SheetTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
         <Button variant="ghost" size="icon" className="rounded-full bg-background/90 backdrop-blur-sm shadow-sm border">
           <Menu className="h-5 w-5" />
         </Button>
-      </DrawerTrigger>
-      <DrawerContent className="p-0 max-h-[90vh] h-[90vh] rounded-t-xl">
-        <div className="h-full overflow-y-auto">
-          <AppSidebar />
-        </div>
-      </DrawerContent>
-    </Drawer>
+      </SheetTrigger>
+      <SheetContent side="left" className="p-0 w-[80%] max-w-[300px]">
+        <AppSidebar />
+      </SheetContent>
+    </Sheet>
   );
   
   // For study room chat, we want a clean layout to maximize chat space
@@ -121,12 +122,12 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             <AppSidebar />
           </div>
           
-          {/* Mobile sidebar drawer */}
+          {/* Mobile sidebar with Sheet component */}
           <MobileSidebar />
           
           <SidebarInset>
             <div className="flex flex-col min-h-full max-w-full">
-              {/* New HeaderNav component */}
+              {/* HeaderNav component */}
               <HeaderNav />
               
               <main className="flex-1 p-4 md:p-6 pb-safe-bottom overflow-auto">
