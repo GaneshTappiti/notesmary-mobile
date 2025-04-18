@@ -3,14 +3,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import AppLayout from "./components/AppLayout";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Authentication from "./pages/Authentication";
 import AIAnswers from "./pages/AIAnswers";
-import AIAnswerGenerator from "./pages/AIAnswerGenerator";
 import UploadNotes from "./pages/UploadNotes";
 import FindNotes from "./pages/FindNotes";
 import ViewNotes from "./pages/ViewNotes";
@@ -25,10 +24,11 @@ import Settings from "./pages/Settings";
 import Subscription from "./pages/Subscription";
 import MyNotes from "./pages/MyNotes";
 import AIMarkAnswers from "./pages/AIMarkAnswers";
+import { useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
-// Authentication guard component - moved outside of App component to fix hook error
+// Authentication guard component
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
   
@@ -40,7 +40,6 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   return isAuthenticated ? <>{children}</> : <Navigate to="/authentication" />;
 };
 
-// Separate AppRoutes function to avoid hook errors
 const AppRoutes = () => {
   return (
     <Routes>
@@ -66,16 +65,6 @@ const AppRoutes = () => {
           <PrivateRoute>
             <AppLayout>
               <AIAnswers />
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/ai-answer-generator" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <AIAnswerGenerator />
             </AppLayout>
           </PrivateRoute>
         } 
@@ -170,6 +159,7 @@ const AppRoutes = () => {
           </PrivateRoute>
         } 
       />
+      {/* New route for study room info page */}
       <Route 
         path="/study-room/:id/info" 
         element={
@@ -219,13 +209,13 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <AuthProvider>
-        <Toaster />
-        <Sonner />
+    <AuthProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
         <AppRoutes />
-      </AuthProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
