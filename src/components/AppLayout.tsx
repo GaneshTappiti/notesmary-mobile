@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SidebarInset } from "@/components/ui/sidebar";
@@ -55,40 +56,25 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     setIsSheetOpen(false);
   }, [location.pathname, isMobile]);
   
-  if (!showSidebar) {
-    return (
-      <ThemeProvider>
-        <TooltipProvider>
+  // Fixed: removed early returns and instead used conditional rendering
+  return (
+    <ThemeProvider>
+      <TooltipProvider>
+        {!showSidebar ? (
           <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
             <Navbar />
             <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
               {isLoading ? <Loading /> : children}
             </main>
           </div>
-        </TooltipProvider>
-      </ThemeProvider>
-    );
-  }
-  
-  if (isStudyRoomChatPage) {
-    return (
-      <ThemeProvider>
-        <TooltipProvider>
+        ) : isStudyRoomChatPage ? (
           <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
             <main className="w-full h-[100dvh] pb-safe-bottom">
               {isLoading ? <Loading /> : children}
             </main>
             <MobileSidebar isSheetOpen={isSheetOpen} setIsSheetOpen={setIsSheetOpen} />
           </div>
-        </TooltipProvider>
-      </ThemeProvider>
-    );
-  }
-  
-  if (isStudyRoomPage) {
-    return (
-      <ThemeProvider>
-        <TooltipProvider>
+        ) : isStudyRoomPage ? (
           <div className="min-h-[100dvh] w-full max-w-full overflow-hidden">
             <HeaderNav />
             <main className="pt-16 px-4 pb-safe-bottom max-w-full overflow-x-auto overflow-y-auto">
@@ -96,31 +82,25 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             </main>
             <MobileSidebar isSheetOpen={isSheetOpen} setIsSheetOpen={setIsSheetOpen} />
           </div>
-        </TooltipProvider>
-      </ThemeProvider>
-    );
-  }
-
-  return (
-    <ThemeProvider>
-      <TooltipProvider>
-        <div className="min-h-[100dvh] flex w-full max-w-full overflow-hidden">
-          <div className="hidden md:block">
-            <AppSidebar />
-          </div>
-          
-          <MobileSidebar isSheetOpen={isSheetOpen} setIsSheetOpen={setIsSheetOpen} />
-          
-          <SidebarInset>
-            <div className="flex flex-col min-h-full max-w-full">
-              <HeaderNav />
-              
-              <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom overflow-auto">
-                {isLoading ? <Loading /> : children}
-              </main>
+        ) : (
+          <div className="min-h-[100dvh] flex w-full max-w-full overflow-hidden">
+            <div className="hidden md:block">
+              <AppSidebar />
             </div>
-          </SidebarInset>
-        </div>
+            
+            <MobileSidebar isSheetOpen={isSheetOpen} setIsSheetOpen={setIsSheetOpen} />
+            
+            <SidebarInset>
+              <div className="flex flex-col min-h-full max-w-full">
+                <HeaderNav />
+                
+                <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom overflow-auto">
+                  {isLoading ? <Loading /> : children}
+                </main>
+              </div>
+            </SidebarInset>
+          </div>
+        )}
       </TooltipProvider>
     </ThemeProvider>
   );

@@ -13,7 +13,6 @@ const Loading = ({ className = "", containerClassName = "" }: LoadingProps) => {
         aria-label="Orange and tan hamster running in a metal wheel" 
         role="img" 
         className={`wheel-and-hamster ${className}`}
-        style={{ fontSize: '14px' }}
       >
         <div className="wheel"></div>
         <div className="hamster">
