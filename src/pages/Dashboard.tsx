@@ -24,6 +24,7 @@ import { AnalyticsCard } from '@/components/dashboard/AnalyticsCard';
 import { CalendarCard } from '@/components/dashboard/CalendarCard';
 import { StudyProgressCard } from '@/components/dashboard/StudyProgressCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { StudyRoomCard } from '@/components/dashboard/StudyRoomCard';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -72,22 +73,22 @@ const Dashboard = () => {
       id: '1',
       title: 'Physics Study Session',
       participants: 5,
-      time: '2:00 PM',
-      avatar: 'https://ui-avatars.com/api/?name=P&background=4F46E5&color=fff',
+      date: 'Today 2:00 PM',
+      status: 'active',
     },
     {
       id: '2',
       title: 'Math Group',
       participants: 3,
-      time: '4:00 PM',
-      avatar: 'https://ui-avatars.com/api/?name=M&background=F59E0B&color=fff',
+      date: 'Today 4:00 PM',
+      status: 'scheduled',
     },
     {
       id: '3',
       title: 'Biology Discussion',
       participants: 7,
-      time: '6:30 PM',
-      avatar: 'https://ui-avatars.com/api/?name=B&background=10B981&color=fff',
+      date: 'Today 6:30 PM',
+      status: 'scheduled',
     }
   ];
 
@@ -101,11 +102,9 @@ const Dashboard = () => {
 
   // Handle navigation to specific routes
   const handleViewAllTasks = () => {
-    // Navigate to tasks page (you may need to add this route if it doesn't exist)
     toast({
       title: "Feature Coming Soon",
       description: "The Tasks page will be available in the next update.",
-      duration: 3000,
     });
   };
 
@@ -140,6 +139,18 @@ const Dashboard = () => {
       title: "Task Details",
       description: `You clicked on task #${taskId}`
     });
+  };
+  
+  const handleViewAllNotes = () => {
+    navigate('/find-notes');
+  };
+
+  const handleViewAIAnswers = () => {
+    navigate('/ai-answers');
+  };
+
+  const handleViewAnalytics = () => {
+    navigate('/study-analytics');
   };
 
   return (
@@ -203,13 +214,13 @@ const Dashboard = () => {
                 <TrendingUp size={18} className="text-blue-600" />
                 Study Performance
               </CardTitle>
-              <Tabs defaultValue="week" className="w-[240px]">
-                <TabsList className="grid grid-cols-3 h-8">
-                  <TabsTrigger value="week" className="text-xs">Week</TabsTrigger>
-                  <TabsTrigger value="month" className="text-xs">Month</TabsTrigger>
-                  <TabsTrigger value="year" className="text-xs">Year</TabsTrigger>
-                </TabsList>
-              </Tabs>
+              <Button 
+                variant="ghost" 
+                className="text-sm text-blue-600 hover:text-blue-700"
+                onClick={handleViewAnalytics}
+              >
+                View All <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
             </CardHeader>
             
             <CardContent className="px-6 py-5">
@@ -222,7 +233,7 @@ const Dashboard = () => {
                     </div>
                     <Progress 
                       value={subject.progress} 
-                      className="h-2 bg-gray-100"
+                      className={`h-2 bg-gray-100`}
                       indicatorClassName={`bg-${subject.color}-500`}
                     />
                   </div>
@@ -305,50 +316,14 @@ const Dashboard = () => {
         <CardContent className="px-6 py-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {studyRooms.map((room) => (
-              <Card 
-                key={room.id} 
-                className="border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all cursor-pointer bg-white"
-                onClick={() => navigate(`/study-room/${room.id}`)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center space-x-3 mb-3">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src={room.avatar} />
-                      <AvatarFallback>{room.title[0]}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-medium text-gray-900">{room.title}</h3>
-                      <p className="text-xs text-gray-500">{room.time} • {room.participants} participants</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="gap-1 text-blue-600 border-blue-200 hover:border-blue-400 hover:bg-blue-50"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleJoinRoom(room.id);
-                      }}
-                    >
-                      <Users size={14} />
-                      Join
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="gap-1"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRoomDetails(room.id);
-                      }}
-                    >
-                      View Details
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <StudyRoomCard 
+                key={room.id}
+                id={room.id}
+                title={room.title}
+                participants={room.participants}
+                date={room.date}
+                status={room.status}
+              />
             ))}
           </div>
         </CardContent>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const isEducationalEmail = (email: string) => {
   const domain = email.split('@')[1];
@@ -69,6 +69,7 @@ const Authentication = () => {
   const [activeTab, setActiveTab] = useState("login");
   const { login, signup, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -89,13 +90,25 @@ const Authentication = () => {
   });
 
   const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
-    await login(values.email, values.password);
+    try {
+      await login(values.email, values.password);
+      toast({
+        title: "Login successful",
+        description: "Welcome back to Notex!",
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
   const onSignupSubmit = async (values: z.infer<typeof signupSchema>) => {
     try {
       await signup(values.email, values.password, values.fullName);
       setActiveTab("login");
+      toast({
+        title: "Account created successfully",
+        description: "Please login with your new account",
+      });
     } catch (error: any) {
       console.error("Signup error:", error);
     }
