@@ -8,7 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  TooltipProps,
+  TooltipProps as RechartsTooltipProps,
   BarChart as RechartsBarChart,
   Bar,
   Legend,
@@ -32,24 +32,69 @@ interface CommonChartProps {
   startEndOnly?: boolean;
 }
 
+// Export chart container components for StudyAnalytics
+export const ChartContainer: React.FC<{
+  config: Record<string, { color: string }>;
+  children: React.ReactNode;
+}> = ({ config, children }) => {
+  return <div className="w-full h-full">{children}</div>;
+};
+
+export const ChartTooltip: React.FC<{
+  content: React.ReactNode;
+}> = ({ content }) => {
+  return <Tooltip content={content} />;
+};
+
+export const ChartTooltipContent: React.FC<{
+  nameKey: string;
+  formatter: (value: any, name?: string) => [string, string];
+}> = ({ nameKey, formatter }) => {
+  const TooltipContent = (props: RechartsTooltipProps<any, any>) => {
+    const { active, payload, label } = props;
+
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-2 border border-gray-200 rounded-md shadow-md">
+          <p className="text-xs font-medium">{label}</p>
+          {payload.map((entry, index) => {
+            const [formattedValue, name] = formatter(entry.value, entry.name);
+            return (
+              <div key={index} className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                <p className="text-xs font-semibold">
+                  {name}: {formattedValue}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return <TooltipContent />;
+};
+
 // Custom tooltip component
 const CustomTooltip = ({ 
   active, 
   payload, 
   label,
   valueFormatter = (value: number) => `${value}` 
-}: TooltipProps & { valueFormatter?: (value: number) => string }) => {
+}: RechartsTooltipProps<any, any> & { valueFormatter?: (value: number) => string }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded-md shadow-md">
-        <p className="text-xs font-medium text-gray-600 dark:text-gray-300">{label}</p>
+      <div className="bg-white p-2 border border-gray-200 rounded-md shadow-md">
+        <p className="text-xs font-medium text-gray-600">{label}</p>
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center gap-1.5">
             <div 
               className="w-2 h-2 rounded-full" 
               style={{ backgroundColor: entry.color }}
             />
-            <p className="text-xs font-semibold text-gray-800 dark:text-gray-100">
+            <p className="text-xs font-semibold text-gray-800">
               {valueFormatter(entry.value as number)}
             </p>
           </div>

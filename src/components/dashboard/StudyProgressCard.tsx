@@ -49,13 +49,12 @@ export const StudyProgressCard: React.FC<StudyProgressCardProps> = ({
           {items.map((item) => (
             <div key={item.id} className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{item.title}</span>
+                <span className="text-sm font-medium text-gray-700">{item.title}</span>
                 <span className="text-sm font-semibold">{item.progress}%</span>
               </div>
               <Progress 
                 value={item.progress} 
-                max={100} 
-                className="h-2.5 bg-gray-100 dark:bg-gray-800"
+                className="h-2.5 bg-gray-100"
                 indicatorClassName={getColorClass(item.color)}
               />
             </div>
