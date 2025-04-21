@@ -1,3 +1,4 @@
+
 import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -37,7 +38,7 @@ const queryClient = new QueryClient({
   },
 });
 
-// Loading component
+// Loading component to display while pages are loading
 const Loading = () => (
   <div className="h-screen flex flex-col items-center justify-center p-4">
     <div className="w-full max-w-md space-y-4">
@@ -61,44 +62,24 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     return <Loading />;
   }
   
-  return isAuthenticated ? <>{children}</> : <Navigate to="/" />;
-};
-
-// Public route guard - redirects authenticated users to dashboard
-const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useAuth();
-  
-  if (isLoading) {
-    return <Loading />;
-  }
-  
-  return isAuthenticated ? <Navigate to="/dashboard" /> : <>{children}</>;
+  return isAuthenticated ? <>{children}</> : <Navigate to="/authentication" />;
 };
 
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route 
-        path="/" 
-        element={
-          <PublicRoute>
-            <Suspense fallback={<Loading />}>
-              <Index />
-            </Suspense>
-          </PublicRoute>
-        } 
-      />
-      <Route 
-        path="/authentication" 
-        element={
-          <PublicRoute>
-            <Suspense fallback={<Loading />}>
-              <Authentication />
-            </Suspense>
-          </PublicRoute>
-        } 
-      />
+      <Route path="/" element={
+        <Suspense fallback={<Loading />}>
+          <Index />
+        </Suspense>
+      } />
+      <Route path="/login" element={<Navigate to="/authentication" />} />
+      <Route path="/authentication" element={
+        <Suspense fallback={<Loading />}>
+          <Authentication />
+        </Suspense>
+      } />
       
       {/* Protected routes with AppLayout */}
       <Route 

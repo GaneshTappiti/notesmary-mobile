@@ -15,15 +15,6 @@ import {
 } from 'recharts';
 import { cn } from '@/lib/utils';
 
-// Define ValueType and NameType for TooltipProps
-type ValueType = number;
-type NameType = string;
-
-// Fix TS2314 error by providing proper type arguments to TooltipProps
-type CustomTooltipProps = TooltipProps<ValueType, NameType> & { 
-  valueFormatter?: (value: number) => string 
-};
-
 // Common props for all chart types
 interface CommonChartProps {
   data: any[];
@@ -47,18 +38,18 @@ const CustomTooltip = ({
   payload, 
   label,
   valueFormatter = (value: number) => `${value}` 
-}: CustomTooltipProps) => {
+}: TooltipProps & { valueFormatter?: (value: number) => string }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-2 border border-gray-200 rounded-md shadow-md">
-        <p className="text-xs font-medium text-gray-600">{label}</p>
+      <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded-md shadow-md">
+        <p className="text-xs font-medium text-gray-600 dark:text-gray-300">{label}</p>
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center gap-1.5">
             <div 
               className="w-2 h-2 rounded-full" 
               style={{ backgroundColor: entry.color }}
             />
-            <p className="text-xs font-semibold text-gray-800">
+            <p className="text-xs font-semibold text-gray-800 dark:text-gray-100">
               {valueFormatter(entry.value as number)}
             </p>
           </div>
@@ -67,28 +58,6 @@ const CustomTooltip = ({
     );
   }
   return null;
-};
-
-// Export additional components needed by StudyAnalytics.tsx
-export const ChartContainer: React.FC<{ 
-  children: React.ReactNode; 
-  config?: Record<string, { color: string }>
-}> = ({ children, config = {} }) => {
-  return <div className="w-full h-full">{children}</div>;
-};
-
-export const ChartTooltip: React.FC<{ 
-  content?: React.ReactNode 
-}> = ({ content }) => {
-  // Use type assertion to fix TS2769 error
-  return <Tooltip content={content as any} />;
-};
-
-export const ChartTooltipContent: React.FC<{
-  nameKey?: string;
-  formatter?: (value: any) => [string, string];
-}> = ({ nameKey, formatter }) => {
-  return <CustomTooltip valueFormatter={(val) => formatter ? formatter(val)[0] : `${val}`} />;
 };
 
 // Line Chart Component

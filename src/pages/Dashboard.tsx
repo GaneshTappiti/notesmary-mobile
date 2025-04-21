@@ -1,11 +1,12 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Upload,
   Search,
@@ -13,6 +14,7 @@ import {
   Users,
   Bell,
   Bookmark,
+  GraduationCap,
   X,
   ArrowRight,
   MessageSquare,
@@ -98,7 +100,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="px-4 py-6 max-w-7xl mx-auto space-y-6">
         {/* Search bar */}
         <div className="md:hidden relative mb-4">
@@ -108,7 +110,7 @@ const Dashboard = () => {
             placeholder="Search anything..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-10 py-2 border-gray-200 rounded-lg"
+            className="w-full pl-10 pr-10 py-2 border-gray-200 dark:border-gray-700 rounded-lg"
           />
           {searchQuery && (
             <button
@@ -166,7 +168,7 @@ const Dashboard = () => {
         
         {/* Study Rooms Section */}
         <Card className="border-none shadow-sm overflow-hidden">
-          <div className="px-6 py-5 flex justify-between items-center border-b border-gray-100">
+          <div className="px-6 py-5 flex justify-between items-center border-b border-gray-100 dark:border-gray-800">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <Users size={18} className="text-blue-600" />
               Study Rooms
@@ -197,7 +199,7 @@ const Dashboard = () => {
               {studyRooms.map((room) => (
                 <Card 
                   key={room.id} 
-                  className="border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all cursor-pointer"
+                  className="border border-gray-100 dark:border-gray-800 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800 transition-all cursor-pointer"
                   onClick={() => navigate(`/study-room/${room.id}`)}
                 >
                   <CardContent className="p-4">
@@ -207,8 +209,8 @@ const Dashboard = () => {
                         <AvatarFallback>{room.title[0]}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="font-medium text-gray-900">{room.title}</h3>
-                        <p className="text-xs text-gray-500">{room.time} • {room.participants} participants</p>
+                        <h3 className="font-medium text-gray-900 dark:text-white">{room.title}</h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{room.time} • {room.participants} participants</p>
                       </div>
                     </div>
                     
@@ -236,12 +238,12 @@ const Dashboard = () => {
               
               {/* "View All" card */}
               <Card 
-                className="border border-dashed border-gray-200 bg-transparent hover:bg-gray-50 transition-all cursor-pointer flex items-center justify-center"
+                className="border border-dashed border-gray-200 dark:border-gray-700 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all cursor-pointer flex items-center justify-center"
                 onClick={() => navigate('/study-rooms')}
               >
                 <CardContent className="p-4 text-center flex flex-col items-center">
                   <ArrowRight size={24} className="text-blue-500 mb-2" />
-                  <p className="text-sm font-medium text-blue-600">View All Rooms</p>
+                  <p className="text-sm font-medium text-blue-600 dark:text-blue-400">View All Rooms</p>
                 </CardContent>
               </Card>
             </div>

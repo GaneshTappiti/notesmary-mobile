@@ -7,130 +7,181 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
+
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-    --primary: 221 83% 53%;
+
+    --primary: 210 100% 50%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
+
+    --secondary: 210 40% 96%;
     --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 40% 96%;
     --accent-foreground: 222 47% 11%;
-    --destructive: 0 84.2% 60.2%;
+
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 222 47% 11%;
+
     --radius: 1rem;
 
-    --sidebar-background: 213 100% 98%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 221 83% 53%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 210 40% 96.1%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214.3 31.8% 91.4%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5% 26%;
+    --sidebar-primary: 240 6% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 5% 96%;
+    --sidebar-accent-foreground: 240 6% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217 91% 60%;
   }
 
-  @font-face {
-    font-family: 'SF Pro Display';
-    src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 100% 50%;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 212.7 26.8% 83.9%;
+
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 40% 98%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 217 32% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 17%;
+    --sidebar-ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-medium-webfont.woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-semibold-webfont.woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-bold-webfont.woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  * {
+    @apply border-border;
   }
 
-  @font-face {
-    font-family: 'SF Pro Display';
-    src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-medium-webfont.woff');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
-  @font-face {
-    font-family: 'SF Pro Display';
-    src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-semibold-webfont.woff');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
+  body {
+    @apply bg-background text-foreground font-['SF_Pro_Display',sans-serif] antialiased;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+    min-height: 100vh;
+    /* For iOS Safari fixed position issues */
+    -webkit-overflow-scrolling: touch;
   }
 
-  @font-face {
-    font-family: 'SF Pro Display';
-    src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-bold-webfont.woff');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
   }
 
-  @layer base {
-    * {
-      @apply border-border;
-    }
+  /* Ensure images are responsive by default */
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
 
-    html {
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-    }
+  /* Improved touch targets for mobile */
+  button, 
+  a, 
+  input, 
+  select, 
+  textarea {
+    @apply transition-all duration-300;
+    touch-action: manipulation;
+  }
 
-    body {
-      @apply bg-background text-foreground font-['SF_Pro_Display',sans-serif] antialiased;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      overflow-x: hidden;
-      min-height: 100vh;
-      -webkit-overflow-scrolling: touch;
-      background-image: linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(236,242,254,0.8) 100%);
-    }
+  input, 
+  textarea, 
+  select, 
+  button {
+    font-family: inherit;
+    font-size: 100%;
+  }
 
-    h1, h2, h3, h4, h5, h6 {
-      @apply font-medium tracking-tight text-blue-900;
-    }
+  /* Enhanced focus styles for accessibility */
+  a:focus,
+  button:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    @apply outline-none ring-2 ring-primary/70;
+  }
 
-    img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-    }
+  .glass-card {
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border border-white/20 dark:border-gray-700/20 shadow-sm;
+  }
 
-    button, 
-    a, 
-    input, 
-    select, 
-    textarea {
-      @apply transition-all duration-300;
-      touch-action: manipulation;
-    }
-
-    input, 
-    textarea, 
-    select, 
-    button {
-      font-family: inherit;
-      font-size: 100%;
-    }
-
-    a:focus,
-    button:focus,
-    input:focus,
-    select:focus,
-    textarea:focus {
-      @apply outline-none ring-2 ring-primary/70;
-    }
-
-    .glass-card {
-      @apply bg-white/90 backdrop-blur-lg border border-blue-50 shadow-sm;
-    }
-
-    .section-container {
-      @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16;
-    }
+  .section-container {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16;
   }
 }
 
@@ -179,10 +230,12 @@
     @apply mx-auto w-full max-w-7xl;
   }
 
+  /* Improved visibility for small screens */
   .text-mobile-adaptive {
     @apply text-sm sm:text-base;
   }
 
+  /* Safe area inset padding for modern mobile browsers */
   .safe-padding-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
@@ -191,14 +244,17 @@
     padding-top: env(safe-area-inset-top, 0);
   }
   
+  /* Prevent text from being too small on mobile */
   .min-text-size {
     font-size: max(16px, 1rem);
   }
 
+  /* Utility for proper vertical rhythm */
   .vertical-rhythm > * + * {
     @apply mt-4;
   }
 
+  /* Improved overflow handling */
   .overflow-x-auto-safe {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -206,10 +262,12 @@
     scrollbar-width: thin;
   }
 
+  /* Better card layouts at different breakpoints */
   .responsive-grid {
     @apply grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
   }
   
+  /* Responsive tables */
   .responsive-table {
     @apply w-full overflow-x-auto-safe whitespace-nowrap sm:whitespace-normal;
   }
