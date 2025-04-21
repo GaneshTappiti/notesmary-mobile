@@ -11,7 +11,32 @@ import {
   YAxis,
   LineChart as RechartsLineChart,
   Line,
+  TooltipProps,
 } from "recharts";
+
+// Add the needed interfaces for the ChartContainer, ChartTooltip and ChartTooltipContent
+interface ChartConfig {
+  [key: string]: {
+    color: string;
+  };
+}
+
+interface ChartContainerProps {
+  config: ChartConfig;
+  children: React.ReactNode;
+}
+
+interface ChartTooltipProps extends Omit<TooltipProps<any, any>, "content"> {
+  content?: React.ReactNode;
+}
+
+interface ChartTooltipContentProps {
+  nameKey?: string;
+  formatter?: (value: any, name?: string) => [string, string];
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+}
 
 interface ChartProps {
   data: any[];
@@ -27,6 +52,55 @@ interface ChartProps {
   [key: string]: any;
   // You may add more as needed
 }
+
+// Add ChartContainer component
+export const ChartContainer: React.FC<ChartContainerProps> = ({
+  config,
+  children,
+}) => {
+  return <>{children}</>;
+};
+
+// Add ChartTooltip component
+export const ChartTooltip: React.FC<ChartTooltipProps> = (props) => {
+  return <RechartsTooltip {...props} />;
+};
+
+// Add ChartTooltipContent component
+export const ChartTooltipContent: React.FC<ChartTooltipContentProps> = ({
+  nameKey = "name",
+  formatter = (value) => [`${value}`, "Value"],
+  active,
+  payload,
+  label,
+}) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-2 border border-gray-200 rounded-md shadow-md">
+        {label && <p className="text-xs font-medium text-gray-600">{label}</p>}
+        {payload.map((entry, index) => {
+          const [formattedValue, formattedName] = formatter(
+            entry.value,
+            entry.name
+          );
+          return (
+            <div key={index} className="flex items-center gap-1.5">
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: entry.color }}
+              />
+              <p className="text-xs font-semibold text-gray-800">
+                {formattedName}: {formattedValue}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+  return null;
+};
+
 function CustomTooltip({ 
   active,
   payload,
@@ -130,5 +204,3 @@ export const BarChart: React.FC<ChartProps> = ({
     </ResponsiveContainer>
   </div>
 );
-
-// ChartContainer, ChartTooltip, ChartTooltipContent are not used or exported anymore, as per the error in original file.
