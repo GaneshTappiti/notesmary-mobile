@@ -32,8 +32,26 @@ export const StudyRoomCard: React.FC<StudyRoomCardProps> = ({
     }
   };
   
+  const handleJoin = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/study-room/${id}`);
+  };
+  
+  const handleChat = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/study-room/${id}/chat`);
+  };
+  
+  const handleInfo = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/study-room/${id}/info`);
+  };
+  
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition-all">
+    <div 
+      className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition-all cursor-pointer"
+      onClick={() => navigate(`/study-room/${id}`)}
+    >
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div className="flex-1">
           <h4 className="font-medium text-base mb-1">{title}</h4>
@@ -55,7 +73,7 @@ export const StudyRoomCard: React.FC<StudyRoomCardProps> = ({
           <Button 
             variant="default" 
             size="sm" 
-            onClick={() => navigate(`/study-room/${id}`)}
+            onClick={handleJoin}
             className="flex items-center"
           >
             <Users className="mr-1 h-4 w-4" />
@@ -66,7 +84,7 @@ export const StudyRoomCard: React.FC<StudyRoomCardProps> = ({
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={() => navigate(`/study-room/${id}/chat`)}
+              onClick={handleChat}
               className="flex-1"
             >
               <MessageSquare className="h-4 w-4" />
@@ -75,7 +93,7 @@ export const StudyRoomCard: React.FC<StudyRoomCardProps> = ({
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={() => navigate(`/study-room/${id}/info`)}
+              onClick={handleInfo}
               className="flex-1"
             >
               <Info className="h-4 w-4" />

@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -27,6 +28,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Stats cards data
   const statsCards = [
@@ -97,6 +99,49 @@ const Dashboard = () => {
     { id: 4, title: 'Biology Research Paper', time: 'Next Monday', status: 'pending' },
   ];
 
+  // Handle navigation to specific routes
+  const handleViewAllTasks = () => {
+    // Navigate to tasks page (you may need to add this route if it doesn't exist)
+    toast({
+      title: "Feature Coming Soon",
+      description: "The Tasks page will be available in the next update.",
+      duration: 3000,
+    });
+  };
+
+  const handleJoinRoom = (roomId: string) => {
+    navigate(`/study-room/${roomId}`);
+  };
+
+  const handleRoomDetails = (roomId: string) => {
+    navigate(`/study-room/${roomId}/chat`);
+  };
+
+  const handleViewAllRooms = () => {
+    navigate('/study-rooms');
+  };
+
+  const handleSyncCalendar = () => {
+    toast({
+      title: "Calendar synced",
+      description: "Your calendar has been updated with the latest events"
+    });
+  };
+
+  const handleNewTask = () => {
+    toast({
+      title: "New task created",
+      description: "Your task has been added to your list"
+    });
+  };
+
+  const handleTaskClick = (taskId: number) => {
+    toast({
+      title: "Task Details",
+      description: `You clicked on task #${taskId}`
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -111,12 +156,7 @@ const Dashboard = () => {
             variant="outline"
             size="sm"
             className="gap-1 h-9"
-            onClick={() => {
-              toast({
-                title: "Calendar synced",
-                description: "Your calendar has been updated with the latest events"
-              });
-            }}
+            onClick={handleSyncCalendar}
           >
             <Calendar size={16} />
             Sync Calendar
@@ -124,12 +164,7 @@ const Dashboard = () => {
           <Button 
             size="sm"
             className="bg-blue-600 hover:bg-blue-700 gap-1 h-9 text-white"
-            onClick={() => {
-              toast({
-                title: "New task created",
-                description: "Your task has been added to your list"
-              });
-            }}
+            onClick={handleNewTask}
           >
             <Plus size={16} />
             New Task
@@ -213,7 +248,11 @@ const Dashboard = () => {
             <CardContent className="p-0">
               <div className="divide-y divide-gray-100">
                 {upcomingTasks.map((task) => (
-                  <div key={task.id} className="flex items-center justify-between px-6 py-3.5 hover:bg-gray-50 transition-colors">
+                  <div 
+                    key={task.id} 
+                    className="flex items-center justify-between px-6 py-3.5 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => handleTaskClick(task.id)}
+                  >
                     <div className="flex items-center gap-3">
                       <div className={`h-2 w-2 rounded-full ${
                         task.status === 'urgent' ? 'bg-red-500' : 
@@ -232,7 +271,11 @@ const Dashboard = () => {
                 ))}
               </div>
               <div className="px-6 py-3 border-t border-gray-100">
-                <Button variant="ghost" className="w-full justify-center text-blue-600 hover:text-blue-700 hover:bg-blue-50 py-1.5">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-center text-blue-600 hover:text-blue-700 hover:bg-blue-50 py-1.5"
+                  onClick={handleViewAllTasks}
+                >
                   View All Tasks
                 </Button>
               </div>
@@ -251,7 +294,7 @@ const Dashboard = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => window.location.href = "/study-rooms"}
+            onClick={handleViewAllRooms}
             className="gap-1 h-9 text-blue-600 border-blue-200 hover:border-blue-400"
           >
             View All Rooms
@@ -265,7 +308,7 @@ const Dashboard = () => {
               <Card 
                 key={room.id} 
                 className="border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all cursor-pointer bg-white"
-                onClick={() => window.location.href = `/study-room/${room.id}`}
+                onClick={() => navigate(`/study-room/${room.id}`)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3 mb-3">
@@ -284,6 +327,10 @@ const Dashboard = () => {
                       variant="outline" 
                       size="sm" 
                       className="gap-1 text-blue-600 border-blue-200 hover:border-blue-400 hover:bg-blue-50"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleJoinRoom(room.id);
+                      }}
                     >
                       <Users size={14} />
                       Join
@@ -294,7 +341,7 @@ const Dashboard = () => {
                       className="gap-1"
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.location.href = `/study-room/${room.id}/chat`;
+                        handleRoomDetails(room.id);
                       }}
                     >
                       View Details
