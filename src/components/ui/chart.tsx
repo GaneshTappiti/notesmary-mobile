@@ -157,9 +157,9 @@ export const LineChart: React.FC<ChartProps> = ({
   <div className={className}>
     <ResponsiveContainer width="100%" height="100%">
       <RechartsLineChart data={data}>
-        {showGridLines && <CartesianGrid strokeDasharray="3 3" />}
-        <XAxis dataKey={index} />
-        {showYAxis && <YAxis />}
+        {showGridLines && <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />}
+        <XAxis dataKey={index} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#888' }} />
+        {showYAxis && <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#888' }} />}
         {showTooltip && (
           <RechartsTooltip content={<CustomTooltip />} />
         )}
@@ -171,10 +171,11 @@ export const LineChart: React.FC<ChartProps> = ({
             stroke={colors[idx % colors.length]}
             animationDuration={showAnimation ? 300 : 0}
             strokeWidth={2}
-            dot={false}
+            dot={{ stroke: colors[idx % colors.length], strokeWidth: 2, fill: '#fff', r: 4 }}
+            activeDot={{ stroke: colors[idx % colors.length], strokeWidth: 2, fill: '#fff', r: 6 }}
           />
         ))}
-        {showLegend && <Legend />}
+        {showLegend && <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />}
       </RechartsLineChart>
     </ResponsiveContainer>
   </div>
@@ -196,9 +197,9 @@ export const BarChart: React.FC<ChartProps> = ({
   <div className={className}>
     <ResponsiveContainer width="100%" height="100%">
       <RechartsBarChart data={data}>
-        {showGridLines && <CartesianGrid strokeDasharray="3 3" />}
-        <XAxis dataKey={index} />
-        {showYAxis && <YAxis />}
+        {showGridLines && <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />}
+        <XAxis dataKey={index} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#888' }} />
+        {showYAxis && <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#888' }} />}
         {showTooltip && (
           <RechartsTooltip content={<CustomTooltip />} />
         )}
@@ -208,9 +209,11 @@ export const BarChart: React.FC<ChartProps> = ({
             dataKey={cat}
             fill={colors[idx % colors.length]}
             animationDuration={showAnimation ? 300 : 0}
+            radius={[4, 4, 0, 0]}
+            barSize={30}
           />
         ))}
-        {showLegend && <Legend />}
+        {showLegend && <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />}
       </RechartsBarChart>
     </ResponsiveContainer>
   </div>

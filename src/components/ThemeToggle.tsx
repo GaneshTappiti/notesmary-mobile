@@ -19,10 +19,9 @@ export function ThemeToggle({
   const { toast } = useToast();
 
   const handleToggle = () => {
-    // Just show a toast since we're always in light mode
     toast({
       title: "Light mode active",
-      description: "This application uses a light theme for a clean, professional look.",
+      description: "This application uses a light theme for optimal readability.",
       duration: 2000,
     });
   };

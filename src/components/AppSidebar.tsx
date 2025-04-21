@@ -1,22 +1,20 @@
+
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { 
-  BookText, 
+  LayoutDashboard, 
+  FileText, 
   BrainCircuit, 
-  MessageSquare, 
-  CreditCard, 
+  GraduationCap, 
   BarChart, 
   Upload, 
   Search,
   Bell,
-  Home,
+  Users,
+  Settings,
+  CreditCard,
   LogOut,
   ChevronDown,
-  Settings,
-  User,
-  FileText,
-  Users,
-  GraduationCap,
-  Calendar
+  User
 } from 'lucide-react';
 import {
   Sidebar,
@@ -71,7 +69,7 @@ export const AppSidebar = () => {
     {
       title: "Dashboard",
       path: "/dashboard",
-      icon: <Home size={20} />,
+      icon: <LayoutDashboard size={20} />,
     },
     {
       title: "Upload Notes",
@@ -105,7 +103,7 @@ export const AppSidebar = () => {
     },
     {
       title: "Study Rooms",
-      path: "/study-room/1",
+      path: "/study-rooms",
       icon: <Users size={20} />,
     },
   ];
@@ -127,7 +125,7 @@ export const AppSidebar = () => {
   return (
     <Sidebar 
       data-state={state} 
-      className="z-50 shadow-md border-r border-gray-100 bg-white rounded-tr-[30px] rounded-br-[30px] overflow-hidden w-[280px]"
+      className="z-50 shadow-md border-r border-gray-100 bg-white rounded-tr-[20px] rounded-br-[20px] overflow-hidden w-[270px]"
     >
       <SidebarHeader className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
         <Link to="/dashboard" className="flex items-center gap-2">
@@ -154,8 +152,8 @@ export const AppSidebar = () => {
                     isActive={isActive(item.path)}
                     tooltip={state === "collapsed" ? item.title : undefined}
                     className={cn(
-                      "transition-all duration-200 hover:translate-x-1 rounded-xl py-2.5",
-                      isActive(item.path) && "bg-blue-50 border-l-4 border-blue-500"
+                      "transition-all duration-200 hover:translate-x-1 rounded-xl py-2",
+                      isActive(item.path) ? "bg-blue-50 border-l-4 border-blue-500" : ""
                     )}
                   >
                     <Link to={item.path} className="flex items-center gap-3 px-3">
@@ -191,7 +189,7 @@ export const AppSidebar = () => {
                       isActive={location.pathname.includes('settings') || location.pathname.includes('subscription')}
                       tooltip={state === "collapsed" ? "Settings" : undefined}
                       className={cn(
-                        "transition-all duration-200 hover:translate-x-1 w-full justify-between rounded-xl py-2.5",
+                        "transition-all duration-200 hover:translate-x-1 w-full justify-between rounded-xl py-2",
                         (location.pathname.includes('settings') || location.pathname.includes('subscription')) && 
                         "bg-blue-50 border-l-4 border-blue-500"
                       )}
@@ -225,7 +223,7 @@ export const AppSidebar = () => {
                       <Link 
                         key={item.path}
                         to={item.path}
-                        className={`flex items-center gap-2 px-3 py-2.5 text-sm rounded-xl transition-colors ${
+                        className={`flex items-center gap-2 px-3 py-2 text-sm rounded-xl transition-colors ${
                           isActive(item.path) 
                             ? 'bg-blue-50 border-l-4 border-blue-500 text-blue-600 font-medium' 
                             : 'hover:bg-gray-100 text-gray-700'
@@ -254,7 +252,7 @@ export const AppSidebar = () => {
                   isActive={isActive("/notifications")}
                   tooltip={state === "collapsed" ? "Notifications" : undefined}
                   className={cn(
-                    "transition-all duration-200 hover:translate-x-1 rounded-xl py-2.5",
+                    "transition-all duration-200 hover:translate-x-1 rounded-xl py-2",
                     isActive("/notifications") && "bg-blue-50 border-l-4 border-blue-500"
                   )}
                 >
@@ -300,7 +298,7 @@ export const AppSidebar = () => {
         <SidebarMenuButton 
           onClick={handleSignOut}
           tooltip={state === "collapsed" ? "Sign Out" : undefined}
-          className="w-full text-gray-700 hover:bg-red-50 transition-colors duration-200 py-2.5 rounded-xl"
+          className="w-full text-gray-700 hover:bg-red-50 transition-colors duration-200 py-2 rounded-xl"
         >
           <LogOut size={18} className="text-red-500" />
           <span>Sign Out</span>
