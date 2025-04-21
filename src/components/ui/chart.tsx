@@ -26,8 +26,18 @@ interface ChartContainerProps {
   children: React.ReactNode;
 }
 
-interface ChartTooltipProps extends Omit<TooltipProps<any, any>, "content"> {
-  content?: React.ReactNode;
+// Fix the TooltipProps generic type parameters
+interface ChartTooltipProps {
+  content?: React.ReactElement | React.FC<any> | null;
+  separator?: string;
+  wrapperClassName?: string;
+  labelClassName?: string;
+  formatter?: (value: any, name?: string) => [string, string];
+  labelFormatter?: (label: any) => React.ReactNode;
+  itemSorter?: (item: any) => number;
+  isAnimationActive?: boolean;
+  animationDuration?: number;
+  animationEasing?: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear';
 }
 
 interface ChartTooltipContentProps {
@@ -61,9 +71,10 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   return <>{children}</>;
 };
 
-// Add ChartTooltip component
+// Add ChartTooltip component - fixed to handle the proper type
 export const ChartTooltip: React.FC<ChartTooltipProps> = (props) => {
-  return <RechartsTooltip {...props} />;
+  // Using type assertion to handle the conversion properly
+  return <RechartsTooltip {...props as any} />;
 };
 
 // Add ChartTooltipContent component
