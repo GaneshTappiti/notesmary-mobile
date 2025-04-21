@@ -24,7 +24,7 @@ const MobileSidebar = () => {
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="p-0 w-[80%] max-w-[300px]">
+      <SheetContent side="left" className="p-0 w-[80%] max-w-[300px] bg-white">
         <AppSidebar />
       </SheetContent>
     </Sheet>

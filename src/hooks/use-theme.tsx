@@ -1,28 +1,10 @@
 
 import { useState, useEffect } from 'react';
 
-type Theme = 'light' | 'dark';
+type Theme = 'light';
 
 export function useThemePreference() {
-  const [theme, setTheme] = useState<Theme>(() => {
-    // For SSR/First render - always initially check localStorage
-    if (typeof window !== 'undefined') {
-      // Check if theme exists in localStorage
-      const storedTheme = localStorage.getItem('theme') as Theme;
-      
-      if (storedTheme) {
-        return storedTheme;
-      }
-      
-      // Check if user prefers dark mode
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-      }
-    }
-    
-    // Default to light
-    return 'light';
-  });
+  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
     // Update localStorage when theme changes
@@ -30,14 +12,13 @@ export function useThemePreference() {
     
     // Update document classes
     const root = window.document.documentElement;
-    const isDark = theme === 'dark';
-    
-    root.classList.remove(isDark ? 'light' : 'dark');
-    root.classList.add(theme);
+    root.classList.remove('dark');
+    root.classList.add('light');
   }, [theme]);
 
+  // Toggle function is a no-op since we always want light mode
   const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+    // No-op - we always stay in light mode
   };
 
   return { theme, setTheme, toggleTheme };

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -107,18 +108,18 @@ const Authentication = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="min-h-[100dvh] w-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+    <div className="min-h-[100dvh] w-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
             Notex
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2">
+          <p className="text-sm sm:text-base text-slate-600 mt-2">
             Your personal study assistant
           </p>
         </div>
 
-        <Card className="border-slate-200 dark:border-slate-700 shadow-lg w-full">
+        <Card className="border-slate-200 shadow-lg w-full">
           <CardHeader className="px-4 sm:px-6 py-4 sm:py-6">
             <CardTitle className="text-xl sm:text-2xl text-center">
               Welcome to Notex
@@ -262,13 +263,13 @@ const Authentication = () => {
             </Tabs>
           </CardContent>
           <CardFooter className="flex justify-center px-4 sm:px-6 py-3 sm:py-4">
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-500">
               {activeTab === "login"
                 ? "Don't have an account? "
                 : "Already have an account? "}
               <Button
                 variant="link"
-                className="p-0 h-auto text-blue-600 dark:text-blue-400 text-xs sm:text-sm"
+                className="p-0 h-auto text-blue-600 text-xs sm:text-sm"
                 onClick={() =>
                   setActiveTab(activeTab === "login" ? "signup" : "login")
                 }

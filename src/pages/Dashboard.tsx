@@ -100,7 +100,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       <div className="px-4 py-6 max-w-7xl mx-auto space-y-6">
         {/* Search bar */}
         <div className="md:hidden relative mb-4">
@@ -110,7 +110,7 @@ const Dashboard = () => {
             placeholder="Search anything..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-10 py-2 border-gray-200 dark:border-gray-700 rounded-lg"
+            className="w-full pl-10 pr-10 py-2 border-gray-200 rounded-lg"
           />
           {searchQuery && (
             <button
@@ -167,8 +167,8 @@ const Dashboard = () => {
         </div>
         
         {/* Study Rooms Section */}
-        <Card className="border-none shadow-sm overflow-hidden">
-          <div className="px-6 py-5 flex justify-between items-center border-b border-gray-100 dark:border-gray-800">
+        <Card className="border-none shadow-sm overflow-hidden bg-white">
+          <div className="px-6 py-5 flex justify-between items-center border-b border-gray-100">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <Users size={18} className="text-blue-600" />
               Study Rooms
@@ -177,7 +177,7 @@ const Dashboard = () => {
               <Button 
                 onClick={() => setCreateRoomModalOpen(true)} 
                 size="sm" 
-                className="bg-blue-600 hover:bg-blue-700 gap-1 h-9"
+                className="bg-blue-600 hover:bg-blue-700 gap-1 h-9 text-white"
               >
                 <Plus size={16} />
                 Create Room
@@ -199,7 +199,7 @@ const Dashboard = () => {
               {studyRooms.map((room) => (
                 <Card 
                   key={room.id} 
-                  className="border border-gray-100 dark:border-gray-800 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800 transition-all cursor-pointer"
+                  className="border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all cursor-pointer bg-white"
                   onClick={() => navigate(`/study-room/${room.id}`)}
                 >
                   <CardContent className="p-4">
@@ -209,8 +209,8 @@ const Dashboard = () => {
                         <AvatarFallback>{room.title[0]}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="font-medium text-gray-900 dark:text-white">{room.title}</h3>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{room.time} • {room.participants} participants</p>
+                        <h3 className="font-medium text-gray-900">{room.title}</h3>
+                        <p className="text-xs text-gray-500">{room.time} • {room.participants} participants</p>
                       </div>
                     </div>
                     
@@ -238,12 +238,12 @@ const Dashboard = () => {
               
               {/* "View All" card */}
               <Card 
-                className="border border-dashed border-gray-200 dark:border-gray-700 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all cursor-pointer flex items-center justify-center"
+                className="border border-dashed border-gray-200 bg-transparent hover:bg-gray-50 transition-all cursor-pointer flex items-center justify-center"
                 onClick={() => navigate('/study-rooms')}
               >
                 <CardContent className="p-4 text-center flex flex-col items-center">
                   <ArrowRight size={24} className="text-blue-500 mb-2" />
-                  <p className="text-sm font-medium text-blue-600 dark:text-blue-400">View All Rooms</p>
+                  <p className="text-sm font-medium text-blue-600">View All Rooms</p>
                 </CardContent>
               </Card>
             </div>

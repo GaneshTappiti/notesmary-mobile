@@ -45,23 +45,23 @@ const Index = () => {
 
   return (
     <div 
-      className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 relative"
+      className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-blue-50 to-white relative"
       ref={containerRef}
     >
       {/* Animated gradient backgrounds */}
       <motion.div 
-        className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-br from-blue-100/50 to-purple-100/30 dark:from-blue-900/20 dark:to-purple-900/10 -z-10"
+        className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-br from-blue-100/50 to-purple-100/30 -z-10"
         style={{ opacity: bgOpacity1, backgroundPosition: bgPosition }}
       />
       <motion.div 
-        className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-tr from-indigo-100/30 to-pink-100/20 dark:from-indigo-900/10 dark:to-pink-900/5 -z-10"
+        className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-tr from-indigo-100/30 to-pink-100/20 -z-10"
         style={{ opacity: bgOpacity2 }}
       />
       
       {/* Gradient blobs */}
-      <div className="absolute top-1/4 -left-64 w-96 h-96 bg-blue-200 dark:bg-blue-900/30 rounded-full blur-3xl opacity-30 dark:opacity-20 -z-10"></div>
-      <div className="absolute top-1/3 -right-64 w-96 h-96 bg-purple-200 dark:bg-purple-900/30 rounded-full blur-3xl opacity-30 dark:opacity-20 -z-10"></div>
-      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-pink-200 dark:bg-pink-900/30 rounded-full blur-3xl opacity-20 dark:opacity-10 -z-10"></div>
+      <div className="absolute top-1/4 -left-64 w-96 h-96 bg-blue-200 rounded-full blur-3xl opacity-30 -z-10"></div>
+      <div className="absolute top-1/3 -right-64 w-96 h-96 bg-purple-200 rounded-full blur-3xl opacity-30 -z-10"></div>
+      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-pink-200 rounded-full blur-3xl opacity-20 -z-10"></div>
 
       {/* Back to top button */}
       <motion.div 

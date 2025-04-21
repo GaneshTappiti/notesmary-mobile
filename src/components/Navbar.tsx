@@ -38,7 +38,7 @@ export const Navbar = () => {
     <header 
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 py-3' 
+          ? 'bg-white/90 backdrop-blur-md border-b border-gray-200/50 py-3' 
           : 'bg-transparent py-5'
       }`}
     >
@@ -52,8 +52,8 @@ export const Navbar = () => {
             className="flex items-center space-x-2"
           >
             <Link to="/" className="flex items-center space-x-2">
-              <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+              <BookOpen className="w-6 h-6 text-blue-600" />
+              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-500">
                 Notex
               </span>
             </Link>
@@ -68,7 +68,7 @@ export const Navbar = () => {
           >
             <a 
               href="#features" 
-              className="text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="text-foreground hover:text-blue-600 transition-colors"
               onClick={(e) => {
                 e.preventDefault();
                 document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
@@ -78,7 +78,7 @@ export const Navbar = () => {
             </a>
             <a 
               href="#pricing" 
-              className="text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="text-foreground hover:text-blue-600 transition-colors"
               onClick={(e) => {
                 e.preventDefault();
                 document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
@@ -88,7 +88,7 @@ export const Navbar = () => {
             </a>
             <a 
               href="#contact" 
-              className="text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="text-foreground hover:text-blue-600 transition-colors"
               onClick={(e) => {
                 e.preventDefault();
                 document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
@@ -110,7 +110,7 @@ export const Navbar = () => {
             <div className="hidden md:flex items-center space-x-3">
               {isLoggedIn ? (
                 <Button 
-                  className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-full px-5"
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5"
                   onClick={() => navigate('/dashboard')}
                 >
                   Dashboard
@@ -119,7 +119,7 @@ export const Navbar = () => {
                 <>
                   <Button 
                     variant="ghost" 
-                    className="text-foreground hover:text-blue-600 dark:hover:text-blue-400"
+                    className="text-foreground hover:text-blue-600"
                     onClick={() => navigate('/authentication')}
                   >
                     <LogIn className="w-4 h-4 mr-2" />
@@ -127,7 +127,7 @@ export const Navbar = () => {
                   </Button>
                   
                   <Button 
-                    className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-full px-5"
+                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5"
                     onClick={() => navigate('/authentication')}
                   >
                     Get Started
@@ -144,11 +144,11 @@ export const Navbar = () => {
                     <Menu className="h-6 w-6" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[80vw] sm:w-[350px]">
+                <SheetContent side="right" className="w-[80vw] sm:w-[350px] bg-white">
                   <div className="flex flex-col h-full">
                     <div className="flex items-center justify-between py-4 border-b">
                       <div className="flex items-center space-x-2">
-                        <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <BookOpen className="w-5 h-5 text-blue-600" />
                         <span className="font-semibold">Notex</span>
                       </div>
                       <SheetTrigger asChild>
@@ -161,7 +161,7 @@ export const Navbar = () => {
                     <div className="flex flex-col space-y-4 py-6">
                       <a 
                         href="#features" 
-                        className="text-foreground hover:text-blue-600 dark:hover:text-blue-400 py-2"
+                        className="text-foreground hover:text-blue-600 py-2"
                         onClick={(e) => {
                           e.preventDefault();
                           document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
@@ -171,7 +171,7 @@ export const Navbar = () => {
                       </a>
                       <a 
                         href="#pricing" 
-                        className="text-foreground hover:text-blue-600 dark:hover:text-blue-400 py-2"
+                        className="text-foreground hover:text-blue-600 py-2"
                         onClick={(e) => {
                           e.preventDefault();
                           document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
@@ -181,7 +181,7 @@ export const Navbar = () => {
                       </a>
                       <a 
                         href="#contact" 
-                        className="text-foreground hover:text-blue-600 dark:hover:text-blue-400 py-2"
+                        className="text-foreground hover:text-blue-600 py-2"
                         onClick={(e) => {
                           e.preventDefault();
                           document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
