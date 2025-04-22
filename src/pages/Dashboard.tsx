@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -8,6 +7,8 @@ import { StatsCard } from '@/components/dashboard/StatsCard';
 import { AnalyticsCard } from '@/components/dashboard/AnalyticsCard';
 import { StudyRoomCard } from '@/components/dashboard/StudyRoomCard';
 import { QuickAccessCard } from '@/components/dashboard/QuickAccessCard';
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { DashboardTopbar } from "@/components/dashboard/DashboardTopbar";
 import {
   Upload,
   Search,
@@ -22,7 +23,6 @@ const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Quick access options with updated styling
   const quickAccessOptions = [
     {
       title: 'Upload Notes',
@@ -79,7 +79,6 @@ const Dashboard = () => {
     }
   ];
 
-  // Stats cards data with trends
   const statsCards = [
     {
       title: 'Total Notes',
@@ -101,7 +100,6 @@ const Dashboard = () => {
     }
   ];
 
-  // Study rooms data with updated design
   const studyRooms = [
     {
       id: '1',
@@ -132,7 +130,6 @@ const Dashboard = () => {
     }
   ];
 
-  // Tasks list with priority levels
   const tasks = [
     { id: 1, title: 'Physics Assignment Due', time: '2:00 PM Today', subject: 'Physics', priority: 'high', completed: false },
     { id: 2, title: 'Math Group Study', time: '4:30 PM Tomorrow', subject: 'Math', priority: 'medium', completed: false },
@@ -150,114 +147,113 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* 1. Quick Access Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {quickAccessOptions.map((option, index) => (
-          <QuickAccessCard
-            key={index}
-            {...option}
-            className="hover:shadow-lg transition-all duration-300"
-          />
-        ))}
-      </div>
+    <div className="min-h-screen w-full flex bg-gray-50 dark:bg-gray-950">
+      <DashboardSidebar />
+      <div className="flex-1 ml-20">
+        <DashboardTopbar />
 
-      {/* 2. Recent Study Rooms */}
-      <Card className="border-none shadow-sm overflow-hidden bg-white">
-        <div className="p-6 border-b border-gray-100">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Users size={20} className="text-gray-500" />
-              Recent Study Rooms
-            </h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/study-rooms')}
-              className="text-blue-600 border-blue-200 hover:border-blue-400"
-            >
-              View All
-            </Button>
-          </div>
-        </div>
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {studyRooms.map((room) => (
-            <StudyRoomCard key={room.id} {...room} />
-          ))}
-        </div>
-      </Card>
-
-      {/* 3. Progress Metrics & Tasks */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Stats Cards */}
-        <div className="lg:col-span-2">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {statsCards.map((card, index) => (
-              <StatsCard
+        <main className="p-5 md:p-8 max-w-7xl mx-auto animate-fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {quickAccessOptions.map((option, index) => (
+              <QuickAccessCard
                 key={index}
-                {...card}
+                {...option}
+                className="hover:shadow-lg transition-all duration-300"
               />
             ))}
           </div>
-        </div>
-
-        {/* Tasks Summary */}
-        <Card className="border-none shadow-sm">
-          <div className="p-4 border-b border-gray-100">
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold flex items-center gap-2">
-                <CheckSquare size={18} className="text-gray-500" />
-                Tasks
-              </h3>
-              <Button size="sm" variant="ghost" onClick={handleNewTask}>
-                <Plus size={16} className="mr-1" />
-                Add Task
-              </Button>
-            </div>
+          <div className="mt-7">
+            <Card className="border-none shadow-sm overflow-hidden bg-white">
+              <div className="p-6 border-b border-gray-100">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-lg font-semibold flex items-center gap-2">
+                    <Users size={20} className="text-gray-500" />
+                    Recent Study Rooms
+                  </h2>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate('/study-rooms')}
+                    className="text-blue-600 border-blue-200 hover:border-blue-400"
+                  >
+                    View All
+                  </Button>
+                </div>
+              </div>
+              <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {studyRooms.map((room) => (
+                  <StudyRoomCard key={room.id} {...room} />
+                ))}
+              </div>
+            </Card>
           </div>
-          <div className="p-4">
-            <div className="space-y-3">
-              {tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className={`p-3 rounded-lg border ${
-                    task.completed ? 'bg-gray-50 border-gray-200' : 'bg-white border-gray-200'
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className={`text-sm font-medium ${task.completed ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
-                        {task.title}
-                      </h4>
-                      <p className="text-xs text-gray-500 mt-1">{task.time}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
-                          {task.subject}
-                        </span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          task.priority === 'high' ? 'bg-red-50 text-red-700' :
-                          task.priority === 'medium' ? 'bg-yellow-50 text-yellow-700' :
-                          'bg-green-50 text-green-700'
-                        }`}>
-                          {task.priority}
-                        </span>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-7">
+            <div className="lg:col-span-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {statsCards.map((card, index) => (
+                  <StatsCard
+                    key={index}
+                    {...card}
+                  />
+                ))}
+              </div>
+            </div>
+            <Card className="border-none shadow-sm">
+              <div className="p-4 border-b border-gray-100">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <CheckSquare size={18} className="text-gray-500" />
+                    Tasks
+                  </h3>
+                  <Button size="sm" variant="ghost" onClick={handleNewTask}>
+                    <Plus size={16} className="mr-1" />
+                    Add Task
+                  </Button>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="space-y-3">
+                  {tasks.map((task) => (
+                    <div
+                      key={task.id}
+                      className={`p-3 rounded-lg border ${
+                        task.completed ? 'bg-gray-50 border-gray-200' : 'bg-white border-gray-200'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h4 className={`text-sm font-medium ${task.completed ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                            {task.title}
+                          </h4>
+                          <p className="text-xs text-gray-500 mt-1">{task.time}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
+                              {task.subject}
+                            </span>
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              task.priority === 'high' ? 'bg-red-50 text-red-700' :
+                              task.priority === 'medium' ? 'bg-yellow-50 text-yellow-700' :
+                              'bg-green-50 text-green-700'
+                            }`}>
+                              {task.priority}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            </Card>
           </div>
-        </Card>
-      </div>
-
-      {/* 4. Weekly Study Activity */}
-      <div className="grid grid-cols-1 gap-6">
-        <AnalyticsCard
-          title="Weekly Study Activity"
-          chartType="bar"
-          filters={["This Week", "Last Week", "Month"]}
-        />
+          <div className="grid grid-cols-1 gap-6 mt-7">
+            <AnalyticsCard
+              title="Weekly Study Activity"
+              chartType="bar"
+              filters={["This Week", "Last Week", "Month"]}
+            />
+          </div>
+        </main>
       </div>
     </div>
   );
