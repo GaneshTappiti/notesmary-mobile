@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 export const DashboardTopbar = () => {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
-  const name = profile?.fullName || user?.email || "User";
+  const name = profile?.full_name || user?.email || "User";
 
   return (
     <header className="flex items-center justify-between gap-4 px-6 pt-6 pb-2 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-900 shadow-none sticky top-0 z-20">
@@ -17,7 +17,7 @@ export const DashboardTopbar = () => {
           Hello, {name.split(" ")[0]} 👋
         </h1>
         <p className="text-xs text-gray-500">
-          Here’s your dashboard for today
+          Here's your dashboard for today
         </p>
       </div>
       <div className="flex items-center gap-3 flex-1 justify-center">
