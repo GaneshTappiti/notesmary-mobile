@@ -39,9 +39,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setProfile(userProfile);
           }
         } else {
-          // Check localStorage as a fallback
-          const isLoggedInFromStorage = localStorage.getItem('isLoggedIn') === 'true';
-          setIsAuthenticated(isLoggedInFromStorage);
+          // No active session found
+          setIsAuthenticated(false);
+          setUser(null);
+          setProfile(null);
+          localStorage.removeItem('isLoggedIn');
         }
       } catch (error) {
         console.error('Auth check error:', error);

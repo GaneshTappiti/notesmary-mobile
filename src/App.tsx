@@ -1,3 +1,4 @@
+
 import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -78,7 +79,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public routes - Index page is available without authentication */}
+      {/* Public routes - Index page is available without authentication, no PublicRoute wrapper */}
       <Route path="/" element={
         <Suspense fallback={<Loading />}>
           <Index />
