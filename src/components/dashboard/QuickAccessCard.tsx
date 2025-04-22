@@ -13,6 +13,7 @@ interface QuickAccessCardProps {
   buttonVariant: "default" | "outline";
   onClick: () => void;
   isPrimary?: boolean;
+  className?: string; // Added className property
 }
 
 export const QuickAccessCard: React.FC<QuickAccessCardProps> = ({
@@ -23,13 +24,14 @@ export const QuickAccessCard: React.FC<QuickAccessCardProps> = ({
   buttonText,
   buttonVariant,
   onClick,
-  isPrimary = false
+  isPrimary = false,
+  className = '' // Add default empty string for className
 }) => {
   return (
     <Card 
       className={`border shadow-sm hover:shadow-md transition-all duration-200 hover:translate-y-[-2px] dark:bg-gray-800 group ${
         isPrimary ? 'border-blue-300 dark:border-blue-700/50' : ''
-      }`}
+      } ${className}`} // Add className to the Card component
     >
       <CardHeader className="pb-2 pt-4">
         <div className="flex items-center gap-3">
