@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -10,12 +11,10 @@ import { Pricing } from '@/components/Pricing';
 import { Footer } from '@/components/Footer';
 import { ArrowUpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { isAuthenticated } = useAuth();
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -32,12 +31,7 @@ const Index = () => {
   
   useEffect(() => {
     document.title = "Notex - AI-Powered Learning Platform";
-    
-    // Check if the user is already logged in
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, [navigate, isAuthenticated]);
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

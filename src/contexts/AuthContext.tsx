@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error('Auth check error:', error);
         setIsAuthenticated(false);
       } finally {
+        // Set isLoading to false regardless of outcome
         setIsLoading(false);
       }
     };

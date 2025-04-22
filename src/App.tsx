@@ -78,19 +78,19 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public routes */}
+      {/* Public routes - Index page is available without authentication */}
       <Route path="/" element={
-        <PublicRoute>
-          <Suspense fallback={<Loading />}>
-            <Index />
-          </Suspense>
-        </PublicRoute>
+        <Suspense fallback={<Loading />}>
+          <Index />
+        </Suspense>
       } />
       <Route path="/login" element={<Navigate to="/authentication" />} />
       <Route path="/authentication" element={
-        <Suspense fallback={<Loading />}>
-          <Authentication />
-        </Suspense>
+        <PublicRoute>
+          <Suspense fallback={<Loading />}>
+            <Authentication />
+          </Suspense>
+        </PublicRoute>
       } />
       
       {/* Protected routes with AppLayout */}
