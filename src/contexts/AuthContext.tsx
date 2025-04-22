@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthService, UserProfile } from '@/services/AuthService';
@@ -39,7 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setProfile(userProfile);
           }
         } else {
-          // No active session found
+          // No active session found - explicitly set authentication state to false
           setIsAuthenticated(false);
           setUser(null);
           setProfile(null);
@@ -48,6 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         console.error('Auth check error:', error);
         setIsAuthenticated(false);
+        setUser(null);
+        setProfile(null);
       } finally {
         // Set isLoading to false regardless of outcome
         setIsLoading(false);
@@ -56,6 +57,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Set up auth state change listener
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session ? 'session exists' : 'no session');
+      
       if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
         setUser(session.user);

@@ -11,9 +11,11 @@ import { Pricing } from '@/components/Pricing';
 import { Footer } from '@/components/Footer';
 import { ArrowUpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { scrollYProgress } = useScroll({
@@ -31,11 +33,21 @@ const Index = () => {
   
   useEffect(() => {
     document.title = "Notex - AI-Powered Learning Platform";
+    
+    // Don't redirect on the index page even if authenticated
+    // This allows both logged-in and logged-out users to see the landing page
   }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // If still loading auth state, don't render anything until we know
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-pulse text-blue-500">Loading...</div>
+    </div>;
+  }
 
   return (
     <div 
