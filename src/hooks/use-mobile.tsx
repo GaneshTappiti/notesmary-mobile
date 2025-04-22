@@ -10,8 +10,10 @@ export function useIsMobile() {
   React.useEffect(() => {
     // Handle initial check
     const checkIfMobile = () => {
-      const mobile = window.innerWidth < MOBILE_BREAKPOINT
-      setIsMobile(mobile)
+      // Check both width and user agent for better detection
+      const mobileByWidth = window.innerWidth < MOBILE_BREAKPOINT
+      const mobileByAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      setIsMobile(mobileByWidth || mobileByAgent)
       if (!isInitialized) setIsInitialized(true)
     }
 
@@ -35,7 +37,8 @@ export function useIsMobile() {
     // Use matchMedia for better compatibility 
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
     const handleMediaChange = (e: MediaQueryListEvent) => {
-      setIsMobile(e.matches)
+      const mobileByAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      setIsMobile(e.matches || mobileByAgent)
     }
     
     // Try to use the newer addEventListener if available, fall back to older API

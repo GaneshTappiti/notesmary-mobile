@@ -9,6 +9,7 @@ import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -16,6 +17,27 @@ interface AppLayoutProps {
 
 const MobileSidebar = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const isMobile = useIsMobile();
+  
+  // Use Drawer for iOS devices to fix bottom sheet issues
+  const useBottomDrawer = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  
+  if (useBottomDrawer && isMobile) {
+    return (
+      <Drawer>
+        <DrawerTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
+          <Button variant="ghost" size="icon" className="rounded-full bg-background/90 backdrop-blur-sm shadow-sm border">
+            <Menu className="h-5 w-5" />
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent className="p-0">
+          <div className="h-[calc(100svh-3rem)]">
+            <AppSidebar />
+          </div>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
   
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -56,7 +78,7 @@ const StandardLayout = ({ children }: AppLayoutProps) => (
     
     <MobileSidebar />
     
-    <SidebarInset>
+    <SidebarInset className="w-full">
       <div className="flex flex-col min-h-full max-w-full">
         <HeaderNav />
         

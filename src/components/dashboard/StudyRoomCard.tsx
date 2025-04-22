@@ -42,7 +42,7 @@ export const StudyRoomCard: React.FC<StudyRoomCardProps> = ({
       className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all duration-300 bg-white"
     >
       <div className="flex justify-between items-start mb-2">
-        <h4 className="font-medium text-base text-gray-900">{title}</h4>
+        <h4 className="font-medium text-base text-gray-900 line-clamp-1">{title}</h4>
         {getStatusBadge()}
       </div>
       
