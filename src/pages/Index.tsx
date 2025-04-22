@@ -20,7 +20,9 @@ const Index = () => {
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"]
+    offset: ["start start", "end end"],
+    // Add layoutEffect: false to prevent the warning
+    layoutEffect: false
   });
   
   // Transform values for the gradient background
