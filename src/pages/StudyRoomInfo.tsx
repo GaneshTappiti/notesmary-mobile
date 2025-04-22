@@ -262,14 +262,10 @@ const StudyRoomInfo = () => {
       
       {/* Tabs Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-4 w-full mb-6">
+        <TabsList className="grid grid-cols-3 w-full mb-6">
           <TabsTrigger value="overview" className="flex items-center gap-1.5">
             <Info size={16} />
             <span>Overview</span>
-          </TabsTrigger>
-          <TabsTrigger value="whiteboard" className="flex items-center gap-1.5">
-            <PenTool size={16} />
-            <span>Whiteboard</span>
           </TabsTrigger>
           <TabsTrigger value="resources" className="flex items-center gap-1.5">
             <FileText size={16} />
@@ -482,69 +478,6 @@ const StudyRoomInfo = () => {
                 <div className="p-4 rounded-lg bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-100 dark:border-indigo-900">
                   <h4 className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">MOST ACTIVE DAY</h4>
                   <p className="text-xl font-semibold">{roomDetails.analytics.mostActiveDay}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        {/* Whiteboard Tab */}
-        <TabsContent value="whiteboard" className="space-y-6">
-          <Card className="border border-purple-100 dark:border-purple-900 shadow-sm">
-            <CardHeader className="pb-3">
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <PenTool size={18} />
-                  <span>Collaborative Whiteboard</span>
-                </CardTitle>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="border-purple-200 dark:border-purple-800">
-                    <Clipboard size={14} className="mr-2" />
-                    <span>Share Screen</span>
-                  </Button>
-                  <Button variant="outline" size="sm" className="border-purple-200 dark:border-purple-800">
-                    <Bookmark size={14} className="mr-2" />
-                    <span>Save</span>
-                  </Button>
-                </div>
-              </div>
-              <CardDescription>
-                Draw and collaborate in real-time with other study room members
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="aspect-video rounded-lg border-2 border-dashed border-purple-200 dark:border-purple-800 flex flex-col items-center justify-center p-8 bg-purple-50 dark:bg-purple-900/20">
-                <PenTool size={48} className="text-purple-300 dark:text-purple-700 mb-3" />
-                <h3 className="text-lg font-medium text-purple-700 dark:text-purple-300 mb-1">Start collaborating on the whiteboard</h3>
-                <p className="text-center text-sm text-purple-600 dark:text-purple-400 mb-4 max-w-md">
-                  Share ideas, solve problems together, or explain concepts visually.
-                  Your work is saved automatically.
-                </p>
-                <Button className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700">
-                  Start Drawing
-                </Button>
-              </div>
-              
-              <div className="mt-4 p-4 rounded-lg bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-900">
-                <h4 className="font-medium text-purple-700 dark:text-purple-300 mb-2 flex items-center gap-2">
-                  <CheckSquare size={16} />
-                  <span>Previous Whiteboard Sessions</span>
-                </h4>
-                <div className="space-y-2">
-                  <div className="p-2 rounded bg-white dark:bg-gray-800 flex items-center justify-between border border-purple-100 dark:border-purple-900">
-                    <div className="flex items-center gap-2">
-                      <PenTool size={14} className="text-purple-500" />
-                      <span className="text-sm">Physics Problem Set 3 - Solutions</span>
-                    </div>
-                    <Badge variant="outline" className="text-xs">3 days ago</Badge>
-                  </div>
-                  <div className="p-2 rounded bg-white dark:bg-gray-800 flex items-center justify-between border border-purple-100 dark:border-purple-900">
-                    <div className="flex items-center gap-2">
-                      <PenTool size={14} className="text-purple-500" />
-                      <span className="text-sm">Quantum Mechanics Concept Map</span>
-                    </div>
-                    <Badge variant="outline" className="text-xs">1 week ago</Badge>
-                  </div>
                 </div>
               </div>
             </CardContent>
@@ -842,3 +775,4 @@ const StudyRoomInfo = () => {
 };
 
 export default StudyRoomInfo;
+
