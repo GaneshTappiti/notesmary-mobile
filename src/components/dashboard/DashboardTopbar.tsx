@@ -3,10 +3,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const DashboardTopbar = () => {
   const { user, profile } = useAuth();
+  const navigate = useNavigate();
   const name = profile?.full_name || user?.email || "User";
 
   return (
@@ -26,14 +27,14 @@ export const DashboardTopbar = () => {
         />
       </div>
       <div className="flex items-center gap-3">
-        <Link
-          to="/notifications"
+        <button
           aria-label="Notifications"
           className="relative p-2 rounded-full hover:bg-blue-100 dark:hover:bg-gray-800 transition"
+          onClick={() => navigate("/notifications")}
         >
           <Bell className="w-5 h-5 text-gray-600 dark:text-gray-200" />
           <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-red-500" />
-        </Link>
+        </button>
         <Avatar>
           <AvatarImage src={profile?.avatar_url || ""} alt={name} />
           <AvatarFallback>{name[0]}</AvatarFallback>

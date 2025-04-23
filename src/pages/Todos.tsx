@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from "@/components/ui/button";
@@ -23,33 +24,29 @@ const Todos: React.FC = () => {
   const [newTask, setNewTask] = useState('');
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
 
-  const fetchTodos = useCallback(async () => {
-    if (!user?.id) return [];
-    
-    let query = supabase
-      .from('todos')
-      .select('*')
-      .eq('user_id', user.id);
-
-    if (filter === 'active') {
-      query = query.eq('completed', false);
-    } else if (filter === 'completed') {
-      query = query.eq('completed', true);
-    }
-
-    const { data, error } = await query.order('created_at', { ascending: false });
-    
-    if (error) throw error;
-    return data;
-  }, [user?.id, filter]);
-
+  // Fetch todos
   const { data: todos, isLoading } = useQuery<Todo[]>({
     queryKey: ['todos', user?.id, filter],
-    queryFn: fetchTodos,
-    enabled: !!user?.id,
-    staleTime: 30000 // 30 seconds
+    queryFn: async () => {
+      let query = supabase
+        .from('todos')
+        .select('*')
+        .eq('user_id', user?.id);
+
+      if (filter === 'active') {
+        query = query.eq('completed', false);
+      } else if (filter === 'completed') {
+        query = query.eq('completed', true);
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    }
   });
 
+  // Add todo mutation
   const addTodoMutation = useMutation({
     mutationFn: async (task: string) => {
       const { data, error } = await supabase
@@ -81,6 +78,7 @@ const Todos: React.FC = () => {
     }
   });
 
+  // Toggle todo mutation
   const toggleTodoMutation = useMutation({
     mutationFn: async ({ id, completed }: { id: string, completed: boolean }) => {
       const { data, error } = await supabase
@@ -96,6 +94,7 @@ const Todos: React.FC = () => {
     }
   });
 
+  // Delete todo mutation
   const deleteTodoMutation = useMutation({
     mutationFn: async (id: string) => {
       const { data, error } = await supabase
@@ -154,10 +153,10 @@ const Todos: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-4">Loading...</div>
+        <div>Loading...</div>
       ) : (
         <div className="space-y-2">
-          {!todos || todos.length === 0 ? (
+          {todos?.length === 0 ? (
             <p className="text-center text-gray-500">No tasks yet</p>
           ) : (
             todos?.map((todo) => (

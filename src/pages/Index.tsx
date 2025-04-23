@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { supabase } from '@/integrations/supabase/client';
 import { Upload, Search, Users, Brain, CheckSquare } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // Mapping of icon names to Lucide React icons
 const iconMap = {
@@ -16,6 +16,8 @@ const iconMap = {
 };
 
 const Index: React.FC = () => {
+  const navigate = useNavigate();
+
   // Fetch quick access links from Supabase
   const { data: quickLinks, isLoading } = useQuery({
     queryKey: ['quickLinks'],
@@ -31,8 +33,7 @@ const Index: React.FC = () => {
       }
       
       return data;
-    },
-    staleTime: 60 * 1000, // Keep data fresh for 1 minute
+    }
   });
 
   return (
@@ -81,20 +82,14 @@ const Index: React.FC = () => {
                     <Button 
                       variant={link.is_primary ? 'default' : 'outline'} 
                       className="w-full"
-                      asChild
+                      onClick={() => navigate(link.page_link)}
                     >
-                      <Link to={link.page_link}>Get Started</Link>
+                      Get Started
                     </Button>
                   </div>
                 );
               })
             )}
-          </div>
-          <div className="mt-12">
-            {/* Add a button to navigate to My Notes using Link component */}
-            <Button asChild className="mx-auto">
-              <Link to="/my-notes">Go to My Notes</Link>
-            </Button>
           </div>
         </section>
       </main>

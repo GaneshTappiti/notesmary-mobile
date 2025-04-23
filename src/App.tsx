@@ -1,5 +1,5 @@
 
-import React, { Suspense, lazy } from "react";
+import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -8,32 +8,29 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import AppLayout from "@/components/AppLayout";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Import pages with lazy loading to improve initial load time
-const Index = lazy(() => import("@/pages/Index"));
-const Authentication = lazy(() => import("@/pages/Authentication"));
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const AIAnswers = lazy(() => import("@/pages/AIAnswers"));
-const UploadNotes = lazy(() => import("@/pages/UploadNotes"));
-const FindNotes = lazy(() => import("@/pages/FindNotes"));
-const ViewNotes = lazy(() => import("@/pages/ViewNotes"));
-const NotFound = lazy(() => import("@/pages/NotFound"));
-const Notifications = lazy(() => import("@/pages/Notifications"));
-const StudyAnalytics = lazy(() => import("@/pages/StudyAnalytics"));
-const StudyRooms = lazy(() => import("@/pages/StudyRooms"));
-const StudyRoom = lazy(() => import("@/pages/StudyRoom"));
-const StudyRoomChat = lazy(() => import("@/pages/StudyRoomChat"));
-const Settings = lazy(() => import("@/pages/Settings"));
-const Todos = lazy(() => import("@/pages/Todos"));
-const MyNotes = lazy(() => import("@/pages/MyNotes"));
+// Import pages
+const Index = React.lazy(() => import("@/pages/Index"));
+const Login = React.lazy(() => import("@/pages/Login"));
+const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
+const Authentication = React.lazy(() => import("@/pages/Authentication"));
+const AIAnswers = React.lazy(() => import("@/pages/AIAnswers"));
+const UploadNotes = React.lazy(() => import("@/pages/UploadNotes"));
+const FindNotes = React.lazy(() => import("@/pages/FindNotes"));
+const ViewNotes = React.lazy(() => import("@/pages/ViewNotes"));
+const NotFound = React.lazy(() => import("@/pages/NotFound"));
+const Notifications = React.lazy(() => import("@/pages/Notifications"));
+const StudyAnalytics = React.lazy(() => import("@/pages/StudyAnalytics"));
+const StudyRooms = React.lazy(() => import("@/pages/StudyRooms"));
+const StudyRoom = React.lazy(() => import("@/pages/StudyRoom"));
+const StudyRoomChat = React.lazy(() => import("@/pages/StudyRoomChat"));
+const Settings = React.lazy(() => import("@/pages/Settings"));
+const Todos = React.lazy(() => import("@/pages/Todos"));
 
-// Create a single query client with optimized settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 30 * 1000, // 30 seconds default stale time
-      gcTime: 5 * 60 * 1000, // 5 minutes cache time (previously cacheTime)
     },
   },
 });
@@ -106,8 +103,6 @@ const AppRoutes = () => {
           </PrivateRoute>
         } 
       />
-      
-      {/* All other routes - follow the same pattern */}
       <Route 
         path="/upload-notes" 
         element={
@@ -167,42 +162,6 @@ const AppRoutes = () => {
             </AppLayout>
           </PrivateRoute>
         } 
-      />
-      <Route 
-        path="/study-room/:id" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <StudyRoom />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/study-room/:id/chat" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <StudyRoomChat />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route
-        path="/my-notes"
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <MyNotes />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        }
       />
       
       {/* Catch-all route */}
