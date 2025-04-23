@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Upload, FileText, Check, AlertCircle, FileIcon } from 'lucide-react';
+import { X, Upload, FileText, Check, AlertCircle } from 'lucide-react';
 
 interface UploadModalProps {
   open: boolean;

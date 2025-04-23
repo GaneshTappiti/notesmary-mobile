@@ -1,5 +1,5 @@
 
-import { Sun } from "lucide-react";
+import { SunMoon, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ThemeProvider";
 import { useToast } from "@/hooks/use-toast";
@@ -15,13 +15,14 @@ export function ThemeToggle({
   size = "icon", 
   className 
 }: ThemeToggleProps) {
-  const { theme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const { toast } = useToast();
 
   const handleToggle = () => {
+    toggleTheme();
     toast({
-      title: "Light mode active",
-      description: "This application uses a light theme for optimal readability.",
+      title: theme === "light" ? "Dark mode activated" : "Light mode activated",
+      description: `You've switched to ${theme === "light" ? "dark" : "light"} mode.`,
       duration: 2000,
     });
   };
@@ -32,9 +33,9 @@ export function ThemeToggle({
       size={size}
       onClick={handleToggle}
       className={className}
-      aria-label="Light mode"
+      aria-label="Toggle theme"
     >
-      <Sun size={18} />
+      {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
     </Button>
   );
 }

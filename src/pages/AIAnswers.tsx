@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
@@ -7,12 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { FileText, Upload, BookOpen, Search, AlertCircle, CheckCircle2, FileIcon } from "lucide-react";
-import { Database } from "@/types/database.types";
-import { supabase } from "@/integrations/supabase/client";
-
-// Define properly typed Note interface based on database.types.ts
-type Note = Database['public']['Tables']['notes']['Row'];
+import { FileText, Upload, BookOpen, Search, AlertCircle, CheckCircle2 } from "lucide-react";
 
 const AIAnswers = () => {
   const { toast } = useToast();
@@ -22,40 +17,6 @@ const AIAnswers = () => {
   const [answer, setAnswer] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [status, setStatus] = useState<"idle" | "ready" | "processing" | "complete" | "error">("idle");
-  const [userNotes, setUserNotes] = useState<Note[]>([]);
-  const [isLoadingNotes, setIsLoadingNotes] = useState<boolean>(false);
-
-  // Fetch user's notes from Supabase
-  useEffect(() => {
-    const fetchUserNotes = async () => {
-      setIsLoadingNotes(true);
-      try {
-        const { data, error } = await supabase
-          .from('notes')
-          .select('id, title, subject, branch, file_url, uploaded_at')
-          .order('uploaded_at', { ascending: false });
-
-        if (error) {
-          throw error;
-        }
-
-        if (data) {
-          setUserNotes(data as Note[]);
-        }
-      } catch (error) {
-        console.error('Error fetching notes:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load your notes. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoadingNotes(false);
-      }
-    };
-
-    fetchUserNotes();
-  }, [toast]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
