@@ -38,14 +38,30 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
-export const AppSidebar = () => {
+interface AppSidebarProps {
+  onItemClick?: () => void;
+}
+
+export const AppSidebar = ({ onItemClick }: AppSidebarProps = {}) => {
   const location = useLocation();
-  const { state, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [isStudyRoomOpen, setIsStudyRoomOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  
+  const { state, toggleSidebar } = useSidebar();
+  
+  // Close collapsibles when sidebar is collapsed
+  useEffect(() => {
+    if (state === "collapsed") {
+      setIsStudyRoomOpen(false);
+      setIsSettingsOpen(false);
+    }
+  }, [state]);
   
   const isActive = (path: string) => {
     // Match exact path or path pattern with parameters
@@ -54,6 +70,11 @@ export const AppSidebar = () => {
       return location.pathname.startsWith(basePath);
     }
     return location.pathname === path;
+  };
+  
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    if (onItemClick) onItemClick();
   };
   
   const handleSignOut = () => {
@@ -69,6 +90,9 @@ export const AppSidebar = () => {
     
     // Redirect to home page
     navigate('/');
+    
+    // Close mobile sidebar if applicable
+    if (onItemClick) onItemClick();
   };
   
   const mainMenuItems = [
@@ -129,7 +153,6 @@ export const AppSidebar = () => {
   ];
   
   // Settings submenu items (including subscription)
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const settingsItems = [
     {
       title: "Account Settings",
@@ -146,10 +169,13 @@ export const AppSidebar = () => {
   return (
     <Sidebar data-state={state} className="z-50 shadow-lg border-r border-gray-200 dark:border-gray-800">
       <SidebarHeader className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800">
-        <Link to="/dashboard" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
+        <Link 
+          to="/dashboard" 
+          className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400"
+          onClick={() => onItemClick && onItemClick()}
+        >
           Notex
         </Link>
-        {/* Dark mode toggle removed from here */}
       </SidebarHeader>
       
       <SidebarContent>
@@ -160,15 +186,15 @@ export const AppSidebar = () => {
               {mainMenuItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton 
-                    asChild 
+                    onClick={() => handleNavigation(item.path)}
                     isActive={isActive(item.path)}
                     tooltip={state === "collapsed" ? item.title : undefined}
                     className="transition-all duration-200 hover:translate-x-1"
                   >
-                    <Link to={item.path} className="flex items-center gap-3">
+                    <div className="flex items-center gap-3">
                       {item.icon}
                       <span>{item.title}</span>
-                    </Link>
+                    </div>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -198,10 +224,10 @@ export const AppSidebar = () => {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pl-7 pt-1 space-y-1">
                     {studyRoomItems.map((item) => (
-                      <Link 
+                      <div
                         key={item.path}
-                        to={item.path}
-                        className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
+                        onClick={() => handleNavigation(item.path)}
+                        className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors cursor-pointer ${
                           isActive(item.path) 
                             ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium' 
                             : 'hover:bg-gray-100 dark:hover:bg-gray-800'
@@ -209,7 +235,7 @@ export const AppSidebar = () => {
                       >
                         {item.icon}
                         <span>{item.title}</span>
-                      </Link>
+                      </div>
                     ))}
                   </CollapsibleContent>
                 </Collapsible>
@@ -240,10 +266,10 @@ export const AppSidebar = () => {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pl-7 pt-1 space-y-1">
                     {settingsItems.map((item) => (
-                      <Link 
+                      <div
                         key={item.path}
-                        to={item.path}
-                        className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
+                        onClick={() => handleNavigation(item.path)}
+                        className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors cursor-pointer ${
                           isActive(item.path) 
                             ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium' 
                             : 'hover:bg-gray-100 dark:hover:bg-gray-800'
@@ -251,7 +277,7 @@ export const AppSidebar = () => {
                       >
                         {item.icon}
                         <span>{item.title}</span>
-                      </Link>
+                      </div>
                     ))}
                   </CollapsibleContent>
                 </Collapsible>

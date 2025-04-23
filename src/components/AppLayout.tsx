@@ -38,6 +38,28 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     setIsStudyRoomChatPage(location.pathname.includes('/study-room/') && location.pathname.includes('/chat'));
   }, [location.pathname]);
   
+  // Mobile drawer for sidebar on small screens
+  const MobileSidebar = () => {
+    const isSidebarPath = !['/', '/login', '/authentication'].includes(location.pathname);
+    
+    if (!isSidebarPath) return null;
+    
+    return (
+      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <DrawerTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
+          <Button variant="ghost" size="icon" className="rounded-full bg-background/90 backdrop-blur-sm shadow-sm border">
+            <Menu className="h-5 w-5" />
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent className="p-0 max-h-screen h-[90vh]">
+          <div className="h-full overflow-y-auto">
+            <AppSidebar onItemClick={() => setIsDrawerOpen(false)} />
+          </div>
+        </DrawerContent>
+      </Drawer>
+    );
+  };
+  
   if (!showSidebar) {
     return (
       <ThemeProvider>
@@ -50,22 +72,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       </ThemeProvider>
     );
   }
-  
-  // Mobile drawer for sidebar on small screens
-  const MobileSidebar = () => (
-    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-      <DrawerTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
-        <Button variant="ghost" size="icon" className="rounded-full bg-background/90 backdrop-blur-sm shadow-sm border">
-          <Menu className="h-5 w-5" />
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent className="p-0 max-h-screen h-screen">
-        <div className="h-full overflow-y-auto">
-          <AppSidebar />
-        </div>
-      </DrawerContent>
-    </Drawer>
-  );
   
   // For study room chat, we want a clean layout to maximize chat space
   if (isStudyRoomChatPage) {
@@ -120,7 +126,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             
             <SidebarInset>
               <div className="flex flex-col min-h-full max-w-full">
-                {/* New HeaderNav component */}
+                {/* Header Navigation */}
                 <HeaderNav />
                 
                 <main className="flex-1 p-4 md:p-6 overflow-auto">
