@@ -1,203 +1,301 @@
-
+import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import AppLayout from "./components/AppLayout";
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Authentication from "./pages/Authentication";
-import AIAnswers from "./pages/AIAnswers";
-import UploadNotes from "./pages/UploadNotes";
-import FindNotes from "./pages/FindNotes";
-import ViewNotes from "./pages/ViewNotes";
-import NotFound from "./pages/NotFound";
-import Notifications from "./pages/Notifications";
-import StudyAnalytics from "./pages/StudyAnalytics";
-import StudyRooms from "./pages/StudyRooms";
-import StudyRoom from "./pages/StudyRoom";
-import StudyRoomChat from "./pages/StudyRoomChat";
-import StudyRoomInfo from "./pages/StudyRoomInfo";
-import Settings from "./pages/Settings";
-import Subscription from "./pages/Subscription";
-import MyNotes from "./pages/MyNotes";
-import AIMarkAnswers from "./pages/AIMarkAnswers";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import AppLayout from "@/components/AppLayout";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const queryClient = new QueryClient();
+// Import pages
+const Index = React.lazy(() => import("@/pages/Index"));
+const Login = React.lazy(() => import("@/pages/Login"));
+const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
+const Authentication = React.lazy(() => import("@/pages/Authentication"));
+const AIAnswers = React.lazy(() => import("@/pages/AIAnswers"));
+const UploadNotes = React.lazy(() => import("@/pages/UploadNotes"));
+const FindNotes = React.lazy(() => import("@/pages/FindNotes"));
+const ViewNotes = React.lazy(() => import("@/pages/ViewNotes"));
+const NotFound = React.lazy(() => import("@/pages/NotFound"));
+const Notifications = React.lazy(() => import("@/pages/Notifications"));
+const StudyAnalytics = React.lazy(() => import("@/pages/StudyAnalytics"));
+const StudyRooms = React.lazy(() => import("@/pages/StudyRooms"));
+const StudyRoom = React.lazy(() => import("@/pages/StudyRoom"));
+const StudyRoomChat = React.lazy(() => import("@/pages/StudyRoomChat"));
+const StudyRoomInfo = React.lazy(() => import("@/pages/StudyRoomInfo"));
+const Settings = React.lazy(() => import("@/pages/Settings"));
+const Subscription = React.lazy(() => import("@/pages/Subscription"));
+const MyNotes = React.lazy(() => import("@/pages/MyNotes"));
+const AIMarkAnswers = React.lazy(() => import("@/pages/AIMarkAnswers"));
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
+// Loading component to display while pages are loading
+const Loading = () => (
+  <div className="h-screen flex flex-col items-center justify-center p-4">
+    <div className="w-full max-w-md space-y-4">
+      <Skeleton className="h-12 w-3/4 mx-auto" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-2/3" />
+      <div className="flex space-x-2 pt-4">
+        <Skeleton className="h-10 w-24" />
+        <Skeleton className="h-10 w-24" />
+      </div>
+    </div>
+  </div>
+);
+
+// Authentication guard component
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  return isLoggedIn ? <>{children}</> : <Navigate to="/authentication" />;
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  return isAuthenticated ? <>{children}</> : <Navigate to="/authentication" />;
+};
+
+// Redirect to Dashboard if logged in
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  return !isAuthenticated ? <>{children}</> : <Navigate to="/dashboard" />;
+};
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* Public routes */}
+      <Route path="/" element={
+        <PublicRoute>
+          <Suspense fallback={<Loading />}>
+            <Index />
+          </Suspense>
+        </PublicRoute>
+      } />
+      <Route path="/login" element={<Navigate to="/authentication" />} />
+      <Route path="/authentication" element={
+        <Suspense fallback={<Loading />}>
+          <Authentication />
+        </Suspense>
+      } />
+      
+      {/* Protected routes with AppLayout */}
+      <Route 
+        path="/dashboard" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <Dashboard />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/ai-answers" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <AIAnswers />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/ai-mark-answers" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <AIMarkAnswers />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/upload-notes" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <UploadNotes />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/find-notes" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <FindNotes />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/view-notes/:noteId" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <ViewNotes />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/view-notes" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <MyNotes />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/notifications" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <Notifications />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/study-analytics" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <StudyAnalytics />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/study-rooms" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <StudyRooms />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/study-room/:id" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <StudyRoom />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/study-room/:id/info" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <StudyRoomInfo />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/study-room/:id/chat" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <StudyRoomChat />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/subscription" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <Subscription />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/settings" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <Settings />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      
+      {/* Catch-all route */}
+      <Route path="*" element={
+        <Suspense fallback={<Loading />}>
+          <NotFound />
+        </Suspense>
+      } />
+    </Routes>
+  );
 };
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <Toaster />
-    <Sonner />
-    <BrowserRouter>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Index />} />
-        <Route path="/login" element={<Navigate to="/authentication" />} />
-        <Route path="/authentication" element={<Authentication />} />
-        
-        {/* Protected routes with AppLayout */}
-        <Route 
-          path="/dashboard" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <Dashboard />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/ai-answers" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <AIAnswers />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/ai-mark-answers" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <AIMarkAnswers />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/upload-notes" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <UploadNotes />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/find-notes" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <FindNotes />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/view-notes/:noteId" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <ViewNotes />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/view-notes" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <MyNotes />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/notifications" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <Notifications />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/study-analytics" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <StudyAnalytics />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/study-rooms" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <StudyRooms />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/study-room/:id" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <StudyRoom />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/study-room/:id/info" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <StudyRoomInfo />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/study-room/:id/chat" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <StudyRoomChat />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/subscription" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <Subscription />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/settings" 
-          element={
-            <PrivateRoute>
-              <AppLayout>
-                <Settings />
-              </AppLayout>
-            </PrivateRoute>
-          } 
-        />
-        
-        {/* Catch-all route */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Suspense fallback={<Loading />}>
+          <AppRoutes />
+        </Suspense>
+      </BrowserRouter>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

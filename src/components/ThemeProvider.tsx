@@ -1,11 +1,12 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark";
+type Theme = "light";
 
 interface ThemeProviderProps {
   children: React.ReactNode;
   defaultTheme?: Theme;
+  storageKey?: string;
 }
 
 interface ThemeContextType {
@@ -18,26 +19,24 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({
   children,
   defaultTheme = "light",
+  storageKey = "theme",
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    // Check if theme is stored in localStorage
-    const savedTheme = localStorage.getItem("theme") as Theme;
-    // Return saved theme or default
-    return savedTheme || defaultTheme;
-  });
+  // We're always using light theme regardless of what's stored
+  const [theme] = useState<Theme>("light");
 
   useEffect(() => {
-    // Apply theme to document element
+    // Apply light theme to document element
     const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
+    root.classList.remove("dark");
+    root.classList.add("light");
     
     // Save theme to localStorage
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+    localStorage.setItem(storageKey, theme);
+  }, [theme, storageKey]);
 
+  // Toggle function is a no-op since we always want light mode
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    // No-op - we always stay in light mode
   };
 
   return (
