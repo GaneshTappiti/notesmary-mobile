@@ -72,12 +72,14 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     return (
       <ThemeProvider>
         <TooltipProvider>
-          <div className="min-h-screen w-full max-w-full overflow-x-hidden">
-            <main className="w-full h-screen">{children}</main>
-            
-            {/* Mobile sidebar for study room */}
-            <MobileSidebar />
-          </div>
+          <SidebarProvider>
+            <div className="min-h-screen w-full max-w-full overflow-x-hidden">
+              <main className="w-full h-screen">{children}</main>
+              
+              {/* Mobile sidebar for study room */}
+              <MobileSidebar />
+            </div>
+          </SidebarProvider>
         </TooltipProvider>
       </ThemeProvider>
     );
@@ -88,13 +90,15 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     return (
       <ThemeProvider>
         <TooltipProvider>
-          <div className="min-h-screen w-full max-w-full overflow-x-hidden">
-            <HeaderNav />
-            <main className="pt-16 px-4 max-w-full overflow-x-auto">{children}</main>
-            
-            {/* Mobile sidebar for study room */}
-            <MobileSidebar />
-          </div>
+          <SidebarProvider>
+            <div className="min-h-screen w-full max-w-full overflow-x-hidden">
+              <HeaderNav />
+              <main className="pt-16 px-4 max-w-full overflow-x-auto">{children}</main>
+              
+              {/* Mobile sidebar for study room */}
+              <MobileSidebar />
+            </div>
+          </SidebarProvider>
         </TooltipProvider>
       </ThemeProvider>
     );
