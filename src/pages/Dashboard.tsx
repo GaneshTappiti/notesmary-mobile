@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -35,6 +34,8 @@ import { DashboardStatsCard } from '@/components/dashboard/DashboardStatsCard';
 import { QuickAccessCard } from '@/components/dashboard/QuickAccessCard';
 import { ActivityItem } from '@/components/dashboard/ActivityItem';
 import { StudyRoomCard } from '@/components/dashboard/StudyRoomCard';
+import { StatisticsSection } from '@/components/dashboard/StatisticsSection';
+import { TasksList } from '@/components/dashboard/TasksList';
 
 const Dashboard = () => {
   const [createRoomModalOpen, setCreateRoomModalOpen] = useState(false);
@@ -186,7 +187,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">      
       <div className="pb-8 px-4 max-w-7xl mx-auto">
-        {/* Personalized greeting with focus mode toggle */}
+        {/* Greeting section */}
         <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
@@ -228,23 +229,11 @@ const Dashboard = () => {
           </div>
         </div>
         
-        {/* Stats overview - with improved descriptions */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          {stats.map((stat, index) => (
-            <DashboardStatsCard 
-              key={index}
-              label={stat.label}
-              description={stat.description}
-              value={stat.value}
-              icon={stat.icon}
-              link={stat.link}
-              color={stat.color}
-            />
-          ))}
-        </div>
+        {/* Statistics Section */}
+        <StatisticsSection />
         
+        {/* Quick Access Cards */}
         {!focusMode && (
-          // Quick Access section - consolidated, no more duplicates
           <Card className="border-none shadow-sm mb-8 dark:bg-gray-800/50 overflow-hidden">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
@@ -287,7 +276,94 @@ const Dashboard = () => {
           </Card>
         )}
         
-        {/* Tabbed content - reduces vertical scrolling */}
+        {/* Study Rooms and Tasks Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Study Rooms */}
+          <Card className="border-none shadow-sm dark:bg-gray-800/50 overflow-hidden">
+            <CardHeader className="pb-2 pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="bg-yellow-100 dark:bg-yellow-900/30 p-2 rounded-full">
+                    <Users className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                  </div>
+                  <CardTitle className="text-lg">Study Rooms</CardTitle>
+                </div>
+              
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="default" 
+                    size="sm" 
+                    onClick={() => setCreateRoomModalOpen(true)}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Plus className="h-4 w-4 mr-1" /> Create Room
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setBrowseRoomsModalOpen(true)}
+                  >
+                    <Search className="h-4 w-4 mr-1" /> Browse
+                  </Button>
+                  
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                        <HelpCircle className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">Create or join virtual study rooms with peers</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {/* Study rooms list */}
+              {studyRooms.length > 0 ? (
+                <div className="space-y-4">
+                  {studyRooms.map((room) => (
+                    <StudyRoomCard 
+                      key={room.id}
+                      id={room.id}
+                      title={room.title}
+                      participants={room.participants}
+                      date={room.date}
+                      status={room.status}
+                    />
+                  ))}
+                  
+                  {/* View all button */}
+                  <div className="text-center pt-2">
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => navigate('/study-rooms')}
+                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    >
+                      View all study rooms
+                      <ArrowRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <DashboardEmptyState
+                  icon={<Users className="h-12 w-12" />}
+                  title="No study rooms yet"
+                  description="Create a new study room or join an existing one"
+                  actionLabel="Create Room"
+                  onAction={() => setCreateRoomModalOpen(true)}
+                />
+              )}
+            </CardContent>
+          </Card>
+          
+          {/* Tasks List */}
+          <TasksList />
+        </div>
+        
+        {/* Activity & Planning Section */}
         <Card className="border-none shadow-sm mb-6 dark:bg-gray-800/50 overflow-hidden">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">Activity & Planning</CardTitle>
@@ -414,87 +490,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
         
-        {/* Study Rooms Section - Consolidated in one place */}
-        <Card className="border-none shadow-sm mb-6 dark:bg-gray-800/50 overflow-hidden">
-          <CardHeader className="pb-2 pt-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="bg-yellow-100 dark:bg-yellow-900/30 p-2 rounded-full">
-                  <Users className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
-                </div>
-                <CardTitle className="text-lg">Study Rooms</CardTitle>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="default" 
-                  size="sm" 
-                  onClick={() => setCreateRoomModalOpen(true)}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  <Plus className="h-4 w-4 mr-1" /> Create Room
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setBrowseRoomsModalOpen(true)}
-                >
-                  <Search className="h-4 w-4 mr-1" /> Browse
-                </Button>
-                
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-xs">Create or join virtual study rooms with peers</p>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {/* Study rooms list */}
-            {studyRooms.length > 0 ? (
-              <div className="space-y-4">
-                {studyRooms.map((room) => (
-                  <StudyRoomCard 
-                    key={room.id}
-                    id={room.id}
-                    title={room.title}
-                    participants={room.participants}
-                    date={room.date}
-                    status={room.status}
-                  />
-                ))}
-                
-                {/* View all button */}
-                <div className="text-center pt-2">
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => navigate('/study-rooms')}
-                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                  >
-                    View all study rooms
-                    <ArrowRight className="ml-1 h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <DashboardEmptyState
-                icon={<Users className="h-12 w-12" />}
-                title="No study rooms yet"
-                description="Create a new study room or join an existing one"
-                actionLabel="Create Room"
-                onAction={() => setCreateRoomModalOpen(true)}
-              />
-            )}
-          </CardContent>
-        </Card>
-        
+        {/* Modals */}
         <CreateRoomModal 
           open={createRoomModalOpen} 
           onClose={() => setCreateRoomModalOpen(false)} 
