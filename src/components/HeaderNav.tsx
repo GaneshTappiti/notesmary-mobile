@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { 
@@ -70,7 +69,7 @@ export const HeaderNav = () => {
       'ai-mark-answers': 'Mark Answers',
     };
     
-    return titles[path] || 'Notex';
+    return titles[path] || 'Notezz';  // Updated from 'Notex' to 'Notezz'
   };
 
   // Function to generate breadcrumbs based on the current path
