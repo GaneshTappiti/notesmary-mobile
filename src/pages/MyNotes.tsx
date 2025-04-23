@@ -11,8 +11,9 @@ import { useNavigate } from "react-router-dom";
 interface Note {
   id: string;
   title: string;
-  content: string;
+  content: string | null;
   uploaded_at: string | null;
+  // Optional: add more fields from the notes table if needed
 }
 
 const MyNotes: React.FC = () => {
@@ -24,14 +25,14 @@ const MyNotes: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Check auth
+  // Authentication check: redirect if not logged in
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       navigate("/authentication");
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  // Fetch notes
+  // Fetch user’s notes from Supabase
   useEffect(() => {
     const fetchNotes = async () => {
       if (!user) return;
@@ -51,7 +52,7 @@ const MyNotes: React.FC = () => {
     fetchNotes();
   }, [user, toast]);
 
-  // Add note
+  // Add a new note to Supabase
   const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
@@ -61,12 +62,12 @@ const MyNotes: React.FC = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("notes")
-      .insert([{ title, content, user_id: user.id }])
+      .insert([{ title, content, user_id: user?.id }])
       .select("id,title,content,uploaded_at");
     if (error) {
       toast({ title: "Error", description: error.message });
     } else if (data) {
-      setNotes((prev) => [data[0] as Note, ...prev]);
+      setNotes(prev => [data[0] as Note, ...prev]);
       setTitle("");
       setContent("");
       toast({ title: "Note added!", description: "Your note was saved." });
