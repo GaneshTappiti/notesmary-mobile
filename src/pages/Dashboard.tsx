@@ -151,7 +151,7 @@ const Dashboard = () => {
               <Card key={index} className="p-4">
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="font-medium">{room.title}</h3>
-                  <Badge variant={room.status === 'Active' ? 'success' : 'outline'}>
+                  <Badge variant={room.status === 'Active' ? 'default' : 'outline'}>
                     {room.status}
                   </Badge>
                 </div>
