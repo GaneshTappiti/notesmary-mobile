@@ -22,16 +22,16 @@ export function useRealtimeSubscription<T>(
   useEffect(() => {
     const channelName = `realtime-${tableName}-${Math.random().toString(36).slice(2, 9)}`;
     
-    let newChannel = supabase.channel(channelName);
+    // Create a new channel
+    const newChannel = supabase.channel(channelName);
     
-    // Add presence event handling
-    newChannel = newChannel.on('presence', { event: 'sync' }, () => {
+    // Set up presence event
+    const channelWithPresence = newChannel.on('presence', { event: 'sync' }, () => {
       setIsConnected(true);
     });
     
-    // Add postgres changes event handling with the correct method chaining
-    // The key fix is to chain the .on() calls and use a single .subscribe() at the end
-    newChannel = newChannel.on(
+    // Set up postgres changes event
+    const channelWithPostgresChanges = channelWithPresence.on(
       'postgres_changes',
       { 
         event, 
@@ -60,8 +60,8 @@ export function useRealtimeSubscription<T>(
       }
     );
     
-    // Subscribe to the channel after setting up all event handlers
-    newChannel.subscribe((status) => {
+    // Subscribe to the channel
+    channelWithPostgresChanges.subscribe((status) => {
       if (status === 'SUBSCRIBED') {
         setIsConnected(true);
         setError(null);
@@ -71,12 +71,12 @@ export function useRealtimeSubscription<T>(
       }
     });
 
-    setChannel(newChannel);
+    setChannel(channelWithPostgresChanges);
 
     // Cleanup: remove the channel when component unmounts
     return () => {
-      if (newChannel) {
-        supabase.removeChannel(newChannel);
+      if (channelWithPostgresChanges) {
+        supabase.removeChannel(channelWithPostgresChanges);
       }
     };
   }, [tableName, event, schema, filter, filterValue]);
