@@ -1,17 +1,20 @@
+
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { 
   Bell, 
+  ChevronDown,
   User,
   Settings,
   LogOut,
   Menu,
+  ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from './ThemeToggle';
 import { Badge } from '@/components/ui/badge';
-import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -29,15 +32,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useIsMobile } from '@/hooks/use-mobile';
 
 export const HeaderNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [unreadNotifications, setUnreadNotifications] = useState(3); // Mock unread count
-  const { state, toggleSidebar } = useSidebar();
-  const isMobile = useIsMobile();
   
   // Handle sign out
   const handleSignOut = () => {
@@ -69,7 +69,7 @@ export const HeaderNav = () => {
       'ai-mark-answers': 'Mark Answers',
     };
     
-    return titles[path] || 'Notezz';  // Updated from 'Notex' to 'Notezz'
+    return titles[path] || 'Notex';
   };
 
   // Function to generate breadcrumbs based on the current path
@@ -185,13 +185,9 @@ export const HeaderNav = () => {
       <div className="h-full flex flex-col justify-center">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {!isMobile && (
-              <SidebarTrigger 
-                className="hidden md:flex mr-2 transition-all hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-1"
-              >
-                <Menu className="h-5 w-5" />
-              </SidebarTrigger>
-            )}
+            <SidebarTrigger className="hidden md:flex mr-2 transition-all hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-1">
+              <Menu className="h-5 w-5" />
+            </SidebarTrigger>
             
             <h1 className="text-lg font-semibold mr-6">
               {getPageTitle(location.pathname)}
@@ -199,7 +195,7 @@ export const HeaderNav = () => {
           </div>
           
           <div className="flex items-center gap-2">
-            {/* Theme toggle */}
+            {/* Theme toggle - ONLY kept here, removed from sidebar */}
             <ThemeToggle 
               variant="ghost" 
               size="sm"

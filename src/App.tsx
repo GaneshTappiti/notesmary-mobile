@@ -23,7 +23,6 @@ import Settings from "./pages/Settings";
 import Subscription from "./pages/Subscription";
 import MyNotes from "./pages/MyNotes";
 import AIMarkAnswers from "./pages/AIMarkAnswers";
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 const queryClient = new QueryClient();
 
@@ -34,173 +33,171 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="light" storageKey="notex-theme">
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Navigate to="/authentication" />} />
-          <Route path="/authentication" element={<Authentication />} />
-          
-          {/* Protected routes with AppLayout */}
-          <Route 
-            path="/dashboard" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Dashboard />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/ai-answers" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <AIAnswers />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/ai-mark-answers" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <AIMarkAnswers />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/upload-notes" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <UploadNotes />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/find-notes" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <FindNotes />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/view-notes/:noteId" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <ViewNotes />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/view-notes" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <MyNotes />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/notifications" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Notifications />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/study-analytics" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <StudyAnalytics />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/study-rooms" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <StudyRooms />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/study-room/:id" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <StudyRoom />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/study-room/:id/info" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <StudyRoomInfo />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/study-room/:id/chat" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <StudyRoomChat />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/subscription" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Subscription />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/settings" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Settings />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          
-          {/* Catch-all route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+    <Toaster />
+    <Sonner />
+    <BrowserRouter>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Navigate to="/authentication" />} />
+        <Route path="/authentication" element={<Authentication />} />
+        
+        {/* Protected routes with AppLayout */}
+        <Route 
+          path="/dashboard" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/ai-answers" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <AIAnswers />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/ai-mark-answers" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <AIMarkAnswers />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/upload-notes" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <UploadNotes />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/find-notes" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <FindNotes />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/view-notes/:noteId" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <ViewNotes />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/view-notes" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <MyNotes />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/notifications" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Notifications />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/study-analytics" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <StudyAnalytics />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/study-rooms" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <StudyRooms />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/study-room/:id" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <StudyRoom />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/study-room/:id/info" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <StudyRoomInfo />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/study-room/:id/chat" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <StudyRoomChat />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/subscription" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Subscription />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/settings" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Settings />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        
+        {/* Catch-all route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 

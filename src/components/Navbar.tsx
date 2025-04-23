@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X, LogIn, BrainCircuit, LogOut, Search, Bell } from 'lucide-react';
@@ -26,6 +27,7 @@ export const Navbar = () => {
   const location = useLocation();
   const { toast } = useToast();
 
+  // Check if we're in dashboard mode (showing the sidebar)
   const isDashboardMode = !['/', '/login', '/authentication'].includes(location.pathname);
 
   useEffect(() => {
@@ -50,6 +52,7 @@ export const Navbar = () => {
     };
   }, []);
 
+  // If we're in dashboard mode, don't show the marketing navbar
   if (isDashboardMode) {
     return null;
   }
@@ -125,7 +128,7 @@ export const Navbar = () => {
               className="flex items-center"
             >
               <Link to="/" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
-                Notezz
+                Notex
               </Link>
             </motion.div>
             
