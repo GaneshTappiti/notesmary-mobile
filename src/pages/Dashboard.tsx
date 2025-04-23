@@ -6,12 +6,14 @@ import { Card } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import DashboardStatsCard from '@/components/dashboard/DashboardStatsCard';
 import {
   Upload,
   Search,
   Users,
   Brain,
   Timer,
+  Plus,
   Clock,
 } from 'lucide-react';
 
@@ -23,10 +25,10 @@ const Dashboard = () => {
   const quickAccessOptions = [
     {
       title: 'Upload Notes',
-      description: 'Share your study materials',
+      description: 'Share study materials',
       icon: <Upload className="h-5 w-5" />,
       buttonText: 'Upload',
-      isPrimary: true,
+      primaryAction: true,
       onClick: () => navigate('/upload-notes')
     },
     {
@@ -62,7 +64,7 @@ const Dashboard = () => {
     }
   ];
 
-  // Study rooms data with updated design
+  // Study rooms data
   const studyRooms = [
     {
       id: '1',
@@ -70,8 +72,7 @@ const Dashboard = () => {
       participants: 5,
       time: '1h 30m',
       date: 'Today 2:00 PM',
-      status: 'active',
-      extraParticipants: 2
+      status: 'active'
     },
     {
       id: '2',
@@ -79,8 +80,7 @@ const Dashboard = () => {
       participants: 3,
       time: '45m',
       date: 'Today 4:00 PM',
-      status: 'scheduled',
-      extraParticipants: 1
+      status: 'scheduled'
     },
     {
       id: '3',
@@ -88,8 +88,28 @@ const Dashboard = () => {
       participants: 7,
       time: '2h',
       date: 'Today 6:30 PM',
-      status: 'scheduled',
-      extraParticipants: 4
+      status: 'scheduled'
+    }
+  ];
+
+  const stats = [
+    {
+      value: '53',
+      label: 'Total Notes',
+      trend: '+10%',
+      icon: <Upload className="h-5 w-5" />
+    },
+    {
+      value: '28',
+      label: 'Study Sessions',
+      trend: '+14%',
+      icon: <Users className="h-5 w-5" />
+    },
+    {
+      value: '152',
+      label: 'AI Answers',
+      trend: '+23%',
+      icon: <Brain className="h-5 w-5" />
     }
   ];
 
@@ -104,27 +124,20 @@ const Dashboard = () => {
       {/* Quick Access Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {quickAccessOptions.map((option, index) => (
-          <Card key={index} className="border overflow-hidden">
-            <div className="p-6 space-y-4">
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-medium">{option.title}</h3>
-                  {option.isPrimary && (
-                    <Badge className="bg-purple-600">primary</Badge>
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {option.description}
-                </p>
-              </div>
-              <Button 
-                className="w-full"
-                variant={option.isPrimary ? "default" : "secondary"}
-                onClick={option.onClick}
-              >
-                {option.buttonText}
-              </Button>
+          <Card key={index} className="border p-6 space-y-4">
+            <div className="flex flex-col gap-1">
+              <h3 className="font-medium">{option.title}</h3>
+              <p className="text-sm text-muted-foreground">
+                {option.description}
+              </p>
             </div>
+            <Button 
+              className="w-full"
+              variant={option.primaryAction ? "default" : "secondary"}
+              onClick={option.onClick}
+            >
+              {option.buttonText}
+            </Button>
           </Card>
         ))}
       </div>
@@ -150,7 +163,7 @@ const Dashboard = () => {
             <Card key={room.id} className="border">
               <div className="p-6 space-y-4">
                 <div className="space-y-3">
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-center justify-between">
                     <h3 className="font-medium">{room.title}</h3>
                     <Badge 
                       variant={room.status === 'active' ? 'default' : 'secondary'}
@@ -173,26 +186,18 @@ const Dashboard = () => {
                     {room.date}
                   </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex -space-x-2">
-                    {[...Array(3)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="h-8 w-8 rounded-full bg-gray-100 border-2 border-white"
-                      />
-                    ))}
-                    {room.extraParticipants > 0 && (
-                      <div className="h-8 w-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-sm text-gray-600">
-                        +{room.extraParticipants}
-                      </div>
-                    )}
-                  </div>
-                  <Button>Join Again</Button>
-                </div>
+                <Button className="w-full">Join Again</Button>
               </div>
             </Card>
           ))}
         </div>
+      </div>
+
+      {/* Stats Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {stats.map((stat, index) => (
+          <DashboardStatsCard key={index} {...stat} />
+        ))}
       </div>
     </div>
   );
