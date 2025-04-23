@@ -1,3 +1,4 @@
+
 import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -22,11 +23,8 @@ const StudyAnalytics = React.lazy(() => import("@/pages/StudyAnalytics"));
 const StudyRooms = React.lazy(() => import("@/pages/StudyRooms"));
 const StudyRoom = React.lazy(() => import("@/pages/StudyRoom"));
 const StudyRoomChat = React.lazy(() => import("@/pages/StudyRoomChat"));
-const StudyRoomInfo = React.lazy(() => import("@/pages/StudyRoomInfo"));
 const Settings = React.lazy(() => import("@/pages/Settings"));
-const Subscription = React.lazy(() => import("@/pages/Subscription"));
-const MyNotes = React.lazy(() => import("@/pages/MyNotes"));
-const AIMarkAnswers = React.lazy(() => import("@/pages/AIMarkAnswers"));
+const Todos = React.lazy(() => import("@/pages/Todos"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,13 +76,12 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public routes - Index page is available without authentication */}
+      {/* Public routes */}
       <Route path="/" element={
         <Suspense fallback={<Loading />}>
           <Index />
         </Suspense>
       } />
-      <Route path="/login" element={<Navigate to="/authentication" />} />
       <Route path="/authentication" element={
         <PublicRoute>
           <Suspense fallback={<Loading />}>
@@ -93,7 +90,7 @@ const AppRoutes = () => {
         </PublicRoute>
       } />
       
-      {/* Protected routes with AppLayout */}
+      {/* Protected routes */}
       <Route 
         path="/dashboard" 
         element={
@@ -101,30 +98,6 @@ const AppRoutes = () => {
             <AppLayout>
               <Suspense fallback={<Loading />}>
                 <Dashboard />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/ai-answers" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <AIAnswers />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/ai-mark-answers" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <AIMarkAnswers />
               </Suspense>
             </AppLayout>
           </PrivateRoute>
@@ -155,48 +128,24 @@ const AppRoutes = () => {
         } 
       />
       <Route 
-        path="/view-notes/:noteId" 
+        path="/todos" 
         element={
           <PrivateRoute>
             <AppLayout>
               <Suspense fallback={<Loading />}>
-                <ViewNotes />
+                <Todos />
               </Suspense>
             </AppLayout>
           </PrivateRoute>
         } 
       />
       <Route 
-        path="/view-notes" 
+        path="/ai-answers" 
         element={
           <PrivateRoute>
             <AppLayout>
               <Suspense fallback={<Loading />}>
-                <MyNotes />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/notifications" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <Notifications />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/study-analytics" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <StudyAnalytics />
+                <AIAnswers />
               </Suspense>
             </AppLayout>
           </PrivateRoute>
@@ -209,66 +158,6 @@ const AppRoutes = () => {
             <AppLayout>
               <Suspense fallback={<Loading />}>
                 <StudyRooms />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/study-room/:id" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <StudyRoom />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/study-room/:id/info" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <StudyRoomInfo />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/study-room/:id/chat" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <StudyRoomChat />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/subscription" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <Subscription />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/settings" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <Settings />
               </Suspense>
             </AppLayout>
           </PrivateRoute>
