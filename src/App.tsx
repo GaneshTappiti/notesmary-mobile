@@ -26,7 +26,6 @@ import AIMarkAnswers from "./pages/AIMarkAnswers";
 
 const queryClient = new QueryClient();
 
-// Authentication guard component
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   return isLoggedIn ? <>{children}</> : <Navigate to="/authentication" />;
