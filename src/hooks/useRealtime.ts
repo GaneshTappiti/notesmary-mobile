@@ -40,22 +40,28 @@ export function useRealtimeSubscription<T>(
           table: tableName,
           ...(filter && filterValue ? { filter: `${filter}=eq.${filterValue}` } : {})
         },
-        (payload) => {
+        (payload: any) => {
           console.log('Realtime update:', payload);
           
-          const { eventType, new: newRecord, old: oldRecord } = payload;
+          // Extract data from the payload structure
+          // In Supabase JS v2, the payload structure for postgres_changes is different
+          const eventType = payload.eventType;
+          const newRecord = payload.new;
+          const oldRecord = payload.old;
           
           if (eventType === 'INSERT') {
             setData(prev => [...prev, newRecord as T]);
           } else if (eventType === 'UPDATE') {
             setData(prev => prev.map(item => 
-              // @ts-ignore
-              item.id === newRecord.id ? { ...item, ...newRecord } : item
+              // @ts-ignore - We'll check ID existence before accessing
+              (item && item.id && newRecord && newRecord.id && item.id === newRecord.id) 
+                ? { ...item, ...newRecord } 
+                : item
             ));
           } else if (eventType === 'DELETE') {
             setData(prev => prev.filter(item => 
-              // @ts-ignore
-              item.id !== oldRecord.id
+              // @ts-ignore - We'll check ID existence before accessing
+              !(item && item.id && oldRecord && oldRecord.id && item.id === oldRecord.id)
             ));
           }
         }
