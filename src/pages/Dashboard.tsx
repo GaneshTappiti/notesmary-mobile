@@ -1,20 +1,18 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Card } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { StatsCard } from '@/components/dashboard/StatsCard';
-import { AnalyticsCard } from '@/components/dashboard/AnalyticsCard';
-import { StudyRoomCard } from '@/components/dashboard/StudyRoomCard';
-import { QuickAccessCard } from '@/components/dashboard/QuickAccessCard';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import {
   Upload,
   Search,
   Users,
   Brain,
   Timer,
-  Plus,
-  CheckSquare
+  Clock,
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -26,77 +24,41 @@ const Dashboard = () => {
     {
       title: 'Upload Notes',
       description: 'Share your study materials',
-      icon: <Upload className="h-6 w-6" />,
-      bgColor: 'bg-blue-50',
-      isPrimary: true,
+      icon: <Upload className="h-5 w-5" />,
       buttonText: 'Upload',
-      buttonVariant: 'default' as const,
+      isPrimary: true,
       onClick: () => navigate('/upload-notes')
     },
     {
       title: 'Find Notes',
       description: 'Discover study resources',
-      icon: <Search className="h-6 w-6" />,
-      bgColor: 'bg-purple-50',
-      isPrimary: false,
+      icon: <Search className="h-5 w-5" />,
       buttonText: 'Search',
-      buttonVariant: 'outline' as const,
       onClick: () => navigate('/find-notes')
     },
     {
       title: 'Join Study Room',
       description: 'Study with peers in real-time',
-      icon: <Users className="h-6 w-6" />,
-      bgColor: 'bg-green-50',
-      isPrimary: false,
+      icon: <Users className="h-5 w-5" />,
       buttonText: 'Join',
-      buttonVariant: 'outline' as const,
       onClick: () => navigate('/study-rooms')
     },
     {
       title: 'Ask AI',
       description: 'Get instant help with questions',
-      icon: <Brain className="h-6 w-6" />,
-      bgColor: 'bg-amber-50',
-      isPrimary: false,
+      icon: <Brain className="h-5 w-5" />,
       buttonText: 'Ask Now',
-      buttonVariant: 'outline' as const,
       onClick: () => navigate('/ai-answers')
     },
     {
       title: 'Focus Mode',
       description: 'Eliminate distractions',
-      icon: <Timer className="h-6 w-6" />,
-      bgColor: 'bg-red-50',
-      isPrimary: false,
+      icon: <Timer className="h-5 w-5" />,
       buttonText: 'Start Focus',
-      buttonVariant: 'outline' as const,
       onClick: () => toast({
         title: "Coming Soon",
         description: "Focus Mode will be available in the next update."
       })
-    }
-  ];
-
-  // Stats cards data with trends
-  const statsCards = [
-    {
-      title: 'Total Notes',
-      value: '53',
-      icon: <Upload className="h-5 w-5 text-blue-500" />,
-      trend: { value: '10%', isPositive: true }
-    },
-    {
-      title: 'Study Sessions',
-      value: '28',
-      icon: <Users className="h-5 w-5 text-green-500" />,
-      trend: { value: '5%', isPositive: true }
-    },
-    {
-      title: 'AI Answers',
-      value: '152',
-      icon: <Brain className="h-5 w-5 text-purple-500" />,
-      trend: { value: '8%', isPositive: true }
     }
   ];
 
@@ -106,156 +68,131 @@ const Dashboard = () => {
       id: '1',
       title: 'Physics Study Session',
       participants: 5,
+      time: '1h 30m',
       date: 'Today 2:00 PM',
       status: 'active',
-      duration: '1h 30m',
-      avatars: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg']
+      extraParticipants: 2
     },
     {
       id: '2',
       title: 'Math Group',
       participants: 3,
+      time: '45m',
       date: 'Today 4:00 PM',
       status: 'scheduled',
-      duration: '45m',
-      avatars: ['/placeholder.svg', '/placeholder.svg']
+      extraParticipants: 1
     },
     {
       id: '3',
       title: 'Biology Discussion',
       participants: 7,
+      time: '2h',
       date: 'Today 6:30 PM',
       status: 'scheduled',
-      duration: '2h',
-      avatars: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg']
+      extraParticipants: 4
     }
   ];
 
-  // Tasks list with priority levels
-  const tasks = [
-    { id: 1, title: 'Physics Assignment Due', time: '2:00 PM Today', subject: 'Physics', priority: 'high', completed: false },
-    { id: 2, title: 'Math Group Study', time: '4:30 PM Tomorrow', subject: 'Math', priority: 'medium', completed: false },
-    { id: 3, title: 'Chemistry Lab Report', time: 'Friday, 10:00 AM', subject: 'Chemistry', priority: 'low', completed: true },
-    { id: 4, title: 'Biology Research Paper', time: 'Next Monday', subject: 'Biology', priority: 'medium', completed: false }
-  ];
-
-  const [activeTab, setActiveTab] = useState('all');
-
-  const handleNewTask = () => {
-    toast({
-      title: "Add New Task",
-      description: "Task creation modal will be implemented in the next update."
-    });
-  };
-
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* 1. Quick Access Section */}
+    <div className="space-y-8 pb-8">
+      {/* Header Section */}
+      <div className="space-y-2">
+        <h1 className="text-2xl font-semibold">Hello, Tappiti 👋</h1>
+        <p className="text-muted-foreground">Here's your dashboard for today</p>
+      </div>
+
+      {/* Quick Access Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {quickAccessOptions.map((option, index) => (
-          <QuickAccessCard
-            key={index}
-            {...option}
-          />
+          <Card key={index} className="border overflow-hidden">
+            <div className="p-6 space-y-4">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium">{option.title}</h3>
+                  {option.isPrimary && (
+                    <Badge className="bg-purple-600">primary</Badge>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {option.description}
+                </p>
+              </div>
+              <Button 
+                className="w-full"
+                variant={option.isPrimary ? "default" : "secondary"}
+                onClick={option.onClick}
+              >
+                {option.buttonText}
+              </Button>
+            </div>
+          </Card>
         ))}
       </div>
 
-      {/* 2. Recent Study Rooms */}
-      <Card className="border-none shadow-sm overflow-hidden bg-white dark:bg-gray-800">
-        <div className="p-6 border-b border-gray-100 dark:border-gray-700">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Users size={20} className="text-gray-500" />
-              Recent Study Rooms
-            </h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/study-rooms')}
-              className="text-blue-600 border-blue-200 hover:border-blue-400"
-            >
-              View All
-            </Button>
+      {/* Recent Study Rooms Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            <h2 className="font-semibold">Recent Study Rooms</h2>
           </div>
+          <Button 
+            variant="link" 
+            className="text-purple-600"
+            onClick={() => navigate('/study-rooms')}
+          >
+            View All
+          </Button>
         </div>
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {studyRooms.map((room) => (
-            <StudyRoomCard key={room.id} {...room} />
-          ))}
-        </div>
-      </Card>
-
-      {/* 3. Progress Metrics & Tasks */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Stats Cards */}
-        <div className="lg:col-span-2">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {statsCards.map((card, index) => (
-              <StatsCard
-                key={index}
-                {...card}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Tasks Summary */}
-        <Card className="border-none shadow-sm">
-          <div className="p-4 border-b border-gray-100 dark:border-gray-700">
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold flex items-center gap-2">
-                <CheckSquare size={18} className="text-gray-500" />
-                Tasks
-              </h3>
-              <Button size="sm" variant="ghost" onClick={handleNewTask}>
-                <Plus size={16} className="mr-1" />
-                Add Task
-              </Button>
-            </div>
-          </div>
-          <div className="p-4">
-            <div className="space-y-3">
-              {tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className={`p-3 rounded-lg border ${
-                    task.completed ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'
-                  }`}
-                >
+            <Card key={room.id} className="border">
+              <div className="p-6 space-y-4">
+                <div className="space-y-3">
                   <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className={`text-sm font-medium ${task.completed ? 'text-gray-500 line-through' : 'text-gray-900 dark:text-gray-100'}`}>
-                        {task.title}
-                      </h4>
-                      <p className="text-xs text-gray-500 mt-1">{task.time}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
-                          {task.subject}
-                        </span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          task.priority === 'high' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' :
-                          task.priority === 'medium' ? 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300' :
-                          'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                        }`}>
-                          {task.priority}
-                        </span>
-                      </div>
+                    <h3 className="font-medium">{room.title}</h3>
+                    <Badge 
+                      variant={room.status === 'active' ? 'default' : 'secondary'}
+                      className={room.status === 'active' ? 'bg-green-500' : ''}
+                    >
+                      {room.status === 'active' ? 'Active' : 'Scheduled'}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      {room.time}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Users className="h-4 w-4" />
+                      {room.participants} participants
                     </div>
                   </div>
+                  <div className="text-sm text-muted-foreground">
+                    {room.date}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* 4. Weekly Study Activity */}
-      <div className="grid grid-cols-1 gap-6">
-        <AnalyticsCard
-          title="Weekly Study Activity"
-          chartType="bar"
-          filters={["This Week", "Last Week", "Month"]}
-        />
+                <div className="flex justify-between items-center">
+                  <div className="flex -space-x-2">
+                    {[...Array(3)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="h-8 w-8 rounded-full bg-gray-100 border-2 border-white"
+                      />
+                    ))}
+                    {room.extraParticipants > 0 && (
+                      <div className="h-8 w-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-sm text-gray-600">
+                        +{room.extraParticipants}
+                      </div>
+                    )}
+                  </div>
+                  <Button>Join Again</Button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );
