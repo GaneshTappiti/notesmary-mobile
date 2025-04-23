@@ -91,6 +91,12 @@ const Index: React.FC = () => {
               })
             )}
           </div>
+          <div className="mt-12">
+            {/* Add a button to navigate to My Notes */}
+            <Button onClick={() => navigate("/my-notes")} className="mx-auto">
+              Go to My Notes
+            </Button>
+          </div>
         </section>
       </main>
     </div>

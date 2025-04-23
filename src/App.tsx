@@ -1,4 +1,3 @@
-
 import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -25,6 +24,7 @@ const StudyRoom = React.lazy(() => import("@/pages/StudyRoom"));
 const StudyRoomChat = React.lazy(() => import("@/pages/StudyRoomChat"));
 const Settings = React.lazy(() => import("@/pages/Settings"));
 const Todos = React.lazy(() => import("@/pages/Todos"));
+const MyNotes = React.lazy(() => import("@/pages/MyNotes"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -162,6 +162,18 @@ const AppRoutes = () => {
             </AppLayout>
           </PrivateRoute>
         } 
+      />
+      <Route
+        path="/my-notes"
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <MyNotes />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        }
       />
       
       {/* Catch-all route */}
