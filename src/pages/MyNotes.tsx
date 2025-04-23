@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useSupabaseQuery } from "@/hooks/useSupabase";
 
 interface Note {
   id: string;
@@ -32,25 +33,19 @@ const MyNotes: React.FC = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  // Fetch user’s notes from Supabase
+  // Use the custom hook to fetch notes more efficiently
+  const { data: fetchedNotes, loading: notesLoading } = useSupabaseQuery<Note>('notes', {
+    filter: user ? { column: 'user_id', value: user.id } : undefined,
+    orderBy: { column: 'uploaded_at', ascending: false },
+    select: "id,title,content,uploaded_at"
+  });
+
+  // Update notes when fetched data changes
   useEffect(() => {
-    const fetchNotes = async () => {
-      if (!user) return;
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("notes")
-        .select("id,title,content,uploaded_at")
-        .eq("user_id", user.id)
-        .order("uploaded_at", { ascending: false });
-      if (error) {
-        toast({ title: "Error", description: "Failed to fetch notes" });
-      } else {
-        setNotes(data as Note[]);
-      }
-      setLoading(false);
-    };
-    fetchNotes();
-  }, [user, toast]);
+    if (fetchedNotes) {
+      setNotes(fetchedNotes);
+    }
+  }, [fetchedNotes]);
 
   // Add a new note to Supabase
   const handleAddNote = async (e: React.FormEvent) => {
@@ -98,21 +93,24 @@ const MyNotes: React.FC = () => {
         </Button>
       </form>
       <div className="space-y-4">
-        {notes.length === 0 && (
+        {notesLoading ? (
+          <div className="text-center text-gray-500">Loading notes...</div>
+        ) : notes.length === 0 ? (
           <div className="text-gray-500 text-center">You have no notes yet.</div>
-        )}
-        {notes.map(note => (
-          <div
-            key={note.id}
-            className="border rounded-lg p-4 shadow transition-all bg-white dark:bg-gray-900"
-          >
-            <h3 className="font-semibold text-lg text-blue-700 dark:text-blue-300">{note.title}</h3>
-            <p className="mb-1 text-gray-700 dark:text-gray-300">{note.content}</p>
-            <div className="text-xs text-gray-400 mt-2">
-              {note.uploaded_at ? new Date(note.uploaded_at).toLocaleString() : ""}
+        ) : (
+          notes.map(note => (
+            <div
+              key={note.id}
+              className="border rounded-lg p-4 shadow transition-all bg-white dark:bg-gray-900"
+            >
+              <h3 className="font-semibold text-lg text-blue-700 dark:text-blue-300">{note.title}</h3>
+              <p className="mb-1 text-gray-700 dark:text-gray-300">{note.content}</p>
+              <div className="text-xs text-gray-400 mt-2">
+                {note.uploaded_at ? new Date(note.uploaded_at).toLocaleString() : ""}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
