@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 
 export const Footer = () => {
@@ -15,7 +14,7 @@ export const Footer = () => {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center">
               <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
-                Notex
+                Notezz
               </span>
             </div>
             <p className="mt-4 text-gray-600 max-w-xs">
@@ -71,7 +70,7 @@ export const Footer = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mt-8 flex flex-col sm:flex-row justify-between text-sm text-gray-500"
         >
-          <p>&copy; 2023 Notex. All rights reserved.</p>
+          <p>&copy; 2023 Notezz. All rights reserved.</p>
           <div className="mt-4 sm:mt-0 flex space-x-6">
             <a href="#" className="hover:text-blue-600">Privacy Policy</a>
             <a href="#" className="hover:text-blue-600">Terms of Service</a>
