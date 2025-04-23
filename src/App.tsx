@@ -168,6 +168,30 @@ const AppRoutes = () => {
           </PrivateRoute>
         } 
       />
+      <Route 
+        path="/study-room/:id" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <StudyRoom />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/study-room/:id/chat" 
+        element={
+          <PrivateRoute>
+            <AppLayout>
+              <Suspense fallback={<Loading />}>
+                <StudyRoomChat />
+              </Suspense>
+            </AppLayout>
+          </PrivateRoute>
+        } 
+      />
       <Route
         path="/my-notes"
         element={
