@@ -33,7 +33,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       retry: 1,
       staleTime: 30 * 1000, // 30 seconds default stale time
-      cacheTime: 5 * 60 * 1000, // 5 minutes cache time
+      gcTime: 5 * 60 * 1000, // 5 minutes cache time (previously cacheTime)
     },
   },
 });
