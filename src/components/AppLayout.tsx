@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SidebarInset } from "@/components/ui/sidebar";
-import { AppSidebar } from '@/components/AppSidebar';
+import { AppSideBar } from '@/components/AppSidebar';
 import { HeaderNav } from '@/components/HeaderNav';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Menu } from 'lucide-react';
@@ -25,7 +25,7 @@ const MobileSidebar = () => {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-[80%] max-w-[300px] bg-white">
-        <AppSidebar />
+        <AppSideBar />
       </SheetContent>
     </Sheet>
   );
@@ -51,7 +51,7 @@ const SimpleLayout = ({ children }: AppLayoutProps) => (
 const StandardLayout = ({ children }: AppLayoutProps) => (
   <div className="min-h-[100dvh] flex w-full max-w-full">
     <div className="hidden md:block">
-      <AppSidebar />
+      <AppSideBar />
     </div>
     
     <MobileSidebar />
@@ -60,7 +60,7 @@ const StandardLayout = ({ children }: AppLayoutProps) => (
       <div className="flex flex-col min-h-full max-w-full">
         <HeaderNav />
         
-        <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom">
+        <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom overflow-x-hidden">
           {children}
         </main>
       </div>
@@ -69,7 +69,7 @@ const StandardLayout = ({ children }: AppLayoutProps) => (
 );
 
 const BasicLayout = ({ children }: AppLayoutProps) => (
-  <div className="min-h-[100dvh] w-full max-w-full">
+  <div className="min-h-[100dvh] w-full max-w-full overflow-x-hidden">
     <main className="px-4 pb-safe-bottom max-w-full">
       {children}
     </main>

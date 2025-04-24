@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { Menu, X } from "lucide-react";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   
@@ -31,16 +33,20 @@ export const Navbar = () => {
   };
   
   const handleLogout = async () => {
-    await logout();
-    navigate('/');
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-white/80 backdrop-blur-md py-3 shadow-sm"
-          : "bg-transparent py-5"
+          ? "bg-white/80 backdrop-blur-md py-2 shadow-sm"
+          : "bg-transparent py-3 md:py-5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,6 +57,23 @@ export const Navbar = () => {
             </span>
           </Link>
 
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="p-1"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </Button>
+          </div>
+
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <Link
               to="/"
@@ -72,7 +95,8 @@ export const Navbar = () => {
             </Link>
           </nav>
 
-          <div className="flex items-center gap-3">
+          {/* Desktop Auth Buttons */}
+          <div className="hidden md:flex items-center gap-3">
             {isAuthenticated ? (
               <>
                 <Button 
@@ -96,6 +120,78 @@ export const Navbar = () => {
             )}
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-3 py-3 border-t border-gray-100">
+            <div className="space-y-1 px-2">
+              <Link
+                to="/"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link
+                to="/features"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Features
+              </Link>
+              <Link
+                to="/pricing"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Pricing
+              </Link>
+              
+              <div className="pt-4 pb-2">
+                {isAuthenticated ? (
+                  <div className="flex flex-col space-y-2">
+                    <Button 
+                      onClick={() => {
+                        navigate('/dashboard');
+                        setMobileMenuOpen(false);
+                      }}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Dashboard
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        handleLogout();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full"
+                    >
+                      Log out
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col space-y-2">
+                    <Link 
+                      to="/authentication" 
+                      className="block w-full" 
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Button variant="outline" className="w-full">Log in</Button>
+                    </Link>
+                    <Link 
+                      to="/authentication" 
+                      className="block w-full"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Button className="w-full">Sign up</Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
