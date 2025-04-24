@@ -8,6 +8,7 @@ import { StatsCard } from '@/components/dashboard/StatsCard';
 import { AnalyticsCard } from '@/components/dashboard/AnalyticsCard';
 import { StudyRoomCard } from '@/components/dashboard/StudyRoomCard';
 import { QuickAccessCard } from '@/components/dashboard/QuickAccessCard';
+import { PageContainer } from '@/components/PageContainer';
 import {
   Upload,
   Search,
@@ -165,124 +166,126 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">
-          Welcome back, {user?.user_metadata?.full_name || 'Student'}!
-        </h1>
-        <Button 
-          variant="outline" 
-          onClick={handleLogout}
-          className="gap-2"
-        >
-          <LogOut className="h-4 w-4" />
-          Logout
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {quickAccessOptions.map((option, index) => (
-          <QuickAccessCard
-            key={index}
-            {...option}
-            className="hover:shadow-lg transition-all duration-300"
-          />
-        ))}
-      </div>
-
-      <Card className="border-none shadow-sm overflow-hidden bg-white">
-        <div className="p-6 border-b border-gray-100">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Users size={20} className="text-gray-500" />
-              Recent Study Rooms
-            </h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/study-rooms')}
-              className="text-blue-600 border-blue-200 hover:border-blue-400"
-            >
-              View All
-            </Button>
-          </div>
+    <PageContainer>
+      <div className="space-y-6 animate-fade-in">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-semibold">
+            Welcome back, {user?.user_metadata?.full_name || 'Student'}!
+          </h1>
+          <Button 
+            variant="outline" 
+            onClick={handleLogout}
+            className="gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
         </div>
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {studyRooms.map((room) => (
-            <StudyRoomCard key={room.id} {...room} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          {quickAccessOptions.map((option, index) => (
+            <QuickAccessCard
+              key={index}
+              {...option}
+              className="hover:shadow-lg transition-all duration-300"
+            />
           ))}
         </div>
-      </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {statsCards.map((card, index) => (
-              <StatsCard
-                key={index}
-                {...card}
-              />
-            ))}
-          </div>
-        </div>
-
-        <Card className="border-none shadow-sm">
-          <div className="p-4 border-b border-gray-100">
+        <Card className="border-none shadow-sm overflow-hidden bg-white">
+          <div className="p-6 border-b border-gray-100">
             <div className="flex justify-between items-center">
-              <h3 className="font-semibold flex items-center gap-2">
-                <CheckSquare size={18} className="text-gray-500" />
-                Tasks
-              </h3>
-              <Button size="sm" variant="ghost" onClick={handleNewTask}>
-                <Plus size={16} className="mr-1" />
-                Add Task
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <Users size={20} className="text-gray-500" />
+                Recent Study Rooms
+              </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/study-rooms')}
+                className="text-blue-600 border-blue-200 hover:border-blue-400"
+              >
+                View All
               </Button>
             </div>
           </div>
-          <div className="p-4">
-            <div className="space-y-3">
-              {tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className={`p-3 rounded-lg border ${
-                    task.completed ? 'bg-gray-50 border-gray-200' : 'bg-white border-gray-200'
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className={`text-sm font-medium ${task.completed ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
-                        {task.title}
-                      </h4>
-                      <p className="text-xs text-gray-500 mt-1">{task.time}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
-                          {task.subject}
-                        </span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          task.priority === 'high' ? 'bg-red-50 text-red-700' :
-                          task.priority === 'medium' ? 'bg-yellow-50 text-yellow-700' :
-                          'bg-green-50 text-green-700'
-                        }`}>
-                          {task.priority}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {studyRooms.map((room) => (
+              <StudyRoomCard key={room.id} {...room} />
+            ))}
+          </div>
+        </Card>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {statsCards.map((card, index) => (
+                <StatsCard
+                  key={index}
+                  {...card}
+                />
               ))}
             </div>
           </div>
-        </Card>
-      </div>
 
-      <div className="grid grid-cols-1 gap-6">
-        <AnalyticsCard
-          title="Weekly Study Activity"
-          chartType="bar"
-          filters={["This Week", "Last Week", "Month"]}
-        />
+          <Card className="border-none shadow-sm">
+            <div className="p-4 border-b border-gray-100">
+              <div className="flex justify-between items-center">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <CheckSquare size={18} className="text-gray-500" />
+                  Tasks
+                </h3>
+                <Button size="sm" variant="ghost" onClick={handleNewTask}>
+                  <Plus size={16} className="mr-1" />
+                  Add Task
+                </Button>
+              </div>
+            </div>
+            <div className="p-4">
+              <div className="space-y-3">
+                {tasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className={`p-3 rounded-lg border ${
+                      task.completed ? 'bg-gray-50 border-gray-200' : 'bg-white border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className={`text-sm font-medium ${task.completed ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          {task.title}
+                        </h4>
+                        <p className="text-xs text-gray-500 mt-1">{task.time}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
+                            {task.subject}
+                          </span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            task.priority === 'high' ? 'bg-red-50 text-red-700' :
+                            task.priority === 'medium' ? 'bg-yellow-50 text-yellow-700' :
+                            'bg-green-50 text-green-700'
+                          }`}>
+                            {task.priority}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
+          <AnalyticsCard
+            title="Weekly Study Activity"
+            chartType="bar"
+            filters={["This Week", "Last Week", "Month"]}
+          />
+        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
