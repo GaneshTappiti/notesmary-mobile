@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,10 +9,9 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 import {
   Form,
@@ -22,9 +22,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
 const isEducationalEmail = (email: string) => {
@@ -36,10 +36,7 @@ const isEducationalEmail = (email: string) => {
     /\.ac\.[a-z]{2,}$/,
     /\.edu\.[a-z]{2,}$/,
     /\.college$/,
-    /\.university$/,
-    /\.org$/,
-    /\.school$/,
-    /\.(ca|de|fr|it|es|br|cn|in|uk|ng|jp|au|my|sg)$/
+    /\.university$/
   ];
   
   return eduPatterns.some(pattern => pattern.test(domain));
@@ -66,7 +63,7 @@ const signupSchema = z.object({
 });
 
 const Authentication = () => {
-  const [activeTab, setActiveTab] = useState("login");
+  const [activeTab, setActiveTab] = useState("signup");
   const { login, signup, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -113,7 +110,7 @@ const Authentication = () => {
       console.error("Signup error:", error);
     }
   };
-  
+
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/dashboard");
@@ -121,48 +118,47 @@ const Authentication = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="min-h-[100dvh] w-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-[100dvh] w-full bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
             Notex
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 mt-2">
+          <p className="text-base text-slate-600 mt-2">
             Your personal study assistant
           </p>
         </div>
 
-        <Card className="border-slate-200 shadow-lg w-full">
-          <CardHeader className="px-4 sm:px-6 py-4 sm:py-6">
-            <CardTitle className="text-xl sm:text-2xl text-center">
-              Welcome to Notex
-            </CardTitle>
-            <CardDescription className="text-center text-sm sm:text-base">
-              {activeTab === "login"
-                ? "Sign in to your account to continue"
+        <Card className="border-slate-200 shadow-lg">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-2xl">Welcome to Notex</CardTitle>
+            <CardDescription>
+              {activeTab === "login" 
+                ? "Sign in to your account to continue" 
                 : "Create a new account to get started"}
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-4 sm:px-6 pb-2 sm:pb-4">
-            <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid grid-cols-2 mb-4 sm:mb-6 w-full">
+          
+          <CardContent className="space-y-4 pt-4">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid grid-cols-2 w-full mb-4">
                 <TabsTrigger value="login">Log In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
               </TabsList>
 
               <TabsContent value="login">
                 <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-3 sm:space-y-4">
+                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                     <FormField
                       control={loginForm.control}
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm sm:text-base">Email</FormLabel>
+                          <FormLabel>Email</FormLabel>
                           <FormControl>
                             <Input placeholder="Enter your email" {...field} />
                           </FormControl>
-                          <FormMessage className="text-xs sm:text-sm" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -171,7 +167,7 @@ const Authentication = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm sm:text-base">Password</FormLabel>
+                          <FormLabel>Password</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
@@ -179,34 +175,40 @@ const Authentication = () => {
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-xs sm:text-sm" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <Button
-                      type="submit"
-                      className="w-full bg-blue-600 hover:bg-blue-700 mt-2"
-                      disabled={isLoading}
-                    >
+                    <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
                       {isLoading ? "Logging in..." : "Log In"}
                     </Button>
+                    <p className="text-center text-sm text-gray-600 mt-4">
+                      Don't have an account?{" "}
+                      <button
+                        type="button"
+                        className="text-blue-600 hover:text-blue-700 font-medium"
+                        onClick={() => setActiveTab("signup")}
+                      >
+                        Sign up
+                      </button>
+                    </p>
                   </form>
                 </Form>
               </TabsContent>
 
               <TabsContent value="signup">
                 <Form {...signupForm}>
-                  <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-3 sm:space-y-4">
+                  <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-4">
                     <FormField
                       control={signupForm.control}
                       name="fullName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm sm:text-base">Full Name</FormLabel>
+                          <FormLabel>Full Name</FormLabel>
                           <FormControl>
                             <Input placeholder="Enter your full name" {...field} />
                           </FormControl>
-                          <FormMessage className="text-xs sm:text-sm" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -215,14 +217,14 @@ const Authentication = () => {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm sm:text-base">Email</FormLabel>
+                          <FormLabel>Email</FormLabel>
                           <FormControl>
                             <Input placeholder="Enter your college email" {...field} />
                           </FormControl>
-                          <FormMessage className="text-xs sm:text-sm" />
-                          <Alert className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 p-2 mt-1">
+                          <FormMessage />
+                          <Alert className="bg-blue-50 border-blue-200 p-2 mt-1">
                             <Info className="h-4 w-4 inline-block mr-1 text-blue-500" />
-                            <AlertDescription className="text-xs text-blue-600 dark:text-blue-400 inline">
+                            <AlertDescription className="text-xs text-blue-600 inline">
                               We only accept academic institution email addresses (.edu, .ac.xx, etc.)
                             </AlertDescription>
                           </Alert>
@@ -234,7 +236,7 @@ const Authentication = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm sm:text-base">Password</FormLabel>
+                          <FormLabel>Password</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
@@ -242,7 +244,7 @@ const Authentication = () => {
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-xs sm:text-sm" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -251,7 +253,7 @@ const Authentication = () => {
                       name="confirmPassword"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm sm:text-base">Confirm Password</FormLabel>
+                          <FormLabel>Confirm Password</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
@@ -259,38 +261,28 @@ const Authentication = () => {
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-xs sm:text-sm" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <Button
-                      type="submit"
-                      className="w-full bg-blue-600 hover:bg-blue-700 mt-2"
-                      disabled={isLoading}
-                    >
+                    <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
                       {isLoading ? "Creating account..." : "Sign Up"}
                     </Button>
+                    <p className="text-center text-sm text-gray-600 mt-4">
+                      Already have an account?{" "}
+                      <button
+                        type="button"
+                        className="text-blue-600 hover:text-blue-700 font-medium"
+                        onClick={() => setActiveTab("login")}
+                      >
+                        Log in
+                      </button>
+                    </p>
                   </form>
                 </Form>
               </TabsContent>
             </Tabs>
           </CardContent>
-          <CardFooter className="flex justify-center px-4 sm:px-6 py-3 sm:py-4">
-            <p className="text-xs sm:text-sm text-slate-500">
-              {activeTab === "login"
-                ? "Don't have an account? "
-                : "Already have an account? "}
-              <Button
-                variant="link"
-                className="p-0 h-auto text-blue-600 text-xs sm:text-sm"
-                onClick={() =>
-                  setActiveTab(activeTab === "login" ? "signup" : "login")
-                }
-              >
-                {activeTab === "login" ? "Sign up" : "Log in"}
-              </Button>
-            </p>
-          </CardFooter>
         </Card>
       </div>
     </div>
