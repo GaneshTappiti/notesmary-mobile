@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SidebarInset } from "@/components/ui/sidebar";
@@ -41,7 +40,7 @@ const StudyRoomLayout = ({ children }: AppLayoutProps) => (
 const SimpleLayout = ({ children }: AppLayoutProps) => (
   <div className="min-h-[100dvh] w-full max-w-full">
     <HeaderNav />
-    <main className="pt-16 px-4 pb-safe-bottom max-w-full">
+    <main className="pt-16 pb-safe-bottom max-w-full">
       {children}
     </main>
     <MobileSidebar />
@@ -59,8 +58,7 @@ const StandardLayout = ({ children }: AppLayoutProps) => (
     <SidebarInset>
       <div className="flex flex-col min-h-full max-w-full">
         <HeaderNav />
-        
-        <main className="flex-1 p-3 sm:p-4 md:p-6 pb-safe-bottom overflow-x-hidden">
+        <main className="flex-1 pb-safe-bottom overflow-x-hidden">
           {children}
         </main>
       </div>
@@ -70,7 +68,7 @@ const StandardLayout = ({ children }: AppLayoutProps) => (
 
 const BasicLayout = ({ children }: AppLayoutProps) => (
   <div className="min-h-[100dvh] w-full max-w-full overflow-x-hidden">
-    <main className="px-4 pb-safe-bottom max-w-full">
+    <main className="pb-safe-bottom max-w-full">
       {children}
     </main>
   </div>

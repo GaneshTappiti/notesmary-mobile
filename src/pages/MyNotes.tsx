@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,8 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, FileText, Edit, Trash, Download, Star, Upload, Plus, Filter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { PageContainer } from '@/components/PageContainer';
 
-// Mock data
 interface Note {
   id: string;
   title: string;
@@ -28,7 +27,6 @@ const MyNotes = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('uploaded');
   
-  // Mock notes data
   const uploadedNotes: Note[] = [
     {
       id: "1",
@@ -90,7 +88,6 @@ const MyNotes = () => {
     }
   ];
   
-  // Filter notes based on search query
   const filteredUploadedNotes = uploadedNotes.filter(note => 
     note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     note.subject.toLowerCase().includes(searchQuery.toLowerCase())
@@ -101,7 +98,6 @@ const MyNotes = () => {
     note.subject.toLowerCase().includes(searchQuery.toLowerCase())
   );
   
-  // Handle star/unstar
   const handleToggleStar = (noteId: string, isUploaded: boolean) => {
     toast({
       title: "Note updated",
@@ -109,7 +105,6 @@ const MyNotes = () => {
     });
   };
   
-  // Handle delete
   const handleDelete = (noteId: string) => {
     toast({
       title: "Note deleted",
@@ -118,18 +113,15 @@ const MyNotes = () => {
     });
   };
   
-  // Handle view note
   const handleViewNote = (noteId: string) => {
     navigate(`/view-notes/${noteId}`);
   };
   
-  // Calculate formatted date
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
   
-  // Render note list
   const renderNoteList = (notes: Note[], isUploaded: boolean) => {
     if (notes.length === 0) {
       return (
@@ -218,20 +210,21 @@ const MyNotes = () => {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-950">
-      <div className="pb-12 px-4 max-w-7xl mx-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+      <PageContainer className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">My Notes</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm md:text-base">
               Manage your uploaded and saved notes
             </p>
           </div>
-          <div>
-            <Button onClick={() => navigate('/upload-notes')} className="bg-blue-600 hover:bg-blue-700 flex items-center gap-1.5">
-              <Plus size={16} />
-              <span>Upload New Note</span>
-            </Button>
-          </div>
+          <Button 
+            onClick={() => navigate('/upload-notes')} 
+            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+          >
+            <Plus size={16} />
+            <span>Upload New Note</span>
+          </Button>
         </div>
         
         <div className="mb-6 relative">
@@ -281,7 +274,7 @@ const MyNotes = () => {
             {renderNoteList(filteredSavedNotes, false)}
           </TabsContent>
         </Tabs>
-      </div>
+      </PageContainer>
     </div>
   );
 };
