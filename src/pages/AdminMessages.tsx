@@ -50,13 +50,30 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+interface Sender {
+  id: string;
+  name: string;
+  avatar: string;
+}
+
+interface Message {
+  id: string;
+  content: string;
+  sender: Sender;
+  roomName: string;
+  timestamp: string;
+  flagged: boolean;
+  flagReason: string | null;
+  flaggedBy: string | null;
+}
+
 const AdminMessages = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [flagStatusFilter, setFlagStatusFilter] = useState<'all' | 'flagged' | 'cleared'>('all');
   const [viewMessageId, setViewMessageId] = useState<string | null>(null);
   
   // Mock data for messages
-  const messages = [
+  const messages: Message[] = [
     {
       id: '1',
       content: 'Can anyone share their notes from yesterday's lecture on differential equations?',
@@ -126,7 +143,7 @@ const AdminMessages = () => {
       flagged: true,
       flagReason: 'Potential academic dishonesty',
       flaggedBy: 'Emma Thompson'
-    },
+    }
   ];
 
   // Find the currently viewed message
