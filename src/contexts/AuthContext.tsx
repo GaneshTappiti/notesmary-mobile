@@ -26,6 +26,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // First set up auth state listener before checking for existing session
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+          console.log('Auth state changed:', event);
+          if (session) {
+            setIsAuthenticated(true);
+            setUser(session.user);
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            // Use setTimeout to avoid potential Supabase deadlocks
+            if (session.user) {
+              setTimeout(() => {
+                AuthService.getUserProfile(session.user.id)
+                  .then(userProfile => {
+                    setProfile(userProfile);
+                  })
+                  .catch(error => {
+                    console.error('Error fetching user profile:', error);
+                  });
+              }, 0);
+            }
+          } else {
+            setIsAuthenticated(false);
+            setUser(null);
+            setProfile(null);
+            localStorage.removeItem('isLoggedIn');
+          }
+        });
+        
         // Check if there's an active session
         const { data: sessionData } = await supabase.auth.getSession();
         
@@ -43,39 +71,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const isLoggedInFromStorage = localStorage.getItem('isLoggedIn') === 'true';
           setIsAuthenticated(isLoggedInFromStorage);
         }
+        
+        setIsLoading(false);
+        
+        return () => {
+          subscription.unsubscribe();
+        };
       } catch (error) {
         console.error('Auth check error:', error);
         setIsAuthenticated(false);
-      } finally {
         setIsLoading(false);
       }
     };
 
-    // Set up auth state change listener
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        setIsAuthenticated(true);
-        setUser(session.user);
-        localStorage.setItem('isLoggedIn', 'true');
-        
-        // Fetch the user profile
-        if (session.user) {
-          const userProfile = await AuthService.getUserProfile(session.user.id);
-          setProfile(userProfile);
-        }
-      } else if (event === 'SIGNED_OUT') {
-        setIsAuthenticated(false);
-        setUser(null);
-        setProfile(null);
-        localStorage.removeItem('isLoggedIn');
-      }
-    });
-
     checkAuth();
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
   }, []);
 
   const login = async (email: string, password: string) => {

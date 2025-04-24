@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -9,9 +10,11 @@ import { PublicRoute } from "@/components/PublicRoute";
 import AppLayout from "@/components/AppLayout";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Lazy load all page components
+// Import Authentication page directly without lazy loading to avoid issues
+import Authentication from "@/pages/Authentication";
+
+// Lazy load all other page components
 const Index = lazy(() => import("@/pages/Index"));
-const Authentication = lazy(() => import("@/pages/Authentication"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const AIAnswers = lazy(() => import("@/pages/AIAnswers"));
 const AIMarkAnswers = lazy(() => import("@/pages/AIMarkAnswers"));
@@ -65,11 +68,10 @@ const AppRoutes = () => {
         </PublicRoute>
       } />
       
+      {/* Authentication route that's not lazy loaded */}
       <Route path="/authentication" element={
         <PublicRoute>
-          <Suspense fallback={<Loading />}>
-            <Authentication />
-          </Suspense>
+          <Authentication />
         </PublicRoute>
       } />
       
