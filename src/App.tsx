@@ -1,4 +1,5 @@
-import React, { Suspense } from "react";
+
+import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -8,6 +9,26 @@ import { PrivateRoute } from "@/components/PrivateRoute";
 import { PublicRoute } from "@/components/PublicRoute";
 import AppLayout from "@/components/AppLayout";
 import { Skeleton } from "@/components/ui/skeleton";
+
+// Lazy load all page components
+const Index = lazy(() => import("@/pages/Index"));
+const Authentication = lazy(() => import("@/pages/Authentication"));
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const AIAnswers = lazy(() => import("@/pages/AIAnswers"));
+const AIMarkAnswers = lazy(() => import("@/pages/AIMarkAnswers"));
+const UploadNotes = lazy(() => import("@/pages/UploadNotes"));
+const FindNotes = lazy(() => import("@/pages/FindNotes"));
+const ViewNotes = lazy(() => import("@/pages/ViewNotes"));
+const MyNotes = lazy(() => import("@/pages/MyNotes"));
+const Notifications = lazy(() => import("@/pages/Notifications"));
+const StudyAnalytics = lazy(() => import("@/pages/StudyAnalytics"));
+const StudyRooms = lazy(() => import("@/pages/StudyRooms"));
+const StudyRoom = lazy(() => import("@/pages/StudyRoom"));
+const StudyRoomInfo = lazy(() => import("@/pages/StudyRoomInfo"));
+const StudyRoomChat = lazy(() => import("@/pages/StudyRoomChat"));
+const Subscription = lazy(() => import("@/pages/Subscription"));
+const Settings = lazy(() => import("@/pages/Settings"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
