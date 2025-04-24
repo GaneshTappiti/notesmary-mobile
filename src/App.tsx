@@ -259,7 +259,7 @@ const AppRoutes = () => {
       {/* Catch-all route */}
       <Route path="*" element={
         <Suspense fallback={<Loading />}>
-          <NotFound />
+          <Navigate to="/" replace />
         </Suspense>
       } />
     </Routes>

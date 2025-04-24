@@ -1,11 +1,12 @@
 
 import { useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { HeroActions } from '@/components/HeroActions';
-import { FileUp, BookOpen, BrainCircuit, Users, Play, Sparkles } from 'lucide-react';
+import { FileUp, BookOpen, BrainCircuit, Users, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -86,7 +87,16 @@ const Index = () => {
                     Get instant answers, join study rooms, and own your exams. Transform your handwritten notes into organized digital study materials with the power of AI.
                   </motion.p>
                   
-                  <HeroActions />
+                  <div className="mt-8 flex flex-wrap gap-4">
+                    <Link to="/authentication">
+                      <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                        Get Started
+                      </Button>
+                    </Link>
+                    <Button size="lg" variant="outline">
+                      Learn More
+                    </Button>
+                  </div>
                 </div>
               </div>
               
