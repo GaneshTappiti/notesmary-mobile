@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { Navbar } from '@/components/Navbar';
+import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { useNavigate } from 'react-router-dom';
 import {
   Search,
   BookOpen,
@@ -15,13 +14,13 @@ import {
   List,
   Download,
   Eye,
-  Star,
   User,
   FileText,
   Calendar,
   Bookmark
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { PageContainer } from '@/components/PageContainer';
 
 interface NoteItem {
   id: string;
@@ -183,9 +182,7 @@ const FindNotes = () => {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white">
-      <Navbar />
-      
-      <div className="pt-28 pb-12 px-4 max-w-7xl mx-auto">
+      <PageContainer>
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Find Notes</h1>
           <p className="text-gray-600">Discover and view notes from peers across different subjects and topics</p>
@@ -473,7 +470,7 @@ const FindNotes = () => {
             </Button>
           </div>
         )}
-      </div>
+      </PageContainer>
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { PrivateRoute } from "@/components/PrivateRoute";
 import { PublicRoute } from "@/components/PublicRoute";
 import AppLayout from "@/components/AppLayout";
 import { Skeleton } from "@/components/ui/skeleton";
+import FindNotes from "@/pages/FindNotes";
 
 // Lazy load all page components
 const Index = lazy(() => import("@/pages/Index"));
@@ -16,7 +17,6 @@ const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const AIAnswers = lazy(() => import("@/pages/AIAnswers"));
 const AIMarkAnswers = lazy(() => import("@/pages/AIMarkAnswers"));
 const UploadNotes = lazy(() => import("@/pages/UploadNotes"));
-const FindNotes = lazy(() => import("@/pages/FindNotes"));
 const ViewNotes = lazy(() => import("@/pages/ViewNotes"));
 const MyNotes = lazy(() => import("@/pages/MyNotes"));
 const Notifications = lazy(() => import("@/pages/Notifications"));
@@ -128,9 +128,7 @@ const AppRoutes = () => {
         element={
           <PrivateRoute>
             <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <FindNotes />
-              </Suspense>
+              <FindNotes />
             </AppLayout>
           </PrivateRoute>
         } 
