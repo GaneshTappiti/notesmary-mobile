@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -92,18 +93,10 @@ const Index = () => {
       
       <main className="relative z-10 space-y-24 pb-24">
         <Hero />
-        <PageContainer>
-          <Features />
-        </PageContainer>
-        <PageContainer>
-          <AIExamQuestions />
-        </PageContainer>
-        <PageContainer>
-          <StudyAnalytics />
-        </PageContainer>
-        <PageContainer>
-          <Pricing />
-        </PageContainer>
+        <Features />
+        <AIExamQuestions />
+        <StudyAnalytics />
+        <Pricing />
       </main>
       
       <Footer />

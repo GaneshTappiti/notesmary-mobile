@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Menu, X } from "lucide-react";
+import { PageContainer } from "@/components/PageContainer";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -49,7 +50,7 @@ export const Navbar = () => {
           : "bg-transparent py-3 md:py-5"
       }`}
     >
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <PageContainer fullWidth noPadding className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
@@ -192,7 +193,7 @@ export const Navbar = () => {
             </div>
           </div>
         )}
-      </div>
+      </PageContainer>
     </header>
   );
 };

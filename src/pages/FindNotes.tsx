@@ -183,7 +183,7 @@ const FindNotes = () => {
   };
   
   return (
-    <PageContainer className="pt-4 md:pt-6">
+    <PageContainer>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Find Notes</h1>
         <p className="text-gray-600">Discover and view notes from peers across different subjects and topics</p>

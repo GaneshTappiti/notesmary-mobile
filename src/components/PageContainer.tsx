@@ -6,24 +6,31 @@ interface PageContainerProps {
   className?: string;
   fullWidth?: boolean;
   noPadding?: boolean;
+  contentClassName?: string;
 }
 
 export const PageContainer = ({ 
   children, 
   className, 
   fullWidth = false,
-  noPadding = false
+  noPadding = false,
+  contentClassName
 }: PageContainerProps) => {
   return (
     <div className={cn(
       "w-full",
       !fullWidth && "container",
-      !fullWidth && "max-w-7xl", 
-      !noPadding && "px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-10",
+      !noPadding && "py-6 sm:py-8 md:py-10",
       "mx-auto",
       className
     )}>
-      {children}
+      <div className={cn(
+        "w-full",
+        !noPadding && "px-4 sm:px-6 lg:px-8",
+        contentClassName
+      )}>
+        {children}
+      </div>
     </div>
   );
 };
