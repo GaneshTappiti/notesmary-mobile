@@ -1,4 +1,3 @@
-
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -39,12 +38,14 @@ import {
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { useAuth } from '@/contexts/AuthContext';
 
 export const AppSidebar = () => {
   const location = useLocation();
   const { state, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { logout } = useAuth();
   const [isStudyRoomOpen, setIsStudyRoomOpen] = useState(false);
   
   const isActive = (path: string) => {
@@ -55,14 +56,22 @@ export const AppSidebar = () => {
     return location.pathname === path;
   };
   
-  const handleSignOut = () => {
-    localStorage.removeItem("isLoggedIn");
-    toast({
-      title: "Signed out successfully",
-      description: "You have been logged out of your account.",
-      duration: 3000,
-    });
-    navigate('/');
+  const handleSignOut = async () => {
+    try {
+      await logout();
+      toast({
+        title: "Signed out successfully",
+        description: "You have been logged out of your account.",
+        duration: 3000,
+      });
+      navigate('/');
+    } catch (error) {
+      toast({
+        title: "Error signing out",
+        description: "There was a problem signing you out. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
   
   const mainMenuItems = [
