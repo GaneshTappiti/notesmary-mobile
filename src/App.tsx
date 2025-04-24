@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -9,6 +8,7 @@ import { PrivateRoute } from "@/components/PrivateRoute";
 import { PublicRoute } from "@/components/PublicRoute";
 import AppLayout from "@/components/AppLayout";
 import { Skeleton } from "@/components/ui/skeleton";
+import { HelmetProvider } from "react-helmet-async";
 
 // Import Authentication page directly without lazy loading to avoid issues
 import Authentication from "@/pages/Authentication";
@@ -31,6 +31,12 @@ const StudyRoomChat = lazy(() => import("@/pages/StudyRoomChat"));
 const Subscription = lazy(() => import("@/pages/Subscription"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
+
+// Admin dashboard pages
+const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
+const AdminNotes = lazy(() => import("@/pages/AdminNotes"));
+const AdminMessages = lazy(() => import("@/pages/AdminMessages"));
+const AdminUsers = lazy(() => import("@/pages/AdminUsers"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -101,6 +107,7 @@ const AppRoutes = () => {
           </PrivateRoute>
         } 
       />
+      
       <Route 
         path="/ai-mark-answers" 
         element={
@@ -258,6 +265,51 @@ const AppRoutes = () => {
         } 
       />
       
+      {/* Admin routes */}
+      <Route 
+        path="/admin" 
+        element={
+          <PrivateRoute>
+            <Suspense fallback={<Loading />}>
+              <AdminDashboard />
+            </Suspense>
+          </PrivateRoute>
+        } 
+      />
+      
+      <Route 
+        path="/admin/notes" 
+        element={
+          <PrivateRoute>
+            <Suspense fallback={<Loading />}>
+              <AdminNotes />
+            </Suspense>
+          </PrivateRoute>
+        } 
+      />
+      
+      <Route 
+        path="/admin/messages" 
+        element={
+          <PrivateRoute>
+            <Suspense fallback={<Loading />}>
+              <AdminMessages />
+            </Suspense>
+          </PrivateRoute>
+        } 
+      />
+      
+      <Route 
+        path="/admin/users" 
+        element={
+          <PrivateRoute>
+            <Suspense fallback={<Loading />}>
+              <AdminUsers />
+            </Suspense>
+          </PrivateRoute>
+        } 
+      />
+      
       {/* Catch-all route */}
       <Route path="*" element={
         <Suspense fallback={<Loading />}>
@@ -271,13 +323,15 @@ const AppRoutes = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Suspense fallback={<Loading />}>
-          <AppRoutes />
-        </Suspense>
-      </BrowserRouter>
+      <HelmetProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Suspense fallback={<Loading />}>
+            <AppRoutes />
+          </Suspense>
+        </BrowserRouter>
+      </HelmetProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
