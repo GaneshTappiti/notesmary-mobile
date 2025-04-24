@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
@@ -17,6 +17,15 @@ const Index = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated } = useAuth();
   
+  useEffect(() => {
+    document.title = "Notex - AI-Powered Learning Platform";
+    
+    // Check if the user is already logged in
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [navigate, isAuthenticated]);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
@@ -30,15 +39,6 @@ const Index = () => {
   // Back to top visibility
   const backToTopOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
   
-  useEffect(() => {
-    document.title = "Notex - AI-Powered Learning Platform";
-    
-    // Check if the user is already logged in
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, [navigate, isAuthenticated]);
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

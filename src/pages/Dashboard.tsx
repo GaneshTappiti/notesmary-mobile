@@ -1,7 +1,6 @@
-
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { StatsCard } from '@/components/dashboard/StatsCard';
@@ -15,14 +14,15 @@ import {
   Brain,
   Timer,
   Plus,
-  CheckSquare
+  CheckSquare,
+  LogOut
 } from 'lucide-react';
 
 const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  // Quick access options with updated styling
   const quickAccessOptions = [
     {
       title: 'Upload Notes',
@@ -79,7 +79,6 @@ const Dashboard = () => {
     }
   ];
 
-  // Stats cards data with trends
   const statsCards = [
     {
       title: 'Total Notes',
@@ -101,7 +100,6 @@ const Dashboard = () => {
     }
   ];
 
-  // Study rooms data with updated design
   const studyRooms = [
     {
       id: '1',
@@ -132,7 +130,6 @@ const Dashboard = () => {
     }
   ];
 
-  // Tasks list with priority levels
   const tasks = [
     { id: 1, title: 'Physics Assignment Due', time: '2:00 PM Today', subject: 'Physics', priority: 'high', completed: false },
     { id: 2, title: 'Math Group Study', time: '4:30 PM Tomorrow', subject: 'Math', priority: 'medium', completed: false },
@@ -149,9 +146,39 @@ const Dashboard = () => {
     });
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* 1. Quick Access Section */}
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold">
+          Welcome back, {user?.user_metadata?.full_name || 'Student'}!
+        </h1>
+        <Button 
+          variant="outline" 
+          onClick={handleLogout}
+          className="gap-2"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {quickAccessOptions.map((option, index) => (
           <QuickAccessCard
@@ -162,7 +189,6 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* 2. Recent Study Rooms */}
       <Card className="border-none shadow-sm overflow-hidden bg-white">
         <div className="p-6 border-b border-gray-100">
           <div className="flex justify-between items-center">
@@ -187,9 +213,7 @@ const Dashboard = () => {
         </div>
       </Card>
 
-      {/* 3. Progress Metrics & Tasks */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Stats Cards */}
         <div className="lg:col-span-2">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {statsCards.map((card, index) => (
@@ -201,7 +225,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Tasks Summary */}
         <Card className="border-none shadow-sm">
           <div className="p-4 border-b border-gray-100">
             <div className="flex justify-between items-center">
@@ -251,7 +274,6 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* 4. Weekly Study Activity */}
       <div className="grid grid-cols-1 gap-6">
         <AnalyticsCard
           title="Weekly Study Activity"
