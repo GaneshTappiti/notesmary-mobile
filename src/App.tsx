@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -87,6 +86,7 @@ const AppRoutes = () => {
           </PrivateRoute>
         } 
       />
+      
       <Route 
         path="/ai-answers" 
         element={
@@ -259,7 +259,7 @@ const AppRoutes = () => {
       {/* Catch-all route */}
       <Route path="*" element={
         <Suspense fallback={<Loading />}>
-          <Navigate to="/" replace />
+          <NotFound />
         </Suspense>
       } />
     </Routes>

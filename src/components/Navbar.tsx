@@ -1,12 +1,13 @@
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -20,6 +21,19 @@ export const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  
+  const handleAuthAction = () => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      navigate('/authentication');
+    }
+  };
+  
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   return (
     <header
@@ -60,9 +74,16 @@ export const Navbar = () => {
 
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
-              <Link to="/dashboard">
-                <Button>Dashboard</Button>
-              </Link>
+              <>
+                <Button 
+                  onClick={() => navigate('/dashboard')}
+                  variant="outline"
+                  className="mr-2"
+                >
+                  Dashboard
+                </Button>
+                <Button onClick={handleLogout}>Log out</Button>
+              </>
             ) : (
               <>
                 <Link to="/authentication" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">

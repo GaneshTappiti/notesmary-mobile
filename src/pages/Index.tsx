@@ -1,26 +1,24 @@
-
 import { useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { HeroActions } from '@/components/HeroActions';
 import { FileUp, BookOpen, BrainCircuit, Users, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   
   useEffect(() => {
     document.title = "Notex - AI-Powered Learning Platform";
     
-    // Check if the user is already logged in
-    if (isAuthenticated) {
+    // Check if the user is already logged in and redirect if needed
+    if (!isLoading && isAuthenticated) {
       navigate("/dashboard");
     }
-  }, [navigate, isAuthenticated]);
+  }, [navigate, isAuthenticated, isLoading]);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -30,6 +28,15 @@ const Index = () => {
   const bgOpacity1 = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const bgOpacity2 = useTransform(scrollYProgress, [0, 1], [0.5, 0.8]);
   const bgPosition = useTransform(scrollYProgress, [0, 1], ['0% 0%', '100% 100%']);
+
+  // If still loading auth state, show minimal loading
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div 
@@ -87,16 +94,7 @@ const Index = () => {
                     Get instant answers, join study rooms, and own your exams. Transform your handwritten notes into organized digital study materials with the power of AI.
                   </motion.p>
                   
-                  <div className="mt-8 flex flex-wrap gap-4">
-                    <Link to="/authentication">
-                      <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-                        Get Started
-                      </Button>
-                    </Link>
-                    <Button size="lg" variant="outline">
-                      Learn More
-                    </Button>
-                  </div>
+                  <HeroActions />
                 </div>
               </div>
               
