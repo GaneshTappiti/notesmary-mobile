@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SidebarInset } from "@/components/ui/sidebar";
-import { AppSidebar } from '@/components/AppSidebar';  // Note the capitalization
+import { AppSidebar } from '@/components/AppSidebar';  // Consistent naming
 import { HeaderNav } from '@/components/HeaderNav';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Menu } from 'lucide-react';
@@ -25,7 +25,7 @@ const MobileSidebar = () => {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-[80%] max-w-[300px] bg-white">
-        <AppSideBar />
+        <AppSidebar />
       </SheetContent>
     </Sheet>
   );
@@ -51,7 +51,7 @@ const SimpleLayout = ({ children }: AppLayoutProps) => (
 const StandardLayout = ({ children }: AppLayoutProps) => (
   <div className="min-h-[100dvh] flex w-full max-w-full">
     <div className="hidden md:block">
-      <AppSideBar />
+      <AppSidebar />
     </div>
     
     <MobileSidebar />
