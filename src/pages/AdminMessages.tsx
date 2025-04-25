@@ -76,11 +76,11 @@ const AdminMessages = () => {
   const messages: Message[] = [
     {
       id: '1',
-      content: 'Can anyone share their notes from yesterday's lecture on differential equations?',
+      content: "Can anyone share their notes from yesterday's lecture on differential equations?",
       sender: {
         id: '101',
         name: 'Emma Thompson',
-        avatar: '',
+        avatar: ''
       },
       roomName: 'Advanced Mathematics',
       timestamp: '2023-04-15T10:23:15',
@@ -94,7 +94,7 @@ const AdminMessages = () => {
       sender: {
         id: '102',
         name: 'Sophia Chen',
-        avatar: '',
+        avatar: ''
       },
       roomName: 'Physics Group Study',
       timestamp: '2023-04-15T09:45:00',
@@ -104,11 +104,11 @@ const AdminMessages = () => {
     },
     {
       id: '3',
-      content: 'This class is completely useless and the professor doesn't know what they're talking about.',
+      content: "This class is completely useless and the professor doesn't know what they're talking about.",
       sender: {
         id: '103',
         name: 'John Davis',
-        avatar: '',
+        avatar: ''
       },
       roomName: 'Chemistry 101',
       timestamp: '2023-04-14T16:30:22',
@@ -122,7 +122,7 @@ const AdminMessages = () => {
       sender: {
         id: '104',
         name: 'Jessica Brown',
-        avatar: '',
+        avatar: ''
       },
       roomName: 'Biology Research',
       timestamp: '2023-04-14T14:12:55',
@@ -136,7 +136,7 @@ const AdminMessages = () => {
       sender: {
         id: '105',
         name: 'Michael Williams',
-        avatar: '',
+        avatar: ''
       },
       roomName: 'Computer Science 305',
       timestamp: '2023-04-13T18:05:10',
