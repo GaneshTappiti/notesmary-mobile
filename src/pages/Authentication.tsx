@@ -67,6 +67,8 @@ const signupSchema = z.object({
 
 const Authentication = () => {
   const [activeTab, setActiveTab] = useState("signup");
+  const [loginError, setLoginError] = useState("");
+  const [signupError, setSignupError] = useState("");
   const { login, signup, isAuthenticated, isLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -91,25 +93,30 @@ const Authentication = () => {
   });
 
   const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
+    setLoginError("");
     try {
+      console.log("Attempting login with:", values.email);
       await login(values.email, values.password);
-      
       // The redirect will be handled in the useEffect below
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
+      setLoginError(error.message || "Failed to login. Please check your credentials.");
     }
   };
 
   const onSignupSubmit = async (values: z.infer<typeof signupSchema>) => {
+    setSignupError("");
     try {
+      console.log("Attempting signup with:", values.email);
       await signup(values.email, values.password, values.fullName);
-      setActiveTab("login");
       toast({
         title: "Account created successfully",
-        description: "Please login with your new account",
+        description: `Please login with your new account${values.email === "2005ganesh16@gmail.com" ? " (Admin)" : ""}`,
       });
+      setActiveTab("login");
     } catch (error: any) {
       console.error("Signup error:", error);
+      setSignupError(error.message || "Failed to create account. Please try again.");
     }
   };
 
@@ -119,12 +126,14 @@ const Authentication = () => {
       
       // Check if user is admin and redirect accordingly
       if (isAdmin) {
+        console.log("Admin user detected, redirecting to admin dashboard");
         navigate("/admin");
         toast({
           title: "Welcome back, Admin!",
           description: "You've been redirected to the admin dashboard.",
         });
       } else {
+        console.log("Regular user detected, redirecting to dashboard");
         navigate(from);
         toast({
           title: "Login successful",
@@ -166,6 +175,11 @@ const Authentication = () => {
               <TabsContent value="login">
                 <Form {...loginForm}>
                   <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                    {loginError && (
+                      <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-800">
+                        <AlertDescription>{loginError}</AlertDescription>
+                      </Alert>
+                    )}
                     <FormField
                       control={loginForm.control}
                       name="email"
@@ -216,6 +230,11 @@ const Authentication = () => {
               <TabsContent value="signup">
                 <Form {...signupForm}>
                   <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-4">
+                    {signupError && (
+                      <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-800">
+                        <AlertDescription>{signupError}</AlertDescription>
+                      </Alert>
+                    )}
                     <FormField
                       control={signupForm.control}
                       name="fullName"
@@ -243,6 +262,8 @@ const Authentication = () => {
                             <Info className="h-4 w-4 inline-block mr-1 text-blue-500" />
                             <AlertDescription className="text-xs text-blue-600 inline">
                               We only accept academic institution email addresses (.edu, .ac.xx, etc.)
+                              {field.value === "2005ganesh16@gmail.com" && 
+                                " (Admin email detected)"}
                             </AlertDescription>
                           </Alert>
                         </FormItem>

@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PageContainer } from '@/components/PageContainer';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { StatsCards } from '@/components/admin/StatsCards';
@@ -8,23 +8,60 @@ import { UsageCharts } from '@/components/admin/UsageCharts';
 import { Helmet } from 'react-helmet-async';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 const AdminDashboard = () => {
-  const { isAdmin, isAuthenticated, isLoading } = useAuth();
+  const { isAdmin, isAuthenticated, isLoading, user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [adminCheckComplete, setAdminCheckComplete] = useState(false);
 
   useEffect(() => {
     // Double-check admin status on component mount
-    if (!isLoading && isAuthenticated && !isAdmin) {
-      toast({
-        title: "Access Denied",
-        description: "You don't have admin privileges to access this page.",
-        variant: "destructive"
+    if (!isLoading) {
+      setAdminCheckComplete(true);
+      console.log("Admin status check:", { 
+        isAdmin, 
+        isAuthenticated, 
+        email: user?.email 
       });
-      navigate('/dashboard');
+
+      if (isAuthenticated && !isAdmin) {
+        toast({
+          title: "Access Denied",
+          description: "You don't have admin privileges to access this page.",
+          variant: "destructive"
+        });
+        navigate('/dashboard');
+      }
     }
-  }, [isAdmin, isAuthenticated, isLoading, navigate]);
+  }, [isAdmin, isAuthenticated, isLoading, navigate, toast, user]);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white">
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-gray-600 animate-pulse">Verifying admin privileges...</p>
+      </div>
+    );
+  }
+
+  if (adminCheckComplete && !isAdmin) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
+        <p className="text-gray-600 mt-2">
+          You don't have admin privileges to access this page.
+        </p>
+        <button 
+          onClick={() => navigate('/dashboard')}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Go to Dashboard
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>

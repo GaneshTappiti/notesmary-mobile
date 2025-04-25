@@ -2,7 +2,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -12,6 +12,7 @@ interface PrivateRouteProps {
 export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps) => {
   const { isAuthenticated, isLoading, user, isAdmin } = useAuth();
   const location = useLocation();
+  const { toast } = useToast();
 
   if (isLoading) {
     return (
