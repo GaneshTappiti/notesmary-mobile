@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { PageContainer } from '@/components/PageContainer';
 import { AdminLayout } from '@/components/admin/AdminLayout';
@@ -9,6 +8,9 @@ import { Helmet } from 'react-helmet-async';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { ShieldAlert, ArrowLeft } from 'lucide-react';
 
 const AdminDashboard = () => {
   const { isAdmin, isAuthenticated, isLoading, user } = useAuth();
@@ -23,7 +25,8 @@ const AdminDashboard = () => {
       console.log("Admin status check:", { 
         isAdmin, 
         isAuthenticated, 
-        email: user?.email 
+        email: user?.email,
+        userData: user
       });
 
       if (isAuthenticated && !isAdmin) {
@@ -48,17 +51,29 @@ const AdminDashboard = () => {
 
   if (adminCheckComplete && !isAdmin) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
-        <p className="text-gray-600 mt-2">
-          You don't have admin privileges to access this page.
-        </p>
-        <button 
-          onClick={() => navigate('/dashboard')}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        >
-          Go to Dashboard
-        </button>
+      <div className="h-screen flex flex-col items-center justify-center p-6">
+        <Alert variant="destructive" className="max-w-md w-full">
+          <ShieldAlert className="h-5 w-5" />
+          <AlertTitle className="text-lg font-bold">Access Denied</AlertTitle>
+          <AlertDescription className="mt-2">
+            <p className="mb-4">
+              You don't have admin privileges to access this dashboard. Only users with admin role can view this page.
+            </p>
+            <p className="text-sm opacity-75 mb-4">
+              Current user: {user?.email || "Not logged in"}
+              <br/>
+              Admin status: {isAdmin ? "Yes" : "No"}
+            </p>
+            <Button 
+              onClick={() => navigate('/dashboard')}
+              variant="outline"
+              className="w-full"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Return to Dashboard
+            </Button>
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }

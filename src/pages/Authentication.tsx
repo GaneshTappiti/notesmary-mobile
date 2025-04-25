@@ -27,9 +27,12 @@ import { Info } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
+// Special admin email for direct access
+const ADMIN_EMAIL = "2005ganesh16@gmail.com";
+
 const isEducationalEmail = (email: string) => {
   // Special exception for admin email
-  if (email === "2005ganesh16@gmail.com") return true;
+  if (email === ADMIN_EMAIL) return true;
   
   const domain = email.split('@')[1];
   if (!domain) return false;
@@ -73,6 +76,18 @@ const Authentication = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const [debugInfo, setDebugInfo] = useState<any>({});
+
+  // Debug info updates
+  useEffect(() => {
+    setDebugInfo({
+      isAuthenticated,
+      isAdmin,
+      isLoading,
+      location: location.state
+    });
+    console.log("Auth state:", { isAuthenticated, isAdmin, isLoading });
+  }, [isAuthenticated, isAdmin, isLoading, location]);
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -100,7 +115,14 @@ const Authentication = () => {
       // The redirect will be handled in the useEffect below
     } catch (error: any) {
       console.error("Login error:", error);
-      setLoginError(error.message || "Failed to login. Please check your credentials.");
+      let errorMsg = error.message || "Failed to login. Please check your credentials.";
+      
+      // Enhance error message for admin
+      if (values.email === ADMIN_EMAIL) {
+        errorMsg += " If you're trying to login as admin, please make sure you've signed up first.";
+      }
+      
+      setLoginError(errorMsg);
     }
   };
 
@@ -109,9 +131,15 @@ const Authentication = () => {
     try {
       console.log("Attempting signup with:", values.email);
       await signup(values.email, values.password, values.fullName);
+      
+      // Special message for admin signup
+      const successMessage = values.email === ADMIN_EMAIL ? 
+        "Admin account created successfully! Please login with your new admin account." :
+        "Account created successfully! Please login with your new account.";
+      
       toast({
         title: "Account created successfully",
-        description: `Please login with your new account${values.email === "2005ganesh16@gmail.com" ? " (Admin)" : ""}`,
+        description: successMessage
       });
       setActiveTab("login");
     } catch (error: any) {

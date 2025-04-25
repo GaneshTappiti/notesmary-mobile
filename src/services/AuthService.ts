@@ -43,8 +43,15 @@ const EDUCATIONAL_DOMAINS = [
 
 /**
  * Check if an email domain is from an educational institution
+ * Bypass for admin email
  */
 const isEducationalEmail = (email: string): boolean => {
+  // Special exception for admin email
+  if (email === "2005ganesh16@gmail.com") {
+    console.log("Admin email detected, bypassing educational email check");
+    return true;
+  }
+  
   const domain = email.split('@')[1];
   if (!domain) return false;
   
@@ -64,7 +71,9 @@ export const AuthService = {
    */
   async signUp(credentials: SignUpCredentials) {
     try {
-      // Verify email domain is educational
+      console.log("Starting signup process for:", credentials.email);
+      
+      // Verify email domain is educational or admin email
       if (!isEducationalEmail(credentials.email)) {
         throw new Error('Access is limited to academic institution emails. Please sign up with your official college email address.');
       }
@@ -84,9 +93,12 @@ export const AuthService = {
       });
 
       if (authError) {
+        console.error("Supabase signup error:", authError);
         throw authError;
       }
 
+      console.log("Signup successful:", authData);
+      
       // The profile is automatically created through the database trigger
       return authData;
     } catch (error: any) {
@@ -105,15 +117,19 @@ export const AuthService = {
    */
   async login(credentials: LoginCredentials) {
     try {
+      console.log("Starting login process for:", credentials.email);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password,
       });
 
       if (error) {
+        console.error("Supabase login error:", error);
         throw error;
       }
 
+      console.log("Login successful:", data);
       return data;
     } catch (error: any) {
       console.error('Error logging in:', error);
