@@ -17,6 +17,15 @@ import Authentication from "@/pages/Authentication";
 // Lazy load all other page components
 const Index = lazy(() => import("@/pages/Index"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const MyNotes = lazy(() => import("@/pages/MyNotes"));
+const UploadNotes = lazy(() => import("@/pages/UploadNotes"));
+const FindNotes = lazy(() => import("@/pages/FindNotes"));
+const ViewNotes = lazy(() => import("@/pages/ViewNotes"));
+const AIAnswers = lazy(() => import("@/pages/AIAnswers"));
+const StudyRooms = lazy(() => import("@/pages/StudyRooms"));
+const StudyRoom = lazy(() => import("@/pages/StudyRoom"));
+const StudyRoomChat = lazy(() => import("@/pages/StudyRoomChat"));
+const StudyAnalytics = lazy(() => import("@/pages/StudyAnalytics"));
 
 // Admin dashboard pages
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
@@ -72,6 +81,79 @@ const AppRoutes = () => {
         <PrivateRoute>
           <Suspense fallback={<Loading />}>
             <Dashboard />
+          </Suspense>
+        </PrivateRoute>
+      } />
+      
+      {/* Protected User routes */}
+      <Route path="/my-notes" element={
+        <PrivateRoute>
+          <Suspense fallback={<Loading />}>
+            <MyNotes />
+          </Suspense>
+        </PrivateRoute>
+      } />
+      
+      <Route path="/upload-notes" element={
+        <PrivateRoute>
+          <Suspense fallback={<Loading />}>
+            <UploadNotes />
+          </Suspense>
+        </PrivateRoute>
+      } />
+      
+      <Route path="/find-notes" element={
+        <PrivateRoute>
+          <Suspense fallback={<Loading />}>
+            <FindNotes />
+          </Suspense>
+        </PrivateRoute>
+      } />
+      
+      <Route path="/view-notes/:noteId" element={
+        <PrivateRoute>
+          <Suspense fallback={<Loading />}>
+            <ViewNotes />
+          </Suspense>
+        </PrivateRoute>
+      } />
+      
+      <Route path="/ai-answers" element={
+        <PrivateRoute>
+          <Suspense fallback={<Loading />}>
+            <AIAnswers />
+          </Suspense>
+        </PrivateRoute>
+      } />
+      
+      <Route path="/study-rooms" element={
+        <PrivateRoute>
+          <Suspense fallback={<Loading />}>
+            <StudyRooms />
+          </Suspense>
+        </PrivateRoute>
+      } />
+      
+      <Route path="/study-room/:roomId" element={
+        <PrivateRoute>
+          <Suspense fallback={<Loading />}>
+            <StudyRoom />
+          </Suspense>
+        </PrivateRoute>
+      } />
+      
+      <Route path="/study-room/:roomId/chat" element={
+        <PrivateRoute>
+          <Suspense fallback={<Loading />}>
+            <StudyRoomChat />
+          </Suspense>
+        </PrivateRoute>
+      } />
+      
+      <Route path="/study-analytics" element={
+        <PrivateRoute>
+          <Suspense fallback={<Loading />}>
+            <StudyAnalytics />
           </Suspense>
         </PrivateRoute>
       } />
