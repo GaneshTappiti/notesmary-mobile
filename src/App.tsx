@@ -66,6 +66,15 @@ const AppRoutes = () => {
           <Authentication />
         </PublicRoute>
       } />
+
+      {/* Protected dashboard route */}
+      <Route path="/dashboard" element={
+        <PrivateRoute>
+          <Suspense fallback={<Loading />}>
+            <Dashboard />
+          </Suspense>
+        </PrivateRoute>
+      } />
       
       {/* Admin routes */}
       <Route 

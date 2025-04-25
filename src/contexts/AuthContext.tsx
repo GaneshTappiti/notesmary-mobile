@@ -27,7 +27,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkAdminStatus = async (email: string) => {
     try {
-      const { data: isAdminUser } = await supabase.rpc('is_admin', { check_email: email });
+      // For now, we'll use the is_admin function from Supabase
+      const { data: isAdminUser, error } = await supabase.rpc('is_admin', { check_email: email });
+      
+      if (error) {
+        console.error('Error checking admin status:', error);
+        return false;
+      }
+      
       setIsAdmin(!!isAdminUser);
       return !!isAdminUser;
     } catch (error) {
@@ -46,7 +53,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.setItem('isLoggedIn', 'true');
             
             if (session.user) {
+              // Check admin status immediately to update UI accordingly
               await checkAdminStatus(session.user.email || '');
+              
+              // Use setTimeout to avoid recursive calls in auth state change
               setTimeout(() => {
                 AuthService.getUserProfile(session.user.id)
                   .then(userProfile => {
@@ -73,7 +83,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(sessionData.session.user);
           
           if (sessionData.session.user) {
+            // Check admin status immediately
             await checkAdminStatus(sessionData.session.user.email || '');
+            
             const userProfile = await AuthService.getUserProfile(sessionData.session.user.id);
             setProfile(userProfile);
           }
@@ -101,6 +113,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (session) {
         setIsAuthenticated(true);
         setUser(session.user);
+        
+        // Check admin status right after login
+        if (session.user && session.user.email) {
+          const isAdminUser = await checkAdminStatus(session.user.email);
+          setIsAdmin(isAdminUser);
+        }
+        
         localStorage.setItem('isLoggedIn', 'true');
         
         // Fetch the user profile

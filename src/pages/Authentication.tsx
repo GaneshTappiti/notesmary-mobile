@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -65,6 +66,7 @@ const Authentication = () => {
   const [activeTab, setActiveTab] = useState("signup");
   const { login, signup, isAuthenticated, isLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
@@ -89,21 +91,7 @@ const Authentication = () => {
     try {
       await login(values.email, values.password);
       
-      setTimeout(() => {
-        if (values.email === '2005ganesh16@gmail.com') {
-          navigate('/admin');
-          toast({
-            title: "Welcome back, Admin!",
-            description: "You've been redirected to the admin dashboard.",
-          });
-        } else {
-          navigate('/dashboard');
-          toast({
-            title: "Login successful",
-            description: "Welcome back to Notex!",
-          });
-        }
-      }, 100);
+      // The redirect will be handled in the useEffect below
     } catch (error) {
       console.error("Login error:", error);
     }
@@ -124,9 +112,24 @@ const Authentication = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      const from = location.state?.from?.pathname || "/dashboard";
+      
+      // Check if user is admin and redirect accordingly
+      if (isAdmin) {
+        navigate("/admin");
+        toast({
+          title: "Welcome back, Admin!",
+          description: "You've been redirected to the admin dashboard.",
+        });
+      } else {
+        navigate(from);
+        toast({
+          title: "Login successful",
+          description: "Welcome back to Notex!",
+        });
+      }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, isAdmin, navigate, location, toast]);
 
   return (
     <div className="min-h-[100dvh] w-full bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center p-4">
