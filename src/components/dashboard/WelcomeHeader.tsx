@@ -9,7 +9,7 @@ interface WelcomeHeaderProps {
 
 export const WelcomeHeader = ({ userName, onLogout }: WelcomeHeaderProps) => {
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-semibold">
         Welcome back, {userName || 'Student'}!
       </h1>
