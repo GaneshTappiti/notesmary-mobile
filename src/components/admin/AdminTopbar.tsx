@@ -38,8 +38,13 @@ export const AdminTopbar: React.FC<AdminTopbarProps> = ({ onMenuClick }) => {
   };
   
   const getInitials = () => {
-    if (profile?.firstName && profile?.lastName) {
-      return `${profile.firstName[0]}${profile.lastName[0]}`.toUpperCase();
+    if (profile?.full_name) {
+      // Split the full name and take the first letter of each part
+      const nameParts = profile.full_name.split(' ');
+      if (nameParts.length >= 2) {
+        return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+      }
+      return profile.full_name.substring(0, 2).toUpperCase();
     }
     
     return user?.email?.substring(0, 2).toUpperCase() || 'AD';
@@ -87,7 +92,7 @@ export const AdminTopbar: React.FC<AdminTopbarProps> = ({ onMenuClick }) => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={profile?.avatarUrl} alt={profile?.firstName || "Admin user"} />
+                  <AvatarImage src={profile?.avatar_url} alt={profile?.full_name || "Admin user"} />
                   <AvatarFallback>{getInitials()}</AvatarFallback>
                 </Avatar>
               </Button>
