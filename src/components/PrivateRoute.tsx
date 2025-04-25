@@ -9,16 +9,8 @@ interface PrivateRouteProps {
 }
 
 export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps) => {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, isAdmin } = useAuth();
   const location = useLocation();
-
-  const checkAdminAccess = async () => {
-    if (adminOnly) {
-      const { data } = await supabase.rpc('is_admin', { check_email: user?.email });
-      return data;
-    }
-    return true;
-  };
 
   if (isLoading) {
     return (
@@ -30,17 +22,16 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
   }
 
   if (!isAuthenticated) {
-    // Redirect to authentication page
     return <Navigate to="/authentication" state={{ from: location }} replace />;
   }
 
-  // If it's an admin-only route, check admin status
-  if (adminOnly) {
-    const isAdmin = checkAdminAccess();
-    if (!isAdmin) {
-      // Redirect to a non-admin page or show an error
-      return <Navigate to="/dashboard" replace />;
-    }
+  if (adminOnly && !isAdmin) {
+    toast({
+      title: "Access Denied",
+      description: "You don't have permission to access this page.",
+      variant: "destructive"
+    });
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;

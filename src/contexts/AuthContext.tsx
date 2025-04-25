@@ -9,6 +9,7 @@ interface AuthContextType {
   user: any | null;
   profile: UserProfile | null;
   isLoading: boolean;
+  isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, fullName?: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -22,20 +23,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<any | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  const checkAdminStatus = async (email: string) => {
+    try {
+      const { data: isAdminUser } = await supabase.rpc('is_admin', { check_email: email });
+      setIsAdmin(!!isAdminUser);
+      return !!isAdminUser;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      return false;
+    }
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // First set up auth state listener before checking for existing session
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-          console.log('Auth state changed:', event);
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
           if (session) {
             setIsAuthenticated(true);
             setUser(session.user);
             localStorage.setItem('isLoggedIn', 'true');
             
-            // Use setTimeout to avoid potential Supabase deadlocks
             if (session.user) {
+              await checkAdminStatus(session.user.email || '');
               setTimeout(() => {
                 AuthService.getUserProfile(session.user.id)
                   .then(userProfile => {
@@ -50,26 +61,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsAuthenticated(false);
             setUser(null);
             setProfile(null);
+            setIsAdmin(false);
             localStorage.removeItem('isLoggedIn');
           }
         });
         
-        // Check if there's an active session
         const { data: sessionData } = await supabase.auth.getSession();
         
         if (sessionData.session) {
           setIsAuthenticated(true);
           setUser(sessionData.session.user);
           
-          // Fetch the user profile
           if (sessionData.session.user) {
+            await checkAdminStatus(sessionData.session.user.email || '');
             const userProfile = await AuthService.getUserProfile(sessionData.session.user.id);
             setProfile(userProfile);
           }
-        } else {
-          // Check localStorage as a fallback
-          const isLoggedInFromStorage = localStorage.getItem('isLoggedIn') === 'true';
-          setIsAuthenticated(isLoggedInFromStorage);
         }
         
         setIsLoading(false);
@@ -169,6 +176,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         user,
         profile,
         isLoading,
+        isAdmin,
         login,
         signup,
         logout,

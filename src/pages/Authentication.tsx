@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -64,7 +63,7 @@ const signupSchema = z.object({
 
 const Authentication = () => {
   const [activeTab, setActiveTab] = useState("signup");
-  const { login, signup, isAuthenticated, isLoading } = useAuth();
+  const { login, signup, isAuthenticated, isLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -89,10 +88,22 @@ const Authentication = () => {
   const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
     try {
       await login(values.email, values.password);
-      toast({
-        title: "Login successful",
-        description: "Welcome back to Notex!",
-      });
+      
+      setTimeout(() => {
+        if (values.email === '2005ganesh16@gmail.com') {
+          navigate('/admin');
+          toast({
+            title: "Welcome back, Admin!",
+            description: "You've been redirected to the admin dashboard.",
+          });
+        } else {
+          navigate('/dashboard');
+          toast({
+            title: "Login successful",
+            description: "Welcome back to Notex!",
+          });
+        }
+      }, 100);
     } catch (error) {
       console.error("Login error:", error);
     }
