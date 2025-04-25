@@ -28,6 +28,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
 const isEducationalEmail = (email: string) => {
+  // Special exception for admin email
+  if (email === "2005ganesh16@gmail.com") return true;
+  
   const domain = email.split('@')[1];
   if (!domain) return false;
   
