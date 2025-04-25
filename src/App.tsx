@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -16,21 +17,6 @@ import Authentication from "@/pages/Authentication";
 // Lazy load all other page components
 const Index = lazy(() => import("@/pages/Index"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const AIAnswers = lazy(() => import("@/pages/AIAnswers"));
-const AIMarkAnswers = lazy(() => import("@/pages/AIMarkAnswers"));
-const UploadNotes = lazy(() => import("@/pages/UploadNotes"));
-const FindNotes = lazy(() => import("@/pages/FindNotes"));
-const ViewNotes = lazy(() => import("@/pages/ViewNotes"));
-const MyNotes = lazy(() => import("@/pages/MyNotes"));
-const Notifications = lazy(() => import("@/pages/Notifications"));
-const StudyAnalytics = lazy(() => import("@/pages/StudyAnalytics"));
-const StudyRooms = lazy(() => import("@/pages/StudyRooms"));
-const StudyRoom = lazy(() => import("@/pages/StudyRoom"));
-const StudyRoomInfo = lazy(() => import("@/pages/StudyRoomInfo"));
-const StudyRoomChat = lazy(() => import("@/pages/StudyRoomChat"));
-const Subscription = lazy(() => import("@/pages/Subscription"));
-const Settings = lazy(() => import("@/pages/Settings"));
-const NotFound = lazy(() => import("@/pages/NotFound"));
 
 // Admin dashboard pages
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
@@ -74,202 +60,18 @@ const AppRoutes = () => {
         </PublicRoute>
       } />
       
-      {/* Authentication route that's not lazy loaded */}
+      {/* Authentication route */}
       <Route path="/authentication" element={
         <PublicRoute>
           <Authentication />
         </PublicRoute>
       } />
       
-      {/* Protected routes with AppLayout */}
-      <Route 
-        path="/dashboard" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <Dashboard />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      
-      <Route 
-        path="/ai-answers" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <AIAnswers />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      
-      <Route 
-        path="/ai-mark-answers" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <AIMarkAnswers />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/upload-notes" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <UploadNotes />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/find-notes" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <FindNotes />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/view-notes/:noteId" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <ViewNotes />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/view-notes" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <MyNotes />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/notifications" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <Notifications />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/study-analytics" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <StudyAnalytics />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/study-rooms" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <StudyRooms />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/study-room/:id" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <StudyRoom />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/study-room/:id/info" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <StudyRoomInfo />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/study-room/:id/chat" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <StudyRoomChat />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/subscription" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <Subscription />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      <Route 
-        path="/settings" 
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Suspense fallback={<Loading />}>
-                <Settings />
-              </Suspense>
-            </AppLayout>
-          </PrivateRoute>
-        } 
-      />
-      
       {/* Admin routes */}
       <Route 
         path="/admin" 
         element={
-          <PrivateRoute>
+          <PrivateRoute adminOnly={true}>
             <Suspense fallback={<Loading />}>
               <AdminDashboard />
             </Suspense>
@@ -280,7 +82,7 @@ const AppRoutes = () => {
       <Route 
         path="/admin/notes" 
         element={
-          <PrivateRoute>
+          <PrivateRoute adminOnly={true}>
             <Suspense fallback={<Loading />}>
               <AdminNotes />
             </Suspense>
@@ -291,7 +93,7 @@ const AppRoutes = () => {
       <Route 
         path="/admin/messages" 
         element={
-          <PrivateRoute>
+          <PrivateRoute adminOnly={true}>
             <Suspense fallback={<Loading />}>
               <AdminMessages />
             </Suspense>
@@ -302,7 +104,7 @@ const AppRoutes = () => {
       <Route 
         path="/admin/users" 
         element={
-          <PrivateRoute>
+          <PrivateRoute adminOnly={true}>
             <Suspense fallback={<Loading />}>
               <AdminUsers />
             </Suspense>
@@ -310,12 +112,8 @@ const AppRoutes = () => {
         } 
       />
       
-      {/* Catch-all route */}
-      <Route path="*" element={
-        <Suspense fallback={<Loading />}>
-          <NotFound />
-        </Suspense>
-      } />
+      {/* Fallback route */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

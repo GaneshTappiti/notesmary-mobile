@@ -1,14 +1,24 @@
 
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PrivateRouteProps {
   children: React.ReactNode;
+  adminOnly?: boolean;
 }
 
-export const PrivateRoute = ({ children }: PrivateRouteProps) => {
-  const { isAuthenticated, isLoading } = useAuth();
+export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps) => {
+  const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
+
+  const checkAdminAccess = async () => {
+    if (adminOnly) {
+      const { data } = await supabase.rpc('is_admin', { check_email: user?.email });
+      return data;
+    }
+    return true;
+  };
 
   if (isLoading) {
     return (
@@ -20,10 +30,17 @@ export const PrivateRoute = ({ children }: PrivateRouteProps) => {
   }
 
   if (!isAuthenticated) {
-    // Redirect them to the /authentication page, but save the current location they were
-    // trying to go to when they were redirected. This allows us to send them
-    // along to that page after they login, which is a nicer user experience
+    // Redirect to authentication page
     return <Navigate to="/authentication" state={{ from: location }} replace />;
+  }
+
+  // If it's an admin-only route, check admin status
+  if (adminOnly) {
+    const isAdmin = checkAdminAccess();
+    if (!isAdmin) {
+      // Redirect to a non-admin page or show an error
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   return <>{children}</>;
