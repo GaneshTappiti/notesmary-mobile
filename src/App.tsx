@@ -9,6 +9,7 @@ import { PrivateRoute } from "@/components/PrivateRoute";
 import { PublicRoute } from "@/components/PublicRoute";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HelmetProvider } from "react-helmet-async";
+import AppLayout from "@/components/AppLayout";
 
 // Import Authentication page directly without lazy loading to avoid issues
 import Authentication from "@/pages/Authentication";
@@ -79,90 +80,112 @@ const AppRoutes = () => {
       {/* Protected dashboard route */}
       <Route path="/dashboard" element={
         <PrivateRoute>
-          <Suspense fallback={<Loading />}>
-            <Dashboard />
-          </Suspense>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <Dashboard />
+            </Suspense>
+          </AppLayout>
         </PrivateRoute>
       } />
       
       {/* Protected User routes */}
       <Route path="/my-notes" element={
         <PrivateRoute>
-          <Suspense fallback={<Loading />}>
-            <MyNotes />
-          </Suspense>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <MyNotes />
+            </Suspense>
+          </AppLayout>
         </PrivateRoute>
       } />
       
       <Route path="/upload-notes" element={
         <PrivateRoute>
-          <Suspense fallback={<Loading />}>
-            <UploadNotes />
-          </Suspense>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <UploadNotes />
+            </Suspense>
+          </AppLayout>
         </PrivateRoute>
       } />
       
       <Route path="/find-notes" element={
         <PrivateRoute>
-          <Suspense fallback={<Loading />}>
-            <FindNotes />
-          </Suspense>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <FindNotes />
+            </Suspense>
+          </AppLayout>
         </PrivateRoute>
       } />
       
       <Route path="/view-notes/:noteId" element={
         <PrivateRoute>
-          <Suspense fallback={<Loading />}>
-            <ViewNotes />
-          </Suspense>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <ViewNotes />
+            </Suspense>
+          </AppLayout>
         </PrivateRoute>
       } />
       
       <Route path="/ai-answers" element={
         <PrivateRoute>
-          <Suspense fallback={<Loading />}>
-            <AIAnswers />
-          </Suspense>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <AIAnswers />
+            </Suspense>
+          </AppLayout>
         </PrivateRoute>
       } />
       
       <Route path="/study-rooms" element={
         <PrivateRoute>
-          <Suspense fallback={<Loading />}>
-            <StudyRooms />
-          </Suspense>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <StudyRooms />
+            </Suspense>
+          </AppLayout>
         </PrivateRoute>
       } />
       
       <Route path="/study-room/:roomId" element={
         <PrivateRoute>
-          <Suspense fallback={<Loading />}>
-            <StudyRoom />
-          </Suspense>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <StudyRoom />
+            </Suspense>
+          </AppLayout>
         </PrivateRoute>
       } />
       
       <Route path="/study-room/:roomId/chat" element={
         <PrivateRoute>
-          <Suspense fallback={<Loading />}>
-            <StudyRoomChat />
-          </Suspense>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <StudyRoomChat />
+            </Suspense>
+          </AppLayout>
         </PrivateRoute>
       } />
       
       <Route path="/study-room/:roomId/info" element={
         <PrivateRoute>
-          <Suspense fallback={<Loading />}>
-            <StudyRoomInfo />
-          </Suspense>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <StudyRoomInfo />
+            </Suspense>
+          </AppLayout>
         </PrivateRoute>
       } />
       
       <Route path="/study-analytics" element={
         <PrivateRoute>
-          <Suspense fallback={<Loading />}>
-            <StudyAnalytics />
-          </Suspense>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <StudyAnalytics />
+            </Suspense>
+          </AppLayout>
         </PrivateRoute>
       } />
       
