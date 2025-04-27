@@ -209,73 +209,71 @@ const MyNotes = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-950">
-      <PageContainer className="space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">My Notes</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm md:text-base">
-              Manage your uploaded and saved notes
-            </p>
-          </div>
-          <Button 
-            onClick={() => navigate('/upload-notes')} 
-            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
-          >
-            <Plus size={16} />
-            <span>Upload New Note</span>
+    <PageContainer className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">My Notes</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm md:text-base">
+            Manage your uploaded and saved notes
+          </p>
+        </div>
+        <Button 
+          onClick={() => navigate('/upload-notes')} 
+          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+        >
+          <Plus size={16} />
+          <span>Upload New Note</span>
+        </Button>
+      </div>
+      
+      <div className="mb-6 relative">
+        <Input
+          type="text"
+          placeholder="Search your notes..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-10 pr-4 py-2 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+        />
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Search className="h-5 w-5 text-gray-400" />
+        </div>
+        <div className="absolute inset-y-0 right-0 pr-3 flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="h-8 text-gray-500">
+            <Filter size={16} className="mr-1" />
+            <span className="hidden sm:inline">Filters</span>
           </Button>
-        </div>
-        
-        <div className="mb-6 relative">
-          <Input
-            type="text"
-            placeholder="Search your notes..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-          />
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
-          </div>
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="h-8 text-gray-500">
-              <Filter size={16} className="mr-1" />
-              <span className="hidden sm:inline">Filters</span>
+          {searchQuery && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8"
+              onClick={() => setSearchQuery('')}
+            >
+              Clear
             </Button>
-            {searchQuery && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8"
-                onClick={() => setSearchQuery('')}
-              >
-                Clear
-              </Button>
-            )}
-          </div>
+          )}
         </div>
+      </div>
+      
+      <Tabs defaultValue="uploaded" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="uploaded" className="flex-1">
+            Uploaded Notes ({filteredUploadedNotes.length})
+          </TabsTrigger>
+          <TabsTrigger value="saved" className="flex-1">
+            Saved Notes ({filteredSavedNotes.length})
+          </TabsTrigger>
+        </TabsList>
         
-        <Tabs defaultValue="uploaded" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4">
-            <TabsTrigger value="uploaded" className="flex-1">
-              Uploaded Notes ({filteredUploadedNotes.length})
-            </TabsTrigger>
-            <TabsTrigger value="saved" className="flex-1">
-              Saved Notes ({filteredSavedNotes.length})
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="uploaded" className="mt-2">
-            {renderNoteList(filteredUploadedNotes, true)}
-          </TabsContent>
-          
-          <TabsContent value="saved" className="mt-2">
-            {renderNoteList(filteredSavedNotes, false)}
-          </TabsContent>
-        </Tabs>
-      </PageContainer>
-    </div>
+        <TabsContent value="uploaded" className="mt-2">
+          {renderNoteList(filteredUploadedNotes, true)}
+        </TabsContent>
+        
+        <TabsContent value="saved" className="mt-2">
+          {renderNoteList(filteredSavedNotes, false)}
+        </TabsContent>
+      </Tabs>
+    </PageContainer>
   );
 };
 

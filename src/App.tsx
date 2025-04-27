@@ -22,6 +22,7 @@ const UploadNotes = lazy(() => import("@/pages/UploadNotes"));
 const FindNotes = lazy(() => import("@/pages/FindNotes"));
 const ViewNotes = lazy(() => import("@/pages/ViewNotes"));
 const AIAnswers = lazy(() => import("@/pages/AIAnswers"));
+const AIMarkAnswers = lazy(() => import("@/pages/AIMarkAnswers"));
 const StudyRooms = lazy(() => import("@/pages/StudyRooms"));
 const StudyRoom = lazy(() => import("@/pages/StudyRoom"));
 const StudyRoomChat = lazy(() => import("@/pages/StudyRoomChat"));
@@ -134,6 +135,16 @@ const AppRoutes = () => {
           <AppLayout>
             <Suspense fallback={<Loading />}>
               <AIAnswers />
+            </Suspense>
+          </AppLayout>
+        </PrivateRoute>
+      } />
+      
+      <Route path="/ai-mark-answers" element={
+        <PrivateRoute>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <AIMarkAnswers />
             </Suspense>
           </AppLayout>
         </PrivateRoute>

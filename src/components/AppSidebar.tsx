@@ -1,3 +1,4 @@
+
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -92,7 +93,7 @@ export const AppSidebar = () => {
     },
     {
       title: "My Notes",
-      path: "/view-notes",
+      path: "/my-notes",
       icon: <FileText size={20} />,
     },
     {

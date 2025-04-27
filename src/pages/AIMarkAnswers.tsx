@@ -1,10 +1,10 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Copy, Download, Upload, X, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { PageContainer } from '@/components/PageContainer';
 
 type AnswerType = '2marks' | '5marks' | '10marks' | 'all';
 type GeneratedAnswer = {
@@ -23,13 +23,11 @@ const AIMarkAnswers = () => {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      // Check file type
       const fileType = selectedFile.type;
       if (
         fileType === 'application/pdf' ||
         fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       ) {
-        // Check file size (max 10MB)
         if (selectedFile.size <= 10 * 1024 * 1024) {
           setFile(selectedFile);
         } else {
@@ -58,7 +56,6 @@ const AIMarkAnswers = () => {
     
     setIsGenerating(true);
     
-    // Simulate API call with setTimeout
     setTimeout(() => {
       setGeneratedAnswer({
         twoMarks: "A transformer is an electrical device that transfers energy between two or more circuits through electromagnetic induction. It consists of two or more coils of wire wound around a core, and it's used to increase (step up) or decrease (step down) AC voltages.",
@@ -93,14 +90,13 @@ const AIMarkAnswers = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <PageContainer>
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">AI-Powered Answer Generator</h1>
         <p className="text-gray-600 dark:text-gray-400">Upload study material and get structured answers based on mark distribution.</p>
       </div>
 
       <div className="grid gap-6 grid-cols-1">
-        {/* Upload Section */}
         <Card className="shadow-md">
           <CardHeader>
             <CardTitle>Upload Study Material</CardTitle>
@@ -137,7 +133,6 @@ const AIMarkAnswers = () => {
           </CardContent>
         </Card>
 
-        {/* Answer Type Selection */}
         <Card className="shadow-md">
           <CardHeader>
             <CardTitle>Select Answer Type</CardTitle>
@@ -176,7 +171,6 @@ const AIMarkAnswers = () => {
           </CardContent>
         </Card>
 
-        {/* Generated Answer Display Section */}
         {generatedAnswer && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-center">Generated Answers</h2>
@@ -258,7 +252,7 @@ const AIMarkAnswers = () => {
           </div>
         )}
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
