@@ -13,8 +13,13 @@ export const HeroActions = () => {
     if (isAuthenticated) {
       navigate('/dashboard');
     } else {
-      navigate('/authentication');
+      // Redirect to the signup tab
+      navigate('/authentication', { state: { activeTab: 'signup' } });
     }
+  };
+  
+  const handleLogin = () => {
+    navigate('/authentication', { state: { activeTab: 'login' } });
   };
   
   return (
@@ -29,14 +34,15 @@ export const HeroActions = () => {
         className="bg-blue-600 hover:bg-blue-700 px-5 py-2 text-sm sm:text-base"
         onClick={handleGetStarted}
       >
-        Get Started
+        Try Notex
       </Button>
       <Button 
         size="lg" 
         variant="outline"
         className="px-5 py-2 text-sm sm:text-base"
+        onClick={handleLogin}
       >
-        Learn More
+        Login
       </Button>
     </motion.div>
   );

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,12 +68,14 @@ const signupSchema = z.object({
 });
 
 const Authentication = () => {
-  const [activeTab, setActiveTab] = useState("signup");
+  const location = useLocation();
+  // Get the activeTab from location state, default to "login" if not provided
+  const initialTab = location.state?.activeTab || "login";
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [loginError, setLoginError] = useState("");
   const [signupError, setSignupError] = useState("");
   const { login, signup, isAuthenticated, isLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
   const [debugInfo, setDebugInfo] = useState<any>({});
 
@@ -87,7 +88,15 @@ const Authentication = () => {
       location: location.state
     });
     console.log("Auth state:", { isAuthenticated, isAdmin, isLoading });
+    console.log("Location state:", location.state);
   }, [isAuthenticated, isAdmin, isLoading, location]);
+
+  // Listen for location state changes to update the active tab
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
