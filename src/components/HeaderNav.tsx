@@ -131,8 +131,14 @@ export const HeaderNav = () => {
     );
   };
 
-  // Handle notifications click
+  // Handle notifications click with improved feedback
   const handleNotificationsClick = () => {
+    setUnreadNotifications(0); // Reset unread count when notifications are viewed
+    toast({
+      title: "Accessing notifications",
+      description: "Taking you to your notifications page",
+      duration: 2000,
+    });
     navigate('/notifications');
   };
 
@@ -168,12 +174,13 @@ export const HeaderNav = () => {
               />
             </div>
             
-            {/* Notifications */}
+            {/* Notifications - Improved accessibility and hover state */}
             <Button 
               variant="ghost" 
               size="sm" 
-              className="relative rounded-full"
+              className="relative rounded-full hover:bg-gray-100"
               onClick={handleNotificationsClick}
+              aria-label={`Notifications ${unreadNotifications > 0 ? `(${unreadNotifications} unread)` : ''}`}
             >
               <Bell size={18} />
               {unreadNotifications > 0 && (

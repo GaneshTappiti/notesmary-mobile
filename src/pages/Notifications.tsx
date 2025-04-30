@@ -22,6 +22,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { NotificationCard } from '@/components/NotificationCard';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { HeaderNav } from '@/components/HeaderNav';
 
 // Import the types from NotificationCard
 import type { NotificationType, ActionType } from '@/components/NotificationCard';
@@ -138,6 +139,13 @@ const Notifications = () => {
     
     setFilteredNotifications(filtered);
   }, [searchQuery, activeFilter, notifications]);
+  
+  // Update HeaderNav notification count - called when component mounts
+  useEffect(() => {
+    // In a real implementation, this would fetch notifications from Supabase
+    // and update HeaderNav unread notification count through a shared state or context
+    document.title = "Notifications | Notex";
+  }, []);
 
   const markAllAsRead = () => {
     setNotifications(notifications.map(notification => ({
@@ -187,11 +195,11 @@ const Notifications = () => {
       if (url) {
         // Simplified action description mapping
         const actionDescription = 
-          actionType === 'join' ? 'the dashboard' :
-          actionType === 'view' ? 'the dashboard' : 
-          actionType === 'renew' ? 'the dashboard' :
-          actionType === 'accept' ? 'the dashboard' :
-          actionType === 'joinDiscussion' ? 'the dashboard' :
+          actionType === 'join' ? 'the study room' :
+          actionType === 'view' ? 'the content' : 
+          actionType === 'renew' ? 'subscription page' :
+          actionType === 'accept' ? 'the collaboration' :
+          actionType === 'joinDiscussion' ? 'the discussion' :
           'the dashboard';
         
         toast({
@@ -199,7 +207,7 @@ const Notifications = () => {
           description: `Taking you to ${actionDescription}`,
         });
         
-        // Redirect to dashboard for all actions for now
+        // Redirect to the specified URL
         navigate(url);
       }
     } else if (actionType === 'decline') {
@@ -236,9 +244,9 @@ const Notifications = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white">
-      <Navbar />
+      <HeaderNav /> {/* Using HeaderNav instead of Navbar for consistent layout */}
       
-      <div className="pt-28 pb-12 px-4 max-w-7xl mx-auto">
+      <div className="pt-8 pb-12 px-4 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
