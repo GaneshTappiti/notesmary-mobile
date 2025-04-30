@@ -19,6 +19,7 @@ export const HeroActions = () => {
   };
   
   const handleLogin = () => {
+    // Redirect to the login tab
     navigate('/authentication', { state: { activeTab: 'login' } });
   };
   
