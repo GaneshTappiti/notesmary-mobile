@@ -1,16 +1,21 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Mail, Bell, Upload, Moon, Sun } from 'lucide-react';
+import { User, Mail, Bell, Upload, Moon, Sun, Save, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Settings = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [isSaving, setIsSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
   const [formData, setFormData] = useState({
     fullName: 'John Doe',
     email: 'john.doe@example.com',
@@ -25,23 +30,74 @@ const Settings = () => {
     darkMode: false,
     autoSave: true
   });
+
+  // Update form data with user info if available
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: user.user_metadata?.full_name || prev.fullName,
+        email: user.email || prev.email,
+        username: user.user_metadata?.username || user.email?.split('@')[0] || prev.username,
+      }));
+    }
+  }, [user]);
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    // Reset saved state when form is changed
+    setSaved(false);
   };
   
   const handleToggleChange = (name: string) => {
     setPreferences(prev => ({ ...prev, [name]: !prev[name] }));
+    // Reset saved state when preferences are changed
+    setSaved(false);
+    
+    // Show toast for dark mode toggle to make it more interactive
+    if (name === 'darkMode') {
+      toast({
+        title: preferences.darkMode ? "Light mode enabled" : "Dark mode enabled",
+        description: "Your theme preference has been updated.",
+      });
+    }
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Settings updated",
-      description: "Your profile settings have been saved successfully.",
-    });
+    setIsSaving(true);
+    
+    try {
+      // Simulate API call with timeout
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Update UI state
+      setSaved(true);
+      
+      toast({
+        title: "Settings saved",
+        description: "Your profile settings have been updated successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error saving settings",
+        description: "There was a problem saving your settings. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  // Reset saved state after 3 seconds
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (saved) {
+      timer = setTimeout(() => setSaved(false), 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [saved]);
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-950">
@@ -106,7 +162,11 @@ const Settings = () => {
                     type="email" 
                     value={formData.email} 
                     onChange={handleInputChange} 
+                    disabled={Boolean(user)} // Disable email editing if user is logged in
                   />
+                  {user && (
+                    <p className="text-xs text-gray-500 mt-1">Email cannot be changed after account creation</p>
+                  )}
                 </div>
                 
                 <div className="space-y-2">
@@ -136,8 +196,27 @@ const Settings = () => {
                 </div>
                 
                 <div className="pt-2">
-                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
-                    Save Changes
+                  <Button 
+                    type="submit" 
+                    className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <>
+                        <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1"></div>
+                        Saving...
+                      </>
+                    ) : saved ? (
+                      <>
+                        <Check size={18} className="text-green-200" />
+                        Saved!
+                      </>
+                    ) : (
+                      <>
+                        <Save size={16} />
+                        Save Changes
+                      </>
+                    )}
                   </Button>
                 </div>
               </form>
@@ -181,9 +260,13 @@ const Settings = () => {
                 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Moon size={18} className="text-indigo-600 dark:text-indigo-400" />
+                    {preferences.darkMode ? (
+                      <Moon size={18} className="text-indigo-600 dark:text-indigo-400" />
+                    ) : (
+                      <Sun size={18} className="text-amber-500" />
+                    )}
                     <div>
-                      <p className="font-medium">Dark Mode</p>
+                      <p className="font-medium">{preferences.darkMode ? "Dark Mode" : "Light Mode"}</p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">Switch between light and dark theme</p>
                     </div>
                   </div>
