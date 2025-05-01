@@ -1,7 +1,6 @@
 
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useEffect } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface PrivateRouteProps {
@@ -10,9 +9,21 @@ interface PrivateRouteProps {
 }
 
 export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps) => {
-  const { isAuthenticated, isLoading, user, isAdmin } = useAuth();
+  const { isAuthenticated, isLoading, isAdmin } = useAuth();
   const location = useLocation();
   const { toast } = useToast();
+  
+  // Use useEffect for side effects like showing toasts
+  useEffect(() => {
+    // Only show the toast when we're sure we have an authentication state and need to reject
+    if (!isLoading && adminOnly && isAuthenticated && !isAdmin) {
+      toast({
+        title: "Access Denied",
+        description: "You don't have permission to access this page.",
+        variant: "destructive"
+      });
+    }
+  }, [isLoading, adminOnly, isAuthenticated, isAdmin, toast]);
 
   if (isLoading) {
     return (
@@ -28,11 +39,6 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
   }
 
   if (adminOnly && !isAdmin) {
-    toast({
-      title: "Access Denied",
-      description: "You don't have permission to access this page.",
-      variant: "destructive"
-    });
     return <Navigate to="/dashboard" replace />;
   }
 

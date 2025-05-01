@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthService, UserProfile } from '@/services/AuthService';
@@ -61,13 +62,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             
             if (session.user) {
               // Check admin status immediately to update UI accordingly
-              await checkAdminStatus(session.user.email || '');
+              const adminStatus = await checkAdminStatus(session.user.email || '');
+              setIsAdmin(adminStatus);
               
               // Use setTimeout to avoid recursive calls in auth state change
               setTimeout(() => {
                 AuthService.getUserProfile(session.user.id)
                   .then(userProfile => {
-                    setProfile(userProfile);
+                    if (userProfile) {
+                      setProfile(userProfile);
+                    }
                   })
                   .catch(error => {
                     console.error('Error fetching user profile:', error);
@@ -91,10 +95,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           
           if (sessionData.session.user) {
             // Check admin status immediately
-            await checkAdminStatus(sessionData.session.user.email || '');
+            const adminStatus = await checkAdminStatus(sessionData.session.user.email || '');
+            setIsAdmin(adminStatus);
             
-            const userProfile = await AuthService.getUserProfile(sessionData.session.user.id);
-            setProfile(userProfile);
+            try {
+              const userProfile = await AuthService.getUserProfile(sessionData.session.user.id);
+              if (userProfile) {
+                setProfile(userProfile);
+              }
+            } catch (error) {
+              console.error('Error fetching profile during init:', error);
+            }
           }
         }
         

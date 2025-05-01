@@ -215,13 +215,55 @@ export const AuthService = {
    */
   async getUserProfile(userId: string): Promise<UserProfile | null> {
     try {
+      // First try to get the profile
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
 
+      // If profile doesn't exist, create a new one
+      if (error && error.code === 'PGRST116') {
+        console.log("Profile doesn't exist for user, creating one");
+        
+        // Get user data to extract information
+        const { data: userData } = await supabase.auth.getUser();
+        const user = userData?.user;
+        
+        if (user) {
+          // Create a new profile
+          const newProfile: Partial<UserProfile> = {
+            id: userId,
+            full_name: user.user_metadata?.full_name || null,
+            email: user.email,
+            email_domain: user.email ? extractEmailDomain(user.email) : null,
+            branch: null,
+            year_of_entry: null,
+            year_of_completion: null,
+            phone: null,
+            avatar_url: null
+          };
+          
+          // Insert the new profile
+          const { data: createdProfile, error: insertError } = await supabase
+            .from('profiles')
+            .insert([newProfile])
+            .select()
+            .single();
+            
+          if (insertError) {
+            console.error('Error creating profile:', insertError);
+            return null;
+          }
+          
+          return createdProfile;
+        }
+        
+        return null;
+      }
+
       if (error) {
+        console.error('Error getting profile:', error);
         throw error;
       }
 
