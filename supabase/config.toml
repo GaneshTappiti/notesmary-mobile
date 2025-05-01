@@ -14,8 +14,8 @@ enabled = true
 
 [auth]
 enabled = true
-site_url = "http://localhost:5173"
-additional_redirect_urls = ["https://localhost:5173"]
+site_url = "https://zsiwyvbiwyppkftcaeph.lovable.app"
+additional_redirect_urls = ["https://zsiwyvbiwyppkftcaeph.lovable.app", "https://35a2fb2e-373c-4b2c-9d60-21d62f5f639a.lovableproject.com"]
 
 [functions]
 [functions.ai-integration]
