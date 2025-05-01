@@ -11,6 +11,8 @@ export function useIsMobile() {
   )
 
   React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     // Handle initial check
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
@@ -35,23 +37,27 @@ export function useIsMobile() {
     
     // Use matchMedia for better compatibility 
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const handleMediaChange = (e: MediaQueryListEvent) => {
+    
+    const handleMediaChange = (e: MediaQueryListEvent | MediaQueryList) => {
       setIsMobile(e.matches)
     }
     
     // Try to use the newer addEventListener if available, fall back to older API
     try {
-      mql.addEventListener("change", handleMediaChange)
+      mql.addEventListener("change", handleMediaChange as any)
     } catch (err) {
       // Fallback for older browsers
       mql.addListener(handleMediaChange as any)
     }
+    
+    // Initial check with matchMedia too
+    handleMediaChange(mql);
 
     return () => {
       if (timeoutId) window.clearTimeout(timeoutId)
       window.removeEventListener("resize", handleResize)
       try {
-        mql.removeEventListener("change", handleMediaChange)
+        mql.removeEventListener("change", handleMediaChange as any)
       } catch (err) {
         // Fallback for older browsers
         mql.removeListener(handleMediaChange as any)
@@ -71,6 +77,8 @@ export function useOrientation() {
   )
 
   React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const handleOrientationChange = () => {
       setOrientation(
         window.innerHeight > window.innerWidth ? 'portrait' : 'landscape'

@@ -13,21 +13,23 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
   const { isAuthenticated, isLoading, isAdmin } = useAuth();
   const location = useLocation();
   const { toast } = useToast();
-  const [showLoader, setShowLoader] = useState(true);
+  const [showLoader, setShowLoader] = useState(false);
   
   // Add a small delay before showing the loader to prevent flashing
   useEffect(() => {
     let timer: number | undefined;
+    
     if (isLoading) {
+      // Only show loader after a small delay to prevent UI flashing
       timer = window.setTimeout(() => {
         setShowLoader(true);
-      }, 200);
+      }, 300);
     } else {
       setShowLoader(false);
     }
     
     return () => {
-      if (timer) clearTimeout(timer);
+      if (timer) window.clearTimeout(timer);
     };
   }, [isLoading]);
   

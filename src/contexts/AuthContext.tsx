@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthService, UserProfile } from '@/services/AuthService';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -24,32 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
-  const checkAdminStatus = async (email: string) => {
-    try {
-      console.log("Checking admin status for email:", email);
-      
-      // For admin email, bypass the RPC call and set directly
-      if (email === "2005ganesh16@gmail.com") {
-        console.log("Admin email detected, setting isAdmin=true");
-        return true;
-      }
-      
-      // For other emails, use the is_admin function from Supabase
-      const { data: isAdminUser, error } = await supabase.rpc('is_admin', { check_email: email });
-      
-      if (error) {
-        console.error('Error checking admin status:', error);
-        return false;
-      }
-      
-      console.log("Admin status from RPC:", isAdminUser);
-      return !!isAdminUser;
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-      return false;
-    }
-  };
+  const { toast } = useToast();
 
   // Fetch user profile safely, outside of auth state change callback
   const fetchUserProfile = async (userId: string) => {
@@ -63,83 +38,119 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Check admin status separately to avoid circular callbacks
+  const checkAdminStatus = async (email: string) => {
+    try {
+      // Special case for admin email
+      if (email === "2005ganesh16@gmail.com") {
+        return true;
+      }
+      
+      // For other emails, use RPC
+      const { data: isAdminUser, error } = await supabase.rpc('is_admin', { check_email: email });
+      
+      if (error) {
+        console.error('Error checking admin status:', error);
+        return false;
+      }
+      
+      return !!isAdminUser;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      return false;
+    }
+  };
+
   useEffect(() => {
-    let isMounted = true;
+    let mounted = true;
+    let authSubscription: { data: { subscription: { unsubscribe: () => void } } } | null = null;
     
-    const initAuth = async () => {
+    const initializeAuth = async () => {
       try {
         // First set up the subscription to auth state changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-          if (!isMounted) return;
+        const { data } = supabase.auth.onAuthStateChange((event, session) => {
+          if (!mounted) return;
+          
+          console.log("Auth state changed:", event, session ? "session exists" : "no session");
           
           if (session) {
-            setIsAuthenticated(true);
             setUser(session.user);
+            setIsAuthenticated(true);
             
-            // We use setTimeout to defer profile fetching to avoid potential circular callbacks
-            if (session.user) {
-              const email = session.user.email || '';
-              
-              // Check admin status safely
+            // Defer profile fetching and admin checking
+            if (session.user && session.user.email) {
+              // Use setTimeout to avoid potential circular callbacks
               setTimeout(async () => {
-                if (!isMounted) return;
+                if (!mounted) return;
                 
-                const adminStatus = await checkAdminStatus(email);
-                setIsAdmin(adminStatus);
-                
-                // Fetch user profile separately
-                fetchUserProfile(session.user.id);
+                try {
+                  const adminStatus = await checkAdminStatus(session.user.email || '');
+                  if (mounted) setIsAdmin(adminStatus);
+                  
+                  await fetchUserProfile(session.user.id);
+                } catch (error) {
+                  console.error("Error in deferred auth operations:", error);
+                }
               }, 0);
             }
           } else {
             // User is logged out
-            setIsAuthenticated(false);
             setUser(null);
             setProfile(null);
             setIsAdmin(false);
+            setIsAuthenticated(false);
             localStorage.removeItem('isLoggedIn');
           }
         });
         
-        // Now check the current session
-        const { data: sessionData } = await supabase.auth.getSession();
+        authSubscription = data;
         
-        if (sessionData.session) {
-          setIsAuthenticated(true);
+        // Now check the current session
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Session retrieval error:", sessionError);
+          throw sessionError;
+        }
+        
+        if (sessionData?.session) {
           setUser(sessionData.session.user);
+          setIsAuthenticated(true);
           
-          if (sessionData.session.user) {
+          if (sessionData.session.user && sessionData.session.user.email) {
             const adminStatus = await checkAdminStatus(sessionData.session.user.email || '');
-            setIsAdmin(adminStatus);
+            if (mounted) setIsAdmin(adminStatus);
             
-            // Fetch user profile separately
             await fetchUserProfile(sessionData.session.user.id);
           }
         } else {
-          setIsAuthenticated(false);
           setUser(null);
           setProfile(null);
           setIsAdmin(false);
-        }
-        
-        setIsLoading(false);
-        
-        return () => {
-          subscription.unsubscribe();
-        };
-      } catch (error) {
-        console.error('Auth check error:', error);
-        if (isMounted) {
           setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        if (mounted) {
+          setIsAuthenticated(false);
+          setUser(null);
+        }
+      } finally {
+        if (mounted) {
+          // Set loading to false regardless of success/failure
           setIsLoading(false);
         }
       }
     };
 
-    initAuth();
+    initializeAuth();
     
+    // Clean up function to prevent memory leaks and state updates on unmounted component
     return () => {
-      isMounted = false;
+      mounted = false;
+      if (authSubscription?.data?.subscription) {
+        authSubscription.data.subscription.unsubscribe();
+      }
     };
   }, []);
 
@@ -147,12 +158,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       console.log("Starting login process for:", email);
-      
-      // Check if this is the admin email
-      const isAdminEmail = email === "2005ganesh16@gmail.com";
-      if (isAdminEmail) {
-        console.log("Admin login attempt detected");
-      }
       
       const { data, error } = await AuthService.login({ email, password });
       
@@ -163,20 +168,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (data.session) {
         console.log("Login successful, session established");
-        setIsAuthenticated(true);
-        setUser(data.session.user);
-        
-        // The profile data and admin status will be handled by the onAuthStateChange
         localStorage.setItem('isLoggedIn', 'true');
         
+        // Auth state change event will update the state
         toast({
           title: 'Login Successful',
-          description: isAdminEmail ? 'Welcome back, Admin!' : 'Welcome back to Notex!',
+          description: email === "2005ganesh16@gmail.com" ? 'Welcome back, Admin!' : 'Welcome back to Notex!',
         });
       }
     } catch (error: any) {
       console.error("Login error in context:", error);
-      setIsAuthenticated(false);
       toast({
         title: 'Login Failed',
         description: error.message || 'Invalid email or password. Please try again.',
