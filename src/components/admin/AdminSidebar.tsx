@@ -54,7 +54,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       {/* Mobile sidebar overlay */}
       <div 
         className={cn(
-          "fixed inset-0 z-50 bg-black bg-opacity-50 transition-opacity md:hidden",
+          "fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity md:hidden",
           open ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
         onClick={() => setOpen(false)}
@@ -64,7 +64,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       {/* Mobile sidebar */}
       <div 
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 transform transition-transform ease-in-out duration-300 md:hidden",
+          "fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 transform transition-transform ease-in-out duration-300 md:hidden shadow-lg",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -96,7 +96,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       {/* Desktop sidebar */}
       <div className="hidden md:flex md:flex-shrink-0">
         <div className="flex flex-col w-64">
-          <div className="flex flex-col h-0 flex-1 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="flex flex-col h-0 flex-1 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
             <div className="flex items-center h-16 flex-shrink-0 px-4 border-b border-gray-200 dark:border-gray-700">
               <span className="text-xl font-semibold text-purple-600 dark:text-purple-400">
                 Notex Admin

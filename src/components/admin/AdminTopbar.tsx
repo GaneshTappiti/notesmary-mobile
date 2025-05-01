@@ -51,7 +51,7 @@ export const AdminTopbar: React.FC<AdminTopbarProps> = ({ onMenuClick }) => {
   };
   
   return (
-    <header className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white dark:bg-gray-800 shadow">
+    <header className="sticky top-0 z-30 flex h-16 flex-shrink-0 bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700">
       <button
         type="button"
         className="px-4 text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 md:hidden"
@@ -73,7 +73,7 @@ export const AdminTopbar: React.FC<AdminTopbarProps> = ({ onMenuClick }) => {
                 <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
+            <DropdownMenuContent align="end" className="w-80 bg-white">
               <DropdownMenuLabel>Notifications</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <div className="max-h-80 overflow-y-auto">
@@ -97,7 +97,7 @@ export const AdminTopbar: React.FC<AdminTopbarProps> = ({ onMenuClick }) => {
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-white">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer">
