@@ -131,15 +131,15 @@ export const HeaderNav = () => {
     );
   };
 
-  // Handle notifications click with improved feedback
+  // Handle notifications click
   const handleNotificationsClick = () => {
+    navigate('/notifications');
     setUnreadNotifications(0); // Reset unread count when notifications are viewed
     toast({
       title: "Accessing notifications",
       description: "Taking you to your notifications page",
       duration: 2000,
     });
-    navigate('/notifications');
   };
 
   return (
@@ -174,7 +174,7 @@ export const HeaderNav = () => {
               />
             </div>
             
-            {/* Notifications - Improved accessibility and hover state */}
+            {/* Notifications - improved accessibility and hover state */}
             <Button 
               variant="ghost" 
               size="sm" 

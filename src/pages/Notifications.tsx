@@ -1,5 +1,5 @@
+
 import { useState, useEffect } from 'react';
-import { Navbar } from '@/components/Navbar';
 import { 
   Bell, 
   BookOpen, 
@@ -11,7 +11,6 @@ import {
   Check,
   X,
   MessageSquare,
-  Calendar,
   Lightbulb
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +25,7 @@ import { HeaderNav } from '@/components/HeaderNav';
 
 // Import the types from NotificationCard
 import type { NotificationType, ActionType } from '@/components/NotificationCard';
+import { PageContainer } from '@/components/PageContainer';
 
 // Mock notification data - this would come from your Supabase database in a real implementation
 const mockNotifications = [
@@ -140,15 +140,15 @@ const Notifications = () => {
     setFilteredNotifications(filtered);
   }, [searchQuery, activeFilter, notifications]);
   
-  // Update HeaderNav notification count - called when component mounts
+  // Update document title when component mounts
   useEffect(() => {
-    // In a real implementation, this would fetch notifications from Supabase
-    // and update HeaderNav unread notification count through a shared state or context
     document.title = "Notifications | Notex";
   }, []);
 
   const markAllAsRead = () => {
-    setNotifications(notifications.map(notification => ({
+    if (notifications.length === 0) return;
+    
+    setNotifications(prev => prev.map(notification => ({
       ...notification,
       isRead: true
     })));
@@ -160,6 +160,8 @@ const Notifications = () => {
   };
 
   const clearAllNotifications = () => {
+    if (notifications.length === 0) return;
+    
     setNotifications([]);
     
     toast({
@@ -177,6 +179,7 @@ const Notifications = () => {
     
     // Simulate a refresh delay
     setTimeout(() => {
+      setNotifications(mockNotifications);
       toast({
         title: "Up to Date",
         description: "Your notifications are now up to date.",
@@ -186,7 +189,7 @@ const Notifications = () => {
 
   const handleNotificationAction = (id: string, actionType: ActionType, url?: string) => {
     // Mark the notification as read
-    setNotifications(notifications.map(notification => 
+    setNotifications(prev => prev.map(notification => 
       notification.id === id ? { ...notification, isRead: true } : notification
     ));
     
@@ -211,7 +214,7 @@ const Notifications = () => {
         navigate(url);
       }
     } else if (actionType === 'decline') {
-      setNotifications(notifications.filter(notification => notification.id !== id));
+      setNotifications(prev => prev.filter(notification => notification.id !== id));
       toast({
         title: "Request Declined",
         description: "The collaboration request has been declined.",
@@ -243,9 +246,7 @@ const Notifications = () => {
   const unreadCount = notifications.filter(notification => !notification.isRead).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white">
-      <HeaderNav /> {/* Using HeaderNav instead of Navbar for consistent layout */}
-      
+    <PageContainer>
       <div className="pt-8 pb-12 px-4 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
@@ -289,7 +290,7 @@ const Notifications = () => {
               <CardContent className="p-4">
                 <div className="mb-4">
                   <div className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input 
                       placeholder="Search notifications..." 
                       className="pl-8"
@@ -452,7 +453,7 @@ const Notifications = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 

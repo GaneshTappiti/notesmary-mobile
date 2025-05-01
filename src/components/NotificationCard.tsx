@@ -68,24 +68,11 @@ export const NotificationCard: React.FC<NotificationProps> = ({
     }
   };
 
-  // Determine the correct redirect URL based on notification type and action
-  const getActionUrl = (type: NotificationType, actionType: ActionType) => {
-    if (notification.actionUrl) {
-      return notification.actionUrl;
-    }
-    
-    // All notification types now redirect to dashboard for simplicity
-    // In a real implementation, you would customize these redirects
-    // based on your app's navigation flow
-    return '/dashboard';
-  };
-
   const handleAction = (actionType: ActionType) => {
-    const redirectUrl = notification.actionUrl || (
-      actionType === notification.secondaryActionType && notification.secondaryActionUrl
-        ? notification.secondaryActionUrl
-        : getActionUrl(notification.type, actionType)
-    );
+    const redirectUrl = actionType === notification.actionType 
+      ? notification.actionUrl 
+      : notification.secondaryActionUrl;
+    
     onAction(notification.id, actionType, redirectUrl);
   };
 
