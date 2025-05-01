@@ -14,9 +14,20 @@ export default defineConfig(({ mode }) => ({
     sourcemap: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui': ['@/components/ui'],
+        manualChunks: (id) => {
+          // Create separate vendor chunks
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+              return 'react-vendor';
+            }
+            
+            // Group shadcn UI components
+            if (id.includes('@radix-ui') || id.includes('@/components/ui')) {
+              return 'ui';
+            }
+            
+            return 'vendor'; // Other dependencies
+          }
         },
       },
     },

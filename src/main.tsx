@@ -16,7 +16,6 @@ if (container) {
       <ThemeProvider defaultTheme="light" storageKey="notex-ui-theme">
         <SidebarProvider>
           <App />
-          <Toaster />
         </SidebarProvider>
       </ThemeProvider>
     </React.StrictMode>

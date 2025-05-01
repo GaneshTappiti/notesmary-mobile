@@ -1,5 +1,5 @@
 
-import React, { Suspense, lazy, useEffect } from "react";
+import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -17,7 +17,7 @@ import Authentication from "@/pages/Authentication";
 // Directly import Dashboard to avoid lazy loading issues
 import Dashboard from "@/pages/Dashboard";
 
-// Lazy load all other page components
+// Lazy load all other page components with proper error boundaries
 const Index = lazy(() => import("@/pages/Index"));
 const MyNotes = lazy(() => import("@/pages/MyNotes"));
 const UploadNotes = lazy(() => import("@/pages/UploadNotes"));
@@ -44,7 +44,7 @@ const AdminAnalytics = lazy(() => import("@/pages/AdminAnalytics"));
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   
-  useEffect(() => {
+  React.useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
   
@@ -101,7 +101,7 @@ const App = () => (
               </PublicRoute>
             } />
 
-            {/* Protected dashboard route - No longer using lazy loading for Dashboard */}
+            {/* Protected dashboard route - Using direct import for Dashboard */}
             <Route path="/dashboard" element={
               <PrivateRoute>
                 <AppLayout>
