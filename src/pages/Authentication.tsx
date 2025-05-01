@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,7 +22,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Info, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
@@ -274,14 +273,6 @@ const Authentication = () => {
                         Sign up
                       </button>
                     </p>
-                    
-                    {/* Admin login help */}
-                    <Alert className="bg-blue-50 border-blue-200 mt-4">
-                      <Info className="h-4 w-4 text-blue-500" />
-                      <AlertDescription className="text-xs text-blue-700">
-                        <strong>Admin Login:</strong> To access the admin dashboard, you must first create an admin account using the email 2005ganesh16@gmail.com. After creating your account, you may need to verify your email or disable email confirmation in Supabase.
-                      </AlertDescription>
-                    </Alert>
                   </form>
                 </Form>
               </TabsContent>
@@ -319,7 +310,6 @@ const Authentication = () => {
                           </FormControl>
                           <FormMessage />
                           <Alert className="bg-blue-50 border-blue-200 p-2 mt-1">
-                            <Info className="h-4 w-4 inline-block mr-1 text-blue-500" />
                             <AlertDescription className="text-xs text-blue-600 inline">
                               We only accept academic institution email addresses (.edu, .ac.xx, etc.)
                               {field.value === "2005ganesh16@gmail.com" && 
