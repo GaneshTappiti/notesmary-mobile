@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from '@/components/AppSidebar';
@@ -25,9 +25,9 @@ const MobileSidebar = () => {
         </Button>
       </DrawerTrigger>
       <DrawerContent side="left" className="p-0 w-[80%] max-w-[300px]">
-        <div className="h-[90vh] overflow-y-auto">
+        <div className="h-[100dvh] overflow-y-auto">
           <AppSidebar />
-          <DrawerClose className="hidden" data-drawer-close="true" />
+          <DrawerClose className="sr-only" data-drawer-close="true" />
         </div>
       </DrawerContent>
     </Drawer>
