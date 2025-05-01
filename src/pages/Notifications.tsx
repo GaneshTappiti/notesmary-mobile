@@ -22,10 +22,10 @@ import { NotificationCard } from '@/components/NotificationCard';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { HeaderNav } from '@/components/HeaderNav';
+import { PageContainer } from '@/components/PageContainer';
 
 // Import the types from NotificationCard
 import type { NotificationType, ActionType } from '@/components/NotificationCard';
-import { PageContainer } from '@/components/PageContainer';
 
 // Mock notification data - this would come from your Supabase database in a real implementation
 const mockNotifications = [
