@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthService, UserProfile } from '@/services/AuthService';
@@ -27,7 +26,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkAdminStatus = async (email: string) => {
     try {
-      // For now, we'll use the is_admin function from Supabase
+      console.log("Checking admin status for email:", email);
+      
+      // For admin email, bypass the RPC call and set directly
+      if (email === "2005ganesh16@gmail.com") {
+        console.log("Admin email detected, setting isAdmin=true");
+        return true;
+      }
+      
+      // For other emails, use the is_admin function from Supabase
       const { data: isAdminUser, error } = await supabase.rpc('is_admin', { check_email: email });
       
       if (error) {
@@ -35,7 +42,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return false;
       }
       
-      setIsAdmin(!!isAdminUser);
+      console.log("Admin status from RPC:", isAdminUser);
       return !!isAdminUser;
     } catch (error) {
       console.error('Error checking admin status:', error);
@@ -109,14 +116,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const { session } = await AuthService.login({ email, password });
+      console.log("Starting login process for:", email);
+      
+      // Check if this is the admin email
+      const isAdminEmail = email === "2005ganesh16@gmail.com";
+      if (isAdminEmail) {
+        console.log("Admin login attempt detected");
+      }
+      
+      const { session, error } = await AuthService.login({ email, password });
+      
+      if (error) {
+        console.error("Login error:", error);
+        throw error;
+      }
+      
       if (session) {
+        console.log("Login successful, session established");
         setIsAuthenticated(true);
         setUser(session.user);
         
         // Check admin status right after login
         if (session.user && session.user.email) {
           const isAdminUser = await checkAdminStatus(session.user.email);
+          console.log("Admin status after login:", isAdminUser);
           setIsAdmin(isAdminUser);
         }
         
@@ -130,12 +153,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         toast({
           title: 'Login Successful',
-          description: 'Welcome back to Notex!',
+          description: isAdminEmail ? 'Welcome back, Admin!' : 'Welcome back to Notex!',
         });
       }
-    } catch (error) {
-      // Error is already handled in AuthService
+    } catch (error: any) {
+      console.error("Login error in context:", error);
       setIsAuthenticated(false);
+      toast({
+        title: 'Login Failed',
+        description: error.message || 'Invalid email or password. Please try again.',
+        variant: 'destructive',
+      });
+      throw error;
     } finally {
       setIsLoading(false);
     }

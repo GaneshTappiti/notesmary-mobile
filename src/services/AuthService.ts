@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
@@ -119,6 +118,11 @@ export const AuthService = {
     try {
       console.log("Starting login process for:", credentials.email);
       
+      // For admin email, add special logging
+      if (credentials.email === "2005ganesh16@gmail.com") {
+        console.log("Admin login attempt with:", credentials.email);
+      }
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password,
@@ -133,11 +137,32 @@ export const AuthService = {
       return data;
     } catch (error: any) {
       console.error('Error logging in:', error);
-      toast({
-        title: 'Login Failed',
-        description: error.message || 'Invalid email or password. Please try again.',
-        variant: 'destructive',
-      });
+      
+      // Special handling for admin login attempts
+      if (credentials.email === "2005ganesh16@gmail.com") {
+        console.error('Admin login failed:', error);
+        
+        if (error.message.includes("Email not confirmed")) {
+          toast({
+            title: 'Email Not Confirmed',
+            description: 'Your admin account needs email confirmation. Please check your email inbox or disable email confirmation in Supabase.',
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Admin Login Failed',
+            description: 'Invalid admin credentials. Make sure you have created an admin account first.',
+            variant: 'destructive',
+          });
+        }
+      } else {
+        toast({
+          title: 'Login Failed',
+          description: error.message || 'Invalid email or password. Please try again.',
+          variant: 'destructive',
+        });
+      }
+      
       throw error;
     }
   },

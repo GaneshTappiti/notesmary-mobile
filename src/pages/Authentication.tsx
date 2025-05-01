@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Info } from "lucide-react";
+import { Info, AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
@@ -41,7 +42,9 @@ const isEducationalEmail = (email: string) => {
     /\.ac\.[a-z]{2,}$/,
     /\.edu\.[a-z]{2,}$/,
     /\.college$/,
-    /\.university$/
+    /\.university$/,
+    /\.org$/,
+    /\.gmail\.com$/  // Temporarily allowing gmail for testing
   ];
   
   return eduPatterns.some(pattern => pattern.test(domain));
@@ -58,7 +61,7 @@ const signupSchema = z.object({
     .string()
     .email({ message: "Please enter a valid email address" })
     .refine(isEducationalEmail, {
-      message: "Please use an academic institution email (e.g., .edu, .ac.xx)",
+      message: "Please use an academic institution email (e.g., .edu, .ac.xx) or the admin email",
     }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   confirmPassword: z.string(),
@@ -120,6 +123,12 @@ const Authentication = () => {
     setLoginError("");
     try {
       console.log("Attempting login with:", values.email);
+      const isAdminLogin = values.email === ADMIN_EMAIL;
+      
+      if (isAdminLogin) {
+        console.log("Admin login detected, special handling");
+      }
+      
       await login(values.email, values.password);
       // The redirect will be handled in the useEffect below
     } catch (error: any) {
@@ -128,7 +137,11 @@ const Authentication = () => {
       
       // Enhance error message for admin
       if (values.email === ADMIN_EMAIL) {
-        errorMsg += " If you're trying to login as admin, please make sure you've signed up first.";
+        if (errorMsg.includes("Email not confirmed")) {
+          errorMsg = "Admin email not confirmed. Check your email inbox or disable email confirmation in Supabase Dashboard.";
+        } else {
+          errorMsg = "Admin login failed. Make sure you have created an admin account first.";
+        }
       }
       
       setLoginError(errorMsg);
@@ -143,8 +156,8 @@ const Authentication = () => {
       
       // Special message for admin signup
       const successMessage = values.email === ADMIN_EMAIL ? 
-        "Admin account created successfully! Please login with your new admin account." :
-        "Account created successfully! Please login with your new account.";
+        "Admin account created successfully! Please check your email for confirmation or disable email confirmation in Supabase Dashboard." :
+        "Account created successfully! Please check your email for confirmation.";
       
       toast({
         title: "Account created successfully",
@@ -214,6 +227,7 @@ const Authentication = () => {
                   <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                     {loginError && (
                       <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-800">
+                        <AlertCircle className="h-4 w-4 mr-2" />
                         <AlertDescription>{loginError}</AlertDescription>
                       </Alert>
                     )}
@@ -260,6 +274,14 @@ const Authentication = () => {
                         Sign up
                       </button>
                     </p>
+                    
+                    {/* Admin login help */}
+                    <Alert className="bg-blue-50 border-blue-200 mt-4">
+                      <Info className="h-4 w-4 text-blue-500" />
+                      <AlertDescription className="text-xs text-blue-700">
+                        <strong>Admin Login:</strong> To access the admin dashboard, you must first create an admin account using the email 2005ganesh16@gmail.com. After creating your account, you may need to verify your email or disable email confirmation in Supabase.
+                      </AlertDescription>
+                    </Alert>
                   </form>
                 </Form>
               </TabsContent>
@@ -269,6 +291,7 @@ const Authentication = () => {
                   <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-4">
                     {signupError && (
                       <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-800">
+                        <AlertCircle className="h-4 w-4 mr-2" />
                         <AlertDescription>{signupError}</AlertDescription>
                       </Alert>
                     )}
