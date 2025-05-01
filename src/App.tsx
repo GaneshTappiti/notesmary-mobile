@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -27,6 +28,7 @@ const StudyRoom = lazy(() => import("@/pages/StudyRoom"));
 const StudyRoomChat = lazy(() => import("@/pages/StudyRoomChat"));
 const StudyRoomInfo = lazy(() => import("@/pages/StudyRoomInfo"));
 const StudyAnalytics = lazy(() => import("@/pages/StudyAnalytics"));
+const Notifications = lazy(() => import("@/pages/Notifications"));
 
 // Admin dashboard pages
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
@@ -146,6 +148,16 @@ const AppRoutes = () => {
           <AppLayout>
             <Suspense fallback={<Loading />}>
               <AIMarkAnswers />
+            </Suspense>
+          </AppLayout>
+        </PrivateRoute>
+      } />
+      
+      <Route path="/notifications" element={
+        <PrivateRoute>
+          <AppLayout>
+            <Suspense fallback={<Loading />}>
+              <Notifications />
             </Suspense>
           </AppLayout>
         </PrivateRoute>

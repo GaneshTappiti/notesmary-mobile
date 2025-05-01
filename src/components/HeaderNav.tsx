@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { 
@@ -135,7 +134,6 @@ export const HeaderNav = () => {
   // Handle notifications click
   const handleNotificationsClick = () => {
     navigate('/notifications');
-    setUnreadNotifications(0); // Reset unread count when notifications are viewed
     toast({
       title: "Accessing notifications",
       description: "Taking you to your notifications page",

@@ -21,7 +21,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { NotificationCard } from '@/components/NotificationCard';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { HeaderNav } from '@/components/HeaderNav';
 import { PageContainer } from '@/components/PageContainer';
 
 // Import the types from NotificationCard
