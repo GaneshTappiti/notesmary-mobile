@@ -44,7 +44,7 @@ const DrawerContent = React.forwardRef<
   const sideClasses = {
     bottom: "inset-x-0 bottom-0 mt-24 rounded-t-[10px]",
     top: "inset-x-0 top-0 rounded-b-[10px]",
-    left: "inset-y-0 left-0 h-full w-3/4 max-w-sm rounded-r-[10px]",
+    left: "inset-y-0 left-0 h-full w-3/4 max-w-sm rounded-r-[10px]", 
     right: "inset-y-0 right-0 h-full w-3/4 max-w-sm rounded-l-[10px]"
   }
   
