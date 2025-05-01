@@ -51,34 +51,48 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Fetch user profile safely, outside of auth state change callback
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const userProfile = await AuthService.getUserProfile(userId);
+      if (userProfile) {
+        setProfile(userProfile);
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
+
   useEffect(() => {
-    const checkAuth = async () => {
+    let isMounted = true;
+    
+    const initAuth = async () => {
       try {
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        // First set up the subscription to auth state changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+          if (!isMounted) return;
+          
           if (session) {
             setIsAuthenticated(true);
             setUser(session.user);
-            localStorage.setItem('isLoggedIn', 'true');
             
+            // We use setTimeout to defer profile fetching to avoid potential circular callbacks
             if (session.user) {
-              // Check admin status immediately to update UI accordingly
-              const adminStatus = await checkAdminStatus(session.user.email || '');
-              setIsAdmin(adminStatus);
+              const email = session.user.email || '';
               
-              // Use setTimeout to avoid recursive calls in auth state change
-              setTimeout(() => {
-                AuthService.getUserProfile(session.user.id)
-                  .then(userProfile => {
-                    if (userProfile) {
-                      setProfile(userProfile);
-                    }
-                  })
-                  .catch(error => {
-                    console.error('Error fetching user profile:', error);
-                  });
+              // Check admin status safely
+              setTimeout(async () => {
+                if (!isMounted) return;
+                
+                const adminStatus = await checkAdminStatus(email);
+                setIsAdmin(adminStatus);
+                
+                // Fetch user profile separately
+                fetchUserProfile(session.user.id);
               }, 0);
             }
           } else {
+            // User is logged out
             setIsAuthenticated(false);
             setUser(null);
             setProfile(null);
@@ -87,6 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         });
         
+        // Now check the current session
         const { data: sessionData } = await supabase.auth.getSession();
         
         if (sessionData.session) {
@@ -94,19 +109,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(sessionData.session.user);
           
           if (sessionData.session.user) {
-            // Check admin status immediately
             const adminStatus = await checkAdminStatus(sessionData.session.user.email || '');
             setIsAdmin(adminStatus);
             
-            try {
-              const userProfile = await AuthService.getUserProfile(sessionData.session.user.id);
-              if (userProfile) {
-                setProfile(userProfile);
-              }
-            } catch (error) {
-              console.error('Error fetching profile during init:', error);
-            }
+            // Fetch user profile separately
+            await fetchUserProfile(sessionData.session.user.id);
           }
+        } else {
+          setIsAuthenticated(false);
+          setUser(null);
+          setProfile(null);
+          setIsAdmin(false);
         }
         
         setIsLoading(false);
@@ -116,12 +129,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         };
       } catch (error) {
         console.error('Auth check error:', error);
-        setIsAuthenticated(false);
-        setIsLoading(false);
+        if (isMounted) {
+          setIsAuthenticated(false);
+          setIsLoading(false);
+        }
       }
     };
 
-    checkAuth();
+    initAuth();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -135,8 +154,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.log("Admin login attempt detected");
       }
       
-      // Fixed: The result type doesn't include an error property directly
-      // It's wrapped in a data object with session and user
       const { data, error } = await AuthService.login({ email, password });
       
       if (error) {
@@ -149,20 +166,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsAuthenticated(true);
         setUser(data.session.user);
         
-        // Check admin status right after login
-        if (data.session.user && data.session.user.email) {
-          const isAdminUser = await checkAdminStatus(data.session.user.email);
-          console.log("Admin status after login:", isAdminUser);
-          setIsAdmin(isAdminUser);
-        }
-        
+        // The profile data and admin status will be handled by the onAuthStateChange
         localStorage.setItem('isLoggedIn', 'true');
-        
-        // Fetch the user profile
-        if (data.session.user) {
-          const userProfile = await AuthService.getUserProfile(data.session.user.id);
-          setProfile(userProfile);
-        }
         
         toast({
           title: 'Login Successful',
@@ -207,9 +212,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       await AuthService.logout();
-      setIsAuthenticated(false);
-      setUser(null);
-      setProfile(null);
+      // Auth state change will handle the rest
     } catch (error) {
       // Error is already handled in AuthService
     } finally {

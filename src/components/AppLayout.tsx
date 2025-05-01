@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from '@/components/AppSidebar';
@@ -7,7 +7,7 @@ import { HeaderNav } from '@/components/HeaderNav';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface AppLayoutProps {
@@ -24,9 +24,10 @@ const MobileSidebar = () => {
           <Menu className="h-5 w-5" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="p-0 w-[80%] max-w-[300px] bg-white h-[100dvh] max-h-[100dvh]">
+      <DrawerContent className="p-0 w-[80%] max-w-[300px]">
         <div className="h-full overflow-y-auto">
           <AppSidebar />
+          <DrawerClose className="hidden" data-drawer-close="true" />
         </div>
       </DrawerContent>
     </Drawer>
@@ -82,10 +83,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const isMobile = useIsMobile();
   const [layoutType, setLayoutType] = useState<string>('standard');
   
-  useEffect(() => {
-    // Use path matching for layout determination
-    const path = location.pathname;
-    
+  // Use path matching for layout determination
+  const path = location.pathname;
+  
+  // Use effect to set layout type based on path
+  React.useEffect(() => {
     if (path.includes('/study-room/') && path.includes('/chat')) {
       setLayoutType('study-room-chat');
     } else if (path.includes('/study-room/')) {
@@ -95,7 +97,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     } else {
       setLayoutType('standard');
     }
-  }, [location.pathname]);
+  }, [path]);
   
   // Wrap each layout with TooltipProvider to ensure tooltips work
   return (

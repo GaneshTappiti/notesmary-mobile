@@ -4,19 +4,17 @@ import * as React from "react"
 const MOBILE_BREAKPOINT = 768
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean>(false)
-  const [isInitialized, setIsInitialized] = React.useState<boolean>(false)
+  const [isMobile, setIsMobile] = React.useState<boolean>(
+    typeof window !== 'undefined' 
+      ? window.innerWidth < MOBILE_BREAKPOINT 
+      : false
+  )
 
   React.useEffect(() => {
     // Handle initial check
     const checkIfMobile = () => {
-      const mobile = window.innerWidth < MOBILE_BREAKPOINT
-      setIsMobile(mobile)
-      if (!isInitialized) setIsInitialized(true)
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     }
-
-    // Check immediately on component mount
-    checkIfMobile()
 
     // Set up resize listener with debounce for performance
     let timeoutId: number | undefined
@@ -56,7 +54,7 @@ export function useIsMobile() {
         mql.removeListener(handleMediaChange as any)
       }
     }
-  }, [isInitialized])
+  }, [])
 
   return isMobile
 }

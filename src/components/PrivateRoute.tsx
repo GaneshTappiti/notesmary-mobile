@@ -1,6 +1,6 @@
 
 import { Navigate, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -13,6 +13,16 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
   const { isAuthenticated, isLoading, isAdmin } = useAuth();
   const location = useLocation();
   const { toast } = useToast();
+  const [showLoader, setShowLoader] = useState(true);
+  
+  // Add a small delay before showing the loader to prevent flashing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(isLoading);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [isLoading]);
   
   // Use useEffect for side effects like showing toasts
   useEffect(() => {
@@ -26,7 +36,7 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
     }
   }, [isLoading, adminOnly, isAuthenticated, isAdmin, toast]);
 
-  if (isLoading) {
+  if (showLoader) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white">
         <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
