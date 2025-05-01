@@ -163,8 +163,8 @@ const UploadNotes = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-950">
-      <div className="pb-12 px-4 w-full max-w-5xl mx-auto">
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-indigo-50 to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-950">
+      <div className="pb-12 px-4 w-full max-w-5xl mx-auto pt-4 md:pt-0">
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Upload Notes</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">Share your knowledge with other students</p>

@@ -16,6 +16,9 @@ export function useIsMobile() {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     }
 
+    // Initial check
+    checkIfMobile();
+
     // Set up resize listener with debounce for performance
     let timeoutId: number | undefined
     const handleResize = () => {

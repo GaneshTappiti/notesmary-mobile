@@ -168,7 +168,7 @@ const Dashboard = () => {
 
   return (
     <PageContainer>
-      <div className="space-y-6 animate-fade-in">
+      <div className="space-y-6 animate-fade-in px-1 md:px-0">
         <WelcomeHeader 
           userName={user?.user_metadata?.full_name}
           onLogout={handleLogout}
@@ -176,7 +176,7 @@ const Dashboard = () => {
           onAdminClick={() => navigate('/admin')}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
           {quickAccessOptions.map((option, index) => (
             <QuickAccessCard
               key={index}
@@ -191,9 +191,9 @@ const Dashboard = () => {
           onViewAll={() => navigate('/study-rooms')}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           <div className="lg:col-span-2">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
               {statsCards.map((card, index) => (
                 <StatsCard key={index} {...card} />
               ))}

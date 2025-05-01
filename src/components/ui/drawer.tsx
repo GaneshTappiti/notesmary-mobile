@@ -33,27 +33,44 @@ const DrawerOverlay = React.forwardRef<
 ))
 DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName
 
+interface DrawerContentProps extends React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content> {
+  side?: "bottom" | "left" | "right" | "top"
+}
+
 const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DrawerPortal>
-    <DrawerOverlay />
-    <DrawerPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex flex-col rounded-t-[10px] border bg-background h-[90vh] max-h-[90vh]",
-        className
-      )}
-      {...props}
-    >
-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
-      <div className="flex-1 overflow-y-auto">
-        {children}
-      </div>
-    </DrawerPrimitive.Content>
-  </DrawerPortal>
-))
+  DrawerContentProps
+>(({ className, children, side = "bottom", ...props }, ref) => {
+  const sideClasses = {
+    bottom: "inset-x-0 bottom-0 mt-24 rounded-t-[10px]",
+    top: "inset-x-0 top-0 rounded-b-[10px]",
+    left: "inset-y-0 left-0 h-full w-3/4 max-w-sm rounded-r-[10px]",
+    right: "inset-y-0 right-0 h-full w-3/4 max-w-sm rounded-l-[10px]"
+  }
+  
+  return (
+    <DrawerPortal>
+      <DrawerOverlay />
+      <DrawerPrimitive.Content
+        ref={ref}
+        className={cn(
+          "fixed z-50 flex flex-col border bg-background",
+          sideClasses[side],
+          className
+        )}
+        {...props}
+      >
+        {side === "bottom" && <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />}
+        <div className={cn(
+          "flex-1 overflow-y-auto", 
+          side === "bottom" || side === "top" ? "p-4" : "p-0"
+        )}>
+          {children}
+        </div>
+      </DrawerPrimitive.Content>
+    </DrawerPortal>
+  )
+})
 DrawerContent.displayName = "DrawerContent"
 
 const DrawerHeader = ({

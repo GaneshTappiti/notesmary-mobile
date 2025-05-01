@@ -24,8 +24,8 @@ const MobileSidebar = () => {
           <Menu className="h-5 w-5" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="p-0 w-[80%] max-w-[300px]">
-        <div className="h-full overflow-y-auto">
+      <DrawerContent side="left" className="p-0 w-[80%] max-w-[300px]">
+        <div className="h-[90vh] overflow-y-auto">
           <AppSidebar />
           <DrawerClose className="hidden" data-drawer-close="true" />
         </div>
@@ -59,10 +59,10 @@ const StandardLayout = ({ children }: AppLayoutProps) => (
     
     <MobileSidebar />
     
-    <SidebarInset>
+    <SidebarInset className="w-full">
       <div className="flex flex-col min-h-full w-full max-w-full">
         <HeaderNav />
-        <main className="flex-1 pb-safe-bottom w-full overflow-x-hidden">
+        <main className="flex-1 pb-safe-bottom w-full overflow-x-hidden px-4 md:px-6">
           {children}
         </main>
       </div>
