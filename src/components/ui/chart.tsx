@@ -125,16 +125,19 @@ function CustomTooltip({
 }) {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-2 border border-gray-200 rounded-md shadow-md">
-        <p className="text-xs font-medium text-gray-600">{label}</p>
-        {payload.map((entry, index) => (
-          <div key={index} className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <p className="text-xs font-semibold text-gray-800">
-              {valueFormatter(entry.value as number)}
-            </p>
-          </div>
-        ))}
+      <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded-md shadow-md">
+        <p className="text-xs font-medium text-gray-600 dark:text-gray-300">{label}</p>
+        <div className="mt-1">
+          {payload.map((entry, index) => (
+            <div key={index} className="flex items-center gap-1.5 mb-1">
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+              <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">
+                <span className="capitalize">{entry.name}: </span>
+                {valueFormatter(entry.value as number)}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

@@ -75,13 +75,15 @@ export const UsageCharts: React.FC = () => {
           {isLoading ? (
             <Skeleton className="h-[300px] w-full" />
           ) : (
-            <LineChart 
-              className="h-[300px]"
-              data={period === "weekly" ? weeklyEngagementData : monthlyEngagementData}
-              categories={["notes", "rooms", "messages"]}
-              colors={["#8b5cf6", "#3b82f6", "#ef4444"]}
-              index={period === "weekly" ? "day" : "week"}
-            />
+            <div className="h-[300px] w-full">
+              <LineChart 
+                className="h-[300px]"
+                data={period === "weekly" ? weeklyEngagementData : monthlyEngagementData}
+                categories={["notes", "rooms", "messages"]}
+                colors={["#8b5cf6", "#3b82f6", "#ef4444"]}
+                index={period === "weekly" ? "day" : "week"}
+              />
+            </div>
           )}
         </CardContent>
       </Card>
@@ -98,13 +100,15 @@ export const UsageCharts: React.FC = () => {
           {isLoading ? (
             <Skeleton className="h-[300px] w-full" />
           ) : (
-            <BarChart 
-              className="h-[300px]"
-              data={registrationData}
-              categories={["users"]}
-              colors={["#8b5cf6"]}
-              index="month"
-            />
+            <div className="h-[300px] w-full">
+              <BarChart 
+                className="h-[300px]"
+                data={registrationData}
+                categories={["users"]}
+                colors={["#8b5cf6"]}
+                index="month"
+              />
+            </div>
           )}
         </CardContent>
       </Card>

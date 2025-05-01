@@ -6,12 +6,9 @@ import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ResponsiveBar } from '@nivo/bar';
-import { ResponsiveLine } from '@nivo/line';
-import { ResponsivePie } from '@nivo/pie';
-import { ResponsiveHeatMap } from '@nivo/heatmap';
 import { BarChart, LineChart, PieChart, ActivitySquare, Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { UsageCharts } from '@/components/admin/UsageCharts';
 
 // Mock data for analytics
 const userActivityData = [
@@ -96,7 +93,7 @@ const AdminAnalytics = () => {
       <AdminLayout>
         <PageContainer className="py-6">
           <div className="flex flex-col space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
                 <p className="text-muted-foreground">Monitor platform usage and performance metrics.</p>
@@ -122,445 +119,353 @@ const AdminAnalytics = () => {
               </div>
             </div>
             
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid grid-cols-4 w-[600px]">
-                <TabsTrigger value="overview" className="flex items-center gap-2">
-                  <ActivitySquare className="h-4 w-4" />
-                  <span>Overview</span>
-                </TabsTrigger>
-                <TabsTrigger value="users" className="flex items-center gap-2">
-                  <BarChart className="h-4 w-4" />
-                  <span>Users</span>
-                </TabsTrigger>
-                <TabsTrigger value="content" className="flex items-center gap-2">
-                  <PieChart className="h-4 w-4" />
-                  <span>Content</span>
-                </TabsTrigger>
-                <TabsTrigger value="engagement" className="flex items-center gap-2">
-                  <LineChart className="h-4 w-4" />
-                  <span>Engagement</span>
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="overview" className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Platform Growth</CardTitle>
-                      <CardDescription>Users, notes, and AI usage over time</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-2">
-                      <div className="h-[300px]">
-                        <ResponsiveLine
-                          data={growthData}
-                          margin={{ top: 20, right: 20, bottom: 50, left: 60 }}
-                          xScale={{ type: 'point' }}
-                          yScale={{
-                            type: 'linear',
-                            min: 'auto',
-                            max: 'auto',
-                            stacked: false,
-                            reverse: false
-                          }}
-                          yFormat=" >-.2f"
-                          axisTop={null}
-                          axisRight={null}
-                          axisBottom={{
-                            tickSize: 5,
-                            tickPadding: 5,
-                            tickRotation: 0,
-                            legend: 'Month',
-                            legendOffset: 36,
-                            legendPosition: 'middle'
-                          }}
-                          axisLeft={{
-                            tickSize: 5,
-                            tickPadding: 5,
-                            tickRotation: 0,
-                            legend: 'Count',
-                            legendOffset: -40,
-                            legendPosition: 'middle'
-                          }}
-                          colors={{ scheme: 'category10' }}
-                          pointSize={10}
-                          pointColor={{ theme: 'background' }}
-                          pointBorderWidth={2}
-                          pointBorderColor={{ from: 'serieColor' }}
-                          pointLabelYOffset={-12}
-                          useMesh={true}
-                          legends={[
-                            {
-                              anchor: 'bottom',
-                              direction: 'row',
-                              justify: false,
-                              translateX: 0,
-                              translateY: 50,
-                              itemsSpacing: 0,
-                              itemDirection: 'left-to-right',
-                              itemWidth: 80,
-                              itemHeight: 20,
-                              itemOpacity: 0.75,
-                              symbolSize: 12,
-                              symbolShape: 'circle',
-                              symbolBorderColor: 'rgba(0, 0, 0, .5)',
-                            }
-                          ]}
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Daily User Activity</CardTitle>
-                      <CardDescription>User sessions by day of week</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-2">
-                      <div className="h-[300px]">
-                        <ResponsiveBar
-                          data={userActivityData}
-                          keys={['value']}
-                          indexBy="day"
-                          margin={{ top: 20, right: 20, bottom: 50, left: 60 }}
-                          padding={0.3}
-                          colors={{ scheme: 'purple_blue' }}
-                          axisTop={null}
-                          axisRight={null}
-                          axisBottom={{
-                            tickSize: 5,
-                            tickPadding: 5,
-                            tickRotation: 0,
-                            legend: 'Day',
-                            legendPosition: 'middle',
-                            legendOffset: 32
-                          }}
-                          axisLeft={{
-                            tickSize: 5,
-                            tickPadding: 5,
-                            tickRotation: 0,
-                            legend: 'Sessions',
-                            legendPosition: 'middle',
-                            legendOffset: -40
-                          }}
-                          labelSkipWidth={12}
-                          labelSkipHeight={12}
-                          role="application"
-                          ariaLabel="User activity chart"
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Notes by Subject</CardTitle>
-                      <CardDescription>Distribution of notes across subjects</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-2">
-                      <div className="h-[300px]">
-                        <ResponsivePie
-                          data={notesBySubjectData}
-                          margin={{ top: 20, right: 20, bottom: 80, left: 20 }}
-                          innerRadius={0.5}
-                          padAngle={0.7}
-                          cornerRadius={3}
-                          activeOuterRadiusOffset={8}
-                          colors={{ scheme: 'category10' }}
-                          borderWidth={1}
-                          borderColor={{
-                            from: 'color',
-                            modifiers: [['darker', 0.2]]
-                          }}
-                          arcLinkLabelsSkipAngle={10}
-                          arcLinkLabelsTextColor="#333333"
-                          arcLinkLabelsThickness={2}
-                          arcLinkLabelsColor={{ from: 'color' }}
-                          arcLabelsSkipAngle={10}
-                          arcLabelsTextColor="#ffffff"
-                          legends={[
-                            {
-                              anchor: 'bottom',
-                              direction: 'row',
-                              justify: false,
-                              translateX: 0,
-                              translateY: 50,
-                              itemsSpacing: 0,
-                              itemWidth: 100,
-                              itemHeight: 18,
-                              itemTextColor: '#999',
-                              itemDirection: 'left-to-right',
-                              itemOpacity: 1,
-                              symbolSize: 18,
-                              symbolShape: 'circle'
-                            }
-                          ]}
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+            <div className="overflow-hidden">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid grid-cols-4 max-w-[600px] mb-4">
+                  <TabsTrigger value="overview" className="flex items-center gap-2">
+                    <ActivitySquare className="h-4 w-4" />
+                    <span>Overview</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="users" className="flex items-center gap-2">
+                    <BarChart className="h-4 w-4" />
+                    <span>Users</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="content" className="flex items-center gap-2">
+                    <PieChart className="h-4 w-4" />
+                    <span>Content</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="engagement" className="flex items-center gap-2">
+                    <LineChart className="h-4 w-4" />
+                    <span>Engagement</span>
+                  </TabsTrigger>
+                </TabsList>
                 
-                <div className="mt-6">
+                <TabsContent value="overview" className="space-y-6">
+                  <UsageCharts />
+                  
                   <Card>
                     <CardHeader>
-                      <CardTitle>Active Time Heatmap</CardTitle>
+                      <CardTitle>Active Time Distribution</CardTitle>
                       <CardDescription>When users are most active on the platform</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-2">
-                      <div className="h-[400px]">
-                        <ResponsiveHeatMap
-                          data={activeTimeData}
-                          margin={{ top: 40, right: 20, bottom: 60, left: 60 }}
-                          valueFormat=">-.2f"
-                          axisTop={{
-                            tickSize: 5,
-                            tickPadding: 5,
-                            tickRotation: -90,
-                            legend: '',
-                            legendOffset: 46
-                          }}
-                          axisRight={null}
-                          axisBottom={{
-                            tickSize: 5,
-                            tickPadding: 5,
-                            tickRotation: 0,
-                            legend: 'Day of Week',
-                            legendPosition: 'middle',
-                            legendOffset: 36
-                          }}
-                          axisLeft={{
-                            tickSize: 5,
-                            tickPadding: 5,
-                            tickRotation: 0,
-                            legend: 'Time of Day',
-                            legendPosition: 'middle',
-                            legendOffset: -40
-                          }}
-                          colors={{
-                            type: 'sequential',
-                            scheme: 'purples'
-                          }}
-                          emptyColor="#eeeeee"
-                          legends={[
-                            {
-                              anchor: 'bottom',
-                              translateX: 0,
-                              translateY: 30,
-                              length: 400,
-                              thickness: 8,
-                              direction: 'row',
-                              tickPosition: 'after',
-                              tickSize: 3,
-                              tickSpacing: 4,
-                              tickOverlap: false,
-                              tickFormat: '>-.2f',
-                              title: 'Activity Score →',
-                              titleAlign: 'start',
-                              titleOffset: 4
-                            }
-                          ]}
-                        />
+                    <CardContent>
+                      <div className="h-[400px] w-full">
+                        <div className="flex items-center justify-center h-full">
+                          <p className="text-center text-muted-foreground">
+                            Active time heatmap visualization
+                            <br />
+                            <span className="text-sm">(Displaying data for the selected time period)</span>
+                          </p>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="users" className="mt-6">
-                <div className="grid grid-cols-1 gap-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Monthly Active Users</CardTitle>
-                      <CardDescription>User growth over the last 5 months</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-2">
-                      <div className="h-[400px]">
-                        <ResponsiveBar
-                          data={monthlyUsersData}
-                          keys={['y']}
-                          indexBy="x"
-                          margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
-                          padding={0.3}
-                          valueScale={{ type: 'linear' }}
-                          indexScale={{ type: 'band', round: true }}
-                          colors={{ scheme: 'category10' }}
-                          borderColor={{
-                            from: 'color',
-                            modifiers: [['darker', 1.6]]
-                          }}
-                          axisTop={null}
-                          axisRight={null}
-                          axisBottom={{
-                            tickSize: 5,
-                            tickPadding: 5,
-                            tickRotation: 0,
-                            legend: 'Month',
-                            legendPosition: 'middle',
-                            legendOffset: 32
-                          }}
-                          axisLeft={{
-                            tickSize: 5,
-                            tickPadding: 5,
-                            tickRotation: 0,
-                            legend: 'Users',
-                            legendPosition: 'middle',
-                            legendOffset: -40
-                          }}
-                          labelSkipWidth={12}
-                          labelSkipHeight={12}
-                          labelTextColor={{
-                            from: 'color',
-                            modifiers: [['darker', 1.6]]
-                          }}
-                          role="application"
-                          ariaLabel="Monthly active users"
-                          barAriaLabel={function(e){return e.id+": "+e.formattedValue+" in month: "+e.indexValue}}
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  {/* More user-specific charts would go here */}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="content" className="mt-6">
-                <div className="grid grid-cols-1 gap-6">
+                </TabsContent>
+                
+                <TabsContent value="users" className="space-y-6">
+                  <div className="grid grid-cols-1 gap-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Monthly Active Users</CardTitle>
+                        <CardDescription>User growth over the last 5 months</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="h-[400px] w-full">
+                          <div className="flex items-center justify-center h-full">
+                            <div className="w-full p-4">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                                {monthlyUsersData.map((item, index) => (
+                                  <Card key={index} className="overflow-hidden">
+                                    <CardContent className="p-4">
+                                      <div className="text-2xl font-bold">{item.y}</div>
+                                      <p className="text-sm text-muted-foreground">{item.x}</p>
+                                      <div className="mt-2 h-2 bg-gray-100 rounded-full">
+                                        <div 
+                                          className="h-full bg-primary rounded-full" 
+                                          style={{ width: `${(item.y / 250) * 100}%` }}
+                                        ></div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>User Demographics</CardTitle>
+                        <CardDescription>Breakdown of user types and roles</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="h-[300px] w-full">
+                          <div className="flex items-center justify-center h-full">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                              <Card className="overflow-hidden">
+                                <CardContent className="p-4 flex flex-col items-center">
+                                  <div className="text-3xl font-bold">1,870</div>
+                                  <p className="text-lg">Students</p>
+                                </CardContent>
+                              </Card>
+                              <Card className="overflow-hidden">
+                                <CardContent className="p-4 flex flex-col items-center">
+                                  <div className="text-3xl font-bold">420</div>
+                                  <p className="text-lg">Faculty</p>
+                                </CardContent>
+                              </Card>
+                              <Card className="overflow-hidden">
+                                <CardContent className="p-4 flex flex-col items-center">
+                                  <div className="text-3xl font-bold">540</div>
+                                  <p className="text-lg">Alumni</p>
+                                </CardContent>
+                              </Card>
+                              <Card className="overflow-hidden">
+                                <CardContent className="p-4 flex flex-col items-center">
+                                  <div className="text-3xl font-bold">4</div>
+                                  <p className="text-lg">Admins</p>
+                                </CardContent>
+                              </Card>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="content" className="space-y-6">
                   <Card>
                     <CardHeader>
                       <CardTitle>Content Distribution</CardTitle>
                       <CardDescription>Analysis of content types and popularity</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-2">
-                      <div className="h-[400px]">
-                        <ResponsivePie
-                          data={notesBySubjectData}
-                          margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-                          innerRadius={0.5}
-                          padAngle={0.7}
-                          cornerRadius={3}
-                          activeOuterRadiusOffset={8}
-                          colors={{ scheme: 'nivo' }}
-                          borderWidth={1}
-                          borderColor={{
-                            from: 'color',
-                            modifiers: [['darker', 0.2]]
-                          }}
-                          arcLinkLabelsSkipAngle={10}
-                          arcLinkLabelsTextColor="#333333"
-                          arcLinkLabelsThickness={2}
-                          arcLinkLabelsColor={{ from: 'color' }}
-                          arcLabelsSkipAngle={10}
-                          arcLabelsTextColor={{
-                            from: 'color',
-                            modifiers: [['darker', 2]]
-                          }}
-                          legends={[
-                            {
-                              anchor: 'bottom',
-                              direction: 'row',
-                              justify: false,
-                              translateX: 0,
-                              translateY: 56,
-                              itemsSpacing: 0,
-                              itemWidth: 100,
-                              itemHeight: 18,
-                              itemTextColor: '#999',
-                              itemDirection: 'left-to-right',
-                              itemOpacity: 1,
-                              symbolSize: 18,
-                              symbolShape: 'circle'
-                            }
-                          ]}
-                        />
+                    <CardContent>
+                      <div className="h-[400px] w-full">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 w-full">
+                          {notesBySubjectData.map((item, index) => (
+                            <Card key={index} className="overflow-hidden">
+                              <CardContent className="p-4">
+                                <div className="text-xl font-bold">{item.value}%</div>
+                                <p className="text-sm truncate">{item.id}</p>
+                                <div className="mt-2 h-2 bg-gray-100 rounded-full">
+                                  <div 
+                                    className="h-full bg-primary rounded-full" 
+                                    style={{ width: `${item.value}%` }}
+                                  ></div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
                   
-                  {/* More content-specific charts would go here */}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="engagement" className="mt-6">
-                <div className="grid grid-cols-1 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Most Popular Notes</CardTitle>
+                      <CardDescription>Top downloaded and viewed notes</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Card>
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-base">Most Downloaded</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <ul className="space-y-2">
+                              <li className="flex justify-between items-center">
+                                <span>Advanced Calculus Notes</span>
+                                <span className="font-semibold">421</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Data Structures Tutorial</span>
+                                <span className="font-semibold">348</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Physics Formulas Cheatsheet</span>
+                                <span className="font-semibold">287</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Chemistry Lab Guide</span>
+                                <span className="font-semibold">245</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>History Exam Prep</span>
+                                <span className="font-semibold">198</span>
+                              </li>
+                            </ul>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card>
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-base">Most Viewed</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <ul className="space-y-2">
+                              <li className="flex justify-between items-center">
+                                <span>Programming Basics 101</span>
+                                <span className="font-semibold">1,203</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Advanced Calculus Notes</span>
+                                <span className="font-semibold">957</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Machine Learning Guide</span>
+                                <span className="font-semibold">842</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>Physics Formulas Cheatsheet</span>
+                                <span className="font-semibold">768</span>
+                              </li>
+                              <li className="flex justify-between items-center">
+                                <span>English Literature Notes</span>
+                                <span className="font-semibold">659</span>
+                              </li>
+                            </ul>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                
+                <TabsContent value="engagement" className="space-y-6">
                   <Card>
                     <CardHeader>
                       <CardTitle>User Engagement Metrics</CardTitle>
                       <CardDescription>Key engagement indicators over time</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-2">
-                      <div className="h-[400px]">
-                        <ResponsiveLine
-                          data={growthData}
-                          margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-                          xScale={{ type: 'point' }}
-                          yScale={{
-                            type: 'linear',
-                            min: 'auto',
-                            max: 'auto',
-                            stacked: false,
-                            reverse: false
-                          }}
-                          yFormat=" >-.2f"
-                          axisTop={null}
-                          axisRight={null}
-                          axisBottom={{
-                            tickSize: 5,
-                            tickPadding: 5,
-                            tickRotation: 0,
-                            legend: 'Month',
-                            legendOffset: 36,
-                            legendPosition: 'middle'
-                          }}
-                          axisLeft={{
-                            tickSize: 5,
-                            tickPadding: 5,
-                            tickRotation: 0,
-                            legend: 'Count',
-                            legendOffset: -40,
-                            legendPosition: 'middle'
-                          }}
-                          pointSize={10}
-                          pointColor={{ theme: 'background' }}
-                          pointBorderWidth={2}
-                          pointBorderColor={{ from: 'serieColor' }}
-                          pointLabelYOffset={-12}
-                          useMesh={true}
-                          legends={[
-                            {
-                              anchor: 'bottom-right',
-                              direction: 'column',
-                              justify: false,
-                              translateX: 100,
-                              translateY: 0,
-                              itemsSpacing: 0,
-                              itemDirection: 'left-to-right',
-                              itemWidth: 80,
-                              itemHeight: 20,
-                              itemOpacity: 0.75,
-                              symbolSize: 12,
-                              symbolShape: 'circle',
-                              symbolBorderColor: 'rgba(0, 0, 0, .5)',
-                              effects: [
-                                {
-                                  on: 'hover',
-                                  style: {
-                                    itemBackground: 'rgba(0, 0, 0, .03)',
-                                    itemOpacity: 1
-                                  }
-                                }
-                              ]
-                            }
-                          ]}
-                        />
+                    <CardContent>
+                      <div className="h-[400px] w-full">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+                          <Card>
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-base">Average Session</CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex items-center justify-center h-32">
+                              <div className="text-center">
+                                <div className="text-4xl font-bold">24.3</div>
+                                <p className="text-muted-foreground">minutes</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                          
+                          <Card>
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-base">Daily Active Users</CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex items-center justify-center h-32">
+                              <div className="text-center">
+                                <div className="text-4xl font-bold">427</div>
+                                <p className="text-muted-foreground">users</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                          
+                          <Card>
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-base">Retention Rate</CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex items-center justify-center h-32">
+                              <div className="text-center">
+                                <div className="text-4xl font-bold">78%</div>
+                                <p className="text-muted-foreground">weekly</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
                   
-                  {/* More engagement-specific charts would go here */}
-                </div>
-              </TabsContent>
-            </Tabs>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Weekly Activity</CardTitle>
+                        <CardDescription>User sessions by day of week</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="h-[300px] w-full">
+                          <div className="grid grid-cols-7 gap-2 h-full items-end p-4">
+                            {userActivityData.map((item, i) => (
+                              <div key={i} className="flex flex-col items-center justify-end h-full">
+                                <div 
+                                  className="w-full bg-primary rounded-t-md" 
+                                  style={{ height: `${(item.value / 100) * 100}%` }}
+                                ></div>
+                                <span className="text-xs mt-2">{item.day.substring(0, 3)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Feature Usage</CardTitle>
+                        <CardDescription>Most popular platform features</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          <div>
+                            <div className="flex justify-between mb-1">
+                              <span>Note Uploads</span>
+                              <span>78%</span>
+                            </div>
+                            <div className="w-full h-2 bg-gray-100 rounded-full">
+                              <div className="h-full bg-primary rounded-full" style={{ width: "78%" }}></div>
+                            </div>
+                          </div>
+                          <div>
+                            <div className="flex justify-between mb-1">
+                              <span>AI Answers</span>
+                              <span>64%</span>
+                            </div>
+                            <div className="w-full h-2 bg-gray-100 rounded-full">
+                              <div className="h-full bg-primary rounded-full" style={{ width: "64%" }}></div>
+                            </div>
+                          </div>
+                          <div>
+                            <div className="flex justify-between mb-1">
+                              <span>Study Rooms</span>
+                              <span>53%</span>
+                            </div>
+                            <div className="w-full h-2 bg-gray-100 rounded-full">
+                              <div className="h-full bg-primary rounded-full" style={{ width: "53%" }}></div>
+                            </div>
+                          </div>
+                          <div>
+                            <div className="flex justify-between mb-1">
+                              <span>Note Search</span>
+                              <span>42%</span>
+                            </div>
+                            <div className="w-full h-2 bg-gray-100 rounded-full">
+                              <div className="h-full bg-primary rounded-full" style={{ width: "42%" }}></div>
+                            </div>
+                          </div>
+                          <div>
+                            <div className="flex justify-between mb-1">
+                              <span>Analytics</span>
+                              <span>31%</span>
+                            </div>
+                            <div className="w-full h-2 bg-gray-100 rounded-full">
+                              <div className="h-full bg-primary rounded-full" style={{ width: "31%" }}></div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </PageContainer>
       </AdminLayout>
