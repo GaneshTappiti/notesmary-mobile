@@ -11,14 +11,16 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="h-screen flex overflow-hidden bg-gray-50 dark:bg-gray-900">
       <AdminSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
       
-      <div className="flex flex-col md:pl-64">
+      <div className="flex flex-col w-0 flex-1 overflow-hidden">
         <AdminTopbar onMenuClick={() => setSidebarOpen(true)} />
         
-        <main className="flex-1 overflow-y-auto pb-10">
-          {children}
+        <main className="flex-1 relative overflow-y-auto focus:outline-none pb-10">
+          <div className="w-full">
+            {children}
+          </div>
         </main>
       </div>
     </div>

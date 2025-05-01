@@ -25,7 +25,7 @@ export const PageContainer = ({
       className
     )}>
       <div className={cn(
-        "w-full",
+        "w-full max-w-full",
         !noPadding && "px-4 sm:px-6 lg:px-8",
         contentClassName
       )}>
