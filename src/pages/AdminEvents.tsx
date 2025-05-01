@@ -19,8 +19,32 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 
+// Define interfaces for our data structures
+interface BaseItem {
+  id: string;
+  title: string;
+  date: string;
+  type: string;
+  category: string;
+  description: string;
+}
+
+interface EventItem extends BaseItem {
+  type: 'event';
+  location: string;
+  importance?: never;
+}
+
+interface AnnouncementItem extends BaseItem {
+  type: 'announcement';
+  importance: string;
+  location?: never;
+}
+
+type ItemType = EventItem | AnnouncementItem;
+
 // Mock data for events and announcements
-const eventsData = [
+const eventsData: EventItem[] = [
   {
     id: 'evt-1',
     title: 'End of Semester Submission',
@@ -41,7 +65,7 @@ const eventsData = [
   }
 ];
 
-const announcementsData = [
+const announcementsData: AnnouncementItem[] = [
   {
     id: 'anc-1',
     title: 'System Maintenance',
@@ -65,8 +89,8 @@ const announcementsData = [
 const AdminEvents = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('events');
-  const [events, setEvents] = useState(eventsData);
-  const [announcements, setAnnouncements] = useState(announcementsData);
+  const [events, setEvents] = useState<EventItem[]>(eventsData);
+  const [announcements, setAnnouncements] = useState<AnnouncementItem[]>(announcementsData);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [formData, setFormData] = useState({
@@ -75,7 +99,7 @@ const AdminEvents = () => {
     category: '',
     location: '',
     importance: 'medium',
-    type: 'event'
+    type: 'event' as 'event' | 'announcement'
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -97,20 +121,28 @@ const AdminEvents = () => {
       return;
     }
 
-    const newItem = {
-      id: `${formData.type}-${Date.now()}`,
-      title: formData.title,
-      description: formData.description,
-      date: date.toISOString(),
-      type: formData.type,
-      category: formData.category,
-      ...(formData.type === 'event' ? { location: formData.location } : { importance: formData.importance })
-    };
-
     if (formData.type === 'event') {
-      setEvents(prev => [newItem, ...prev]);
+      const newEvent: EventItem = {
+        id: `evt-${Date.now()}`,
+        title: formData.title,
+        description: formData.description,
+        date: date.toISOString(),
+        type: 'event',
+        category: formData.category,
+        location: formData.location
+      };
+      setEvents(prev => [newEvent, ...prev]);
     } else {
-      setAnnouncements(prev => [newItem, ...prev]);
+      const newAnnouncement: AnnouncementItem = {
+        id: `anc-${Date.now()}`,
+        title: formData.title,
+        description: formData.description,
+        date: date.toISOString(),
+        type: 'announcement',
+        category: formData.category,
+        importance: formData.importance
+      };
+      setAnnouncements(prev => [newAnnouncement, ...prev]);
     }
 
     toast({
@@ -185,7 +217,7 @@ const AdminEvents = () => {
                       </Label>
                       <Select 
                         value={formData.type} 
-                        onValueChange={(value) => handleSelectChange('type', value)}
+                        onValueChange={(value: 'event' | 'announcement') => handleSelectChange('type', value)}
                       >
                         <SelectTrigger className="col-span-3">
                           <SelectValue placeholder="Select type" />
