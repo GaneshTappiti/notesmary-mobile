@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { 
@@ -32,22 +33,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from '@/contexts/AuthContext';
 
 export const HeaderNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { logout, user } = useAuth();
   const [unreadNotifications, setUnreadNotifications] = useState(3); // Mock unread count
   
   // Handle sign out
-  const handleSignOut = () => {
-    localStorage.removeItem("isLoggedIn");
-    toast({
-      title: "Signed out successfully",
-      description: "You have been logged out of your account.",
-      duration: 3000,
-    });
-    navigate('/');
+  const handleSignOut = async () => {
+    try {
+      await logout();
+      toast({
+        title: "Signed out successfully",
+        description: "You have been logged out of your account.",
+        duration: 3000,
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast({
+        title: "Sign out failed",
+        description: "There was a problem signing you out. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   // Function to get page title
@@ -141,6 +153,10 @@ export const HeaderNav = () => {
     });
   };
 
+  const displayName = user?.user_metadata?.full_name || 
+                     user?.email?.split('@')[0] || 
+                     "User";
+
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 h-16">
       <div className="h-full flex flex-col justify-center">
@@ -198,10 +214,13 @@ export const HeaderNav = () => {
                   className="rounded-full flex items-center gap-2 pr-2 pl-1"
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="https://ui-avatars.com/api/?name=Student&background=0D8ABC&color=fff" alt="Student" />
-                    <AvatarFallback>S</AvatarFallback>
+                    <AvatarImage 
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0D8ABC&color=fff`} 
+                      alt={displayName} 
+                    />
+                    <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <span className="hidden sm:inline text-sm font-medium">Student</span>
+                  <span className="hidden sm:inline text-sm font-medium">{displayName}</span>
                   <ChevronDown className="h-4 w-4 text-gray-500" />
                 </Button>
               </DropdownMenuTrigger>
@@ -209,17 +228,17 @@ export const HeaderNav = () => {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => navigate('/view-notes')}>
+                  <DropdownMenuItem onClick={() => navigate('/my-notes')} className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     <span>My Notes</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/settings')}>
+                  <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-500" onClick={handleSignOut}>
+                <DropdownMenuItem className="text-red-500 cursor-pointer" onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign out</span>
                 </DropdownMenuItem>
