@@ -1,8 +1,20 @@
 
 import { motion } from 'framer-motion';
 import { BookOpen, Github, Twitter, Instagram } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 export const Footer = () => {
+  const { toast } = useToast();
+  
+  const handleComingSoonLink = (e: React.MouseEvent<HTMLAnchorElement>, pageName: string) => {
+    e.preventDefault();
+    toast({
+      title: "Coming Soon",
+      description: `The ${pageName} page will be available soon.`,
+    });
+  };
+
   return (
     <footer id="contact" className="bg-gray-50 dark:bg-gray-900/50 pt-16 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,15 +37,28 @@ export const Footer = () => {
               Smarter learning starts here. AI-powered tools for academic excellence.
             </p>
             <div className="mt-6 flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <a 
+                href="#" 
+                onClick={(e) => handleComingSoonLink(e, 'Twitter')}
+                className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
                 <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <a 
+                href="#" 
+                onClick={(e) => handleComingSoonLink(e, 'Instagram')}
+                className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
                 <Instagram className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <a 
+                href="https://github.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
                 <Github className="h-5 w-5" />
                 <span className="sr-only">GitHub</span>
               </a>
@@ -46,8 +71,24 @@ export const Footer = () => {
             <ul className="mt-4 space-y-3">
               <li><a href="#features" className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Features</a></li>
               <li><a href="#pricing" className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Pricing</a></li>
-              <li><a href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">About Us</a></li>
-              <li><a href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Testimonials</a></li>
+              <li>
+                <a 
+                  href="#" 
+                  onClick={(e) => handleComingSoonLink(e, 'About Us')}
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                >
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="#" 
+                  onClick={(e) => handleComingSoonLink(e, 'Testimonials')}
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                >
+                  Testimonials
+                </a>
+              </li>
             </ul>
           </div>
           
@@ -55,10 +96,30 @@ export const Footer = () => {
           <div>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-200 tracking-wider uppercase">Legal</h3>
             <ul className="mt-4 space-y-3">
-              <li><a href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Privacy Policy</a></li>
-              <li><a href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Terms of Service</a></li>
-              <li><a href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Cookie Policy</a></li>
-              <li><a href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Contact Support</a></li>
+              <li>
+                <Link to="/privacy-policy" className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link to="/cookie-policy" className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+                  Cookie Policy
+                </Link>
+              </li>
+              <li>
+                <a 
+                  href="#" 
+                  onClick={(e) => handleComingSoonLink(e, 'Contact Support')}
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                >
+                  Contact Support
+                </a>
+              </li>
             </ul>
           </div>
         </motion.div>
@@ -73,9 +134,9 @@ export const Footer = () => {
         >
           <p>&copy; {new Date().getFullYear()} Notex. All rights reserved.</p>
           <div className="mt-4 sm:mt-0 flex flex-wrap space-x-4">
-            <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">Privacy</a>
-            <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">Terms</a>
-            <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">Cookies</a>
+            <Link to="/privacy" className="hover:text-blue-600 dark:hover:text-blue-400">Privacy</Link>
+            <Link to="/terms" className="hover:text-blue-600 dark:hover:text-blue-400">Terms</Link>
+            <Link to="/cookies" className="hover:text-blue-600 dark:hover:text-blue-400">Cookies</Link>
           </div>
         </motion.div>
       </div>

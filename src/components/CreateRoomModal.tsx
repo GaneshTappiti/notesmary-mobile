@@ -18,11 +18,24 @@ import { HelpCircle, Users, Lock, Unlock, BookOpen, CheckCircle, Copy, X } from 
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
 
 interface CreateRoomModalProps {
   open: boolean;
   onClose: () => void;
 }
+
+// Form validation schema
+const roomFormSchema = z.object({
+  roomName: z.string().min(3, { message: "Room name must be at least 3 characters long" }),
+  description: z.string().optional(),
+  isPrivate: z.boolean().default(false),
+  enableShareLink: z.boolean().default(false),
+});
+
+type RoomFormValues = z.infer<typeof roomFormSchema>;
 
 export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
   const [roomName, setRoomName] = useState("");
@@ -32,8 +45,10 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
   const [currentEmail, setCurrentEmail] = useState("");
   const [enableShareLink, setEnableShareLink] = useState(false);
   const [step, setStep] = useState<"form" | "preview">("form");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [shareableLink, setShareableLink] = useState("https://study.app/join/room/abc123");
 
   const suggestedTopics = [
     "Advanced Calculus Study",
@@ -43,18 +58,52 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
     "Chemistry Lab Preparation"
   ];
 
+  // Email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const handleSubmit = () => {
-    // In a real implementation, this would send data to a server
-    toast({
-      title: "Study Room Created",
-      description: `"${roomName}" room has been created successfully.`,
-    });
+    setIsSubmitting(true);
     
-    // Navigate to the new room (in a real app, we'd use the ID returned from API)
-    const mockNewRoomId = Math.floor(Math.random() * 1000).toString();
-    resetForm();
-    onClose();
-    navigate(`/study-room/${mockNewRoomId}/info`);
+    // Validate required fields
+    if (!roomName.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide a room name",
+        variant: "destructive"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+    
+    // Validate emails
+    const invalidEmails = inviteEmails.filter(email => !emailRegex.test(email));
+    if (invalidEmails.length > 0) {
+      toast({
+        title: "Invalid Email Addresses",
+        description: `Some email addresses are not valid: ${invalidEmails.join(", ")}`,
+        variant: "destructive"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+    
+    // Simulate API call with timeout
+    setTimeout(() => {
+      // In a real implementation, this would send data to a server
+      toast({
+        title: "Study Room Created",
+        description: `"${roomName}" room has been created successfully.`,
+      });
+      
+      // Generate a random ID for the new room
+      const mockNewRoomId = Math.floor(Math.random() * 1000).toString();
+      resetForm();
+      onClose();
+      
+      // Navigate to the new room
+      navigate(`/study-room/${mockNewRoomId}/info`);
+      setIsSubmitting(false);
+    }, 1000);
   };
 
   const resetForm = () => {
@@ -65,6 +114,7 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
     setCurrentEmail("");
     setEnableShareLink(false);
     setStep("form");
+    setIsSubmitting(false);
   };
 
   const useSuggestion = (topic: string) => {
@@ -72,14 +122,63 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
   };
   
   const addEmail = () => {
+    // Validate email
+    if (!currentEmail.trim()) {
+      return;
+    }
+    
+    if (!emailRegex.test(currentEmail)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     if (currentEmail && !inviteEmails.includes(currentEmail)) {
       setInviteEmails([...inviteEmails, currentEmail]);
       setCurrentEmail("");
+    } else if (inviteEmails.includes(currentEmail)) {
+      toast({
+        title: "Duplicate Email",
+        description: "This email has already been added to the invitation list",
+        variant: "destructive"
+      });
     }
   };
   
   const removeEmail = (email: string) => {
     setInviteEmails(inviteEmails.filter(e => e !== email));
+  };
+  
+  const copyShareableLink = () => {
+    navigator.clipboard.writeText(shareableLink)
+      .then(() => {
+        toast({
+          title: "Link Copied",
+          description: "Shareable link has been copied to clipboard",
+        });
+      })
+      .catch(() => {
+        toast({
+          title: "Failed to Copy",
+          description: "Could not copy the link to clipboard",
+          variant: "destructive"
+        });
+      });
+  };
+
+  const validateForm = () => {
+    if (!roomName.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide a room name",
+        variant: "destructive"
+      });
+      return false;
+    }
+    return true;
   };
 
   return (
@@ -112,6 +211,9 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
                 onChange={(e) => setRoomName(e.target.value)} 
                 placeholder="E.g., Calculus Study Group" 
               />
+              {roomName.trim() === "" && (
+                <p className="text-sm text-red-500">Room name is required</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -227,11 +329,11 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
               {enableShareLink && (
                 <div className="flex items-center gap-2 mt-2">
                   <Input 
-                    value="https://study.app/join/room/abc123" 
+                    value={shareableLink} 
                     readOnly
                     className="flex-1 bg-muted"
                   />
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={copyShareableLink}>
                     <Copy className="h-4 w-4 mr-2" />
                     Copy
                   </Button>
@@ -242,7 +344,11 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
             <DialogFooter className="pt-4">
               <Button variant="outline" onClick={onClose}>Cancel</Button>
               <Button 
-                onClick={() => setStep("preview")}
+                onClick={() => {
+                  if (validateForm()) {
+                    setStep("preview");
+                  }
+                }}
                 disabled={!roomName.trim()}
               >
                 Preview Room
@@ -307,12 +413,18 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setStep("form")}>
+              <Button variant="outline" onClick={() => setStep("form")} disabled={isSubmitting}>
                 Back to Edit
               </Button>
-              <Button onClick={handleSubmit} className="gap-2">
-                <CheckCircle className="h-4 w-4" />
-                Create Room
+              <Button onClick={handleSubmit} className="gap-2" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>Creating...</>
+                ) : (
+                  <>
+                    <CheckCircle className="h-4 w-4" />
+                    Create Room
+                  </>
+                )}
               </Button>
             </DialogFooter>
           </div>

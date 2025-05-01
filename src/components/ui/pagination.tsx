@@ -1,10 +1,23 @@
+
 import * as React from "react"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { ButtonProps, buttonVariants } from "@/components/ui/button"
 
-const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
+type PaginationProps = React.ComponentProps<"nav"> & {
+  onPageChange?: (page: number) => void;
+  currentPage?: number;
+  totalPages?: number;
+}
+
+const Pagination = ({ 
+  className, 
+  onPageChange,
+  currentPage = 1,
+  totalPages = 1,
+  ...props 
+}: PaginationProps) => (
   <nav
     role="navigation"
     aria-label="pagination"
@@ -35,14 +48,18 @@ const PaginationItem = React.forwardRef<
 PaginationItem.displayName = "PaginationItem"
 
 type PaginationLinkProps = {
-  isActive?: boolean
+  isActive?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
 } & Pick<ButtonProps, "size"> &
   React.ComponentProps<"a">
 
 const PaginationLink = ({
   className,
   isActive,
+  disabled = false,
   size = "icon",
+  onClick,
   ...props
 }: PaginationLinkProps) => (
   <a
@@ -52,8 +69,19 @@ const PaginationLink = ({
         variant: isActive ? "outline" : "ghost",
         size,
       }),
+      disabled ? "pointer-events-none opacity-50" : "cursor-pointer",
       className
     )}
+    onClick={(e) => {
+      if (disabled) {
+        e.preventDefault();
+        return;
+      }
+      if (onClick) {
+        e.preventDefault();
+        onClick();
+      }
+    }}
     {...props}
   />
 )
@@ -61,12 +89,16 @@ PaginationLink.displayName = "PaginationLink"
 
 const PaginationPrevious = ({
   className,
+  onClick,
+  disabled,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink> & { disabled?: boolean }) => (
   <PaginationLink
     aria-label="Go to previous page"
     size="default"
     className={cn("gap-1 pl-2.5", className)}
+    onClick={onClick}
+    disabled={disabled}
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
@@ -77,12 +109,16 @@ PaginationPrevious.displayName = "PaginationPrevious"
 
 const PaginationNext = ({
   className,
+  onClick,
+  disabled,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink> & { disabled?: boolean }) => (
   <PaginationLink
     aria-label="Go to next page"
     size="default"
     className={cn("gap-1 pr-2.5", className)}
+    onClick={onClick}
+    disabled={disabled}
     {...props}
   >
     <span>Next</span>

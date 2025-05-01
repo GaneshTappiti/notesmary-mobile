@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
   LayoutDashboard, 
@@ -25,6 +25,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 }) => {
   const { logout } = useAuth();
   const { toast } = useToast();
+  const location = useLocation();
   
   const handleLogout = async () => {
     try {
@@ -49,6 +50,31 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   ];
 
+  // Close sidebar on route change on mobile
+  React.useEffect(() => {
+    if (open && window.innerWidth < 768) {
+      setOpen(false);
+    }
+  }, [location.pathname]);
+  
+  // Handle click outside to close sidebar on mobile
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (open && window.innerWidth < 768) {
+        // If clicked element is not part of the sidebar, close it
+        const sidebarEl = document.getElementById('admin-sidebar');
+        if (sidebarEl && !sidebarEl.contains(event.target as Node)) {
+          setOpen(false);
+        }
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open, setOpen]);
+
   return (
     <>
       {/* Mobile sidebar overlay */}
@@ -63,6 +89,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
       {/* Mobile sidebar */}
       <div 
+        id="admin-sidebar"
         className={cn(
           "fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 transform transition-transform ease-in-out duration-300 md:hidden shadow-lg",
           open ? "translate-x-0" : "-translate-x-full"
@@ -78,6 +105,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             type="button"
             className="text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             onClick={() => setOpen(false)}
+            aria-label="Close sidebar"
           >
             <span className="sr-only">Close sidebar</span>
             <svg 

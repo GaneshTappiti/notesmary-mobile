@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Menu, X } from "lucide-react";
 import { PageContainer } from "@/components/PageContainer";
+import { useToast } from "@/hooks/use-toast";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -33,12 +35,45 @@ export const Navbar = () => {
     }
   };
   
+  const handleLoginClick = (e: React.MouseEvent) => {
+    if (isAuthenticated) {
+      e.preventDefault();
+      toast({
+        title: "Already logged in",
+        description: "You are already logged in to your account",
+      });
+    } else {
+      navigate('/authentication', { state: { activeTab: 'login' } });
+    }
+  };
+  
+  const handleSignupClick = (e: React.MouseEvent) => {
+    if (isAuthenticated) {
+      e.preventDefault();
+      toast({
+        title: "Already logged in",
+        description: "You are already logged in to your account",
+      });
+    } else {
+      navigate('/authentication', { state: { activeTab: 'signup' } });
+    }
+  };
+  
   const handleLogout = async () => {
     try {
       await logout();
       navigate('/');
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account",
+      });
     } catch (error) {
       console.error("Logout failed:", error);
+      toast({
+        title: "Logout failed",
+        description: "There was an issue during logout. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -111,10 +146,17 @@ export const Navbar = () => {
               </>
             ) : (
               <>
-                <Link to="/authentication" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+                <Link 
+                  to="/authentication" 
+                  onClick={handleLoginClick}
+                  className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+                >
                   Log in
                 </Link>
-                <Link to="/authentication">
+                <Link 
+                  to="/authentication"
+                  onClick={handleSignupClick}
+                >
                   <Button>Sign up</Button>
                 </Link>
               </>
@@ -176,14 +218,20 @@ export const Navbar = () => {
                     <Link 
                       to="/authentication" 
                       className="block w-full" 
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={(e) => {
+                        handleLoginClick(e);
+                        setMobileMenuOpen(false);
+                      }}
                     >
                       <Button variant="outline" className="w-full">Log in</Button>
                     </Link>
                     <Link 
                       to="/authentication" 
                       className="block w-full"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={(e) => {
+                        handleSignupClick(e);
+                        setMobileMenuOpen(false);
+                      }}
                     >
                       <Button className="w-full">Sign up</Button>
                     </Link>
