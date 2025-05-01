@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from '@/components/AppSidebar';
@@ -7,7 +7,7 @@ import { HeaderNav } from '@/components/HeaderNav';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface AppLayoutProps {
@@ -87,7 +87,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const path = location.pathname;
   
   // Use effect to set layout type based on path
-  React.useEffect(() => {
+  useEffect(() => {
     if (path.includes('/study-room/') && path.includes('/chat')) {
       setLayoutType('study-room-chat');
     } else if (path.includes('/study-room/')) {
