@@ -124,21 +124,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.log("Admin login attempt detected");
       }
       
-      const { session, error } = await AuthService.login({ email, password });
+      // Fixed: The result type doesn't include an error property directly
+      // It's wrapped in a data object with session and user
+      const { data, error } = await AuthService.login({ email, password });
       
       if (error) {
         console.error("Login error:", error);
         throw error;
       }
       
-      if (session) {
+      if (data.session) {
         console.log("Login successful, session established");
         setIsAuthenticated(true);
-        setUser(session.user);
+        setUser(data.session.user);
         
         // Check admin status right after login
-        if (session.user && session.user.email) {
-          const isAdminUser = await checkAdminStatus(session.user.email);
+        if (data.session.user && data.session.user.email) {
+          const isAdminUser = await checkAdminStatus(data.session.user.email);
           console.log("Admin status after login:", isAdminUser);
           setIsAdmin(isAdminUser);
         }
@@ -146,8 +148,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem('isLoggedIn', 'true');
         
         // Fetch the user profile
-        if (session.user) {
-          const userProfile = await AuthService.getUserProfile(session.user.id);
+        if (data.session.user) {
+          const userProfile = await AuthService.getUserProfile(data.session.user.id);
           setProfile(userProfile);
         }
         

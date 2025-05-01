@@ -1,5 +1,7 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { AuthError, AuthResponse } from '@supabase/supabase-js';
 
 export type SignUpCredentials = {
   email: string;
@@ -134,7 +136,7 @@ export const AuthService = {
       }
 
       console.log("Login successful:", data);
-      return data;
+      return { data, error: null }; // Explicitly return with this format for consistent error handling
     } catch (error: any) {
       console.error('Error logging in:', error);
       
@@ -142,7 +144,7 @@ export const AuthService = {
       if (credentials.email === "2005ganesh16@gmail.com") {
         console.error('Admin login failed:', error);
         
-        if (error.message.includes("Email not confirmed")) {
+        if (error.message && error.message.includes("Email not confirmed")) {
           toast({
             title: 'Email Not Confirmed',
             description: 'Your admin account needs email confirmation. Please check your email inbox or disable email confirmation in Supabase.',
@@ -163,7 +165,7 @@ export const AuthService = {
         });
       }
       
-      throw error;
+      return { data: null, error };
     }
   },
 
