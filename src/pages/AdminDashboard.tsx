@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { PageContainer } from '@/components/PageContainer';
 import { AdminLayout } from '@/components/admin/AdminLayout';
@@ -88,7 +89,10 @@ const AdminDashboard = () => {
         <PageContainer className="py-6">
           <div className="flex flex-col space-y-6">
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold tracking-tight">Dashboard Overview</h1>
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">Dashboard Overview</h1>
+                <p className="text-muted-foreground">Welcome to the Notex admin dashboard.</p>
+              </div>
             </div>
             
             <StatsCards />

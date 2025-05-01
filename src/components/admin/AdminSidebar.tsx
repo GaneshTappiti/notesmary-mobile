@@ -12,7 +12,7 @@ import {
   LogOut 
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface AdminSidebarProps {
   open: boolean;
@@ -24,6 +24,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   setOpen 
 }) => {
   const { logout } = useAuth();
+  const { toast } = useToast();
   
   const handleLogout = async () => {
     try {
@@ -122,6 +123,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700",
               "group flex items-center px-2 py-2 text-base font-medium rounded-md"
             )}
+            onClick={() => setOpen(false)}
           >
             <item.icon className="mr-3 flex-shrink-0 h-6 w-6" />
             {item.name}

@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -34,6 +33,8 @@ const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const AdminNotes = lazy(() => import("@/pages/AdminNotes"));
 const AdminMessages = lazy(() => import("@/pages/AdminMessages"));
 const AdminUsers = lazy(() => import("@/pages/AdminUsers"));
+const AdminEvents = lazy(() => import("@/pages/AdminEvents"));
+const AdminAnalytics = lazy(() => import("@/pages/AdminAnalytics"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -240,6 +241,28 @@ const AppRoutes = () => {
           <PrivateRoute adminOnly={true}>
             <Suspense fallback={<Loading />}>
               <AdminUsers />
+            </Suspense>
+          </PrivateRoute>
+        } 
+      />
+      
+      <Route 
+        path="/admin/events" 
+        element={
+          <PrivateRoute adminOnly={true}>
+            <Suspense fallback={<Loading />}>
+              <AdminEvents />
+            </Suspense>
+          </PrivateRoute>
+        } 
+      />
+      
+      <Route 
+        path="/admin/analytics" 
+        element={
+          <PrivateRoute adminOnly={true}>
+            <Suspense fallback={<Loading />}>
+              <AdminAnalytics />
             </Suspense>
           </PrivateRoute>
         } 
