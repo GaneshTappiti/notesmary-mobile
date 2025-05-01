@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { Upload, Search, Users, Brain, Timer } from 'lucide-react';
+import { Upload, Search, Users, Brain, Timer, ShieldCheck } from 'lucide-react';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { AnalyticsCard } from '@/components/dashboard/AnalyticsCard';
 import { QuickAccessCard } from '@/components/dashboard/QuickAccessCard';
@@ -15,7 +15,7 @@ import { PageContainer } from '@/components/PageContainer';
 const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
 
   const quickAccessOptions = [
     {
@@ -58,6 +58,17 @@ const Dashboard = () => {
       buttonVariant: 'outline' as const,
       onClick: () => navigate('/ai-answers')
     },
+    // Admin Panel QuickAccess card that is conditionally added for admin users
+    ...(isAdmin ? [{
+      title: 'Admin Panel',
+      description: 'Access administrative controls',
+      icon: <ShieldCheck className="h-6 w-6" />,
+      bgColor: 'bg-red-50',
+      isPrimary: false,
+      buttonText: 'Access Admin',
+      buttonVariant: 'default' as const,
+      onClick: () => navigate('/admin')
+    }] : []),
     {
       title: 'Focus Mode',
       description: 'Eliminate distractions',
@@ -161,6 +172,8 @@ const Dashboard = () => {
         <WelcomeHeader 
           userName={user?.user_metadata?.full_name}
           onLogout={handleLogout}
+          isAdmin={isAdmin}
+          onAdminClick={() => navigate('/admin')}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
