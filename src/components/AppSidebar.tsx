@@ -74,6 +74,16 @@ export const AppSidebar = () => {
       });
     }
   };
+
+  // Handle click to navigate on mobile
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    // Close any mobile drawer/sheet containing the sidebar
+    const drawerCloseBtn = document.querySelector('[data-drawer-close="true"]');
+    if (drawerCloseBtn && drawerCloseBtn instanceof HTMLElement) {
+      drawerCloseBtn.click();
+    }
+  };
   
   const mainMenuItems = [
     {
@@ -135,20 +145,20 @@ export const AppSidebar = () => {
   return (
     <Sidebar 
       data-state={state} 
-      className="z-50 shadow-md border-r border-gray-100 bg-white rounded-tr-[20px] rounded-br-[20px] overflow-hidden w-[270px]"
+      className="z-50 shadow-md border-r border-gray-100 bg-white rounded-tr-[20px] rounded-br-[20px] overflow-hidden w-full md:w-[270px]"
     >
       <SidebarHeader className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-        <Link to="/dashboard" className="flex items-center gap-2">
+        <div onClick={() => handleNavigation("/dashboard")} className="flex items-center gap-2 cursor-pointer">
           <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm">
             N
           </div>
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-500">
             Notex
           </span>
-        </Link>
+        </div>
       </SidebarHeader>
       
-      <SidebarContent className="px-3 py-4">
+      <SidebarContent className="px-3 py-4 overflow-y-auto">
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-medium text-gray-500 px-3 mb-2">
             Main
@@ -158,7 +168,7 @@ export const AppSidebar = () => {
               {mainMenuItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton 
-                    asChild 
+                    onClick={() => handleNavigation(item.path)} 
                     isActive={isActive(item.path)}
                     tooltip={state === "collapsed" ? item.title : undefined}
                     className={cn(
@@ -166,7 +176,7 @@ export const AppSidebar = () => {
                       isActive(item.path) ? "bg-blue-50 border-l-4 border-blue-500" : ""
                     )}
                   >
-                    <Link to={item.path} className="flex items-center gap-3 px-3">
+                    <div className="flex items-center gap-3 px-3">
                       <div className={cn(
                         "p-1.5 rounded-md",
                         isActive(item.path) 
@@ -183,7 +193,7 @@ export const AppSidebar = () => {
                       )}>
                         {item.title}
                       </span>
-                    </Link>
+                    </div>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -230,10 +240,10 @@ export const AppSidebar = () => {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pl-12 pr-3 pt-1 space-y-1">
                     {settingsItems.map((item) => (
-                      <Link 
+                      <div 
                         key={item.path}
-                        to={item.path}
-                        className={`flex items-center gap-2 px-3 py-2 text-sm rounded-xl transition-colors ${
+                        onClick={() => handleNavigation(item.path)}
+                        className={`flex items-center gap-2 px-3 py-2 text-sm rounded-xl transition-colors cursor-pointer ${
                           isActive(item.path) 
                             ? 'bg-blue-50 border-l-4 border-blue-500 text-blue-600 font-medium' 
                             : 'hover:bg-gray-100 text-gray-700'
@@ -241,7 +251,7 @@ export const AppSidebar = () => {
                       >
                         {item.icon}
                         <span>{item.title}</span>
-                      </Link>
+                      </div>
                     ))}
                   </CollapsibleContent>
                 </Collapsible>
@@ -258,7 +268,7 @@ export const AppSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton 
-                  asChild 
+                  onClick={() => handleNavigation("/notifications")}
                   isActive={isActive("/notifications")}
                   tooltip={state === "collapsed" ? "Notifications" : undefined}
                   className={cn(
@@ -266,7 +276,7 @@ export const AppSidebar = () => {
                     isActive("/notifications") && "bg-blue-50 border-l-4 border-blue-500"
                   )}
                 >
-                  <Link to="/notifications" className="flex items-center gap-3 px-3">
+                  <div className="flex items-center gap-3 px-3">
                     <div className={cn(
                       "p-1.5 rounded-md relative",
                       isActive("/notifications") 
@@ -284,7 +294,7 @@ export const AppSidebar = () => {
                     )}>
                       Notifications
                     </span>
-                  </Link>
+                  </div>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

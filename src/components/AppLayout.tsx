@@ -7,7 +7,7 @@ import { HeaderNav } from '@/components/HeaderNav';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface AppLayoutProps {
@@ -15,19 +15,21 @@ interface AppLayoutProps {
 }
 
 const MobileSidebar = () => {
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   
   return (
-    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-      <SheetTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
+      <DrawerTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
         <Button variant="ghost" size="icon" className="rounded-full bg-background/90 backdrop-blur-sm shadow-sm border">
           <Menu className="h-5 w-5" />
         </Button>
-      </SheetTrigger>
-      <SheetContent side="left" className="p-0 w-[80%] max-w-[300px] bg-white">
-        <AppSidebar />
-      </SheetContent>
-    </Sheet>
+      </DrawerTrigger>
+      <DrawerContent className="p-0 w-[80%] max-w-[300px] bg-white h-[100dvh] max-h-[100dvh]">
+        <div className="h-full overflow-y-auto">
+          <AppSidebar />
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
