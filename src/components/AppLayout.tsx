@@ -5,39 +5,84 @@ import { SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from '@/components/AppSidebar';
 import { HeaderNav } from '@/components/HeaderNav';
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { LayoutDashboard, User, Settings, LogOut, Menu } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface AppLayoutProps {
   children: React.ReactNode;
 }
 
-const MobileSidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const MobileDropdownMenu = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { toast } = useToast();
   
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account",
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({
+        title: "Logout Failed",
+        description: "Could not log you out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
-    <Drawer open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild className="md:hidden fixed top-3 left-3 z-50">
         <Button variant="ghost" size="icon" className="rounded-full bg-background/90 backdrop-blur-sm shadow-sm border">
           <Menu className="h-5 w-5" />
         </Button>
-      </DrawerTrigger>
-      <DrawerContent side="left" className="p-0 w-[80%] max-w-[300px]">
-        <div className="h-[100dvh] overflow-y-auto">
-          <AppSidebar />
-          <DrawerClose className="sr-only" data-drawer-close="true" />
-        </div>
-      </DrawerContent>
-    </Drawer>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-56 mt-1 bg-white">
+        <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => navigate('/dashboard')} className="cursor-pointer">
+          <LayoutDashboard className="mr-2 h-4 w-4" />
+          <span>Dashboard</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer">
+          <User className="mr-2 h-4 w-4" />
+          <span>Profile</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer">
+          <Settings className="mr-2 h-4 w-4" />
+          <span>Settings</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogout} className="text-red-500 cursor-pointer">
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Logout</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
 const StudyRoomLayout = ({ children }: AppLayoutProps) => (
   <div className="min-h-[100dvh] w-full max-w-full">
     <main className="w-full h-[100dvh] pb-safe-bottom">{children}</main>
-    <MobileSidebar />
+    <MobileDropdownMenu />
   </div>
 );
 
@@ -47,7 +92,7 @@ const SimpleLayout = ({ children }: AppLayoutProps) => (
     <main className="pt-16 pb-safe-bottom max-w-full overflow-x-hidden">
       {children}
     </main>
-    <MobileSidebar />
+    <MobileDropdownMenu />
   </div>
 );
 
@@ -57,7 +102,7 @@ const StandardLayout = ({ children }: AppLayoutProps) => (
       <AppSidebar />
     </div>
     
-    <MobileSidebar />
+    <MobileDropdownMenu />
     
     <SidebarInset className="w-full">
       <div className="flex flex-col min-h-full w-full max-w-full">
