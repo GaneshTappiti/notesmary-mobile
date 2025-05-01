@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     let mounted = true;
-    let authSubscription: { data: { subscription: { unsubscribe: () => void } } } | null = null;
+    let authSubscription: { unsubscribe: () => void } | null = null;
     
     const initializeAuth = async () => {
       try {
@@ -103,7 +103,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         });
         
-        authSubscription = data;
+        // Store the subscription object correctly
+        authSubscription = data.subscription;
         
         // Now check the current session
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
@@ -148,8 +149,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Clean up function to prevent memory leaks and state updates on unmounted component
     return () => {
       mounted = false;
-      if (authSubscription?.data?.subscription) {
-        authSubscription.data.subscription.unsubscribe();
+      if (authSubscription) {
+        authSubscription.unsubscribe();
       }
     };
   }, []);
