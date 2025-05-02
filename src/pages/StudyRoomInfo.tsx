@@ -1,362 +1,248 @@
 
-import { useState } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  ArrowLeft, 
-  Users, 
-  UserPlus, 
-  Copy, 
-  AlertTriangle, 
-  Trash2, 
-  LogOut, 
-  MessageSquare, 
-  BookOpen, 
-  FileText,
-  CheckCircle
-} from 'lucide-react';
-import { useToast } from "@/hooks/use-toast";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import React, { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { ChevronLeft, MessageCircle, Users, Info, Settings, ArrowRight } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
+import { Helmet } from 'react-helmet-async';
+
+// Mock data for study room
+const mockRoom = {
+  id: '1',
+  name: 'Advanced Physics Study Group',
+  description: 'Collaborative study space for Advanced Physics concepts and problem-solving. We focus on quantum mechanics, relativity, and advanced mathematical methods in physics.',
+  subject: 'Physics',
+  members: [
+    { id: '1', name: 'Jane Smith', avatar: 'https://ui-avatars.com/api/?name=Jane+Smith&background=6366F1&color=fff', role: 'admin', status: 'online' },
+    { id: '2', name: 'John Doe', avatar: 'https://ui-avatars.com/api/?name=John+Doe&background=22C55E&color=fff', role: 'member', status: 'online' },
+    { id: '3', name: 'Alex Johnson', avatar: 'https://ui-avatars.com/api/?name=Alex+Johnson&background=F43F5E&color=fff', role: 'member', status: 'offline' },
+    { id: '4', name: 'Maria Garcia', avatar: 'https://ui-avatars.com/api/?name=Maria+Garcia&background=8B5CF6&color=fff', role: 'member', status: 'online' },
+    { id: '5', name: 'Sam Lee', avatar: 'https://ui-avatars.com/api/?name=Sam+Lee&background=EC4899&color=fff', role: 'member', status: 'offline' }
+  ],
+  sessions: [
+    { id: '1', date: '2025-05-04', startTime: '18:00', endTime: '20:00', topic: 'Quantum Mechanics: Wave Functions', status: 'upcoming' },
+    { id: '2', date: '2025-05-07', startTime: '17:30', endTime: '19:30', topic: 'Special Relativity Principles', status: 'upcoming' },
+    { id: '3', date: '2025-04-30', startTime: '18:00', endTime: '20:00', topic: 'Electromagnetic Wave Equations', status: 'completed' }
+  ],
+  resources: [
+    { id: '1', name: 'Physics Textbook Chapter 7-9', type: 'pdf', uploadedBy: 'Jane Smith', date: '2025-04-25' },
+    { id: '2', name: 'Wave Functions Practice Problems', type: 'pdf', uploadedBy: 'John Doe', date: '2025-04-28' },
+    { id: '3', name: 'Quantum Mechanics Summary Notes', type: 'doc', uploadedBy: 'Alex Johnson', date: '2025-04-29' }
+  ],
+  lastActivity: new Date(2025, 4, 2, 14, 35)
+};
 
 const StudyRoomInfo = () => {
-  const { id } = useParams<{ id: string }>();
+  const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("overview");
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
-  // Mock data for the room
-  const room = {
-    id,
-    name: "Advanced Physics Study Group",
-    description: "A collaborative space for discussing advanced physics concepts, problem-solving, and exam preparation.",
-    isPrivate: true,
-    shareableLink: "https://study.app/join/room/abc123",
-    isAdmin: true,
-    createdAt: "2023-03-15T12:00:00Z"
+  const [activeTab, setActiveTab] = useState('overview');
+  
+  // In a real app, you'd fetch the room data based on roomId
+  const room = mockRoom; 
+  
+  const handleJoinChat = () => {
+    navigate(`/study-room/${roomId}/chat`);
   };
-
-  // Mock data for room members
-  const members = [
-    { id: "1", name: "Alex Johnson", email: "alex@example.com", role: "Admin", isOnline: true, avatarUrl: "" },
-    { id: "2", name: "Jamie Smith", email: "jamie@example.com", role: "Member", isOnline: true, avatarUrl: "" },
-    { id: "3", name: "Taylor Brown", email: "taylor@example.com", role: "Member", isOnline: false, avatarUrl: "" },
-    { id: "4", name: "Jordan Lee", email: "jordan@example.com", role: "Member", isOnline: false, avatarUrl: "" },
-  ];
-
-  // Mock data for resources
-  const resources = [
-    { id: "1", name: "Physics Formulas.pdf", type: "pdf", size: "2.4 MB", uploadedBy: "Alex Johnson", uploadedAt: "2023-03-16T14:30:00Z" },
-    { id: "2", name: "Quantum Mechanics Notes.docx", type: "docx", size: "1.8 MB", uploadedBy: "Jamie Smith", uploadedAt: "2023-03-17T09:15:00Z" },
-    { id: "3", name: "Thermodynamics Examples.pdf", type: "pdf", size: "3.7 MB", uploadedBy: "Jordan Lee", uploadedAt: "2023-03-18T16:45:00Z" },
-  ];
-
-  const copyInviteLink = () => {
-    navigator.clipboard.writeText(room.shareableLink);
+  
+  const handleLeaveRoom = () => {
     toast({
-      title: "Link copied",
-      description: "Invitation link copied to clipboard",
+      title: "Left study room",
+      description: "You've successfully left the study room",
     });
+    navigate('/study-rooms');
   };
-
-  const sendInvite = () => {
-    if (!inviteEmail) return;
-    
-    // In a real app, this would send an API request
-    toast({
-      title: "Invitation sent",
-      description: `Invitation email sent to ${inviteEmail}`,
-    });
-    setInviteEmail("");
+  
+  const handleEnterRoom = () => {
+    navigate(`/study-room/${roomId}`);
   };
-
-  const leaveRoom = () => {
-    // In a real app, this would send an API request
-    toast({
-      title: "Left room",
-      description: "You have successfully left the room",
-    });
-    setShowLeaveDialog(false);
-    navigate("/study-rooms");
-  };
-
-  const deleteRoom = () => {
-    // In a real app, this would send an API request
-    toast({
-      title: "Room deleted",
-      description: "The study room has been permanently deleted",
-    });
-    setShowDeleteDialog(false);
-    navigate("/study-rooms");
-  };
-
+  
+  if (!room) {
+    return <div>Loading study room...</div>;
+  }
+  
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-6">
-      <div className="flex items-center gap-2 mb-6">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => navigate("/study-rooms")}
-          className="rounded-full"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <h1 className="text-2xl font-bold">{room.name}</h1>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="resources">Resources</TabsTrigger>
-          <TabsTrigger value="chat">Chat</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-4">
-          {/* Room description */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-blue-500" />
-                About this Room
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">{room.description}</p>
-            </CardContent>
-          </Card>
-
-          {/* Members section */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Users className="h-5 w-5 text-blue-500" />
-                Members ({members.length})
-              </CardTitle>
-              <Button size="sm" className="gap-2" onClick={() => document.getElementById('invite-section')?.scrollIntoView({ behavior: 'smooth' })}>
-                <UserPlus className="h-4 w-4" />
-                Invite
+    <>
+      <Helmet>
+        <title>{`${room.name} Info | Notex`}</title>
+      </Helmet>
+      
+      <div className="container mx-auto px-4 py-6 max-w-5xl">
+        <div className="mb-6">
+          <Button variant="ghost" size="sm" onClick={() => navigate('/study-rooms')} className="mb-4">
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            Back to Study Rooms
+          </Button>
+          
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold">{room.name}</h1>
+              <div className="flex items-center gap-2 mt-1">
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-100">{room.subject}</Badge>
+                <span className="text-muted-foreground text-sm">
+                  {room.members.length} members • Last activity {new Date(room.lastActivity).toLocaleString()}
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button onClick={handleJoinChat} className="gap-2">
+                <MessageCircle className="h-4 w-4" />
+                Join Chat
               </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {members.map(member => (
-                  <div key={member.id} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src={member.avatarUrl} />
-                        <AvatarFallback className="bg-primary/10">
-                          {member.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium">{member.name}</p>
-                          <Badge variant={member.role === "Admin" ? "default" : "outline"} className="text-xs">
-                            {member.role}
-                          </Badge>
+              <Button variant="outline" onClick={handleEnterRoom} className="gap-2">
+                <ArrowRight className="h-4 w-4" />
+                Enter Room
+              </Button>
+            </div>
+          </div>
+        </div>
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="overview" className="gap-2">
+              <Info className="h-4 w-4" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="members" className="gap-2">
+              <Users className="h-4 w-4" />
+              Members
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="gap-2">
+              <Settings className="h-4 w-4" />
+              Settings
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="overview" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>About this study room</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>{room.description}</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Upcoming Study Sessions</CardTitle>
+                <CardDescription>Scheduled study sessions for this group</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {room.sessions.filter(s => s.status === 'upcoming').length > 0 ? (
+                  <div className="space-y-4">
+                    {room.sessions.filter(s => s.status === 'upcoming').map(session => (
+                      <div key={session.id} className="flex justify-between items-center border-b pb-3 last:border-0 last:pb-0">
+                        <div>
+                          <p className="font-medium">{session.topic}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {new Date(session.date).toLocaleDateString()} • {session.startTime} - {session.endTime}
+                          </p>
                         </div>
-                        <p className="text-xs text-muted-foreground">{member.email}</p>
+                        <Button size="sm">Join</Button>
                       </div>
-                    </div>
-                    <div className={`w-2 h-2 rounded-full ${member.isOnline ? 'bg-green-500' : 'bg-gray-300'}`} />
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Invite section */}
-          <Card id="invite-section">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <UserPlus className="h-5 w-5 text-blue-500" />
-                Invite Others
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Email Invitation</p>
-                <div className="flex gap-2">
-                  <Input 
-                    placeholder="Enter email address" 
-                    value={inviteEmail} 
-                    onChange={(e) => setInviteEmail(e.target.value)} 
-                    className="flex-1"
-                  />
-                  <Button onClick={sendInvite}>Send Invite</Button>
-                </div>
-              </div>
-              
-              <div className="space-y-2 pt-2">
-                <p className="text-sm font-medium">Shareable Link</p>
-                <div className="flex gap-2">
-                  <Input value={room.shareableLink} readOnly className="flex-1" />
-                  <Button variant="outline" onClick={copyInviteLink}>
-                    <Copy className="h-4 w-4 mr-2" />
-                    Copy Link
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Anyone with this link can {room.isPrivate ? 'request to join' : 'join'} this study room
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Group actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-amber-500" />
-                Group Actions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Button 
-                  variant="outline" 
-                  className="gap-2 text-amber-600 border-amber-200 hover:bg-amber-50 w-full sm:w-auto"
-                  onClick={() => setShowLeaveDialog(true)}
-                >
-                  <LogOut className="h-4 w-4" />
-                  Leave Room
-                </Button>
-                <p className="text-xs text-muted-foreground mt-1">
-                  You will no longer have access to this room's resources and chats
-                </p>
-              </div>
-              
-              {room.isAdmin && (
-                <div>
-                  <Button 
-                    variant="destructive" 
-                    className="gap-2 w-full sm:w-auto"
-                    onClick={() => setShowDeleteDialog(true)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Delete Room
-                  </Button>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    This will permanently delete the room and all its data
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="resources" className="space-y-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-500" />
-                Shared Resources
-              </CardTitle>
-              <Button size="sm">Upload Resource</Button>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {resources.map(resource => (
-                  <div key={resource.id} className="flex items-center justify-between py-2 border-b last:border-0">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <FileText className="h-5 w-5 text-blue-600" />
+                ) : (
+                  <p className="text-muted-foreground">No upcoming sessions scheduled</p>
+                )}
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" className="w-full">Schedule New Session</Button>
+              </CardFooter>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Study Resources</CardTitle>
+                <CardDescription>Shared materials for this study room</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {room.resources.length > 0 ? (
+                  <div className="space-y-3">
+                    {room.resources.map(resource => (
+                      <div key={resource.id} className="flex justify-between items-center border-b pb-3 last:border-0 last:pb-0">
+                        <div>
+                          <p className="font-medium">{resource.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Uploaded by {resource.uploadedBy} on {new Date(resource.date).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <Button variant="ghost" size="sm">View</Button>
                       </div>
-                      <div>
-                        <p className="font-medium">{resource.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {resource.size} • Uploaded by {resource.uploadedBy}
-                        </p>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm">Download</Button>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="chat">
-          <Card className="flex flex-col items-center justify-center py-12">
-            <MessageSquare className="h-12 w-12 text-blue-500 mb-4" />
-            <h3 className="text-lg font-medium mb-2">Chat with Group Members</h3>
-            <p className="text-muted-foreground mb-4 text-center max-w-md">
-              Start real-time discussions, share resources, and collaborate with your study group members
-            </p>
-            <Button 
-              size="lg" 
-              className="gap-2"
-              onClick={() => navigate(`/study-room/${id}/chat`)}
-            >
-              <MessageSquare className="h-5 w-5" />
-              Open Chat
-            </Button>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Leave Room Dialog */}
-      <AlertDialog open={showLeaveDialog} onOpenChange={setShowLeaveDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Leave this study room?</AlertDialogTitle>
-            <AlertDialogDescription>
-              You will no longer have access to this room's resources and chat history.
-              You can rejoin later if you are invited again.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              className="bg-amber-600 hover:bg-amber-700"
-              onClick={leaveRoom}
-            >
-              Leave Room
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Delete Room Dialog */}
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete this study room?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the room and all
-              resources, messages, and other data associated with it.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              className="bg-red-600 hover:bg-red-700"
-              onClick={deleteRoom}
-            >
-              Delete Room
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+                ) : (
+                  <p className="text-muted-foreground">No resources shared yet</p>
+                )}
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" className="w-full">Share Resource</Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="members">
+            <Card>
+              <CardHeader>
+                <CardTitle>Members ({room.members.length})</CardTitle>
+                <CardDescription>People in this study room</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {room.members.map(member => (
+                    <div key={member.id} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarImage src={member.avatar} alt={member.name} />
+                          <AvatarFallback>{member.name.substring(0, 2)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{member.name}</p>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {member.role === 'admin' ? 'Admin' : 'Member'}
+                            </Badge>
+                            <span className={`text-xs flex items-center ${member.status === 'online' ? 'text-green-600' : 'text-gray-400'}`}>
+                              <span className={`w-2 h-2 rounded-full mr-1 ${member.status === 'online' ? 'bg-green-600' : 'bg-gray-400'}`}></span>
+                              {member.status === 'online' ? 'Online' : 'Offline'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm">Message</Button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" className="w-full">Invite Members</Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="settings">
+            <Card>
+              <CardHeader>
+                <CardTitle>Room Settings</CardTitle>
+                <CardDescription>Manage your study room settings</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p>Room settings options will appear here for room admins.</p>
+              </CardContent>
+              <CardFooter className="flex flex-col space-y-2">
+                <Button onClick={handleLeaveRoom} variant="destructive" className="w-full">Leave Study Room</Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </>
   );
 };
 

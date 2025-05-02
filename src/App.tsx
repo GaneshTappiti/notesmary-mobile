@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -32,6 +31,10 @@ const StudyRoomChat = lazy(() => import("@/pages/StudyRoomChat"));
 const StudyRoomInfo = lazy(() => import("@/pages/StudyRoomInfo"));
 const StudyAnalytics = lazy(() => import("@/pages/StudyAnalytics"));
 const Notifications = lazy(() => import("@/pages/Notifications"));
+const Features = lazy(() => import("@/pages/Features"));
+const Pricing = lazy(() => import("@/pages/Pricing"));
+const Settings = lazy(() => import("@/pages/Settings"));
+const Subscription = lazy(() => import("@/pages/Subscription"));
 
 // Admin dashboard pages
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
@@ -94,6 +97,19 @@ const App = () => (
               </PublicRoute>
             } />
             
+            {/* New routes for Features and Pricing */}
+            <Route path="/features" element={
+              <Suspense fallback={<Loading />}>
+                <Features />
+              </Suspense>
+            } />
+            
+            <Route path="/pricing" element={
+              <Suspense fallback={<Loading />}>
+                <Pricing />
+              </Suspense>
+            } />
+            
             {/* Authentication route */}
             <Route path="/authentication" element={
               <PublicRoute>
@@ -106,6 +122,27 @@ const App = () => (
               <PrivateRoute>
                 <AppLayout>
                   <Dashboard />
+                </AppLayout>
+              </PrivateRoute>
+            } />
+            
+            {/* New routes for Settings and Subscription */}
+            <Route path="/settings" element={
+              <PrivateRoute>
+                <AppLayout>
+                  <Suspense fallback={<Loading />}>
+                    <Settings />
+                  </Suspense>
+                </AppLayout>
+              </PrivateRoute>
+            } />
+            
+            <Route path="/subscription" element={
+              <PrivateRoute>
+                <AppLayout>
+                  <Suspense fallback={<Loading />}>
+                    <Subscription />
+                  </Suspense>
                 </AppLayout>
               </PrivateRoute>
             } />
