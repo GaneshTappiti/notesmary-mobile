@@ -4,15 +4,27 @@ import { Helmet } from 'react-helmet-async';
 import { Plus, Filter, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { PageContainer } from '@/components/PageContainer';
 import { StudyPulseCard } from '@/components/study-pulse/StudyPulseCard';
 import { CreatePulseModal } from '@/components/study-pulse/CreatePulseModal';
 import { useToast } from '@/hooks/use-toast';
 
+// Define the type for study rooms
+interface StudyRoom {
+  id: string;
+  title: string;
+  host: string;
+  type: 'public' | 'private'; // Fixed: Using proper union type
+  tags: string[];
+  usersOnline: number;
+  createdAt: string;
+  description: string;
+  duration: string;
+}
+
 // Mock data for study rooms
-const mockStudyRooms = [
+const mockStudyRooms: StudyRoom[] = [
   {
     id: '1',
     title: 'DSA Doubt Solving',
@@ -80,7 +92,7 @@ const StudyPulse = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
-  const [filteredRooms, setFilteredRooms] = useState(mockStudyRooms);
+  const [filteredRooms, setFilteredRooms] = useState<StudyRoom[]>(mockStudyRooms);
 
   // Handle filtering based on active tab and search query
   useEffect(() => {
@@ -112,7 +124,7 @@ const StudyPulse = () => {
     setFilteredRooms(rooms);
   }, [activeTab, searchQuery]);
 
-  const handleCreateRoom = (roomData) => {
+  const handleCreateRoom = (roomData: any) => {
     toast({
       title: "Room Created",
       description: `Your room "${roomData.title}" has been created successfully.`
@@ -120,7 +132,7 @@ const StudyPulse = () => {
     setIsModalOpen(false);
   };
 
-  const handleJoinRoom = (roomId, isPrivate) => {
+  const handleJoinRoom = (roomId: string, isPrivate: boolean) => {
     if (isPrivate) {
       toast({
         title: "Request Sent",
@@ -169,7 +181,6 @@ const StudyPulse = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="max-w-xs"
-                prefix={<Search className="h-4 w-4 text-gray-400" />}
               />
             </div>
           </div>
@@ -179,7 +190,7 @@ const StudyPulse = () => {
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="popular">Popular Today</TabsTrigger>
               {allTags.map(tag => (
-                <TabsTrigger key={tag} value={tag}>#{tag}</TabsTrigger>
+                <TabsTrigger key={tag} value={tag}>{`#${tag}`}</TabsTrigger>
               ))}
             </TabsList>
 

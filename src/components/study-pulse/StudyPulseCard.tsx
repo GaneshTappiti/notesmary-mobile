@@ -11,7 +11,7 @@ interface StudyPulseCardProps {
   id: string;
   title: string;
   host: string;
-  type: 'public' | 'private';
+  type: 'public' | 'private';  // Ensuring this is the correct union type
   tags: string[];
   usersOnline: number;
   createdAt: string;
