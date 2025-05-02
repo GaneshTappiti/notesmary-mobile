@@ -28,6 +28,16 @@ export default defineConfig(({ mode }) => ({
             
             return 'vendor'; // Other dependencies
           }
+          
+          // Create separate chunks for admin pages
+          if (id.includes('/src/pages/Admin')) {
+            return 'admin';
+          }
+          
+          // Create separate chunks for user pages
+          if (id.includes('/src/pages/') && !id.includes('Admin')) {
+            return 'pages';
+          }
         },
       },
     },
@@ -44,5 +54,8 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
-  }
+  },
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' }
+  },
 }));

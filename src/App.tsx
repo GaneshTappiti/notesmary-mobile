@@ -14,8 +14,9 @@ import AppLayout from "@/components/AppLayout";
 // Import Authentication page directly without lazy loading to avoid issues
 import Authentication from "@/pages/Authentication";
 
-// Directly import Dashboard to avoid lazy loading issues
+// Directly import Dashboard and AdminMessages to avoid loading issues
 import Dashboard from "@/pages/Dashboard";
+import AdminMessages from "@/pages/AdminMessages";
 
 // Lazy load all other page components with proper error boundaries
 const Index = lazy(() => import("@/pages/Index"));
@@ -35,7 +36,6 @@ const Notifications = lazy(() => import("@/pages/Notifications"));
 // Admin dashboard pages
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const AdminNotes = lazy(() => import("@/pages/AdminNotes"));
-const AdminMessages = lazy(() => import("@/pages/AdminMessages"));
 const AdminUsers = lazy(() => import("@/pages/AdminUsers"));
 const AdminEvents = lazy(() => import("@/pages/AdminEvents"));
 const AdminAnalytics = lazy(() => import("@/pages/AdminAnalytics"));
@@ -243,6 +243,16 @@ const App = () => (
               } 
             />
             
+            {/* Direct import for AdminMessages page to fix loading issue */}
+            <Route 
+              path="/admin/messages" 
+              element={
+                <PrivateRoute adminOnly={true}>
+                  <AdminMessages />
+                </PrivateRoute>
+              } 
+            />
+            
             {/* Remaining admin routes - with additional error handling */}
             <Route 
               path="/admin/notes" 
@@ -250,17 +260,6 @@ const App = () => (
                 <PrivateRoute adminOnly={true}>
                   <Suspense fallback={<Loading />}>
                     <AdminNotes />
-                  </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/admin/messages" 
-              element={
-                <PrivateRoute adminOnly={true}>
-                  <Suspense fallback={<Loading />}>
-                    <AdminMessages />
                   </Suspense>
                 </PrivateRoute>
               } 
