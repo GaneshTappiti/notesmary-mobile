@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { Upload, Search, Users, Brain, Timer, ShieldCheck } from 'lucide-react';
+import { Upload, Search, Users, Brain, ShieldCheck } from 'lucide-react';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { AnalyticsCard } from '@/components/dashboard/AnalyticsCard';
 import { QuickAccessCard } from '@/components/dashboard/QuickAccessCard';
@@ -11,6 +10,7 @@ import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
 import { TasksSection } from '@/components/dashboard/TasksSection';
 import { StudyRoomsSection } from '@/components/dashboard/StudyRoomsSection';
 import { PageContainer } from '@/components/PageContainer';
+import { StudyPulseEntryCard } from '@/components/dashboard/StudyPulseEntryCard';
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -68,20 +68,7 @@ const Dashboard = () => {
       buttonText: 'Access Admin',
       buttonVariant: 'default' as const,
       onClick: () => navigate('/admin')
-    }] : []),
-    {
-      title: 'Focus Mode',
-      description: 'Eliminate distractions',
-      icon: <Timer className="h-6 w-6" />,
-      bgColor: 'bg-red-50',
-      isPrimary: false,
-      buttonText: 'Start Focus',
-      buttonVariant: 'outline' as const,
-      onClick: () => toast({
-        title: "Coming Soon",
-        description: "Focus Mode will be available in the next update."
-      })
-    }
+    }] : [])
   ];
 
   const statsCards = [
@@ -185,6 +172,9 @@ const Dashboard = () => {
             />
           ))}
         </div>
+
+        {/* Add StudyPulse Entry Card */}
+        <StudyPulseEntryCard />
 
         <StudyRoomsSection 
           rooms={studyRooms}

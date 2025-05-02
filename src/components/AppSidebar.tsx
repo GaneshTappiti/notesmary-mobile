@@ -14,7 +14,8 @@ import {
   CreditCard,
   LogOut,
   ChevronDown,
-  User
+  User,
+  Radar
 } from 'lucide-react';
 import {
   Sidebar,
@@ -120,6 +121,12 @@ export const AppSidebar = () => {
       title: "Study Analytics",
       path: "/study-analytics",
       icon: <BarChart size={20} />,
+    },
+    // Add StudyPulse link here
+    {
+      title: "StudyPulse",
+      path: "/study-pulse",
+      icon: <Radar size={20} />,
     },
     {
       title: "Study Rooms",
