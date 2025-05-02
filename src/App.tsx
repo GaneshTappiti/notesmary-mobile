@@ -43,6 +43,10 @@ const AdminUsers = lazy(() => import("@/pages/AdminUsers"));
 const AdminEvents = lazy(() => import("@/pages/AdminEvents"));
 const AdminAnalytics = lazy(() => import("@/pages/AdminAnalytics"));
 
+// Add StudyPulse imports
+const StudyPulse = lazy(() => import("@/pages/StudyPulse"));
+const StudyPulseRoom = lazy(() => import("@/pages/StudyPulseRoom"));
+
 // Create a component to handle scroll restoration
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -263,6 +267,27 @@ const App = () => (
                 <AppLayout>
                   <Suspense fallback={<Loading />}>
                     <StudyAnalytics />
+                  </Suspense>
+                </AppLayout>
+              </PrivateRoute>
+            } />
+            
+            {/* StudyPulse routes */}
+            <Route path="/study-pulse" element={
+              <PrivateRoute>
+                <AppLayout>
+                  <Suspense fallback={<Loading />}>
+                    <StudyPulse />
+                  </Suspense>
+                </AppLayout>
+              </PrivateRoute>
+            } />
+            
+            <Route path="/study-pulse/:roomId" element={
+              <PrivateRoute>
+                <AppLayout>
+                  <Suspense fallback={<Loading />}>
+                    <StudyPulseRoom />
                   </Suspense>
                 </AppLayout>
               </PrivateRoute>
