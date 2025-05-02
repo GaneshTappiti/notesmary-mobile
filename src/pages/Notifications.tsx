@@ -5,55 +5,82 @@ import { Button } from '@/components/ui/button';
 import { NotificationCard } from '@/components/NotificationCard';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { Bell, BookOpen, Users, AlertCircle, Upload } from 'lucide-react';
 
-// Mock data for notifications
+// Mock data for notifications matching the expected type
 const notificationsMock = [
   {
     id: '1',
+    type: 'studyRoom' as const,
     title: 'Study Room Invitation',
-    message: 'John Doe invited you to join "Physics Advanced Study" room.',
-    time: '2 hours ago',
-    read: false,
-    type: 'invite',
-    actionUrl: '/study-rooms'
+    description: 'John Doe invited you to join "Physics Advanced Study" room.',
+    timestamp: '2 hours ago',
+    isRead: false,
+    actionType: 'join' as const,
+    actionUrl: '/study-rooms',
+    actionText: 'Join Room'
   },
   {
     id: '2',
+    type: 'notes' as const,
     title: 'Notes Shared',
-    message: 'Sarah shared "Organic Chemistry Notes Ch. 7-9" with you.',
-    time: '5 hours ago',
-    read: true,
-    type: 'share',
-    actionUrl: '/my-notes'
+    description: 'Sarah shared "Organic Chemistry Notes Ch. 7-9" with you.',
+    timestamp: '5 hours ago',
+    isRead: true,
+    actionType: 'view' as const,
+    actionUrl: '/my-notes',
+    actionText: 'View Notes'
   },
   {
     id: '3',
+    type: 'system' as const,
     title: 'AI Assistant Update',
-    message: 'We\'ve updated our AI Assistant with new features for mathematics and physics.',
-    time: '1 day ago',
-    read: true,
-    type: 'update',
-    actionUrl: '/ai-answers'
+    description: 'We\'ve updated our AI Assistant with new features for mathematics and physics.',
+    timestamp: '1 day ago',
+    isRead: true,
+    actionType: 'view' as const,
+    actionUrl: '/ai-answers',
+    actionText: 'Explore Features'
   },
   {
     id: '4',
+    type: 'studyRoom' as const,
     title: 'Study Reminder',
-    message: 'Your scheduled study session "Final Exam Prep" starts in 30 minutes.',
-    time: '1 day ago',
-    read: false,
-    type: 'reminder',
-    actionUrl: '/study-analytics'
+    description: 'Your scheduled study session "Final Exam Prep" starts in 30 minutes.',
+    timestamp: '1 day ago',
+    isRead: false,
+    actionType: 'join' as const,
+    actionUrl: '/study-analytics',
+    actionText: 'Join Session'
   },
   {
     id: '5',
+    type: 'notes' as const,
     title: 'Note Upload Complete',
-    message: 'Your notes "Advanced Calculus Chapter 5" have been processed and are now searchable.',
-    time: '2 days ago',
-    read: true,
-    type: 'upload',
-    actionUrl: '/my-notes'
+    description: 'Your notes "Advanced Calculus Chapter 5" have been processed and are now searchable.',
+    timestamp: '2 days ago',
+    isRead: true,
+    actionType: 'view' as const,
+    actionUrl: '/my-notes',
+    actionText: 'View Notes'
   }
 ];
+
+// Function to get appropriate icon for each notification type
+const getNotificationIcon = (type: string) => {
+  switch (type) {
+    case 'studyRoom':
+      return <Users className="h-6 w-6 text-blue-500" />;
+    case 'notes':
+      return <BookOpen className="h-6 w-6 text-green-500" />;
+    case 'system':
+      return <AlertCircle className="h-6 w-6 text-purple-500" />;
+    case 'upload':
+      return <Upload className="h-6 w-6 text-orange-500" />;
+    default:
+      return <Bell className="h-6 w-6 text-gray-500" />;
+  }
+};
 
 const Notifications = () => {
   const { toast } = useToast();
@@ -63,7 +90,7 @@ const Notifications = () => {
   const handleMarkAllAsRead = () => {
     setNotifications(notifications.map(notification => ({
       ...notification,
-      read: true
+      isRead: true
     })));
     
     toast({
@@ -81,17 +108,17 @@ const Notifications = () => {
     });
   };
   
-  const handleNotificationAction = (id: string, action: string) => {
-    if (action === 'mark-read') {
+  const handleNotificationAction = (id: string, actionType: string) => {
+    if (actionType === 'mark-read') {
       setNotifications(notifications.map(notification => 
-        notification.id === id ? { ...notification, read: true } : notification
+        notification.id === id ? { ...notification, isRead: true } : notification
       ));
       
       toast({
         title: "Notification updated",
         description: "Marked as read",
       });
-    } else if (action === 'delete') {
+    } else if (actionType === 'delete') {
       setNotifications(notifications.filter(notification => notification.id !== id));
       
       toast({
@@ -101,13 +128,13 @@ const Notifications = () => {
     }
   };
   
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter(n => !n.isRead).length;
   
   const filteredNotifications = activeTab === "all" 
     ? notifications 
     : activeTab === "unread" 
-      ? notifications.filter(n => !n.read)
-      : notifications.filter(n => n.read);
+      ? notifications.filter(n => !n.isRead)
+      : notifications.filter(n => n.isRead);
   
   return (
     <>
@@ -160,7 +187,8 @@ const Notifications = () => {
                   <NotificationCard
                     key={notification.id}
                     notification={notification}
-                    onAction={(action) => handleNotificationAction(notification.id, action)}
+                    icon={getNotificationIcon(notification.type)}
+                    onAction={(actionType) => handleNotificationAction(notification.id, actionType)}
                   />
                 ))}
               </div>

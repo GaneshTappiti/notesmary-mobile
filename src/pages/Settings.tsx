@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -83,8 +84,8 @@ const Settings = () => {
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="bio">Bio</Label>
-                        <Input id="bio" defaultValue={profile?.bio || ""} />
+                        <Label htmlFor="about">About</Label>
+                        <Input id="about" defaultValue="" placeholder="Tell us about yourself" />
                       </div>
                     </div>
                   </div>
