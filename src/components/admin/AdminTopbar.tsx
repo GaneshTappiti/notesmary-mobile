@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Bell, Menu, Settings, User, LogOut } from 'lucide-react';
+import { Bell, Menu, Settings, User, LogOut, LayoutDashboard } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface AdminTopbarProps {
   onMenuClick: () => void;
@@ -22,6 +23,7 @@ interface AdminTopbarProps {
 export const AdminTopbar: React.FC<AdminTopbarProps> = ({ onMenuClick }) => {
   const { user, logout, profile } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const handleLogout = async () => {
     try {
@@ -35,6 +37,13 @@ export const AdminTopbar: React.FC<AdminTopbarProps> = ({ onMenuClick }) => {
         variant: "destructive",
       });
     }
+  };
+  
+  const handleSwitchToDashboard = () => {
+    navigate('/dashboard');
+    toast({
+      title: "Switched to User Dashboard",
+    });
   };
   
   const getInitials = () => {
@@ -62,7 +71,17 @@ export const AdminTopbar: React.FC<AdminTopbarProps> = ({ onMenuClick }) => {
       </button>
       <div className="flex flex-1 justify-between px-4">
         <div className="flex flex-1">
-          {/* Optional: Search functionality can go here */}
+          {/* User Dashboard Switch Button */}
+          <div className="flex items-center">
+            <Button
+              onClick={handleSwitchToDashboard}
+              className="bg-blue-600 text-white hover:bg-blue-700 flex gap-2 items-center"
+              size="sm"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              <span>Switch to User Dashboard</span>
+            </Button>
+          </div>
         </div>
         <div className="ml-4 flex items-center gap-4">
           {/* Notifications */}
