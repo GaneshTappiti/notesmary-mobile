@@ -1,372 +1,84 @@
-import React, { Suspense, lazy } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { PrivateRoute } from "@/components/PrivateRoute";
-import { PublicRoute } from "@/components/PublicRoute";
-import { Skeleton } from "@/components/ui/skeleton";
-import { HelmetProvider } from "react-helmet-async";
-import AppLayout from "@/components/AppLayout";
 
-// Import Authentication page directly without lazy loading to avoid issues
-import Authentication from "@/pages/Authentication";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import { Toaster } from '@/components/ui/toaster';
+import { HelmetProvider } from 'react-helmet-async';
 
-// Directly import Dashboard and AdminMessages to avoid loading issues
-import Dashboard from "@/pages/Dashboard";
-import AdminMessages from "@/pages/AdminMessages";
+// Public pages
+import { AppLayout } from '@/components/AppLayout';
+import { PublicRoute } from '@/components/PublicRoute';
+import { PrivateRoute } from '@/components/PrivateRoute';
 
-// Lazy load all other page components with proper error boundaries
-const Index = lazy(() => import("@/pages/Index"));
-const MyNotes = lazy(() => import("@/pages/MyNotes"));
-const UploadNotes = lazy(() => import("@/pages/UploadNotes"));
-const FindNotes = lazy(() => import("@/pages/FindNotes"));
-const ViewNotes = lazy(() => import("@/pages/ViewNotes"));
-const AIAnswers = lazy(() => import("@/pages/AIAnswers"));
-const AIMarkAnswers = lazy(() => import("@/pages/AIMarkAnswers"));
-const StudyRooms = lazy(() => import("@/pages/StudyRooms"));
-const StudyRoom = lazy(() => import("@/pages/StudyRoom"));
-const StudyRoomChat = lazy(() => import("@/pages/StudyRoomChat"));
-const StudyRoomInfo = lazy(() => import("@/pages/StudyRoomInfo"));
-const StudyAnalytics = lazy(() => import("@/pages/StudyAnalytics"));
-const Notifications = lazy(() => import("@/pages/Notifications"));
-const Features = lazy(() => import("@/pages/Features"));
-const Pricing = lazy(() => import("@/pages/Pricing"));
-const Settings = lazy(() => import("@/pages/Settings"));
-const Subscription = lazy(() => import("@/pages/Subscription"));
+// Public Routes
+import Home from '@/pages/Home';
+import Login from '@/pages/Login';
+import Signup from '@/pages/Signup';
+import ResetPassword from '@/pages/ResetPassword';
+import Features from '@/pages/Features';
+import Pricing from '@/pages/Pricing';
 
-// Admin dashboard pages
-const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
-const AdminNotes = lazy(() => import("@/pages/AdminNotes"));
-const AdminUsers = lazy(() => import("@/pages/AdminUsers"));
-const AdminEvents = lazy(() => import("@/pages/AdminEvents"));
-const AdminAnalytics = lazy(() => import("@/pages/AdminAnalytics"));
+// Private Routes
+import Dashboard from '@/pages/Dashboard';
+import Notes from '@/pages/Notes';
+import Note from '@/pages/Note';
+import Notebooks from '@/pages/Notebooks';
+import Flashcards from '@/pages/Flashcards';
+import FlashcardDetail from '@/pages/FlashcardDetail';
+import StudyAnalytics from '@/pages/StudyAnalytics';
+import Settings from '@/pages/Settings';
+import Profile from '@/pages/Profile';
+import AIExamQuestions from '@/pages/AIExamQuestions';
+// import StudyRooms from '@/pages/StudyRooms'; // Renamed to StudyPulse
+import StudyPulse from '@/pages/StudyPulse'; // New unified room discovery page
+import StudyRoom from '@/pages/StudyRoom'; // Unified study room page
 
-// Add StudyPulse imports
-const StudyPulse = lazy(() => import("@/pages/StudyPulse"));
-const StudyPulseRoom = lazy(() => import("@/pages/StudyPulseRoom"));
+// Admin Routes
+import AdminDashboard from '@/pages/admin/Dashboard';
 
-// Create a component to handle scroll restoration
-const ScrollToTop = () => {
-  const { pathname } = useLocation();
-  
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  
-  return null;
-};
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
-
-const Loading = () => (
-  <div className="h-screen flex flex-col items-center justify-center p-4">
-    <div className="w-full max-w-md space-y-4">
-      <Skeleton className="h-12 w-3/4 mx-auto" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-2/3" />
-      <div className="flex space-x-2 pt-4">
-        <Skeleton className="h-10 w-24" />
-        <Skeleton className="h-10 w-24" />
-      </div>
-    </div>
-  </div>
-);
-
-// Put BrowserRouter outside of AuthProvider
-const App = () => (
-  <BrowserRouter>
-    <QueryClientProvider client={queryClient}>
-      <HelmetProvider>
-        <AuthProvider>
-          <ScrollToTop />
-          <Toaster />
-          <Sonner />
+function App() {
+  return (
+    <HelmetProvider>
+      <ThemeProvider>
+        <BrowserRouter>
           <Routes>
-            {/* Public routes */}
-            <Route path="/" element={
-              <PublicRoute>
-                <Suspense fallback={<Loading />}>
-                  <Index />
-                </Suspense>
-              </PublicRoute>
-            } />
-            
-            {/* New routes for Features and Pricing */}
-            <Route path="/features" element={
-              <Suspense fallback={<Loading />}>
-                <Features />
-              </Suspense>
-            } />
-            
-            <Route path="/pricing" element={
-              <Suspense fallback={<Loading />}>
-                <Pricing />
-              </Suspense>
-            } />
-            
-            {/* Authentication route */}
-            <Route path="/authentication" element={
-              <PublicRoute>
-                <Authentication />
-              </PublicRoute>
-            } />
-
-            {/* Protected dashboard route - Using direct import for Dashboard */}
-            <Route path="/dashboard" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Dashboard />
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            {/* New routes for Settings and Subscription */}
-            <Route path="/settings" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <Settings />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/subscription" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <Subscription />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            {/* Protected User routes */}
-            <Route path="/my-notes" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <MyNotes />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/upload-notes" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <UploadNotes />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/find-notes" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <FindNotes />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/view-notes/:noteId" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <ViewNotes />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/ai-answers" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <AIAnswers />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/ai-mark-answers" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <AIMarkAnswers />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/notifications" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <Notifications />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/study-rooms" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyRooms />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/study-room/:roomId" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyRoom />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/study-room/:roomId/chat" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyRoomChat />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/study-room/:roomId/info" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyRoomInfo />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/study-analytics" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyAnalytics />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            {/* StudyPulse routes */}
-            <Route path="/study-pulse" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyPulse />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/study-pulse/:roomId" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyPulseRoom />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            {/* Admin routes - NOT wrapped in AppLayout */}
-            <Route 
-              path="/admin" 
-              element={
-                <PrivateRoute adminOnly={true}>
-                  <Suspense fallback={<Loading />}>
-                    <AdminDashboard />
-                  </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            {/* Direct import for AdminMessages page to fix loading issue */}
-            <Route 
-              path="/admin/messages" 
-              element={
-                <PrivateRoute adminOnly={true}>
-                  <AdminMessages />
-                </PrivateRoute>
-              } 
-            />
-            
-            {/* Remaining admin routes - with additional error handling */}
-            <Route 
-              path="/admin/notes" 
-              element={
-                <PrivateRoute adminOnly={true}>
-                  <Suspense fallback={<Loading />}>
-                    <AdminNotes />
-                  </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/admin/users" 
-              element={
-                <PrivateRoute adminOnly={true}>
-                  <Suspense fallback={<Loading />}>
-                    <AdminUsers />
-                  </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/admin/events" 
-              element={
-                <PrivateRoute adminOnly={true}>
-                  <Suspense fallback={<Loading />}>
-                    <AdminEvents />
-                  </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/admin/analytics" 
-              element={
-                <PrivateRoute adminOnly={true}>
-                  <Suspense fallback={<Loading />}>
-                    <AdminAnalytics />
-                  </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            {/* Fallback route */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/" element={<AppLayout />}>
+              {/* Public Routes */}
+              <Route index element={<PublicRoute component={Home} />} />
+              <Route path="login" element={<PublicRoute component={Login} />} />
+              <Route path="signup" element={<PublicRoute component={Signup} />} />
+              <Route path="reset-password" element={<PublicRoute component={ResetPassword} />} />
+              <Route path="features" element={<PublicRoute component={Features} />} />
+              <Route path="pricing" element={<PublicRoute component={Pricing} />} />
+              
+              {/* Private Routes */}
+              <Route path="dashboard" element={<PrivateRoute component={Dashboard} />} />
+              <Route path="notes" element={<PrivateRoute component={Notes} />} />
+              <Route path="note/:id" element={<PrivateRoute component={Note} />} />
+              <Route path="notebooks" element={<PrivateRoute component={Notebooks} />} />
+              <Route path="flashcards" element={<PrivateRoute component={Flashcards} />} />
+              <Route path="flashcards/:id" element={<PrivateRoute component={FlashcardDetail} />} />
+              <Route path="analytics" element={<PrivateRoute component={StudyAnalytics} />} />
+              <Route path="settings" element={<PrivateRoute component={Settings} />} />
+              <Route path="profile" element={<PrivateRoute component={Profile} />} />
+              <Route path="ai-exam-questions" element={<PrivateRoute component={AIExamQuestions} />} />
+              
+              {/* Study Rooms / Study Pulse Routes */}
+              <Route path="study-pulse" element={<PrivateRoute component={StudyPulse} />} />
+              <Route path="study-rooms" element={<Navigate to="/study-pulse" replace />} /> {/* Redirect old route */}
+              <Route path="study-room/:id/*" element={<PrivateRoute component={StudyRoom} />} />
+              
+              {/* Admin Routes */}
+              <Route path="admin" element={<PrivateRoute component={AdminDashboard} admin={true} />} />
+              
+              {/* 404 Route */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Route>
           </Routes>
-        </AuthProvider>
-      </HelmetProvider>
-    </QueryClientProvider>
-  </BrowserRouter>
-);
+        </BrowserRouter>
+        <Toaster />
+      </ThemeProvider>
+    </HelmetProvider>
+  );
+}
 
 export default App;
