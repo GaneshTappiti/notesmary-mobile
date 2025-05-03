@@ -187,6 +187,57 @@ const StudyRoomChat = () => {
     }, 8000);
   };
   
+  // Handle action buttons
+  const handlePhoneCall = () => {
+    toast({
+      title: "Starting voice call",
+      description: "This feature is not implemented yet."
+    });
+  };
+  
+  const handleVideoCall = () => {
+    toast({
+      title: "Starting video call",
+      description: "This feature is not implemented yet."
+    });
+  };
+  
+  const handleShowMembers = () => {
+    navigate(`/study-room/${id}/info`);
+  };
+  
+  const handleShowInfo = () => {
+    navigate(`/study-room/${id}/info`);
+  };
+  
+  const handleAttachFile = () => {
+    toast({
+      title: "Attach file",
+      description: "This feature is not implemented yet."
+    });
+  };
+  
+  const handleAttachImage = () => {
+    toast({
+      title: "Attach image",
+      description: "This feature is not implemented yet."
+    });
+  };
+  
+  const handleAttachDocument = () => {
+    toast({
+      title: "Attach document",
+      description: "This feature is not implemented yet."
+    });
+  };
+  
+  const handleOpenEmoji = () => {
+    toast({
+      title: "Open emoji picker",
+      description: "This feature is not implemented yet."
+    });
+  };
+  
   // Group messages by date
   const groupedMessages: { [date: string]: Message[] } = {};
   messages.forEach(msg => {
@@ -224,17 +275,27 @@ const StudyRoomChat = () => {
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            onClick={handlePhoneCall}
+          >
             <Phone className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            onClick={handleVideoCall}
+          >
             <Video className="h-5 w-5" />
           </Button>
           <Button 
             variant="ghost" 
             size="icon" 
             className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={() => navigate(`/study-room/${id}/info`)}
+            onClick={handleShowMembers}
           >
             <Users className="h-5 w-5" />
           </Button>
@@ -242,7 +303,7 @@ const StudyRoomChat = () => {
             variant="ghost" 
             size="icon" 
             className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={() => navigate(`/study-room/${id}/info`)}
+            onClick={handleShowInfo}
           >
             <Info className="h-5 w-5" />
           </Button>
@@ -351,16 +412,36 @@ const StudyRoomChat = () => {
           
           <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-750">
             <div className="flex items-center gap-1.5">
-              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600"
+                onClick={handleAttachFile}
+              >
                 <PaperclipIcon className="h-4 w-4 text-gray-500" />
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600"
+                onClick={handleAttachImage}
+              >
                 <Image className="h-4 w-4 text-gray-500" />
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600"
+                onClick={handleAttachDocument}
+              >
                 <File className="h-4 w-4 text-gray-500" />
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600"
+                onClick={handleOpenEmoji}
+              >
                 <Smile className="h-4 w-4 text-gray-500" />
               </Button>
             </div>

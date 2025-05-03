@@ -42,7 +42,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 
 const StudyRoom = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
@@ -90,6 +90,27 @@ const StudyRoom = () => {
       .toUpperCase();
   };
 
+  // Handle action buttons that don't have implementations yet
+  const handleFeatureNotImplemented = (featureName: string) => {
+    toast({
+      title: `${featureName} not implemented`,
+      description: `The ${featureName} feature is not implemented yet.`
+    });
+  };
+  
+  const handleSearchInRoom = () => handleFeatureNotImplemented("Search in room");
+  const handleRoomSettings = () => handleFeatureNotImplemented("Room settings");
+  const handleInviteMembers = () => handleFeatureNotImplemented("Invite members");
+  const handleScheduleSession = () => handleFeatureNotImplemented("Schedule session");
+  const handleSetReminder = () => handleFeatureNotImplemented("Set reminder");
+  const handleJoinSession = () => handleFeatureNotImplemented("Join session");
+  const handleVideoCall = () => handleFeatureNotImplemented("Video call");
+  const handleVoiceCall = () => handleFeatureNotImplemented("Voice call");
+  const handleUploadFiles = () => handleFeatureNotImplemented("Upload files");
+  const handleAskQuestion = () => handleFeatureNotImplemented("Ask AI question");
+  const handleAnalyzeDocuments = () => handleFeatureNotImplemented("Analyze documents");
+  const handleSummarizeMaterials = () => handleFeatureNotImplemented("Summarize materials");
+
   return (
     <div className="container mx-auto px-4 py-0 sm:py-4 max-w-5xl">
       {/* WhatsApp Style Header */}
@@ -115,6 +136,7 @@ const StudyRoom = () => {
             variant="ghost" 
             size="icon"
             className="text-muted-foreground"
+            onClick={handleVoiceCall}
           >
             <Phone size={20} />
           </Button>
@@ -122,6 +144,7 @@ const StudyRoom = () => {
             variant="ghost" 
             size="icon"
             className="text-muted-foreground"
+            onClick={handleVideoCall}
           >
             <Video size={20} />
           </Button>
@@ -142,15 +165,15 @@ const StudyRoom = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Room Options</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSearchInRoom}>
                 <Search size={16} className="mr-2" />
                 <span>Search in Room</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleRoomSettings}>
                 <Settings size={16} className="mr-2" />
                 <span>Room Settings</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleInviteMembers}>
                 <UserPlus size={16} className="mr-2" />
                 <span>Invite Members</span>
               </DropdownMenuItem>
@@ -203,7 +226,12 @@ const StudyRoom = () => {
                   <Users size={18} />
                   <span>Members ({roomDetails.members.length})</span>
                 </CardTitle>
-                <Button variant="outline" size="sm" className="flex items-center gap-1.5">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex items-center gap-1.5"
+                  onClick={handleInviteMembers}
+                >
                   <UserPlus size={14} />
                   Invite
                 </Button>
@@ -251,7 +279,12 @@ const StudyRoom = () => {
                   <Clock size={18} />
                   <span>Upcoming Sessions</span>
                 </CardTitle>
-                <Button variant="outline" size="sm" className="flex items-center gap-1.5">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex items-center gap-1.5"
+                  onClick={handleScheduleSession}
+                >
                   <Calendar size={14} />
                   Schedule
                 </Button>
@@ -266,8 +299,8 @@ const StudyRoom = () => {
                   <h3 className="font-medium text-amber-900 dark:text-amber-200">Next Study Session</h3>
                   <p className="text-amber-800 dark:text-amber-300 text-sm mt-1">Tomorrow, 4:00 PM - Problem Solving Practice</p>
                   <div className="flex gap-2 mt-3">
-                    <Button size="sm" variant="default" className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600">Join</Button>
-                    <Button size="sm" variant="outline" className="border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300">Set Reminder</Button>
+                    <Button size="sm" variant="default" className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600" onClick={handleJoinSession}>Join</Button>
+                    <Button size="sm" variant="outline" className="border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300" onClick={handleSetReminder}>Set Reminder</Button>
                   </div>
                 </div>
               </div>
@@ -294,8 +327,8 @@ const StudyRoom = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600">Ask a Question</Button>
-                  <Button variant="outline" className="w-full border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300">Summarize Recent Materials</Button>
+                  <Button onClick={handleAskQuestion} className="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-600">Ask a Question</Button>
+                  <Button onClick={handleSummarizeMaterials} variant="outline" className="w-full border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300">Summarize Recent Materials</Button>
                 </div>
               </div>
             </CardContent>
@@ -311,7 +344,7 @@ const StudyRoom = () => {
                 <Upload className="h-10 w-10 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-foreground mb-1">Upload Study Materials</h3>
                 <p className="text-muted-foreground text-sm mb-4">Drag and drop files or click to browse</p>
-                <Button>Upload Files</Button>
+                <Button onClick={handleUploadFiles}>Upload Files</Button>
               </div>
             </CardContent>
           </Card>
@@ -374,7 +407,7 @@ const StudyRoom = () => {
                     <p className="text-green-800 dark:text-green-300 text-sm mt-1">Get AI summaries, key points, and insights from your study materials.</p>
                   </div>
                 </div>
-                <Button className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">Analyze Documents</Button>
+                <Button onClick={handleAnalyzeDocuments} className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">Analyze Documents</Button>
               </div>
             </CardContent>
           </Card>
@@ -389,7 +422,7 @@ const StudyRoom = () => {
                   <Calendar size={18} /> 
                   <span>Study Sessions</span>
                 </CardTitle>
-                <Button className="flex items-center gap-1.5">
+                <Button onClick={handleScheduleSession} className="flex items-center gap-1.5">
                   <Calendar size={14} />
                   New Session
                 </Button>
@@ -421,17 +454,17 @@ const StudyRoom = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Set Reminder</DropdownMenuItem>
-                        <DropdownMenuItem>Share</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleFeatureNotImplemented("Edit session")}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleSetReminder}>Set Reminder</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleFeatureNotImplemented("Share session")}>Share</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">Cancel</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => handleFeatureNotImplemented("Cancel session")}>Cancel</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
                   <div className="flex gap-2 mt-3">
-                    <Button size="sm" className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600">Join</Button>
-                    <Button size="sm" variant="outline" className="border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300">Set Reminder</Button>
+                    <Button size="sm" className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600" onClick={handleJoinSession}>Join</Button>
+                    <Button size="sm" variant="outline" className="border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300" onClick={handleSetReminder}>Set Reminder</Button>
                   </div>
                 </div>
                 
@@ -459,16 +492,16 @@ const StudyRoom = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Set Reminder</DropdownMenuItem>
-                        <DropdownMenuItem>Share</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleFeatureNotImplemented("Edit session")}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleSetReminder}>Set Reminder</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleFeatureNotImplemented("Share session")}>Share</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">Cancel</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => handleFeatureNotImplemented("Cancel session")}>Cancel</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
                   <div className="flex gap-2 mt-3">
-                    <Button size="sm" variant="outline">Set Reminder</Button>
+                    <Button size="sm" variant="outline" onClick={handleSetReminder}>Set Reminder</Button>
                   </div>
                 </div>
                 
@@ -493,8 +526,8 @@ const StudyRoom = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>View Notes</DropdownMenuItem>
-                        <DropdownMenuItem>View Recording</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleFeatureNotImplemented("View notes")}>View Notes</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleFeatureNotImplemented("View recording")}>View Recording</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>

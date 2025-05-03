@@ -8,11 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Users, Plus, Search, ArrowRight, BookOpen, Shield, MessageCircle } from 'lucide-react';
 import { CreateRoomModal } from '@/components/CreateRoomModal';
+import { useToast } from '@/hooks/use-toast';
 
 const StudyRooms = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   // Mock data for study rooms
   const studyRooms = [
@@ -55,8 +57,24 @@ const StudyRooms = () => {
   );
   
   const enterRoom = (roomId: string) => {
-    // Update to navigate to room info page instead of directly to the room
     navigate(`/study-room/${roomId}/info`);
+  };
+  
+  const handleJoinChat = (roomId: string) => {
+    navigate(`/study-room/${roomId}/chat`);
+  };
+  
+  const handleCreateRoom = (roomData: any) => {
+    // In a real app, this would make an API call to create a room
+    toast({
+      title: "Room Created",
+      description: `Your study room "${roomData.name}" has been created successfully.`
+    });
+    setShowCreateModal(false);
+    // Simulate navigation to the new room after creation
+    setTimeout(() => {
+      navigate(`/study-room/new-room-id/info`);
+    }, 500);
   };
   
   return (
@@ -151,7 +169,7 @@ const StudyRooms = () => {
                     size="sm"
                     variant="ghost"
                     className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
-                    onClick={() => navigate(`/study-room/${room.id}/chat`)}
+                    onClick={() => handleJoinChat(room.id)}
                   >
                     <MessageCircle size={14} className="mr-1" />
                     Chat
@@ -189,7 +207,8 @@ const StudyRooms = () => {
       {/* Create Room Modal */}
       <CreateRoomModal 
         open={showCreateModal} 
-        onClose={() => setShowCreateModal(false)} 
+        onClose={() => setShowCreateModal(false)}
+        onSubmit={handleCreateRoom}
       />
     </div>
   );

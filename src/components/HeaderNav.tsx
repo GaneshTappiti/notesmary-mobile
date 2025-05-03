@@ -41,6 +41,7 @@ export const HeaderNav = () => {
   const { toast } = useToast();
   const { logout, user } = useAuth();
   const [unreadNotifications, setUnreadNotifications] = useState(3); // Mock unread count
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Handle sign out
   const handleSignOut = async () => {
@@ -62,6 +63,20 @@ export const HeaderNav = () => {
     }
   };
   
+  // Handle search
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    
+    toast({
+      title: "Searching",
+      description: `Searching for "${searchQuery}"...`,
+      duration: 2000,
+    });
+    // Here you would typically redirect to a search results page
+    // navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+  };
+  
   // Function to get page title
   const getPageTitle = (pathname: string) => {
     const path = pathname.split('/')[1];
@@ -76,6 +91,7 @@ export const HeaderNav = () => {
       'study-analytics': 'Study Analytics',
       'study-rooms': 'Study Rooms',
       'study-room': 'Study Room',
+      'study-pulse': 'StudyPulse',
       'subscription': 'Subscription Management',
       'settings': 'Settings',
       'ai-mark-answers': 'Mark Answers',
@@ -110,11 +126,11 @@ export const HeaderNav = () => {
                 </BreadcrumbLink>
               </BreadcrumbItem>
               
-              {paths.length > 1 && paths[0] === 'study-room' && (
+              {paths.length > 1 && (paths[0] === 'study-room' || paths[0] === 'study-pulse') && (
                 <>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    {paths.length > 2 ? (
+                    {paths.length > 2 && paths[0] === 'study-room' ? (
                       <BreadcrumbLink asChild>
                         <Link to={`/${paths[0]}/${paths[1]}`}>Room Details</Link>
                       </BreadcrumbLink>
@@ -123,7 +139,7 @@ export const HeaderNav = () => {
                     )}
                   </BreadcrumbItem>
                   
-                  {paths.length > 2 && (
+                  {paths.length > 2 && paths[0] === 'study-room' && (
                     <>
                       <BreadcrumbSeparator />
                       <BreadcrumbItem>
@@ -180,14 +196,16 @@ export const HeaderNav = () => {
           {/* Search bar and actions */}
           <div className="flex items-center gap-3">
             {/* Search bar */}
-            <div className="relative hidden md:block">
+            <form onSubmit={handleSearch} className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input 
                 type="text" 
                 placeholder="Search..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-[240px] pl-9 pr-4 py-2 rounded-lg bg-gray-50 border-gray-200"
               />
-            </div>
+            </form>
             
             {/* Notifications - improved accessibility and hover state */}
             <Button 

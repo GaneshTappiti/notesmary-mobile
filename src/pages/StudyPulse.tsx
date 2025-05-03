@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Plus, Filter, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -88,6 +89,7 @@ const allTags = Array.from(
 );
 
 const StudyPulse = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -130,6 +132,10 @@ const StudyPulse = () => {
       description: `Your room "${roomData.title}" has been created successfully.`
     });
     setIsModalOpen(false);
+    // Simulate navigation to the new room
+    setTimeout(() => {
+      navigate(`/study-pulse/new-room-id`);
+    }, 500);
   };
 
   const handleJoinRoom = (roomId: string, isPrivate: boolean) => {
@@ -140,8 +146,15 @@ const StudyPulse = () => {
       });
     } else {
       // Navigate to the room
-      window.location.href = `/study-pulse/${roomId}`;
+      navigate(`/study-pulse/${roomId}`);
     }
+  };
+
+  const handleShowFilters = () => {
+    toast({
+      title: "Filters",
+      description: "Advanced filtering options coming soon."
+    });
   };
 
   return (
@@ -159,6 +172,7 @@ const StudyPulse = () => {
                 variant="outline" 
                 size="sm"
                 className="flex items-center gap-1"
+                onClick={handleShowFilters}
               >
                 <Filter className="h-4 w-4" />
                 <span className="hidden sm:inline">Filter</span>
