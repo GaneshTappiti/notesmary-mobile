@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -204,11 +203,11 @@ const StudyRooms = () => {
         </div>
       )}
       
-      {/* Create Room Modal */}
+      {/* Create Room Modal - Fixed prop name from onSubmit to onCreate */}
       <CreateRoomModal 
         open={showCreateModal} 
         onClose={() => setShowCreateModal(false)}
-        onSubmit={handleCreateRoom}
+        onCreate={handleCreateRoom}
       />
     </div>
   );
