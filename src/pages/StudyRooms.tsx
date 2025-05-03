@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Users, Plus, Search, ArrowRight, BookOpen } from 'lucide-react';
+import { Users, Plus, Search, ArrowRight, BookOpen, Shield, MessageCircle } from 'lucide-react';
 import { CreateRoomModal } from '@/components/CreateRoomModal';
 
 const StudyRooms = () => {
@@ -60,7 +60,7 @@ const StudyRooms = () => {
   };
   
   return (
-    <div className="container mx-auto px-4 py-6 max-w-5xl">
+    <div className="container mx-auto px-4 py-6 max-w-6xl">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold mb-1">Study Rooms</h1>
@@ -69,7 +69,7 @@ const StudyRooms = () => {
         <div className="mt-4 md:mt-0">
           <Button 
             onClick={() => setShowCreateModal(true)} 
-            className="gap-2"
+            className="gap-2 bg-indigo-600 hover:bg-indigo-700"
           >
             <Plus size={16} />
             Create New Room
@@ -84,66 +84,101 @@ const StudyRooms = () => {
             placeholder="Search study rooms..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-10 border-gray-200 focus:border-indigo-500"
           />
         </div>
       </div>
       
       {filteredRooms.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredRooms.map(room => (
-            <Card key={room.id} className="overflow-hidden hover:border-primary/50 transition-colors">
-              <CardHeader className="pb-3">
+            <Card 
+              key={room.id} 
+              className="overflow-hidden hover:border-indigo-400 hover:shadow-md transition-all duration-300 border-gray-200"
+            >
+              <CardHeader className="pb-3 bg-gray-50/50 dark:bg-gray-800/30">
                 <div className="flex justify-between items-start">
                   <div className="space-y-1">
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 text-lg">
                       {room.name}
                       {room.isNew && (
-                        <Badge className="ml-2 bg-blue-500">New</Badge>
+                        <Badge className="ml-1 bg-blue-500">New</Badge>
                       )}
                     </CardTitle>
                     <CardDescription className="text-sm line-clamp-2">{room.description}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pb-3">
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <BookOpen className="mr-1 h-4 w-4" />
-                  <span>{room.subject}</span>
+              <CardContent className="pb-3 pt-4">
+                <div className="flex items-center text-sm text-muted-foreground mb-2">
+                  <BookOpen className="mr-1 h-4 w-4 text-indigo-500" />
+                  <span className="font-medium">{room.subject}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="relative flex -space-x-2">
+                      {[...Array(Math.min(3, room.memberCount))].map((_, i) => (
+                        <Avatar key={i} className="border-2 border-background w-7 h-7">
+                          <AvatarFallback className="text-xs bg-indigo-100 text-indigo-800">
+                            {String.fromCharCode(65 + i)}
+                          </AvatarFallback>
+                        </Avatar>
+                      ))}
+                      {room.memberCount > 3 && (
+                        <div className="flex items-center justify-center w-7 h-7 rounded-full bg-gray-100 text-xs font-medium border-2 border-background">
+                          +{room.memberCount - 3}
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-sm text-muted-foreground ml-2">
+                      {room.memberCount} members
+                    </span>
+                  </div>
+                  <div className="flex items-center">
+                    <Badge variant="outline" className={`text-xs ${room.onlineCount > 0 ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+                      <span className={`mr-1.5 inline-block w-1.5 h-1.5 rounded-full ${room.onlineCount > 0 ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                      {room.onlineCount > 0 ? `${room.onlineCount} online` : 'No one online'}
+                    </Badge>
+                  </div>
                 </div>
               </CardContent>
-              <CardFooter className="pt-0 flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center">
-                    <Users className="h-4 w-4 mr-1 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">{room.memberCount} members</span>
-                  </div>
-                  <div className="text-xs bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full">
-                    {room.onlineCount > 0 ? `${room.onlineCount} online` : 'No one online'}
-                  </div>
+              <CardFooter className="pt-2 border-t flex justify-between items-center">
+                <div className="text-xs text-muted-foreground">
+                  Active {room.lastActivity}
                 </div>
-                <Button 
-                  size="sm" 
-                  className="gap-1" 
-                  onClick={() => enterRoom(room.id)}
-                >
-                  Enter 
-                  <ArrowRight size={14} />
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    size="sm"
+                    variant="ghost"
+                    className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                    onClick={() => navigate(`/study-room/${room.id}/chat`)}
+                  >
+                    <MessageCircle size={14} className="mr-1" />
+                    Chat
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    className="bg-indigo-600 hover:bg-indigo-700 gap-1" 
+                    onClick={() => enterRoom(room.id)}
+                  >
+                    Enter 
+                    <ArrowRight size={14} />
+                  </Button>
+                </div>
               </CardFooter>
             </Card>
           ))}
         </div>
       ) : (
         <div className="text-center py-12 bg-muted/40 rounded-lg">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
-            <Users className="h-6 w-6 text-primary" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 mb-4">
+            <Users className="h-6 w-6" />
           </div>
           <h3 className="text-lg font-medium mb-2">No study rooms yet</h3>
           <p className="text-muted-foreground mb-4">Create a room to start collaborating</p>
           <Button 
             onClick={() => setShowCreateModal(true)} 
-            className="gap-2"
+            className="gap-2 bg-indigo-600 hover:bg-indigo-700"
           >
             <Plus size={16} />
             Create New Room

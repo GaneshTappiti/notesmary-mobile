@@ -198,34 +198,50 @@ const StudyRoomChat = () => {
   });
   
   return (
-    <div className="flex flex-col h-screen max-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Chat header */}
-      <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+    <div className="flex flex-col h-screen max-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Chat header - Discord inspired */}
+      <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="flex items-center gap-3">
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={() => navigate(`/study-room/${id}/info`)} 
-            className="rounded-full"
+            className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex flex-col">
-            <h1 className="font-bold text-lg">{room.name}</h1>
-            <p className="text-xs text-muted-foreground">{room.onlineCount} online • {room.memberCount} members</p>
+            <div className="flex items-center">
+              <h1 className="font-semibold text-lg">{room.name}</h1>
+              <span className="ml-2 px-1.5 py-0.5 text-xs bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 rounded-full">
+                Live
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <span className="inline-block h-1.5 w-1.5 bg-green-500 rounded-full"></span>
+              {room.onlineCount} online • {room.memberCount} members
+            </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="rounded-full">
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
             <Phone className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-full">
+          <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
             <Video className="h-5 w-5" />
           </Button>
           <Button 
             variant="ghost" 
             size="icon" 
-            className="rounded-full"
+            className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            onClick={() => navigate(`/study-room/${id}/info`)}
+          >
+            <Users className="h-5 w-5" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
             onClick={() => navigate(`/study-room/${id}/info`)}
           >
             <Info className="h-5 w-5" />
@@ -233,20 +249,14 @@ const StudyRoomChat = () => {
         </div>
       </div>
       
-      {/* Chat messages area with WhatsApp-style background */}
+      {/* Chat messages area - Discord inspired */}
       <div 
-        className="flex-1 overflow-y-auto p-4 space-y-4" 
-        style={{
-          backgroundImage: "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AgTFAA52WPZ6gAAAClJREFUaN7twTEBAAAAwiD7p/ZZDGAAAAAAAAAAAAAAAAAAAAAAAAAA4GswqQAByRfafQAAAABJRU5ErkJggg==')", 
-          backgroundRepeat: "repeat",
-          backgroundSize: "150px",
-          opacity: 0.95
-        }}
+        className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-gray-800"
       >
         {Object.entries(groupedMessages).map(([date, msgs], dateIndex) => (
           <div key={date} className="space-y-3">
             <div className="flex justify-center">
-              <div className="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-full text-xs">
+              <div className="bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full text-xs font-medium">
                 {date}
               </div>
             </div>
@@ -258,41 +268,49 @@ const StudyRoomChat = () => {
                 .map(n => n[0])
                 .join('');
               
+              // Group consecutive messages from same sender
+              const isPreviousSameSender = i > 0 && msgs[i-1].senderId === msg.senderId;
+              
               return (
                 <div 
                   key={msg.id}
-                  className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} gap-2`}
+                  className={`flex gap-2 ${isPreviousSameSender ? 'mt-1 pt-0' : 'pt-2'}`}
                 >
-                  {!isCurrentUser && (
-                    <Avatar className="h-8 w-8">
+                  {!isCurrentUser && !isPreviousSameSender && (
+                    <Avatar className="h-9 w-9 mt-0.5">
                       <AvatarImage src={msg.avatar} />
-                      <AvatarFallback className="bg-blue-500 text-white text-xs">
+                      <AvatarFallback className="bg-indigo-500 text-white text-xs">
                         {senderInitials}
                       </AvatarFallback>
                     </Avatar>
                   )}
                   
-                  <div 
-                    className={`max-w-[75%] md:max-w-[60%] p-3 rounded-lg ${
-                      isCurrentUser 
-                        ? 'bg-blue-500 text-white rounded-tr-none' 
-                        : 'bg-white dark:bg-gray-800 rounded-tl-none'
-                    }`}
-                  >
-                    {!isCurrentUser && (
-                      <p className="text-xs font-medium text-blue-600 dark:text-blue-400 mb-1">
-                        {msg.senderName}
-                      </p>
+                  {!isCurrentUser && isPreviousSameSender && (
+                    <div className="w-9"></div> // Spacer for alignment
+                  )}
+                  
+                  <div className="flex-1">
+                    {!isPreviousSameSender && !isCurrentUser && (
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-medium text-sm">{msg.senderName}</span>
+                        <span className="text-xs text-muted-foreground">{formatTime(msg.timestamp)}</span>
+                      </div>
                     )}
-                    <p className="break-words">{msg.content}</p>
-                    <div className={`flex justify-end items-center gap-1 mt-1 ${isCurrentUser ? 'text-blue-100' : 'text-gray-500'}`}>
-                      <span className="text-[10px]">{formatTime(msg.timestamp)}</span>
-                      {isCurrentUser && (
-                        <svg width="16" height="11" viewBox="0 0 16 11" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-2.5 w-4">
-                          <path d="M10.7 0.5L5.85 5.4L3.15 2.7L0.75 5.1L3.1 7.45L5.85 10.2L13.3 2.75L10.7 0.5Z" fill="currentColor"/>
-                        </svg>
-                      )}
+                    
+                    {!isPreviousSameSender && isCurrentUser && (
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-xs text-muted-foreground">{formatTime(msg.timestamp)}</span>
+                        <span className="font-medium text-sm text-indigo-600">{msg.senderName}</span>
+                      </div>
+                    )}
+                    
+                    <div className={`rounded-lg px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 ${isCurrentUser ? 'bg-indigo-50 dark:bg-indigo-900/30 ml-auto' : ''}`}>
+                      <p className="break-words">{msg.content}</p>
                     </div>
+                    
+                    {isPreviousSameSender && (
+                      <span className="text-xs text-muted-foreground ml-3">{formatTime(msg.timestamp)}</span>
+                    )}
                   </div>
                 </div>
               );
@@ -302,7 +320,7 @@ const StudyRoomChat = () => {
         
         {/* Typing indicator */}
         {isTyping && typingUser && (
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-sm text-gray-500 ml-12">
             <div className="flex gap-1">
               <span className="animate-bounce">•</span>
               <span className="animate-bounce delay-75">•</span>
@@ -315,41 +333,48 @@ const StudyRoomChat = () => {
         <div ref={messagesEndRef} />
       </div>
       
-      {/* Message input area */}
+      {/* Message input area - Discord inspired */}
       <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-3">
-        <div className="flex items-end gap-2">
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Smile className="h-5 w-5 text-gray-500" />
-            </Button>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <PaperclipIcon className="h-5 w-5 text-gray-500" />
+        <div className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 overflow-hidden">
+          <Textarea
+            placeholder="Send a message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
+            className="min-h-[60px] max-h-[120px] py-3 px-4 rounded-none border-0 focus:ring-0 resize-none"
+          />
+          
+          <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-750">
+            <div className="flex items-center gap-1.5">
+              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600">
+                <PaperclipIcon className="h-4 w-4 text-gray-500" />
+              </Button>
+              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600">
+                <Image className="h-4 w-4 text-gray-500" />
+              </Button>
+              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600">
+                <File className="h-4 w-4 text-gray-500" />
+              </Button>
+              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600">
+                <Smile className="h-4 w-4 text-gray-500" />
+              </Button>
+            </div>
+            
+            <Button 
+              onClick={sendMessage}
+              disabled={!message.trim()}
+              size="sm"
+              className="rounded-md bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
+              <Send className="h-4 w-4 mr-1" />
+              Send
             </Button>
           </div>
-          
-          <div className="flex-1">
-            <Textarea
-              placeholder="Type a message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  sendMessage();
-                }
-              }}
-              className="min-h-[44px] max-h-[120px] py-2.5 px-3 rounded-2xl resize-none"
-            />
-          </div>
-          
-          <Button 
-            onClick={sendMessage}
-            disabled={!message.trim()}
-            size="icon"
-            className="rounded-full h-10 w-10 bg-blue-500 hover:bg-blue-600"
-          >
-            <Send className="h-5 w-5" />
-          </Button>
         </div>
       </div>
     </div>
