@@ -203,7 +203,7 @@ const StudyRooms = () => {
         </div>
       )}
       
-      {/* Create Room Modal - Fixed prop name from onSubmit to onCreate */}
+      {/* Create Room Modal - Now using the onCreate prop */}
       <CreateRoomModal 
         open={showCreateModal} 
         onClose={() => setShowCreateModal(false)}

@@ -25,6 +25,7 @@ import { useForm } from "react-hook-form";
 interface CreateRoomModalProps {
   open: boolean;
   onClose: () => void;
+  onCreate?: (roomData: any) => void; // Added onCreate prop as optional
 }
 
 // Form validation schema
@@ -37,7 +38,7 @@ const roomFormSchema = z.object({
 
 type RoomFormValues = z.infer<typeof roomFormSchema>;
 
-export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
+export const CreateRoomModal = ({ open, onClose, onCreate }: CreateRoomModalProps) => {
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
@@ -97,6 +98,19 @@ export const CreateRoomModal = ({ open, onClose }: CreateRoomModalProps) => {
       
       // Generate a random ID for the new room
       const mockNewRoomId = Math.floor(Math.random() * 1000).toString();
+      
+      // Call onCreate if provided
+      if (onCreate) {
+        const roomData = {
+          name: roomName,
+          description,
+          isPrivate,
+          inviteEmails,
+          enableShareLink
+        };
+        onCreate(roomData);
+      }
+      
       resetForm();
       onClose();
       
