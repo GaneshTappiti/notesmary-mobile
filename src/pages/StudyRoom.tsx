@@ -6,8 +6,38 @@ import { RoomHeader } from '@/components/study-room/RoomHeader';
 import { RoomTabs } from '@/components/study-room/RoomTabs';
 import { RoomInfoSidebar } from '@/components/study-room/RoomInfoSidebar';
 
+// Define proper types for better type safety
+type MemberStatus = 'online' | 'offline';
+
+interface Member {
+  id: string;
+  name: string;
+  avatar: string;
+  role: string;
+  status: MemberStatus;
+}
+
+interface Resource {
+  id: string;
+  title: string;
+  type: string;
+  uploadedBy: string;
+  date: string;
+}
+
+interface Room {
+  name: string;
+  subject: string;
+  isPrivate: boolean;
+  memberCount: number;
+  onlineCount: number;
+  description: string;
+  members: Member[];
+  resources: Resource[];
+}
+
 // Mock data for the room
-const mockRoom = {
+const mockRoom: Room = {
   name: 'Advanced Physics Study Group',
   subject: 'Physics',
   isPrivate: false,
@@ -15,11 +45,11 @@ const mockRoom = {
   onlineCount: 3,
   description: 'Collaborative study space for Advanced Physics concepts and problem-solving.',
   members: [
-    { id: '1', name: 'Alex Johnson', avatar: '', role: 'Admin', status: 'online' as 'online' },
-    { id: '2', name: 'Sarah Chen', avatar: '', role: 'Member', status: 'online' as 'online' },
-    { id: '3', name: 'Michael Brown', avatar: '', role: 'Member', status: 'offline' as 'offline' },
-    { id: '4', name: 'Jessica Lee', avatar: '', role: 'Member', status: 'online' as 'online' },
-    { id: '5', name: 'David Kim', avatar: '', role: 'Member', status: 'offline' as 'offline' },
+    { id: '1', name: 'Alex Johnson', avatar: '', role: 'Admin', status: 'online' },
+    { id: '2', name: 'Sarah Chen', avatar: '', role: 'Member', status: 'online' },
+    { id: '3', name: 'Michael Brown', avatar: '', role: 'Member', status: 'offline' },
+    { id: '4', name: 'Jessica Lee', avatar: '', role: 'Member', status: 'online' },
+    { id: '5', name: 'David Kim', avatar: '', role: 'Member', status: 'offline' },
   ],
   resources: [
     { id: '1', title: 'Physics Formula Sheet', type: 'PDF', uploadedBy: 'Alex Johnson', date: '2 days ago' },

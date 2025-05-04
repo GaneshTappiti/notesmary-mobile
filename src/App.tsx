@@ -12,6 +12,9 @@ import { PrivateRoute } from '@/components/PrivateRoute';
 // Page imports - only import what actually exists in the project
 import StudyPulse from '@/pages/StudyPulse';
 import StudyRoom from '@/pages/StudyRoom';
+import Features from '@/pages/Features';
+import Index from '@/pages/Index';
+import Dashboard from '@/pages/Dashboard';
 
 function App() {
   return (
@@ -25,7 +28,15 @@ function App() {
               </AppLayout>
             )}>
               {/* Public Routes */}
-              <Route index element={<Navigate to="/study-pulse" replace />} />
+              <Route index element={<Index />} />
+              <Route path="features" element={<Features />} />
+              
+              {/* Private Routes */}
+              <Route path="dashboard" element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              } />
               
               {/* Study Rooms / Study Pulse Routes */}
               <Route path="study-pulse" element={
@@ -41,7 +52,7 @@ function App() {
               } />
               
               {/* 404 Route */}
-              <Route path="*" element={<Navigate to="/study-pulse" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
         </BrowserRouter>
