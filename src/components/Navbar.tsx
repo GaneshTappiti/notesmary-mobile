@@ -85,7 +85,7 @@ export const Navbar = () => {
           : "bg-transparent py-3 md:py-5"
       }`}
     >
-      <PageContainer fullWidth noPadding className="px-4 sm:px-6 lg:px-8">
+      <PageContainer fullWidth className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
