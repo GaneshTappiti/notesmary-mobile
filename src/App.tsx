@@ -242,25 +242,9 @@ const App = () => (
               </PrivateRoute>
             } />
             
-            <Route path="/study-room/:roomId/chat" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyRoomChat />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/study-room/:roomId/info" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyRoomInfo />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
+            {/* Update: Redirect old sub-routes to the main room route */}
+            <Route path="/study-room/:roomId/chat" element={<Navigate to="/study-room/:roomId" replace />} />
+            <Route path="/study-room/:roomId/info" element={<Navigate to="/study-room/:roomId" replace />} />
             
             <Route path="/study-analytics" element={
               <PrivateRoute>
