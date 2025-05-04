@@ -1,5 +1,5 @@
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { Toaster } from '@/components/ui/toaster';
 import { HelmetProvider } from 'react-helmet-async';
@@ -19,7 +19,11 @@ function App() {
       <ThemeProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<AppLayout />}>
+            <Route path="/" element={(
+              <AppLayout>
+                <Outlet />
+              </AppLayout>
+            )}>
               {/* Public Routes */}
               <Route index element={<Navigate to="/study-pulse" replace />} />
               
