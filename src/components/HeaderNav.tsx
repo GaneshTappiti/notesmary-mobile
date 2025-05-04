@@ -169,8 +169,9 @@ export const HeaderNav = () => {
     });
   };
 
-  // Safely access user's display name
-  const displayName = user?.email?.split('@')[0] || "User";
+  const displayName = user?.user_metadata?.full_name || 
+                     user?.email?.split('@')[0] || 
+                     "User";
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 h-16">

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -154,18 +153,11 @@ const Dashboard = () => {
     }
   };
 
-  // Safely get user name without accessing user_metadata directly
-  const getUserName = () => {
-    if (!user) return "";
-    // Try to get name from profile or email
-    return user.email?.split('@')[0] || "";
-  };
-
   return (
     <PageContainer>
       <div className="space-y-6 animate-fade-in px-1 md:px-0">
         <WelcomeHeader 
-          userName={getUserName()}
+          userName={user?.user_metadata?.full_name}
           onLogout={handleLogout}
           isAdmin={isAdmin}
           onAdminClick={() => navigate('/admin')}
