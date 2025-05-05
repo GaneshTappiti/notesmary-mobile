@@ -55,10 +55,12 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
   }
 
   if (!isAuthenticated) {
+    // Redirect to authentication page with the current location so we can return after login
     return <Navigate to="/authentication" state={{ from: location }} replace />;
   }
 
   if (adminOnly && !isAdmin) {
+    // Redirect non-admin users to dashboard
     return <Navigate to="/dashboard" replace />;
   }
 
