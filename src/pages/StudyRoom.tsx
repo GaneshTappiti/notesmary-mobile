@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,10 +18,8 @@ import {
   Send,
   Paperclip,
   Smile,
-  Mic,
   Pin,
   Upload,
-  BrainCircuit,
   Clock,
   Calendar,
   ChevronLeft,
@@ -32,7 +30,6 @@ import {
   LogOut,
   X,
   Info,
-  ChevronRight,
   Plus,
 } from 'lucide-react';
 import { 
@@ -60,6 +57,7 @@ const StudyRoom = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Mock data for the room
   const room = {
@@ -140,6 +138,11 @@ const StudyRoom = () => {
       avatar: "https://ui-avatars.com/api/?name=Alex+Johnson&background=random&color=fff"
     }
   ];
+
+  // Scroll to bottom of chat when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   useEffect(() => {
     // Initialize messages with mock data
@@ -231,7 +234,7 @@ const StudyRoom = () => {
 
   // Handle creating a new room
   const handleCreateRoom = () => {
-    navigate('/study-rooms/create');
+    navigate('/study-rooms');
   };
   
   // Handle joining another room
@@ -264,10 +267,10 @@ const StudyRoom = () => {
   };
 
   // Handle joining a session
-  const handleJoinSession = () => {
+  const handleJoinSession = (sessionId: string) => {
     toast({
       title: "Join Session",
-      description: "Session joining feature is coming soon."
+      description: `Joining session "${room.sessions.find(s => s.id === sessionId)?.topic}" soon.`
     });
   };
 
@@ -311,8 +314,8 @@ const StudyRoom = () => {
         </div>
         <ScrollArea className="flex-1">
           <div className="p-4">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">YOUR STUDY ROOMS</h3>
-            <div className="space-y-1">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">YOUR STUDY ROOMS</h3>
+            <div className="space-y-1.5">
               {['Advanced Physics', 'Data Structures', 'Organic Chemistry'].map((roomName, i) => (
                 <div 
                   key={i} 
@@ -347,7 +350,7 @@ const StudyRoom = () => {
       {/* Main Content */}
       <div className="flex flex-1 flex-col h-full overflow-hidden">
         {/* Room Header */}
-        <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
           <div className="flex items-center gap-3">
             <Button 
               variant="ghost" 
@@ -435,7 +438,7 @@ const StudyRoom = () => {
         <div className="flex-1 overflow-hidden">
           <Tabs defaultValue="chat" value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
             <div className="bg-white dark:bg-gray-800 px-4 border-b border-gray-200 dark:border-gray-700">
-              <TabsList>
+              <TabsList className="w-full justify-start">
                 <TabsTrigger value="chat" className="flex items-center gap-1.5">
                   <MessageSquare size={14} />
                   <span>Chat</span>
@@ -506,6 +509,9 @@ const StudyRoom = () => {
                       <span>{typingUser} is typing...</span>
                     </div>
                   )}
+                  
+                  {/* Empty div for scrolling to the end */}
+                  <div ref={messagesEndRef} />
                 </div>
               </ScrollArea>
 
@@ -611,7 +617,10 @@ const StudyRoom = () => {
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-center">
                     <CardTitle className="text-lg">Study Resources</CardTitle>
-                    <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={handleUploadResource}>Upload Resource</Button>
+                    <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={handleUploadResource}>
+                      <Upload className="h-4 w-4 mr-1" />
+                      Upload Resource
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -709,16 +718,25 @@ const StudyRoom = () => {
               </div>
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mb-6">
-                <h4 className="text-sm font-medium mb-2">Upcoming Session</h4>
+                <h4 className="text-sm font-medium mb-2">Upcoming Sessions</h4>
                 {room.sessions.filter(s => s.status === 'upcoming').length > 0 ? (
-                  <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30 rounded-lg p-3">
-                    <h5 className="font-medium text-sm">{room.sessions[0].topic}</h5>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {new Date(room.sessions[0].date).toLocaleDateString()} • {room.sessions[0].startTime} - {room.sessions[0].endTime}
-                    </p>
-                    <Button size="sm" className="mt-3 bg-indigo-600 hover:bg-indigo-700 w-full" onClick={handleJoinSession}>
-                      Join Session
-                    </Button>
+                  <div className="space-y-3">
+                    {room.sessions.filter(s => s.status === 'upcoming').map(session => (
+                      <div key={session.id} className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30 rounded-lg p-3">
+                        <h5 className="font-medium text-sm">{session.topic}</h5>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                          <Calendar className="h-3 w-3" />
+                          <span>{new Date(session.date).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                          <Clock className="h-3 w-3" />
+                          <span>{session.startTime} - {session.endTime}</span>
+                        </div>
+                        <Button size="sm" className="mt-3 bg-indigo-600 hover:bg-indigo-700 w-full" onClick={() => handleJoinSession(session.id)}>
+                          Join Session
+                        </Button>
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">No upcoming sessions</p>

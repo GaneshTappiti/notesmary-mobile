@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Users, Plus, Search, ArrowRight, BookOpen, Shield, MessageCircle } from 'lucide-react';
+import { Users, Plus, Search, ArrowRight, BookOpen, MessageCircle } from 'lucide-react';
 import { CreateRoomModal } from '@/components/CreateRoomModal';
 import { useToast } from '@/hooks/use-toast';
 
@@ -47,6 +47,16 @@ const StudyRooms = () => {
       onlineCount: 0,
       lastActivity: 'Yesterday',
       isNew: false
+    },
+    { 
+      id: '4', 
+      name: 'Calculus III', 
+      description: 'Study group focusing on multivariable calculus and vector analysis.',
+      subject: 'Mathematics',
+      memberCount: 4,
+      onlineCount: 1,
+      lastActivity: '3 hours ago',
+      isNew: false
     }
   ];
   
@@ -61,8 +71,8 @@ const StudyRooms = () => {
   };
   
   const handleJoinChat = (roomId: string) => {
-    navigate(`/study-room/${roomId}`);
-    // Set the active tab to chat through URL parameters or state management
+    // Navigate to the room with chat tab active
+    navigate(`/study-room/${roomId}?tab=chat`);
   };
   
   const handleCreateRoom = (roomData: any) => {
@@ -72,10 +82,11 @@ const StudyRooms = () => {
       description: `Your study room "${roomData.name}" has been created successfully.`
     });
     setShowCreateModal(false);
-    // Navigate to the new room after creation
+    
+    // Navigate to the new room after creation with a small delay for toast visibility
     setTimeout(() => {
       navigate(`/study-room/new-room-id`);
-    }, 500);
+    }, 800);
   };
   
   return (
@@ -121,7 +132,7 @@ const StudyRooms = () => {
                     <CardTitle className="flex items-center gap-2 text-lg">
                       {room.name}
                       {room.isNew && (
-                        <Badge className="ml-1 bg-blue-500">New</Badge>
+                        <Badge className="ml-1 bg-blue-500 text-white">New</Badge>
                       )}
                     </CardTitle>
                     <CardDescription className="text-sm line-clamp-2">{room.description}</CardDescription>
@@ -193,8 +204,8 @@ const StudyRooms = () => {
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 mb-4">
             <Users className="h-6 w-6" />
           </div>
-          <h3 className="text-lg font-medium mb-2">No study rooms yet</h3>
-          <p className="text-muted-foreground mb-4">Create a room to start collaborating</p>
+          <h3 className="text-lg font-medium mb-2">No study rooms found</h3>
+          <p className="text-muted-foreground mb-4">Try adjusting your search or create a new room</p>
           <Button 
             onClick={() => setShowCreateModal(true)} 
             className="gap-2 bg-indigo-600 hover:bg-indigo-700"
@@ -205,7 +216,7 @@ const StudyRooms = () => {
         </div>
       )}
       
-      {/* Create Room Modal - Now using the onCreate prop */}
+      {/* Create Room Modal */}
       <CreateRoomModal 
         open={showCreateModal} 
         onClose={() => setShowCreateModal(false)}
