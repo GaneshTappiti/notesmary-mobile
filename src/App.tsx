@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -27,8 +28,6 @@ const AIAnswers = lazy(() => import("@/pages/AIAnswers"));
 const AIMarkAnswers = lazy(() => import("@/pages/AIMarkAnswers"));
 const StudyRooms = lazy(() => import("@/pages/StudyRooms"));
 const StudyRoom = lazy(() => import("@/pages/StudyRoom"));
-const StudyRoomChat = lazy(() => import("@/pages/StudyRoomChat"));
-const StudyRoomInfo = lazy(() => import("@/pages/StudyRoomInfo"));
 const StudyAnalytics = lazy(() => import("@/pages/StudyAnalytics"));
 const Notifications = lazy(() => import("@/pages/Notifications"));
 const Features = lazy(() => import("@/pages/Features"));
@@ -232,11 +231,23 @@ const App = () => (
               </PrivateRoute>
             } />
             
+            {/* Study room routes */}
             <Route path="/study-room/:roomId" element={
               <PrivateRoute>
                 <AppLayout>
                   <Suspense fallback={<Loading />}>
                     <StudyRoom />
+                  </Suspense>
+                </AppLayout>
+              </PrivateRoute>
+            } />
+            
+            {/* Add new route for create room */}
+            <Route path="/study-rooms/create" element={
+              <PrivateRoute>
+                <AppLayout>
+                  <Suspense fallback={<Loading />}>
+                    <StudyRooms />
                   </Suspense>
                 </AppLayout>
               </PrivateRoute>

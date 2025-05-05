@@ -45,8 +45,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 
-// Import RoomInfoSidebar and roomDetails 
-// from the current StudyRoomInfo.tsx
+// Format time helper function
 const formatTime = (date: Date) => {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
@@ -62,7 +61,7 @@ const StudyRoom = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
   
-  // Mock data from StudyRoomInfo.tsx
+  // Mock data for the room
   const room = {
     id: roomId || '1',
     name: 'Advanced Physics Study Group',
@@ -93,7 +92,7 @@ const StudyRoom = () => {
     ]
   };
   
-  // Mock chat messages from StudyRoomChat.tsx
+  // Mock chat messages
   const mockMessages = [
     {
       id: "msg1",
@@ -147,7 +146,7 @@ const StudyRoom = () => {
     setMessages(mockMessages);
   }, []);
   
-  // Functions from StudyRoomChat.tsx
+  // Send message function
   const sendMessage = () => {
     if (!message.trim()) return;
     
@@ -230,7 +229,72 @@ const StudyRoom = () => {
     return senderId === 'current-user';
   };
 
-  // Simulate both room list sidebar and room info sidebar
+  // Handle creating a new room
+  const handleCreateRoom = () => {
+    navigate('/study-rooms/create');
+  };
+  
+  // Handle joining another room
+  const handleJoinRoom = (id: string) => {
+    navigate(`/study-room/${id}`);
+  };
+  
+  // Handle downloading a resource
+  const handleDownloadResource = (resourceId: string) => {
+    toast({
+      title: "Download started",
+      description: "Your resource is being downloaded."
+    });
+  };
+  
+  // Handle viewing a resource
+  const handleViewResource = (resourceId: string) => {
+    toast({
+      title: "Opening resource",
+      description: "Resource viewer opening..."
+    });
+  };
+
+  // Handle uploading a resource
+  const handleUploadResource = () => {
+    toast({
+      title: "Upload Resource",
+      description: "This feature is coming soon."
+    });
+  };
+
+  // Handle joining a session
+  const handleJoinSession = () => {
+    toast({
+      title: "Join Session",
+      description: "Session joining feature is coming soon."
+    });
+  };
+
+  // Handle search in room
+  const handleSearchInRoom = () => {
+    toast({
+      title: "Search",
+      description: "Search functionality is coming soon."
+    });
+  };
+
+  // Handle room settings
+  const handleRoomSettings = () => {
+    toast({
+      title: "Room Settings",
+      description: "Settings panel is coming soon."
+    });
+  };
+
+  // Handle invite members
+  const handleInviteMembers = () => {
+    toast({
+      title: "Invite Members",
+      description: "Member invitation feature is coming soon."
+    });
+  };
+
   return (
     <div className="flex h-screen max-h-screen overflow-hidden">
       {/* Left Sidebar - Room List (normally would be separate component) */}
@@ -253,6 +317,7 @@ const StudyRoom = () => {
                 <div 
                   key={i} 
                   className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${i === 0 ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+                  onClick={() => handleJoinRoom(`room-${i + 1}`)}
                 >
                   <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
                   <span className="truncate">{roomName}</span>
@@ -260,7 +325,7 @@ const StudyRoom = () => {
               ))}
             </div>
             <div className="mt-6">
-              <Button className="w-full gap-1" size="sm">
+              <Button className="w-full gap-1" size="sm" onClick={handleCreateRoom}>
                 <Plus size={14} /> Create Room
               </Button>
             </div>
@@ -341,15 +406,15 @@ const StudyRoom = () => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Room Options</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSearchInRoom}>
                   <Search size={14} className="mr-2" />
                   <span>Search in Room</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleRoomSettings}>
                   <Settings size={14} className="mr-2" />
                   <span>Room Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleInviteMembers}>
                   <UserPlus size={14} className="mr-2" />
                   <span>Invite Members</span>
                 </DropdownMenuItem>
@@ -546,7 +611,7 @@ const StudyRoom = () => {
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-center">
                     <CardTitle className="text-lg">Study Resources</CardTitle>
-                    <Button className="bg-indigo-600 hover:bg-indigo-700">Upload Resource</Button>
+                    <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={handleUploadResource}>Upload Resource</Button>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -567,10 +632,20 @@ const StudyRoom = () => {
                             </p>
                           </div>
                           <div className="flex gap-2">
-                            <Button variant="outline" size="sm" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+                              onClick={() => handleViewResource(resource.id)}
+                            >
                               View
                             </Button>
-                            <Button variant="ghost" size="sm" className="text-indigo-700 hover:bg-indigo-50">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-indigo-700 hover:bg-indigo-50"
+                              onClick={() => handleDownloadResource(resource.id)}
+                            >
                               Download
                             </Button>
                           </div>
@@ -641,7 +716,7 @@ const StudyRoom = () => {
                     <p className="text-xs text-muted-foreground mt-1">
                       {new Date(room.sessions[0].date).toLocaleDateString()} • {room.sessions[0].startTime} - {room.sessions[0].endTime}
                     </p>
-                    <Button size="sm" className="mt-3 bg-indigo-600 hover:bg-indigo-700 w-full">
+                    <Button size="sm" className="mt-3 bg-indigo-600 hover:bg-indigo-700 w-full" onClick={handleJoinSession}>
                       Join Session
                     </Button>
                   </div>

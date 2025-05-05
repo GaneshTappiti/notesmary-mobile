@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -56,11 +57,12 @@ const StudyRooms = () => {
   );
   
   const enterRoom = (roomId: string) => {
-    navigate(`/study-room/${roomId}/info`);
+    navigate(`/study-room/${roomId}`);
   };
   
   const handleJoinChat = (roomId: string) => {
-    navigate(`/study-room/${roomId}/chat`);
+    navigate(`/study-room/${roomId}`);
+    // Set the active tab to chat through URL parameters or state management
   };
   
   const handleCreateRoom = (roomData: any) => {
@@ -70,9 +72,9 @@ const StudyRooms = () => {
       description: `Your study room "${roomData.name}" has been created successfully.`
     });
     setShowCreateModal(false);
-    // Simulate navigation to the new room after creation
+    // Navigate to the new room after creation
     setTimeout(() => {
-      navigate(`/study-room/new-room-id/info`);
+      navigate(`/study-room/new-room-id`);
     }, 500);
   };
   
