@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -141,7 +140,9 @@ const StudyRoom = () => {
 
   // Scroll to bottom of chat when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -180,6 +181,11 @@ const StudyRoom = () => {
       };
       
       setMessages(prev => [...prev, responseMessage]);
+      
+      // Auto-scroll to the bottom when new message arrives
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
     }, 5000);
   };
 
@@ -533,7 +539,7 @@ const StudyRoom = () => {
                   <Button 
                     onClick={sendMessage} 
                     disabled={!message.trim()}
-                    className="bg-indigo-600 hover:bg-indigo-700"
+                    className="bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-95"
                   >
                     <Send className="h-4 w-4" />
                   </Button>

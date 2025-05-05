@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, Users, MessageCircle, FileText, Video, Mic, MicOff, VideoOff } from 'lucide-react';
+import { ArrowLeft, Users, MessageCircle, FileText, Video, Mic, MicOff, VideoOff, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // Mock data for the rooms
@@ -99,6 +99,13 @@ const StudyPulseRoom = () => {
     navigate('/study-pulse');
   };
   
+  const handleAddParticipants = () => {
+    toast({
+      title: "Invite Participants",
+      description: "Invitation feature coming soon."
+    });
+  };
+  
   return (
     <>
       <Helmet>
@@ -107,17 +114,29 @@ const StudyPulseRoom = () => {
       
       <PageContainer>
         <div className="space-y-6">
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate('/study-pulse')}
-            >
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              Back
-            </Button>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => navigate('/study-pulse')}
+              >
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back
+              </Button>
+              
+              <Badge className="bg-purple-600">StudyPulse</Badge>
+            </div>
             
-            <Badge className="bg-purple-600">StudyPulse</Badge>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAddParticipants}
+              className="gap-1"
+            >
+              <Plus size={14} />
+              Invite
+            </Button>
           </div>
           
           <div className="flex flex-col md:flex-row justify-between gap-4">
@@ -166,7 +185,7 @@ const StudyPulseRoom = () => {
                 <h3 className="text-lg font-medium">Join the video meeting</h3>
                 <p className="text-gray-500 text-center">Connect with others in this study room via video</p>
                 <Button 
-                  className="bg-purple-600 hover:bg-purple-700"
+                  className="bg-purple-600 hover:bg-purple-700 transition-transform active:scale-95"
                   onClick={handleJoinMeet}
                 >
                   Join Video Meeting
@@ -182,7 +201,7 @@ const StudyPulseRoom = () => {
                     <p>Video meeting active</p>
                     <Button 
                       variant="outline" 
-                      className="mt-4 text-white border-white hover:bg-gray-800"
+                      className="mt-4 text-white border-white hover:bg-gray-800 transition-transform active:scale-95"
                       onClick={handleLeaveMeet}
                     >
                       Leave Meeting
@@ -205,16 +224,16 @@ const StudyPulseRoom = () => {
           )}
           
           <Tabs defaultValue="chat" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList>
-              <TabsTrigger value="chat">
+            <TabsList className="w-full md:w-auto">
+              <TabsTrigger value="chat" className="flex-1 md:flex-initial">
                 <MessageCircle className="h-4 w-4 mr-1" />
                 Chat
               </TabsTrigger>
-              <TabsTrigger value="participants">
+              <TabsTrigger value="participants" className="flex-1 md:flex-initial">
                 <Users className="h-4 w-4 mr-1" />
                 Participants
               </TabsTrigger>
-              <TabsTrigger value="notes">
+              <TabsTrigger value="notes" className="flex-1 md:flex-initial">
                 <FileText className="h-4 w-4 mr-1" />
                 Shared Notes
               </TabsTrigger>
@@ -223,7 +242,7 @@ const StudyPulseRoom = () => {
             <TabsContent value="chat" className="mt-4">
               <Card>
                 <CardContent className="p-4">
-                  <div className="h-64 overflow-y-auto mb-4 border rounded-md p-3">
+                  <div className="h-64 overflow-y-auto mb-4 border rounded-md p-3 space-y-3">
                     {room.messages.map((msg) => (
                       <div key={msg.id} className="mb-3">
                         <div className="flex gap-2 items-start">
@@ -250,7 +269,7 @@ const StudyPulseRoom = () => {
                       placeholder="Type your message..."
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     />
-                    <Button type="submit" disabled={!message.trim()}>Send</Button>
+                    <Button type="submit" disabled={!message.trim()} className="transition-transform active:scale-95">Send</Button>
                   </form>
                 </CardContent>
               </Card>
@@ -261,7 +280,7 @@ const StudyPulseRoom = () => {
                 <CardContent className="p-4">
                   <div className="space-y-3">
                     {room.participants.map((participant) => (
-                      <div key={participant.id} className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50">
+                      <div key={participant.id} className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 transition-colors">
                         <div className="flex items-center gap-3">
                           <Avatar>
                             <AvatarImage src={participant.avatar} alt={participant.name} />
@@ -330,7 +349,7 @@ const StudyPulseRoom = () => {
           <div className="flex justify-end">
             <Button 
               variant="outline" 
-              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 transition-transform active:scale-95"
               onClick={handleLeaveRoom}
             >
               Leave Room

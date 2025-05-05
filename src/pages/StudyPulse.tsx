@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Users, Plus, Search, ArrowRight, BookOpen, Shield, MessageCircle } from 'lucide-react';
+import { Users, Plus, Search, ArrowRight, BookOpen, MessageCircle } from 'lucide-react';
 import { CreateRoomModal } from '@/components/CreateRoomModal';
 import { useToast } from '@/hooks/use-toast';
 
@@ -57,11 +57,11 @@ const StudyPulse = () => {
   );
   
   const enterRoom = (roomId: string) => {
-    navigate(`/study-room/${roomId}`);
+    navigate(`/study-pulse/${roomId}`);
   };
   
   const handleJoinChat = (roomId: string) => {
-    navigate(`/study-room/${roomId}`);
+    navigate(`/study-pulse/${roomId}`);
   };
   
   const handleCreateRoom = (roomData: any) => {
@@ -73,7 +73,7 @@ const StudyPulse = () => {
     setShowCreateModal(false);
     // Simulate navigation to the new room after creation
     setTimeout(() => {
-      navigate(`/study-room/new-room-id`);
+      navigate(`/study-pulse/new-room-id`);
     }, 500);
   };
   
@@ -87,7 +87,7 @@ const StudyPulse = () => {
         <div className="mt-4 md:mt-0">
           <Button 
             onClick={() => setShowCreateModal(true)} 
-            className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+            className="gap-2 bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-95"
           >
             <Plus size={16} />
             Create New Room
@@ -120,7 +120,7 @@ const StudyPulse = () => {
                     <CardTitle className="flex items-center gap-2 text-lg">
                       {room.name}
                       {room.isNew && (
-                        <Badge className="ml-1 bg-blue-500">New</Badge>
+                        <Badge className="ml-1 bg-blue-500 text-white">New</Badge>
                       )}
                     </CardTitle>
                     <CardDescription className="text-sm line-clamp-2">{room.description}</CardDescription>
@@ -168,7 +168,7 @@ const StudyPulse = () => {
                   <Button 
                     size="sm"
                     variant="ghost"
-                    className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                    className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 transition-transform active:scale-95"
                     onClick={() => handleJoinChat(room.id)}
                   >
                     <MessageCircle size={14} className="mr-1" />
@@ -176,7 +176,7 @@ const StudyPulse = () => {
                   </Button>
                   <Button 
                     size="sm" 
-                    className="bg-indigo-600 hover:bg-indigo-700 gap-1" 
+                    className="bg-indigo-600 hover:bg-indigo-700 gap-1 transition-transform active:scale-95" 
                     onClick={() => enterRoom(room.id)}
                   >
                     Enter 
@@ -196,7 +196,7 @@ const StudyPulse = () => {
           <p className="text-muted-foreground mb-4">Create a room to start collaborating</p>
           <Button 
             onClick={() => setShowCreateModal(true)} 
-            className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+            className="gap-2 bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-95"
           >
             <Plus size={16} />
             Create New Room

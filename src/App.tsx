@@ -253,21 +253,7 @@ const App = () => (
               </PrivateRoute>
             } />
             
-            {/* Update: Redirect old sub-routes to the main room route */}
-            <Route path="/study-room/:roomId/chat" element={<Navigate to="/study-room/:roomId" replace />} />
-            <Route path="/study-room/:roomId/info" element={<Navigate to="/study-room/:roomId" replace />} />
-            
-            <Route path="/study-analytics" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyAnalytics />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            {/* StudyPulse routes */}
+            {/* StudyPulse routes with proper navigation */}
             <Route path="/study-pulse" element={
               <PrivateRoute>
                 <AppLayout>
@@ -283,6 +269,16 @@ const App = () => (
                 <AppLayout>
                   <Suspense fallback={<Loading />}>
                     <StudyPulseRoom />
+                  </Suspense>
+                </AppLayout>
+              </PrivateRoute>
+            } />
+            
+            <Route path="/study-analytics" element={
+              <PrivateRoute>
+                <AppLayout>
+                  <Suspense fallback={<Loading />}>
+                    <StudyAnalytics />
                   </Suspense>
                 </AppLayout>
               </PrivateRoute>
