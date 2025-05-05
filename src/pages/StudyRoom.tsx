@@ -33,6 +33,7 @@ import {
   X,
   Info,
   ChevronRight,
+  Plus,
 } from 'lucide-react';
 import { 
   DropdownMenu,
