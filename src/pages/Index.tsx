@@ -12,7 +12,6 @@ import { Footer } from '@/components/Footer';
 import { ArrowUpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { PageContainer } from '@/components/PageContainer';
 
 const Index = () => {
   const navigate = useNavigate();

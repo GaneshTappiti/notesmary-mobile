@@ -71,7 +71,12 @@ export const HeroActions = () => {
         onClick={handleGetStarted}
         disabled={isLoading}
       >
-        {isLoading ? "Loading..." : (
+        {isLoading ? (
+          <>
+            <div className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>
+            <span>Loading...</span>
+          </>
+        ) : (
           <>
             Try Notex
             <ArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" size={18} />
@@ -85,7 +90,12 @@ export const HeroActions = () => {
         onClick={handleLogin}
         disabled={isLoading}
       >
-        {isLoading ? "Loading..." : "Login"}
+        {isLoading ? (
+          <>
+            <div className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>
+            <span>Loading...</span>
+          </>
+        ) : "Login"}
       </Button>
     </motion.div>
   );
