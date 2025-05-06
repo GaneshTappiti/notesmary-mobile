@@ -17,6 +17,8 @@ import Authentication from "@/pages/Authentication";
 // Directly import Dashboard and AdminMessages to avoid loading issues
 import Dashboard from "@/pages/Dashboard";
 import AdminMessages from "@/pages/AdminMessages";
+// Import NotFound page
+import NotFound from "@/pages/NotFound";
 
 // Lazy load all other page components with proper error boundaries
 const Index = lazy(() => import("@/pages/Index"));
@@ -62,6 +64,7 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },
 });
@@ -351,8 +354,8 @@ const App = () => (
               } 
             />
             
-            {/* Fallback route */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {/* NotFound route */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
       </HelmetProvider>

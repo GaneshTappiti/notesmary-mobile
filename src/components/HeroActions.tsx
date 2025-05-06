@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { ArrowRight } from 'lucide-react';
 
 export const HeroActions = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -66,16 +67,21 @@ export const HeroActions = () => {
     >
       <Button 
         size="lg" 
-        className="bg-blue-600 hover:bg-blue-700 px-5 py-2 text-sm sm:text-base transition-all duration-200 active:scale-95"
+        className="bg-blue-600 hover:bg-blue-700 px-5 py-2 text-sm sm:text-base transition-all duration-300 group"
         onClick={handleGetStarted}
         disabled={isLoading}
       >
-        {isLoading ? "Loading..." : "Try Notex"}
+        {isLoading ? "Loading..." : (
+          <>
+            Try Notex
+            <ArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" size={18} />
+          </>
+        )}
       </Button>
       <Button 
         size="lg" 
         variant="outline"
-        className="px-5 py-2 text-sm sm:text-base transition-all duration-200 active:scale-95"
+        className="px-5 py-2 text-sm sm:text-base transition-all duration-300 border-blue-200 hover:border-blue-400"
         onClick={handleLogin}
         disabled={isLoading}
       >
