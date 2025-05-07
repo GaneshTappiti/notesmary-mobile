@@ -9,6 +9,60 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      item_requests: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          item: string
+          preference: string
+          urgency: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          item: string
+          preference: string
+          urgency: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          item?: string
+          preference?: string
+          urgency?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notes: {
+        Row: {
+          content: string | null
+          id: string
+          title: string
+          uploaded_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          id?: string
+          title: string
+          uploaded_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          id?: string
+          title?: string
+          uploaded_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -42,6 +96,45 @@ export type Database = {
           updated_at?: string | null
           year_of_completion?: string | null
           year_of_entry?: string | null
+        }
+        Relationships: []
+      }
+      shared_items: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image: string | null
+          location: string | null
+          price: string
+          status: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          image?: string | null
+          location?: string | null
+          price: string
+          status?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image?: string | null
+          location?: string | null
+          price?: string
+          status?: string
+          title?: string
+          user_id?: string
         }
         Relationships: []
       }
