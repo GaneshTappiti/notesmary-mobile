@@ -15,6 +15,8 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
   const { toast } = useToast();
   const [showLoader, setShowLoader] = useState(false);
   
+  console.log("PrivateRoute render:", { isAuthenticated, isLoading, isAdmin, adminOnly });
+  
   // Add a small delay before showing the loader to prevent flashing
   useEffect(() => {
     let timer: number | undefined;
@@ -45,7 +47,8 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
     }
   }, [isLoading, adminOnly, isAuthenticated, isAdmin, toast]);
 
-  if (isLoading || showLoader) {
+  if (isLoading) {
+    console.log("PrivateRoute: Loading state");
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white">
         <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -55,14 +58,17 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
   }
 
   if (!isAuthenticated) {
+    console.log("PrivateRoute: Not authenticated, redirecting to /authentication");
     // Redirect to authentication page with the current location so we can return after login
     return <Navigate to="/authentication" state={{ from: location }} replace />;
   }
 
   if (adminOnly && !isAdmin) {
+    console.log("PrivateRoute: Not admin, redirecting to /dashboard");
     // Redirect non-admin users to dashboard
     return <Navigate to="/dashboard" replace />;
   }
 
+  console.log("PrivateRoute: Rendering children");
   return <>{children}</>;
 };

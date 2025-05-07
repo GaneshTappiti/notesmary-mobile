@@ -12,7 +12,11 @@ export const HeroActions = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
+  console.log("HeroActions render:", { isAuthenticated, isLoading });
+  
   const handleGetStarted = () => {
+    console.log("handleGetStarted clicked:", { isAuthenticated, isLoading });
+    
     if (isLoading) {
       toast({
         title: "Loading",
@@ -38,6 +42,8 @@ export const HeroActions = () => {
   };
   
   const handleLogin = () => {
+    console.log("handleLogin clicked:", { isAuthenticated, isLoading });
+    
     if (isLoading) {
       toast({
         title: "Loading",
@@ -69,14 +75,9 @@ export const HeroActions = () => {
         size="lg" 
         className="bg-blue-600 hover:bg-blue-700 px-5 py-2 text-sm sm:text-base transition-all duration-300 group"
         onClick={handleGetStarted}
-        disabled={isLoading}
+        isLoading={isLoading}
       >
-        {isLoading ? (
-          <>
-            <div className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>
-            <span>Loading...</span>
-          </>
-        ) : (
+        {!isLoading && (
           <>
             Try Notex
             <ArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" size={18} />
@@ -88,14 +89,9 @@ export const HeroActions = () => {
         variant="outline"
         className="px-5 py-2 text-sm sm:text-base transition-all duration-300 border-blue-200 hover:border-blue-400"
         onClick={handleLogin}
-        disabled={isLoading}
+        isLoading={isLoading}
       >
-        {isLoading ? (
-          <>
-            <div className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>
-            <span>Loading...</span>
-          </>
-        ) : "Login"}
+        {!isLoading && "Login"}
       </Button>
     </motion.div>
   );

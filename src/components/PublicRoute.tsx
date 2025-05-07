@@ -13,6 +13,8 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
   const location = useLocation();
   const [showLoader, setShowLoader] = useState(false);
   const { toast } = useToast();
+  
+  console.log("PublicRoute render:", { isAuthenticated, isLoading });
 
   // Add a small delay before showing the loader
   useEffect(() => {
@@ -43,6 +45,7 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
   }, [isAuthenticated, isLoading, toast]);
 
   if (isLoading && showLoader) {
+    console.log("PublicRoute: Loading state with loader");
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white">
         <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -52,10 +55,12 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
   }
 
   if (isAuthenticated) {
+    console.log("PublicRoute: Already authenticated, redirecting");
     // Get the intended destination from location state or default to dashboard
     const from = location.state?.from?.pathname || "/dashboard";
     return <Navigate to={from} replace />;
   }
 
+  console.log("PublicRoute: Rendering children");
   return <>{children}</>;
 };
