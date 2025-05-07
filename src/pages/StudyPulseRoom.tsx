@@ -1,363 +1,270 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { PageContainer } from '@/components/PageContainer';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, Users, MessageCircle, FileText, Video, Mic, MicOff, VideoOff, Plus } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, MessageSquare, Video, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-// Mock data for the rooms
-const findRoom = (id: string) => {
-  const mockRooms = [
-    {
-      id: '1',
-      title: 'DSA Doubt Solving',
-      host: 'Ganesh Tappiti',
-      type: 'public',
-      tags: ['#DSA', '#Recursion'],
-      usersOnline: 12,
-      description: 'We are solving recursion problems together and clarifying doubts.',
-      duration: '2 hours',
-      participants: [
-        { id: '1', name: 'Ganesh Tappiti', avatar: 'https://ui-avatars.com/api/?name=Ganesh&background=random&color=fff', isHost: true, hasVideo: true, hasMic: true },
-        { id: '2', name: 'Pooja Mehta', avatar: 'https://ui-avatars.com/api/?name=Pooja&background=random&color=fff', isHost: false, hasVideo: false, hasMic: true },
-        { id: '3', name: 'Ajay Singh', avatar: 'https://ui-avatars.com/api/?name=Ajay&background=random&color=fff', isHost: false, hasVideo: true, hasMic: false }
-      ],
-      messages: [
-        { id: '1', sender: 'Ganesh Tappiti', text: 'Welcome everyone to our recursion session!', time: '10:30 AM' },
-        { id: '2', sender: 'Pooja Mehta', text: 'I\'m having trouble with the base case in this problem.', time: '10:32 AM' },
-        { id: '3', sender: 'Ajay Singh', text: 'Let me share my approach...', time: '10:33 AM' },
-      ],
-      notes: "# Recursion Session Notes\n\n## Topics Covered\n- Base cases\n- Recursive step\n- Call stack visualization\n\n## Example Problems\n1. Factorial\n2. Fibonacci\n3. Tower of Hanoi"
-    }
-  ];
-  
-  return mockRooms.find(room => room.id === id);
-};
-
 const StudyPulseRoom = () => {
-  const { roomId } = useParams<{ roomId: string }>();
+  const { roomId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [room, setRoom] = useState<any>(null);
   
-  const room = findRoom(roomId || '');
-  const [activeTab, setActiveTab] = useState('chat');
-  const [message, setMessage] = useState('');
-  const [meetJoined, setMeetJoined] = useState(false);
+  useEffect(() => {
+    // Simulate API call to fetch room data
+    setTimeout(() => {
+      // This would be an actual API call in a real application
+      if (roomId === '1') {
+        setRoom({
+          id: '1',
+          title: 'Advanced Physics Study Group',
+          description: 'Collaborative study space for Advanced Physics concepts and problem-solving.',
+          host: 'Pooja Sharma',
+          type: 'public',
+          tags: ['#Physics', '#Advanced'],
+          users: [
+            { id: '1', name: 'Pooja S.', avatar: 'https://ui-avatars.com/api/?name=Pooja+S&background=random' },
+            { id: '2', name: 'Rahul K.', avatar: 'https://ui-avatars.com/api/?name=Rahul+K&background=random' },
+            { id: '3', name: 'Meera N.', avatar: 'https://ui-avatars.com/api/?name=Meera+N&background=random' },
+            { id: '4', name: 'Avinash T.', avatar: 'https://ui-avatars.com/api/?name=Avinash+T&background=random' },
+            { id: '5', name: 'Divya R.', avatar: 'https://ui-avatars.com/api/?name=Divya+R&background=random' }
+          ],
+          createdAt: new Date(Date.now() - 10 * 60000).toISOString(),
+        });
+      } else if (roomId === '2') {
+        setRoom({
+          id: '2',
+          title: 'Data Structures & Algorithms',
+          description: 'Practice problems and concepts for DS&A interviews.',
+          host: 'Ganesh Tappiti',
+          type: 'public',
+          tags: ['#DSA', '#Algorithms'],
+          users: [
+            { id: '1', name: 'Ganesh T.', avatar: 'https://ui-avatars.com/api/?name=Ganesh+T&background=random' },
+            { id: '2', name: 'Priya M.', avatar: 'https://ui-avatars.com/api/?name=Priya+M&background=random' },
+            { id: '3', name: 'Karthik S.', avatar: 'https://ui-avatars.com/api/?name=Karthik+S&background=random' },
+            { id: '4', name: 'Lakshmi P.', avatar: 'https://ui-avatars.com/api/?name=Lakshmi+P&background=random' },
+            { id: '5', name: 'Vikram J.', avatar: 'https://ui-avatars.com/api/?name=Vikram+J&background=random' },
+            { id: '6', name: 'Sonal R.', avatar: 'https://ui-avatars.com/api/?name=Sonal+R&background=random' },
+            { id: '7', name: 'Rajesh K.', avatar: 'https://ui-avatars.com/api/?name=Rajesh+K&background=random' },
+            { id: '8', name: 'Nandini V.', avatar: 'https://ui-avatars.com/api/?name=Nandini+V&background=random' }
+          ],
+          createdAt: new Date(Date.now() - 2 * 3600000).toISOString(),
+        });
+      } else if (roomId === '3') {
+        setRoom({
+          id: '3',
+          title: 'Organic Chemistry',
+          description: 'Study group for Organic Chemistry final exam preparations.',
+          host: 'Ajay Patel',
+          type: 'private',
+          tags: ['#Chemistry', '#Organic'],
+          users: [
+            { id: '1', name: 'Ajay P.', avatar: 'https://ui-avatars.com/api/?name=Ajay+P&background=random' },
+            { id: '2', name: 'Shreya T.', avatar: 'https://ui-avatars.com/api/?name=Shreya+T&background=random' },
+            { id: '3', name: 'Nikhil M.', avatar: 'https://ui-avatars.com/api/?name=Nikhil+M&background=random' }
+          ],
+          createdAt: new Date(Date.now() - 24 * 3600000).toISOString(),
+        });
+      } else {
+        // Default for new rooms or any other ID
+        setRoom({
+          id: roomId,
+          title: 'New Study Room',
+          description: 'A newly created study room.',
+          host: 'Current User',
+          type: 'public',
+          tags: ['#Study'],
+          users: [
+            { id: '1', name: 'You', avatar: 'https://ui-avatars.com/api/?name=You&background=random' }
+          ],
+          createdAt: new Date().toISOString(),
+        });
+      }
+      setLoading(false);
+    }, 800);
+  }, [roomId]);
   
-  if (!room) {
-    return (
-      <PageContainer>
-        <div className="flex flex-col items-center justify-center h-[60vh]">
-          <h1 className="text-xl font-medium mb-4">Room not found</h1>
-          <Button onClick={() => navigate('/study-pulse')}>
-            Go Back to StudyPulse
-          </Button>
-        </div>
-      </PageContainer>
-    );
-  }
-  
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!message.trim()) return;
-    
+  const handleStartMeet = () => {
     toast({
-      title: "Message Sent",
-      description: "Your message has been sent to the room."
+      title: "Starting Video Meet",
+      description: "Connecting to video conference..."
     });
-    
-    setMessage('');
-  };
-  
-  const handleJoinMeet = () => {
-    setMeetJoined(true);
-    toast({
-      title: "Meet Joined",
-      description: "You have joined the video meeting."
-    });
-  };
-  
-  const handleLeaveMeet = () => {
-    setMeetJoined(false);
-    toast({
-      title: "Meet Left",
-      description: "You have left the video meeting."
-    });
+    // This would integrate with a video conferencing service in a real app
   };
   
   const handleLeaveRoom = () => {
     toast({
       title: "Left Room",
-      description: "You have left the study room."
+      description: "You've left the study room"
     });
     navigate('/study-pulse');
   };
   
-  const handleAddParticipants = () => {
-    toast({
-      title: "Invite Participants",
-      description: "Invitation feature coming soon."
-    });
-  };
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-10 max-w-6xl text-center">
+        <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading study room...</p>
+      </div>
+    );
+  }
+  
+  if (!room) {
+    return (
+      <div className="container mx-auto px-4 py-10 max-w-6xl text-center">
+        <h2 className="text-2xl font-bold mb-2">Room Not Found</h2>
+        <p className="text-gray-600 mb-6">The study room you're looking for doesn't exist or has ended.</p>
+        <Button onClick={() => navigate('/study-pulse')}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to StudyPulse
+        </Button>
+      </div>
+    );
+  }
   
   return (
-    <>
-      <Helmet>
-        <title>{room.title} | StudyPulse</title>
-      </Helmet>
-      
-      <PageContainer>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/study-pulse')}
-              >
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                Back
-              </Button>
-              
-              <Badge className="bg-purple-600">StudyPulse</Badge>
-            </div>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleAddParticipants}
-              className="gap-1"
-            >
-              <Plus size={14} />
-              Invite
-            </Button>
-          </div>
-          
-          <div className="flex flex-col md:flex-row justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold">{room.title}</h1>
-              <p className="text-gray-500">Hosted by {room.host} • {room.duration}</p>
-            </div>
-            
-            <div className="flex gap-2 items-center">
-              <div className="flex -space-x-2 mr-2">
-                {room.participants.slice(0, 3).map((participant) => (
-                  <Avatar key={participant.id} className="border-2 border-white">
-                    <AvatarImage src={participant.avatar} alt={participant.name} />
-                    <AvatarFallback>{participant.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                ))}
-                {room.participants.length > 3 && (
-                  <div className="bg-gray-100 h-8 w-8 rounded-full flex items-center justify-center text-xs font-medium border-2 border-white">
-                    +{room.participants.length - 3}
-                  </div>
-                )}
-              </div>
-              <span className="text-sm text-gray-500">
-                <Users className="h-4 w-4 inline mr-1" />
-                {room.usersOnline} online
-              </span>
-            </div>
-          </div>
-          
-          <div className="flex flex-wrap gap-1">
-            {room.tags.map((tag, index) => (
-              <Badge key={index} variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-          
+    <div className="container mx-auto px-4 py-6 max-w-6xl">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+        <div className="flex items-center">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => navigate('/study-pulse')}
+            className="mr-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
           <div>
-            <p className="text-gray-600">{room.description}</p>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold">{room.title}</h1>
+              <Badge className={room.type === 'public' ? 'bg-green-500' : 'bg-amber-500'}>
+                {room.type === 'public' ? 'Public' : 'Private'}
+              </Badge>
+            </div>
+            <p className="text-muted-foreground">Hosted by {room.host}</p>
           </div>
-          
-          {!meetJoined ? (
-            <Card className="bg-purple-50 border-purple-200">
-              <CardContent className="p-6 flex flex-col items-center justify-center gap-4">
-                <Video className="h-12 w-12 text-purple-500" />
-                <h3 className="text-lg font-medium">Join the video meeting</h3>
-                <p className="text-gray-500 text-center">Connect with others in this study room via video</p>
-                <Button 
-                  className="bg-purple-600 hover:bg-purple-700 transition-transform active:scale-95"
-                  onClick={handleJoinMeet}
-                >
-                  Join Video Meeting
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardContent className="p-6">
-                <div className="bg-gray-900 rounded-lg h-72 flex items-center justify-center">
-                  <div className="text-white text-center">
-                    <Video className="h-12 w-12 mx-auto mb-2" />
-                    <p>Video meeting active</p>
-                    <Button 
-                      variant="outline" 
-                      className="mt-4 text-white border-white hover:bg-gray-800 transition-transform active:scale-95"
-                      onClick={handleLeaveMeet}
-                    >
-                      Leave Meeting
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="flex justify-center mt-4 gap-2">
-                  <Button variant="outline" size="sm">
-                    <Mic className="h-4 w-4 mr-1" />
-                    Mute
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Video className="h-4 w-4 mr-1" />
-                    Stop Video
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-          
-          <Tabs defaultValue="chat" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="w-full md:w-auto">
-              <TabsTrigger value="chat" className="flex-1 md:flex-initial">
-                <MessageCircle className="h-4 w-4 mr-1" />
+        </div>
+        <div className="flex gap-2 mt-4 md:mt-0">
+          <Button 
+            onClick={handleStartMeet}
+            className="gap-2 bg-purple-600 hover:bg-purple-700"
+          >
+            <Video size={16} />
+            Start Meet
+          </Button>
+          <Button 
+            onClick={handleLeaveRoom}
+            variant="outline"
+          >
+            Leave Room
+          </Button>
+        </div>
+      </div>
+      
+      <div className="flex flex-wrap gap-2 mb-6">
+        {room.tags.map((tag: string, index: number) => (
+          <Badge key={index} variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+            {tag}
+          </Badge>
+        ))}
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-3">
+          <Tabs defaultValue="chat">
+            <TabsList className="w-full mb-6">
+              <TabsTrigger value="chat" className="flex-1">
+                <MessageSquare className="h-4 w-4 mr-2" />
                 Chat
               </TabsTrigger>
-              <TabsTrigger value="participants" className="flex-1 md:flex-initial">
-                <Users className="h-4 w-4 mr-1" />
-                Participants
+              <TabsTrigger value="notes" className="flex-1">
+                Notes
               </TabsTrigger>
-              <TabsTrigger value="notes" className="flex-1 md:flex-initial">
-                <FileText className="h-4 w-4 mr-1" />
-                Shared Notes
+              <TabsTrigger value="resources" className="flex-1">
+                Resources
               </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="chat" className="mt-4">
+            <TabsContent value="chat">
               <Card>
-                <CardContent className="p-4">
-                  <div className="h-64 overflow-y-auto mb-4 border rounded-md p-3 space-y-3">
-                    {room.messages.map((msg) => (
-                      <div key={msg.id} className="mb-3">
-                        <div className="flex gap-2 items-start">
-                          <Avatar className="h-8 w-8">
-                            <AvatarFallback>{msg.sender.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-sm">{msg.sender}</span>
-                              <span className="text-xs text-gray-500">{msg.time}</span>
-                            </div>
-                            <p className="text-sm">{msg.text}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <form onSubmit={handleSendMessage} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Type your message..."
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    />
-                    <Button type="submit" disabled={!message.trim()} className="transition-transform active:scale-95">Send</Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="participants" className="mt-4">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="space-y-3">
-                    {room.participants.map((participant) => (
-                      <div key={participant.id} className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarImage src={participant.avatar} alt={participant.name} />
-                            <AvatarFallback>{participant.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-medium">{participant.name}</p>
-                            {participant.isHost && (
-                              <Badge variant="outline" className="text-xs">Host</Badge>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          {participant.hasMic ? (
-                            <Mic className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <MicOff className="h-4 w-4 text-gray-400" />
-                          )}
-                          {participant.hasVideo ? (
-                            <Video className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <VideoOff className="h-4 w-4 text-gray-400" />
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                <CardHeader>
+                  <CardTitle className="text-lg">Group Chat</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[400px] flex items-center justify-center border rounded-md bg-gray-50">
+                    <p className="text-muted-foreground">Chat functionality will be implemented here</p>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
             
-            <TabsContent value="notes" className="mt-4">
+            <TabsContent value="notes">
               <Card>
-                <CardContent className="p-4">
-                  <div className="border rounded-md p-3 min-h-[300px]">
-                    <div className="prose max-w-none">
-                      {room.notes.split('\n').map((line, i) => (
-                        <div key={i}>
-                          {line.startsWith('#') ? (
-                            <h1>{line.replace('#', '').trim()}</h1>
-                          ) : line.startsWith('##') ? (
-                            <h2>{line.replace('##', '').trim()}</h2>
-                          ) : line.startsWith('-') ? (
-                            <ul>
-                              <li>{line.replace('-', '').trim()}</li>
-                            </ul>
-                          ) : line.startsWith('1.') || line.startsWith('2.') || line.startsWith('3.') ? (
-                            <ol>
-                              <li>{line.replace(/\d\./, '').trim()}</li>
-                            </ol>
-                          ) : (
-                            <p>{line}</p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                <CardHeader>
+                  <CardTitle className="text-lg">Shared Notes</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[400px] flex items-center justify-center border rounded-md bg-gray-50">
+                    <p className="text-muted-foreground">Collaborative notes editing will be implemented here</p>
                   </div>
-                  <div className="mt-2 text-sm text-gray-500">
-                    These are shared notes that everyone in the room can see.
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="resources">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Shared Resources</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[400px] flex items-center justify-center border rounded-md bg-gray-50">
+                    <p className="text-muted-foreground">Resource sharing will be implemented here</p>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
           </Tabs>
-          
-          <div className="flex justify-end">
-            <Button 
-              variant="outline" 
-              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 transition-transform active:scale-95"
-              onClick={handleLeaveRoom}
-            >
-              Leave Room
-            </Button>
-          </div>
         </div>
-      </PageContainer>
-    </>
+        
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Users className="h-5 w-5 text-purple-600" />
+                Participants ({room.users.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                {room.users.map((user: any) => (
+                  <div key={user.id} className="flex items-center gap-2.5">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarFallback>{user.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium">
+                      {user.name}
+                      {user.name === 'You' || user.name === room.host.split(' ')[0] + ' ' + room.host.split(' ')[1][0] + '.' ? (
+                        <span className="text-xs ml-2 text-purple-600 font-normal">
+                          {user.name === 'You' ? 'You' : 'Host'}
+                        </span>
+                      ) : null}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 };
 
