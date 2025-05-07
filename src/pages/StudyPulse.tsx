@@ -111,7 +111,7 @@ const StudyPulse = () => {
         <div className="mt-4 md:mt-0">
           <Button 
             onClick={() => setShowCreateModal(true)} 
-            className="gap-2 bg-purple-600 hover:bg-purple-700 transition-all duration-200 hover:shadow-lg hover:shadow-purple-200 animate-pulse"
+            className="gap-2 bg-purple-600 hover:bg-purple-700 transition-all duration-200 hover:shadow-lg hover:shadow-purple-200"
           >
             <Plus size={16} />
             Start a Live StudyPulse
@@ -201,7 +201,7 @@ const StudyPulse = () => {
       <div className="md:hidden fixed bottom-6 right-6 z-10">
         <Button 
           onClick={() => setShowCreateModal(true)} 
-          className="rounded-full h-14 w-14 p-0 bg-purple-600 hover:bg-purple-700 shadow-lg hover:shadow-purple-400/50 animate-pulse"
+          className="rounded-full h-14 w-14 p-0 bg-purple-600 hover:bg-purple-700 shadow-lg hover:shadow-purple-400/50"
         >
           <Plus size={24} />
           <span className="sr-only">Create StudyPulse Room</span>

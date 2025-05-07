@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -115,6 +114,9 @@ export const CreatePulseModal: React.FC<CreatePulseModalProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Create StudyPulse Room</DialogTitle>
+          <DialogDescription>
+            Create a new live study room to collaborate with others
+          </DialogDescription>
         </DialogHeader>
         
         <div className="mb-6 flex justify-between items-center">
