@@ -6,7 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, MessageSquare, Video, ArrowLeft } from 'lucide-react';
+import { Users, MessageSquare, Video, ArrowLeft, Hand } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const StudyPulseRoom = () => {
@@ -15,6 +15,7 @@ const StudyPulseRoom = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [room, setRoom] = useState<any>(null);
+  const [handRaised, setHandRaised] = useState(false);
   
   useEffect(() => {
     // Simulate API call to fetch room data
@@ -107,6 +108,16 @@ const StudyPulseRoom = () => {
     navigate('/study-pulse');
   };
   
+  const handleRaiseHand = () => {
+    setHandRaised(!handRaised);
+    toast({
+      title: handRaised ? "Hand Lowered" : "Hand Raised",
+      description: handRaised 
+        ? "Your virtual hand has been lowered" 
+        : "Your question has been added to the queue"
+    });
+  };
+  
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-10 max-w-6xl text-center">
@@ -131,6 +142,14 @@ const StudyPulseRoom = () => {
   
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
+      {/* Live Pulse Banner */}
+      <div className="bg-purple-100 border-l-4 border-purple-600 p-3 flex items-center gap-2 mb-4 rounded-r-md">
+        <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
+        <span className="text-sm font-medium text-purple-800">
+          You're in a {room.type === 'public' ? 'Public' : 'Private'} Pulse Room (Live Study Session)
+        </span>
+      </div>
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div className="flex items-center">
           <Button 
@@ -159,6 +178,14 @@ const StudyPulseRoom = () => {
             <Video size={16} />
             Start Meet
           </Button>
+          <Button
+            onClick={handleRaiseHand}
+            variant={handRaised ? "default" : "outline"}
+            className={handRaised ? "bg-amber-500 hover:bg-amber-600" : ""}
+          >
+            <Hand size={16} className="mr-1" />
+            {handRaised ? "Hand Raised" : "Raise Hand"}
+          </Button>
           <Button 
             onClick={handleLeaveRoom}
             variant="outline"
@@ -176,6 +203,28 @@ const StudyPulseRoom = () => {
         ))}
       </div>
       
+      {/* Floating Avatar Stack */}
+      <div className="fixed top-20 right-6 z-10 bg-white/80 backdrop-blur-sm p-2 rounded-lg shadow-md border border-gray-200">
+        <div className="flex flex-col items-center">
+          <div className="mb-1">
+            <div className="flex -space-x-2">
+              {room.users.slice(0, 3).map((user: any) => (
+                <Avatar key={user.id} className="border-2 border-white h-8 w-8">
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarFallback>{user.name[0]}</AvatarFallback>
+                </Avatar>
+              ))}
+              {room.users.length > 3 && (
+                <div className="h-8 w-8 rounded-full bg-purple-100 border-2 border-white flex items-center justify-center text-xs font-medium text-purple-700">
+                  +{room.users.length - 3}
+                </div>
+              )}
+            </div>
+          </div>
+          <span className="text-xs text-gray-600 font-medium">{room.users.length} online</span>
+        </div>
+      </div>
+      
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           <Tabs defaultValue="chat">
@@ -187,18 +236,18 @@ const StudyPulseRoom = () => {
               <TabsTrigger value="notes" className="flex-1">
                 Notes
               </TabsTrigger>
-              <TabsTrigger value="resources" className="flex-1">
-                Resources
+              <TabsTrigger value="meet" className="flex-1">
+                Video Meet
               </TabsTrigger>
             </TabsList>
             
             <TabsContent value="chat">
-              <Card>
+              <Card className="border-purple-200 shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-lg">Group Chat</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[400px] flex items-center justify-center border rounded-md bg-gray-50">
+                  <div className="h-[400px] flex items-center justify-center border rounded-md bg-gray-50 border border-purple-100">
                     <p className="text-muted-foreground">Chat functionality will be implemented here</p>
                   </div>
                 </CardContent>
@@ -206,26 +255,32 @@ const StudyPulseRoom = () => {
             </TabsContent>
             
             <TabsContent value="notes">
-              <Card>
+              <Card className="border-purple-200 shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-lg">Shared Notes</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[400px] flex items-center justify-center border rounded-md bg-gray-50">
+                  <div className="h-[400px] flex items-center justify-center border rounded-md bg-gray-50 border border-purple-100">
                     <p className="text-muted-foreground">Collaborative notes editing will be implemented here</p>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
             
-            <TabsContent value="resources">
-              <Card>
+            <TabsContent value="meet">
+              <Card className="border-purple-200 shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-lg">Shared Resources</CardTitle>
+                  <CardTitle className="text-lg">Video Meet</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[400px] flex items-center justify-center border rounded-md bg-gray-50">
-                    <p className="text-muted-foreground">Resource sharing will be implemented here</p>
+                  <div className="h-[400px] flex items-center justify-center border rounded-md bg-gray-50 border-2 border-purple-200 animate-pulse">
+                    <Button 
+                      onClick={handleStartMeet}
+                      className="gap-2 bg-purple-600 hover:bg-purple-700"
+                    >
+                      <Video size={20} />
+                      Join Video Meeting
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -234,7 +289,7 @@ const StudyPulseRoom = () => {
         </div>
         
         <div>
-          <Card>
+          <Card className="border-purple-200">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Users className="h-5 w-5 text-purple-600" />
@@ -244,7 +299,7 @@ const StudyPulseRoom = () => {
             <CardContent>
               <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                 {room.users.map((user: any) => (
-                  <div key={user.id} className="flex items-center gap-2.5">
+                  <div key={user.id} className="flex items-center gap-2.5 hover:bg-purple-50 p-2 rounded-md transition-colors">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={user.avatar} alt={user.name} />
                       <AvatarFallback>{user.name[0]}</AvatarFallback>
@@ -257,6 +312,9 @@ const StudyPulseRoom = () => {
                         </span>
                       ) : null}
                     </span>
+                    {handRaised && user.name === 'You' && (
+                      <Hand size={14} className="ml-auto text-amber-500" />
+                    )}
                   </div>
                 ))}
               </div>

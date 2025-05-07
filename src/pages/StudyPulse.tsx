@@ -1,14 +1,13 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { StudyPulseCard } from '@/components/study-pulse/StudyPulseCard';
 import { CreatePulseModal } from '@/components/study-pulse/CreatePulseModal';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Search, Users } from 'lucide-react';
+import { Plus, Search, Users, TrendingUp } from 'lucide-react';
 
 const StudyPulse = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +27,7 @@ const StudyPulse = () => {
       tags: ['#Physics', '#Advanced'],
       usersOnline: 5,
       createdAt: new Date(Date.now() - 10 * 60000).toISOString(), // 10 minutes ago
+      lastMessage: 'Anyone understand the gravitational field problem?'
     },
     { 
       id: '2', 
@@ -38,6 +38,7 @@ const StudyPulse = () => {
       tags: ['#DSA', '#Algorithms'],
       usersOnline: 8,
       createdAt: new Date(Date.now() - 2 * 3600000).toISOString(), // 2 hours ago
+      lastMessage: 'Let me explain how dynamic programming works...'
     },
     { 
       id: '3', 
@@ -48,10 +49,12 @@ const StudyPulse = () => {
       tags: ['#Chemistry', '#Organic'],
       usersOnline: 3,
       createdAt: new Date(Date.now() - 24 * 3600000).toISOString(), // 1 day ago
+      lastMessage: 'The benzene ring structure is important because...'
     }
   ];
   
-  const tagFilters = ['all', '#DSA', '#Math', '#AI', '#Physics', '#Chemistry'];
+  const tagFilters = ['all', '#DSA', '#Math', '#AI', '#Physics', '#Chemistry', '#ExamPrep'];
+  const trendingTags = ['#ExamPrep', '#LateNightStudy', '#DSA'];
   
   const filteredRooms = studyRooms.filter(room => {
     // Filter by search query
@@ -88,6 +91,16 @@ const StudyPulse = () => {
     }, 500);
   };
   
+  // Auto-refresh effect - would integrate with real-time updates in a full implementation
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      console.log("Auto-refreshing room data...");
+      // In a real implementation, this would fetch updated room data
+    }, 15000);
+    
+    return () => clearInterval(refreshInterval);
+  }, []);
+  
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
@@ -98,15 +111,15 @@ const StudyPulse = () => {
         <div className="mt-4 md:mt-0">
           <Button 
             onClick={() => setShowCreateModal(true)} 
-            className="gap-2 bg-purple-600 hover:bg-purple-700 transition-all duration-200"
+            className="gap-2 bg-purple-600 hover:bg-purple-700 transition-all duration-200 hover:shadow-lg hover:shadow-purple-200 animate-pulse"
           >
             <Plus size={16} />
-            Create StudyPulse Room
+            Start a Live StudyPulse
           </Button>
         </div>
       </div>
       
-      <div className="mb-6">
+      <div className="space-y-4 mb-6">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
           <Input
@@ -115,6 +128,21 @@ const StudyPulse = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 border-gray-200 focus:border-purple-500"
           />
+        </div>
+        
+        <div className="flex flex-wrap gap-2 items-center">
+          <span className="text-sm font-medium text-gray-600">Trending Tags:</span>
+          {trendingTags.map(tag => (
+            <Badge 
+              key={`trending-${tag}`}
+              onClick={() => setActiveTag(tag)}
+              className="cursor-pointer px-3 py-1 bg-amber-100 text-amber-800 hover:bg-amber-200 flex items-center gap-1"
+            >
+              <TrendingUp className="h-3 w-3" />
+              {tag}
+              <span className="inline-block h-2 w-2 rounded-full bg-red-500 animate-pulse ml-1"></span>
+            </Badge>
+          ))}
         </div>
       </div>
       
@@ -147,6 +175,7 @@ const StudyPulse = () => {
               usersOnline={room.usersOnline}
               createdAt={room.createdAt}
               description={room.description}
+              lastMessage={room.lastMessage}
               onJoin={() => handleJoinRoom(room.id)}
             />
           ))}
@@ -160,13 +189,24 @@ const StudyPulse = () => {
           <p className="text-muted-foreground mb-4">Create a room to start collaborating</p>
           <Button 
             onClick={() => setShowCreateModal(true)} 
-            className="gap-2 bg-purple-600 hover:bg-purple-700"
+            className="gap-2 bg-purple-600 hover:bg-purple-700 hover:shadow-lg hover:shadow-purple-200"
           >
             <Plus size={16} />
-            Create StudyPulse Room
+            Start a Live StudyPulse
           </Button>
         </div>
       )}
+      
+      {/* Floating Create Button (visible on smaller screens) */}
+      <div className="md:hidden fixed bottom-6 right-6 z-10">
+        <Button 
+          onClick={() => setShowCreateModal(true)} 
+          className="rounded-full h-14 w-14 p-0 bg-purple-600 hover:bg-purple-700 shadow-lg hover:shadow-purple-400/50 animate-pulse"
+        >
+          <Plus size={24} />
+          <span className="sr-only">Create StudyPulse Room</span>
+        </Button>
+      </div>
       
       {/* Create Room Modal */}
       <CreatePulseModal 
