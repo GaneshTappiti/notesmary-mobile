@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -185,6 +184,7 @@ const FindNotes = () => {
   
   const handleFilterToggle = () => {
     setFilterOpen(!filterOpen);
+    console.log("Filter toggled:", !filterOpen); // Add logging to debug
   };
   
   const handleClearFilters = () => {
@@ -194,6 +194,14 @@ const FindNotes = () => {
     setSelectedSubject('');
     setSearchQuery('');
   };
+  
+  // Count active filters to show indicator
+  const activeFiltersCount = [
+    selectedBranch, 
+    selectedYear, 
+    selectedSemester, 
+    selectedSubject
+  ].filter(Boolean).length;
   
   return (
     <PageContainer>
@@ -218,11 +226,18 @@ const FindNotes = () => {
           </div>
           <Button 
             variant="outline" 
-            className={`flex items-center gap-2 ${filterOpen ? 'bg-blue-50 border-blue-200 text-blue-700' : ''}`}
+            className={`flex items-center gap-2 relative ${filterOpen ? 'bg-blue-50 border-blue-200 text-blue-700' : ''}`}
             onClick={handleFilterToggle}
+            aria-expanded={filterOpen}
           >
             <Filter size={18} />
-            Filters {filterOpen ? <X size={14} className="ml-1" /> : null}
+            Filters 
+            {activeFiltersCount > 0 && (
+              <span className="flex items-center justify-center bg-blue-600 text-white rounded-full h-5 w-5 text-xs font-medium">
+                {activeFiltersCount}
+              </span>
+            )}
+            {filterOpen ? <X size={14} className="ml-1" /> : null}
           </Button>
           <div className="flex items-center gap-2 border-l pl-4 hidden md:flex">
             <Button
@@ -254,7 +269,7 @@ const FindNotes = () => {
                   <SelectValue placeholder="Select branch" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Branches</SelectItem>
+                  <SelectItem value="all">All Branches</SelectItem>
                   {branches.map((branch) => (
                     <SelectItem key={branch} value={branch}>{branch}</SelectItem>
                   ))}
@@ -269,7 +284,7 @@ const FindNotes = () => {
                   <SelectValue placeholder="Select year" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Years</SelectItem>
+                  <SelectItem value="all">All Years</SelectItem>
                   {years.map((year) => (
                     <SelectItem key={year} value={year}>{year}</SelectItem>
                   ))}
@@ -284,7 +299,7 @@ const FindNotes = () => {
                   <SelectValue placeholder="Select semester" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Semesters</SelectItem>
+                  <SelectItem value="all">All Semesters</SelectItem>
                   {semesters.map((semester) => (
                     <SelectItem key={semester} value={semester}>Semester {semester}</SelectItem>
                   ))}
@@ -299,7 +314,7 @@ const FindNotes = () => {
                   <SelectValue placeholder="Select subject" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Subjects</SelectItem>
+                  <SelectItem value="all">All Subjects</SelectItem>
                   {subjects.map((subject) => (
                     <SelectItem key={subject} value={subject}>{subject}</SelectItem>
                   ))}
@@ -319,7 +334,7 @@ const FindNotes = () => {
               <Button 
                 variant="default" 
                 size="sm" 
-                onClick={handleFilterToggle}
+                onClick={() => setFilterOpen(false)}
                 className="px-4 bg-blue-600 hover:bg-blue-700"
               >
                 Apply Filters
