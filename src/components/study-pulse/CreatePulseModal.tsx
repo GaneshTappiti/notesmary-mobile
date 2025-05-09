@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -64,26 +65,30 @@ export const CreatePulseModal: React.FC<CreatePulseModalProps> = ({
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const roomData = {
-      title: formData.title,
-      description: formData.description,
-      type: formData.isPublic ? 'public' : 'private',
-      duration: formData.duration,
-      tags: formData.tags,
-      createdAt: new Date().toISOString()
-    };
-    onCreate(roomData);
     
-    // Reset form
-    setFormData({
-      title: '',
-      description: '',
-      isPublic: true,
-      duration: '1hr',
-      tags: [],
-      currentTag: ''
-    });
-    setStep(1);
+    // Only proceed with submission if we're on the final step
+    if (step === 3) {
+      const roomData = {
+        title: formData.title,
+        description: formData.description,
+        type: formData.isPublic ? 'public' : 'private',
+        duration: formData.duration,
+        tags: formData.tags,
+        createdAt: new Date().toISOString()
+      };
+      onCreate(roomData);
+      
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        isPublic: true,
+        duration: '1hr',
+        tags: [],
+        currentTag: ''
+      });
+      setStep(1);
+    }
   };
   
   const nextStep = () => {
@@ -92,6 +97,20 @@ export const CreatePulseModal: React.FC<CreatePulseModalProps> = ({
   
   const prevStep = () => {
     if (step > 1) setStep(step - 1);
+  };
+  
+  // Handle key presses globally within the form
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Prevent form submission on Enter key unless we're on the final step
+    if (e.key === 'Enter' && step !== 3) {
+      e.preventDefault();
+      
+      // If in the title field and it has content, go to next step
+      if (step === 1 && formData.title.trim()) {
+        nextStep();
+      }
+      // If adding tags, don't do anything as it's handled by handleAddTag
+    }
   };
   
   const predefinedTags = ['#DSA', '#Math', '#Physics', '#AI', '#CSE', '#Chemistry', '#Biology', '#ExamPrep', '#LateNightStudy'];
@@ -133,7 +152,7 @@ export const CreatePulseModal: React.FC<CreatePulseModalProps> = ({
           </div>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4 py-2">
+        <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-4 py-2">
           {/* Step 1: Room Info */}
           {step === 1 && (
             <div className="space-y-4 animate-fade-in">
