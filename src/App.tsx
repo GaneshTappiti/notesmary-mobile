@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -10,6 +9,7 @@ import { PublicRoute } from "@/components/PublicRoute";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HelmetProvider } from "react-helmet-async";
 import AppLayout from "@/components/AppLayout";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Import Authentication page directly without lazy loading to avoid issues
 import Authentication from "@/pages/Authentication";
@@ -261,7 +261,9 @@ const App = () => (
               <PrivateRoute>
                 <AppLayout>
                   <Suspense fallback={<Loading />}>
-                    <StudyPulse />
+                    <ErrorBoundary>
+                      <StudyPulse />
+                    </ErrorBoundary>
                   </Suspense>
                 </AppLayout>
               </PrivateRoute>
@@ -271,7 +273,9 @@ const App = () => (
               <PrivateRoute>
                 <AppLayout>
                   <Suspense fallback={<Loading />}>
-                    <StudyPulseRoom />
+                    <ErrorBoundary>
+                      <StudyPulseRoom />
+                    </ErrorBoundary>
                   </Suspense>
                 </AppLayout>
               </PrivateRoute>

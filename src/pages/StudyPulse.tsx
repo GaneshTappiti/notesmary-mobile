@@ -8,11 +8,13 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Search, Users, TrendingUp } from 'lucide-react';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 const StudyPulse = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [activeTag, setActiveTag] = useState('all');
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -56,6 +58,18 @@ const StudyPulse = () => {
   const tagFilters = ['all', '#DSA', '#Math', '#AI', '#Physics', '#Chemistry', '#ExamPrep'];
   const trendingTags = ['#ExamPrep', '#LateNightStudy', '#DSA'];
   
+  // Simulate data loading
+  useEffect(() => {
+    console.log("StudyPulse component mounted");
+    // Simulate data fetching
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      console.log("StudyPulse data loaded");
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
   const filteredRooms = studyRooms.filter(room => {
     // Filter by search query
     const matchesSearch = 
@@ -70,6 +84,7 @@ const StudyPulse = () => {
   });
   
   const handleJoinRoom = (roomId: string) => {
+    console.log("Joining room:", roomId);
     navigate(`/study-pulse/${roomId}`);
     toast({
       title: "Room Joined",
@@ -100,6 +115,16 @@ const StudyPulse = () => {
     
     return () => clearInterval(refreshInterval);
   }, []);
+  
+  // If there's an error rendering, show a fallback
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-24 text-center">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-purple-500 border-r-transparent"></div>
+        <p className="mt-4">Loading study rooms...</p>
+      </div>
+    );
+  }
   
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
