@@ -15,6 +15,7 @@ const StudyPulse = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [activeTag, setActiveTag] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -63,47 +64,76 @@ const StudyPulse = () => {
     console.log("StudyPulse component mounted");
     // Simulate data fetching
     const timer = setTimeout(() => {
-      setIsLoading(false);
-      console.log("StudyPulse data loaded");
+      try {
+        setIsLoading(false);
+        console.log("StudyPulse data loaded");
+      } catch (error) {
+        console.error("Error loading StudyPulse data:", error);
+        setHasError(true);
+        setIsLoading(false);
+      }
     }, 500);
     
     return () => clearTimeout(timer);
   }, []);
   
   const filteredRooms = studyRooms.filter(room => {
-    // Filter by search query
-    const matchesSearch = 
-      room.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      room.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      room.host.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    // Filter by tag
-    const matchesTag = activeTag === 'all' || room.tags.some(tag => tag === activeTag);
-    
-    return matchesSearch && matchesTag;
+    try {
+      // Filter by search query
+      const matchesSearch = 
+        room.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        room.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        room.host.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Filter by tag
+      const matchesTag = activeTag === 'all' || room.tags.some(tag => tag === activeTag);
+      
+      return matchesSearch && matchesTag;
+    } catch (error) {
+      console.error("Error filtering rooms:", error);
+      return false;
+    }
   });
   
   const handleJoinRoom = (roomId: string) => {
-    console.log("Joining room:", roomId);
-    navigate(`/study-pulse/${roomId}`);
-    toast({
-      title: "Room Joined",
-      description: "You've successfully joined the study room."
-    });
+    try {
+      console.log("Joining room:", roomId);
+      navigate(`/study-pulse/${roomId}`);
+      toast({
+        title: "Room Joined",
+        description: "You've successfully joined the study room."
+      });
+    } catch (error) {
+      console.error("Error joining room:", error);
+      toast({
+        title: "Error",
+        description: "Could not join the study room.",
+        variant: "destructive"
+      });
+    }
   };
   
   const handleCreateRoom = (roomData: any) => {
-    // In a real app, this would make an API call to create a room
-    console.log("Creating room with data:", roomData);
-    toast({
-      title: "Room Created",
-      description: `Your study room "${roomData.title}" has been created successfully.`
-    });
-    setShowCreateModal(false);
-    // Simulate navigation to the new room after creation
-    setTimeout(() => {
-      navigate(`/study-pulse/new-room-id`);
-    }, 500);
+    try {
+      // In a real app, this would make an API call to create a room
+      console.log("Creating room with data:", roomData);
+      toast({
+        title: "Room Created",
+        description: `Your study room "${roomData.title}" has been created successfully.`
+      });
+      setShowCreateModal(false);
+      // Simulate navigation to the new room after creation
+      setTimeout(() => {
+        navigate(`/study-pulse/new-room-id`);
+      }, 500);
+    } catch (error) {
+      console.error("Error creating room:", error);
+      toast({
+        title: "Error",
+        description: "Could not create the study room.",
+        variant: "destructive"
+      });
+    }
   };
   
   // Auto-refresh effect - would integrate with real-time updates in a full implementation
@@ -116,12 +146,43 @@ const StudyPulse = () => {
     return () => clearInterval(refreshInterval);
   }, []);
   
-  // If there's an error rendering, show a fallback
+  // If there's an error or still loading, show a fallback
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-24 text-center">
         <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-purple-500 border-r-transparent"></div>
         <p className="mt-4">Loading study rooms...</p>
+      </div>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <div className="container mx-auto px-4 py-24 text-center">
+        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor" 
+            className="w-8 h-8 text-red-500"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+            />
+          </svg>
+        </div>
+        <h2 className="text-xl font-semibold mb-2">Could not load study rooms</h2>
+        <p className="text-gray-600 mb-4">Please try again later.</p>
+        <Button 
+          onClick={() => window.location.reload()}
+          variant="outline"
+        >
+          Reload Page
+        </Button>
       </div>
     );
   }

@@ -5,6 +5,7 @@ import App from './App.tsx'
 import './index.css'
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Make sure container is found before attempting to render
 const container = document.getElementById('root');
@@ -23,14 +24,16 @@ if (!container) {
     console.log("Initializing application...");
     const root = createRoot(container);
     
-    // Wrap the app in React.StrictMode for better error detection
+    // Wrap the app in ErrorBoundary for better error detection and recovery
     root.render(
       <React.StrictMode>
-        <ThemeProvider defaultTheme="light" storageKey="notex-ui-theme">
-          <SidebarProvider>
-            <App />
-          </SidebarProvider>
-        </ThemeProvider>
+        <ErrorBoundary>
+          <ThemeProvider defaultTheme="light" storageKey="notex-ui-theme">
+            <SidebarProvider>
+              <App />
+            </SidebarProvider>
+          </ThemeProvider>
+        </ErrorBoundary>
       </React.StrictMode>
     );
     console.log("Application rendered successfully");
