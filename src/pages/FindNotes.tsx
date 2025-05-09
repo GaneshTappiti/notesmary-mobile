@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -16,11 +16,11 @@ import {
   List,
   Download,
   Eye,
-  Star,
   User,
   FileText,
   Calendar,
-  Bookmark
+  Bookmark,
+  X
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -47,6 +47,7 @@ const FindNotes = () => {
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [selectedSemester, setSelectedSemester] = useState<string>('');
   const [selectedSubject, setSelectedSubject] = useState<string>('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -182,6 +183,18 @@ const FindNotes = () => {
     });
   };
   
+  const handleFilterToggle = () => {
+    setFilterOpen(!filterOpen);
+  };
+  
+  const handleClearFilters = () => {
+    setSelectedBranch('');
+    setSelectedYear('');
+    setSelectedSemester('');
+    setSelectedSubject('');
+    setSearchQuery('');
+  };
+  
   return (
     <PageContainer>
       <div className="mb-8">
@@ -195,19 +208,21 @@ const FindNotes = () => {
           <div className="relative flex-grow">
             <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <Input 
-              className="pl-10 pr-4 py-6 text-base rounded-lg border border-gray-200"
+              className={`pl-10 pr-4 py-6 text-base rounded-lg border ${isSearchFocused ? 'border-blue-400 ring-2 ring-blue-100' : 'border-gray-200'}`}
               placeholder="Search by topic, subject, chapter or use natural language like 'Show me 3rd-year Mechanical notes on Thermodynamics'"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
             />
           </div>
           <Button 
             variant="outline" 
-            className="flex items-center gap-2"
-            onClick={() => setFilterOpen(!filterOpen)}
+            className={`flex items-center gap-2 ${filterOpen ? 'bg-blue-50 border-blue-200 text-blue-700' : ''}`}
+            onClick={handleFilterToggle}
           >
             <Filter size={18} />
-            Filters
+            Filters {filterOpen ? <X size={14} className="ml-1" /> : null}
           </Button>
           <div className="flex items-center gap-2 border-l pl-4 hidden md:flex">
             <Button
@@ -231,11 +246,11 @@ const FindNotes = () => {
         
         {/* Filter Panel */}
         {filterOpen && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 p-4 bg-gray-50 rounded-lg">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 p-4 bg-gray-50 rounded-lg animate-fade-in">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Branch</label>
               <Select value={selectedBranch} onValueChange={setSelectedBranch}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full bg-white">
                   <SelectValue placeholder="Select branch" />
                 </SelectTrigger>
                 <SelectContent>
@@ -250,7 +265,7 @@ const FindNotes = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
               <Select value={selectedYear} onValueChange={setSelectedYear}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full bg-white">
                   <SelectValue placeholder="Select year" />
                 </SelectTrigger>
                 <SelectContent>
@@ -265,7 +280,7 @@ const FindNotes = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Semester</label>
               <Select value={selectedSemester} onValueChange={setSelectedSemester}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full bg-white">
                   <SelectValue placeholder="Select semester" />
                 </SelectTrigger>
                 <SelectContent>
@@ -280,7 +295,7 @@ const FindNotes = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
               <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full bg-white">
                   <SelectValue placeholder="Select subject" />
                 </SelectTrigger>
                 <SelectContent>
@@ -290,6 +305,25 @@ const FindNotes = () => {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="col-span-full flex justify-end gap-2 mt-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleClearFilters}
+                className="px-4"
+              >
+                Clear All
+              </Button>
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={handleFilterToggle}
+                className="px-4 bg-blue-600 hover:bg-blue-700"
+              >
+                Apply Filters
+              </Button>
             </div>
           </div>
         )}
@@ -460,13 +494,7 @@ const FindNotes = () => {
           <BookOpen className="h-16 w-16 mx-auto text-gray-300 mb-4" />
           <h3 className="text-xl font-medium text-gray-700 mb-2">No notes found</h3>
           <p className="text-gray-500 mb-6">Try adjusting your search or filter criteria</p>
-          <Button onClick={() => {
-            setSearchQuery('');
-            setSelectedBranch('');
-            setSelectedYear('');
-            setSelectedSemester('');
-            setSelectedSubject('');
-          }}>
+          <Button onClick={handleClearFilters}>
             Clear all filters
           </Button>
         </div>
