@@ -11,7 +11,8 @@ import { TasksSection } from '@/components/dashboard/TasksSection';
 import { StudyRoomsSection } from '@/components/dashboard/StudyRoomsSection';
 import { PageContainer } from '@/components/PageContainer';
 import { StudyPulseEntryCard } from '@/components/dashboard/StudyPulseEntryCard';
-import { Card, CardHeader, CardTitle, CardContent, Button } from '@radix-ui/react-card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const Dashboard = () => {
   const { toast } = useToast();
