@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -10,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { HelmetProvider } from "react-helmet-async";
 import AppLayout from "@/components/AppLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { CollegeAdminLayout } from "@/components/college-admin/CollegeAdminLayout";
 
 // Import Authentication page directly without lazy loading to avoid issues
 import Authentication from "@/pages/Authentication";
@@ -43,6 +45,13 @@ const AdminNotes = lazy(() => import("@/pages/AdminNotes"));
 const AdminUsers = lazy(() => import("@/pages/AdminUsers"));
 const AdminEvents = lazy(() => import("@/pages/AdminEvents"));
 const AdminAnalytics = lazy(() => import("@/pages/AdminAnalytics"));
+
+// College Admin dashboard pages
+const CollegeAdminDashboard = lazy(() => import("@/pages/college-admin/CollegeAdminDashboard"));
+const NotesApproval = lazy(() => import("@/pages/college-admin/NotesApproval"));
+const UserManagement = lazy(() => import("@/pages/college-admin/UserManagement"));
+const StudyRoomsMonitor = lazy(() => import("@/pages/college-admin/StudyRoomsMonitor"));
+const CollegeAdminSettings = lazy(() => import("@/pages/college-admin/CollegeAdminSettings"));
 
 // Add StudyPulse imports
 const StudyPulse = lazy(() => import("@/pages/StudyPulse"));
@@ -290,6 +299,42 @@ const App = () => (
                 </AppLayout>
               </PrivateRoute>
             } />
+
+            {/* College Admin Routes */}
+            <Route path="/college-admin" element={
+              <PrivateRoute>
+                <Suspense fallback={<Loading />}>
+                  <CollegeAdminLayout />
+                </Suspense>
+              </PrivateRoute>
+            }>
+              <Route path="dashboard" element={
+                <Suspense fallback={<Loading />}>
+                  <CollegeAdminDashboard />
+                </Suspense>
+              } />
+              <Route path="notes-approval" element={
+                <Suspense fallback={<Loading />}>
+                  <NotesApproval />
+                </Suspense>
+              } />
+              <Route path="user-management" element={
+                <Suspense fallback={<Loading />}>
+                  <UserManagement />
+                </Suspense>
+              } />
+              <Route path="studyrooms" element={
+                <Suspense fallback={<Loading />}>
+                  <StudyRoomsMonitor />
+                </Suspense>
+              } />
+              <Route path="settings" element={
+                <Suspense fallback={<Loading />}>
+                  <CollegeAdminSettings />
+                </Suspense>
+              } />
+              <Route index element={<Navigate to="/college-admin/dashboard" replace />} />
+            </Route>
             
             {/* Admin routes - NOT wrapped in AppLayout */}
             <Route 

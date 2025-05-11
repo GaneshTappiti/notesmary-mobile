@@ -10,6 +10,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   isLoading: boolean;
   isAdmin: boolean;
+  isCollegeAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, fullName?: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -24,6 +25,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isCollegeAdmin, setIsCollegeAdmin] = useState<boolean>(false);
   const { toast } = useToast();
 
   // Fetch user profile safely, outside of auth state change callback
@@ -61,6 +63,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Check college admin status - for educational domains
+  const checkCollegeAdminStatus = (email: string) => {
+    if (!email) return false;
+    
+    // Check for educational email domains
+    const EDUCATIONAL_DOMAINS = [
+      /\.edu$/,                // .edu
+      /\.ac\.[a-z]{2,}$/,      // .ac.xx
+      /\.edu\.[a-z]{2,}$/      // .edu.xx
+    ];
+    
+    const domain = email.split('@')[1];
+    if (!domain) return false;
+    
+    // For demo purposes, consider users with educational domains as college admins
+    return EDUCATIONAL_DOMAINS.some(pattern => pattern.test(domain));
+  };
+
   useEffect(() => {
     let mounted = true;
     let authSubscription: { unsubscribe: () => void } | null = null;
@@ -86,6 +106,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 try {
                   const adminStatus = await checkAdminStatus(session.user.email || '');
                   if (mounted) setIsAdmin(adminStatus);
+
+                  // Check if user is a college admin (has educational domain)
+                  const collegeAdminStatus = checkCollegeAdminStatus(session.user.email || '');
+                  if (mounted) setIsCollegeAdmin(collegeAdminStatus);
                   
                   await fetchUserProfile(session.user.id);
                 } catch (error) {
@@ -98,6 +122,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setUser(null);
             setProfile(null);
             setIsAdmin(false);
+            setIsCollegeAdmin(false);
             setIsAuthenticated(false);
             localStorage.removeItem('isLoggedIn');
           }
@@ -121,6 +146,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           if (sessionData.session.user && sessionData.session.user.email) {
             const adminStatus = await checkAdminStatus(sessionData.session.user.email || '');
             if (mounted) setIsAdmin(adminStatus);
+
+            // Check if user is a college admin (has educational domain)
+            const collegeAdminStatus = checkCollegeAdminStatus(sessionData.session.user.email || '');
+            if (mounted) setIsCollegeAdmin(collegeAdminStatus);
             
             await fetchUserProfile(sessionData.session.user.id);
           }
@@ -128,6 +157,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(null);
           setProfile(null);
           setIsAdmin(false);
+          setIsCollegeAdmin(false);
           setIsAuthenticated(false);
         }
       } catch (error) {
@@ -243,6 +273,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         profile,
         isLoading,
         isAdmin,
+        isCollegeAdmin,
         login,
         signup,
         logout,
