@@ -74,11 +74,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       /\.edu\.[a-z]{2,}$/      // .edu.xx
     ];
     
+    // For testing purposes, consider these domains as educational
+    const TEST_DOMAINS = [
+      'gmail.com',        // Remove in production
+      'example.com',      // Remove in production
+      'hotmail.com'       // Remove in production
+    ];
+    
     const domain = email.split('@')[1];
     if (!domain) return false;
     
-    // For demo purposes, consider users with educational domains as college admins
-    return EDUCATIONAL_DOMAINS.some(pattern => pattern.test(domain));
+    // For demo purposes, consider users with educational domains OR test domains as college admins
+    return EDUCATIONAL_DOMAINS.some(pattern => pattern.test(domain)) || 
+           TEST_DOMAINS.includes(domain);
   };
 
   useEffect(() => {

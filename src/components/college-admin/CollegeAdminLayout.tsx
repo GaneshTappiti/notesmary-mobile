@@ -11,11 +11,8 @@ import { ShieldAlert, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export const CollegeAdminLayout: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading, isCollegeAdmin } = useAuth();
   const navigate = useNavigate();
-  
-  // Check if user is a college admin
-  const isCollegeAdmin = user?.email?.endsWith('.edu');
   
   useEffect(() => {
     if (!isLoading) {

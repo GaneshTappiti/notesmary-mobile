@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { Upload, Search, Users, Brain, ShieldCheck } from 'lucide-react';
+import { Upload, Search, Users, Brain, ShieldCheck, School } from 'lucide-react';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { AnalyticsCard } from '@/components/dashboard/AnalyticsCard';
 import { QuickAccessCard } from '@/components/dashboard/QuickAccessCard';
@@ -11,11 +11,12 @@ import { TasksSection } from '@/components/dashboard/TasksSection';
 import { StudyRoomsSection } from '@/components/dashboard/StudyRoomsSection';
 import { PageContainer } from '@/components/PageContainer';
 import { StudyPulseEntryCard } from '@/components/dashboard/StudyPulseEntryCard';
+import { Card, CardHeader, CardTitle, CardContent, Button } from '@radix-ui/react-card';
 
 const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout, isAdmin, isCollegeAdmin } = useAuth();
 
   const quickAccessOptions = [
     {
@@ -153,6 +154,36 @@ const Dashboard = () => {
     }
   };
 
+  // Add a section for College Admin access if the user has educational email domain
+  const CollegeAdminSection = () => {
+    const { isCollegeAdmin } = useAuth();
+    
+    if (!isCollegeAdmin) return null;
+    
+    return (
+      <Card className="shadow-sm transition-all hover:shadow-md">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-medium">College Admin Panel</CardTitle>
+            <School className="h-5 w-5 text-blue-600" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            You have access to the college administrator dashboard.
+          </p>
+          <Button 
+            onClick={() => navigate('/college-admin/dashboard')} 
+            variant="outline" 
+            className="w-full mt-2"
+          >
+            Access Admin Panel
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <PageContainer>
       <div className="space-y-6 animate-fade-in px-1 md:px-0">
@@ -203,6 +234,9 @@ const Dashboard = () => {
             filters={["This Week", "Last Week", "Month"]}
           />
         </div>
+
+        {/* Add the CollegeAdminSection component to the dashboard layout */}
+        {CollegeAdminSection()}
       </div>
     </PageContainer>
   );
