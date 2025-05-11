@@ -46,6 +46,10 @@ const AdminUsers = lazy(() => import("@/pages/AdminUsers"));
 const AdminEvents = lazy(() => import("@/pages/AdminEvents"));
 const AdminAnalytics = lazy(() => import("@/pages/AdminAnalytics"));
 
+// New College Management pages
+const AdminColleges = lazy(() => import("@/pages/AdminColleges"));
+const AdminCollegeDetails = lazy(() => import("@/pages/AdminCollegeDetails"));
+
 // College Admin dashboard pages
 const CollegeAdminDashboard = lazy(() => import("@/pages/college-admin/CollegeAdminDashboard"));
 const NotesApproval = lazy(() => import("@/pages/college-admin/NotesApproval"));
@@ -354,6 +358,29 @@ const App = () => (
               element={
                 <PrivateRoute adminOnly={true}>
                   <AdminMessages />
+                </PrivateRoute>
+              } 
+            />
+            
+            {/* College Management Routes */}
+            <Route 
+              path="/admin/colleges" 
+              element={
+                <PrivateRoute adminOnly={true}>
+                  <Suspense fallback={<Loading />}>
+                    <AdminColleges />
+                  </Suspense>
+                </PrivateRoute>
+              } 
+            />
+            
+            <Route 
+              path="/admin/colleges/:id" 
+              element={
+                <PrivateRoute adminOnly={true}>
+                  <Suspense fallback={<Loading />}>
+                    <AdminCollegeDetails />
+                  </Suspense>
                 </PrivateRoute>
               } 
             />

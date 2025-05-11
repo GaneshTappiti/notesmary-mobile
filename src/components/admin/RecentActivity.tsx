@@ -34,6 +34,18 @@ export const RecentActivity: React.FC = () => {
     },
     {
       id: 3,
+      type: "new_college",
+      user: {
+        name: "Admin",
+        avatar: "",
+        initials: "AD"
+      },
+      content: "Added new college: Stanford University",
+      domain: "stanford.edu",
+      time: "1 hour ago"
+    },
+    {
+      id: 4,
       type: "new_user",
       user: {
         name: "Sophia Chen",
@@ -45,28 +57,16 @@ export const RecentActivity: React.FC = () => {
       time: "2 hours ago"
     },
     {
-      id: 4,
-      type: "note_upload",
-      user: {
-        name: "Michael Williams",
-        avatar: "",
-        initials: "MW"
-      },
-      content: "Uploaded 'Organic Chemistry Lab Report'",
-      course: "Chemistry",
-      time: "3 hours ago"
-    },
-    {
       id: 5,
-      type: "flagged_message",
+      type: "college_update",
       user: {
-        name: "Jessica Brown",
+        name: "Admin",
         avatar: "",
-        initials: "JB"
+        initials: "AD"
       },
-      content: "Message flagged for review",
-      room: "History Discussion",
-      time: "5 hours ago"
+      content: "Updated college admin for MIT",
+      domain: "mit.edu",
+      time: "3 hours ago"
     }
   ];
 
@@ -81,6 +81,10 @@ export const RecentActivity: React.FC = () => {
         return <Badge variant="destructive">Flagged Message</Badge>;
       case "new_user":
         return <Badge variant="outline" className="border-green-500 text-green-500">New User</Badge>;
+      case "new_college":
+        return <Badge className="bg-purple-500">New College</Badge>;
+      case "college_update":
+        return <Badge className="bg-amber-500">College Update</Badge>;
       default:
         return <Badge variant="secondary">Activity</Badge>;
     }
@@ -128,6 +132,9 @@ export const RecentActivity: React.FC = () => {
                     )}
                     {activity.role && (
                       <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">Role: {activity.role}</span>
+                    )}
+                    {activity.domain && (
+                      <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">Domain: {activity.domain}</span>
                     )}
                   </div>
                 </div>

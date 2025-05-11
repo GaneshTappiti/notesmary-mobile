@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, BookOpen, Video, CalendarDays } from 'lucide-react';
+import { Users, BookOpen, Video, CalendarDays, School } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const StatsCards: React.FC = () => {
@@ -34,6 +34,13 @@ export const StatsCards: React.FC = () => {
       icon: CalendarDays,
       change: "0.0%",
       changeType: "neutral"
+    },
+    {
+      title: "Colleges",
+      value: "24",
+      icon: School,
+      change: "+4.3%",
+      changeType: "positive"
     }
   ];
 
@@ -41,7 +48,7 @@ export const StatsCards: React.FC = () => {
   const isLoading = false;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
       {stats.map((stat, index) => (
         <Card key={index}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

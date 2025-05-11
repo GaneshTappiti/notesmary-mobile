@@ -9,7 +9,8 @@ import {
   CalendarDays, 
   Users, 
   BarChart3, 
-  LogOut 
+  LogOut,
+  School
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -47,6 +48,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     { name: 'Messages', href: '/admin/messages', icon: MessageSquare },
     { name: 'Events & Announcements', href: '/admin/events', icon: CalendarDays },
     { name: 'Users Management', href: '/admin/users', icon: Users },
+    { name: 'Colleges', href: '/admin/colleges', icon: School },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   ];
 
