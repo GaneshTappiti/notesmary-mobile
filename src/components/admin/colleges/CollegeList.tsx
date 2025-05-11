@@ -161,7 +161,7 @@ export const CollegeList: React.FC = () => {
                       <TableCell>{new Date(college.createdAt).toLocaleDateString()}</TableCell>
                       <TableCell className="text-center">
                         <Badge 
-                          variant={college.status === 'active' ? 'success' : 'destructive'}
+                          variant={college.status === 'active' ? 'outline' : 'destructive'}
                           className={
                             college.status === 'active' 
                               ? 'bg-green-100 text-green-800 hover:bg-green-100' 

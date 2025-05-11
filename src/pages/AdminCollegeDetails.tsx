@@ -100,7 +100,7 @@ const AdminCollegeDetails = () => {
                   <div className="flex items-center gap-3">
                     <h1 className="text-2xl font-bold tracking-tight">{college.name}</h1>
                     <Badge 
-                      variant={college.status === 'active' ? 'success' : 'destructive'}
+                      variant={college.status === 'active' ? 'outline' : 'destructive'}
                       className={
                         college.status === 'active' 
                           ? 'bg-green-100 text-green-800 hover:bg-green-100' 
