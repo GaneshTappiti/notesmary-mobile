@@ -13,6 +13,7 @@ import { ArrowLeft, Pencil, School } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AddEditCollegeModal } from '@/components/admin/colleges/AddEditCollegeModal';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Mock data - would be replaced with API call using the id parameter
 const getMockCollegeById = (id: string) => {
@@ -52,6 +53,7 @@ const AdminCollegeDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
   
   // In a real app, fetch data from API based on ID
@@ -74,6 +76,26 @@ const AdminCollegeDetails = () => {
       </AdminLayout>
     );
   }
+
+  // Handle accessing college admin view
+  const handleAccessCollegeAdminView = () => {
+    // Save the original user role/permissions in session storage to restore later
+    if (user) {
+      sessionStorage.setItem('adminViewingAs', JSON.stringify({
+        originalUser: user.email,
+        viewingCollege: college.domain
+      }));
+    }
+    
+    // Show toast and navigate to college admin dashboard
+    toast({
+      title: "Accessing College Admin View",
+      description: `You are now viewing ${college.name} as a college administrator.`,
+    });
+    
+    // Navigate to college admin dashboard
+    navigate('/college-admin/dashboard');
+  };
 
   return (
     <>
@@ -159,12 +181,7 @@ const AdminCollegeDetails = () => {
                     <div className="pt-4">
                       <Button 
                         className="w-full" 
-                        onClick={() => {
-                          toast({
-                            title: "Access College Admin View",
-                            description: "This would redirect to the college admin view in a real implementation."
-                          });
-                        }}
+                        onClick={handleAccessCollegeAdminView}
                       >
                         <School className="mr-2 h-4 w-4" />
                         Access Admin View

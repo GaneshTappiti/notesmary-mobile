@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Bell, MessageSquare, Search, User, Settings, LogOut } from 'lucide-react';
@@ -16,12 +15,34 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 
 export const CollegeAdminHeader: React.FC = () => {
-  const { user, logout, profile } = useAuth();
+  const { user, logout, profile, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
+  // Check for admin viewing as college admin
+  const adminViewingData = React.useMemo(() => {
+    try {
+      const data = sessionStorage.getItem('adminViewingAs');
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      return null;
+    }
+  }, []);
+  
   const handleLogout = async () => {
     try {
+      // If admin is viewing as college admin, just return to admin view
+      if (adminViewingData && isAdmin) {
+        sessionStorage.removeItem('adminViewingAs');
+        navigate('/admin/colleges');
+        toast({
+          title: "Returned to Admin View",
+          description: "You are now back in your admin account.",
+        });
+        return;
+      }
+      
+      // Otherwise perform regular logout
       await logout();
       toast({
         title: "Logged out successfully",
@@ -37,15 +58,32 @@ export const CollegeAdminHeader: React.FC = () => {
     }
   };
 
-  const domainName = user?.email ? user.email.split('@')[1] : 'Unknown Institution';
-  const institutionName = domainName?.split('.')[0].charAt(0).toUpperCase() + domainName?.split('.')[0].slice(1) || 'College';
+  // Determine display information (actual user or admin-as-college)
+  const getDomainName = () => {
+    if (adminViewingData) {
+      return adminViewingData.viewingCollege;
+    }
+    return user?.email ? user.email.split('@')[1] : 'Unknown Institution';
+  };
+  
+  const getInstitutionName = () => {
+    const domain = getDomainName();
+    return domain?.split('.')[0].charAt(0).toUpperCase() + domain?.split('.')[0].slice(1) || 'College';
+  };
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
-            <h1 className="text-lg font-semibold text-gray-900">{institutionName} Admin Dashboard</h1>
+            <h1 className="text-lg font-semibold text-gray-900">
+              {getInstitutionName()} Admin Dashboard
+              {adminViewingData && (
+                <span className="ml-2 text-xs font-normal text-gray-500">
+                  (Admin View Mode)
+                </span>
+              )}
+            </h1>
           </div>
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="icon" className="relative">
@@ -63,7 +101,9 @@ export const CollegeAdminHeader: React.FC = () => {
                     <AvatarFallback>{profile?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                   </Avatar>
                   <span className="text-sm font-medium hidden sm:block">
-                    {profile?.full_name || user?.email?.split('@')[0] || 'Admin User'}
+                    {adminViewingData 
+                      ? `Admin (as ${getInstitutionName()} Admin)` 
+                      : profile?.full_name || user?.email?.split('@')[0] || 'Admin User'}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
@@ -81,7 +121,9 @@ export const CollegeAdminHeader: React.FC = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
+                  <span>
+                    {adminViewingData && isAdmin ? "Return to Admin View" : "Log out"}
+                  </span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

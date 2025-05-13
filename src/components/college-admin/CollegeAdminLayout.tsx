@@ -11,18 +11,37 @@ import { ShieldAlert, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export const CollegeAdminLayout: React.FC = () => {
-  const { user, isAuthenticated, isLoading, isCollegeAdmin } = useAuth();
+  const { user, isAuthenticated, isLoading, isCollegeAdmin, isAdmin } = useAuth();
   const navigate = useNavigate();
+  
+  // Check for admin viewing as college admin
+  const adminViewingData = React.useMemo(() => {
+    try {
+      const data = sessionStorage.getItem('adminViewingAs');
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      console.error("Error parsing adminViewingAs data:", e);
+      return null;
+    }
+  }, []);
+  
+  const isAdminViewingAsCollegeAdmin = Boolean(adminViewingData && isAdmin);
+  
+  // Function to return to admin view
+  const handleReturnToAdminView = () => {
+    sessionStorage.removeItem('adminViewingAs');
+    navigate('/admin/colleges');
+  };
   
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
         navigate('/authentication', { state: { from: window.location.pathname } });
-      } else if (!isCollegeAdmin) {
+      } else if (!isCollegeAdmin && !isAdminViewingAsCollegeAdmin) {
         navigate('/dashboard');
       }
     }
-  }, [isAuthenticated, isCollegeAdmin, isLoading, navigate]);
+  }, [isAuthenticated, isCollegeAdmin, isLoading, navigate, isAdminViewingAsCollegeAdmin]);
 
   if (isLoading) {
     return (
@@ -33,7 +52,7 @@ export const CollegeAdminLayout: React.FC = () => {
     );
   }
 
-  if (!isCollegeAdmin && !isLoading) {
+  if (!isCollegeAdmin && !isAdminViewingAsCollegeAdmin && !isLoading) {
     return (
       <div className="h-screen flex flex-col items-center justify-center p-6">
         <Alert variant="destructive" className="max-w-md w-full">
@@ -63,6 +82,16 @@ export const CollegeAdminLayout: React.FC = () => {
     );
   }
 
+  // Get the display college name
+  const getCollegeName = () => {
+    if (adminViewingData) {
+      return adminViewingData.viewingCollege.split('.')[0].charAt(0).toUpperCase() + 
+             adminViewingData.viewingCollege.split('.')[0].slice(1);
+    }
+    return user?.email?.split('@')[1]?.split('.')[0].charAt(0).toUpperCase() + 
+           user?.email?.split('@')[1]?.split('.')[0].slice(1) || 'Educational Institution';
+  };
+
   return (
     <div className="h-screen flex overflow-hidden bg-gray-50">
       <CollegeAdminSidebar />
@@ -70,10 +99,28 @@ export const CollegeAdminLayout: React.FC = () => {
         <CollegeAdminHeader />
         <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            {/* Admin viewing mode banner */}
+            {isAdminViewingAsCollegeAdmin && (
+              <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h2 className="text-amber-800 font-medium">Admin View Mode</h2>
+                    <p className="text-sm text-amber-700">
+                      You are viewing as a college administrator for {adminViewingData?.viewingCollege}
+                    </p>
+                  </div>
+                  <Button variant="outline" onClick={handleReturnToAdminView} size="sm">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Return to Admin
+                  </Button>
+                </div>
+              </div>
+            )}
+            
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <Badge variant="outline" className="font-normal text-xs px-2 py-1 bg-blue-50 text-blue-600 border-blue-200">
-                  {user?.email?.split('@')[1] || 'Educational Institution'}
+                  {adminViewingData?.viewingCollege || user?.email?.split('@')[1] || 'Educational Institution'}
                 </Badge>
               </div>
             </div>
