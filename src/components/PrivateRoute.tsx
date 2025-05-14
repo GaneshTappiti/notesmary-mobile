@@ -10,6 +10,7 @@ interface PrivateRouteProps {
 }
 
 export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps) => {
+  // Always call all hooks at the top level
   const { isAuthenticated, isLoading, isAdmin } = useAuth();
   const location = useLocation();
   const { toast } = useToast();
@@ -47,6 +48,7 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
     }
   }, [isLoading, adminOnly, isAuthenticated, isAdmin, toast]);
 
+  // Render logic after all hooks have been called
   if (isLoading) {
     console.log("PrivateRoute: Loading state");
     return (

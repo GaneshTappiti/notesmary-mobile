@@ -9,6 +9,7 @@ interface PublicRouteProps {
 }
 
 export const PublicRoute = ({ children }: PublicRouteProps) => {
+  // Always call all hooks at the top level, regardless of conditions
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
   const [showLoader, setShowLoader] = useState(false);
@@ -44,6 +45,7 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
     }
   }, [isAuthenticated, isLoading, toast]);
 
+  // Conditional rendering logic AFTER all hooks have been called
   if (isLoading && showLoader) {
     console.log("PublicRoute: Loading state with loader");
     return (

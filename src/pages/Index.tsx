@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
+  // All hook calls at the top level
   const navigate = useNavigate();
   const { isAuthenticated, isLoading } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -39,6 +40,7 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Render content based on loading state AFTER all hooks are called
   if (isLoading) {
     return (
       <div className="min-h-screen grid place-items-center">

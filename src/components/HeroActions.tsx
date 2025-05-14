@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowRight } from 'lucide-react';
 
 export const HeroActions = () => {
+  // Always call hooks at the top level, unconditionally
   const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -75,9 +76,9 @@ export const HeroActions = () => {
         size="lg" 
         className="bg-blue-600 hover:bg-blue-700 px-5 py-2 text-sm sm:text-base transition-all duration-300 group"
         onClick={handleGetStarted}
-        isLoading={isLoading}
+        disabled={isLoading}
       >
-        {!isLoading && (
+        {isLoading ? "Loading..." : (
           <>
             Try Notex
             <ArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" size={18} />
@@ -89,9 +90,9 @@ export const HeroActions = () => {
         variant="outline"
         className="px-5 py-2 text-sm sm:text-base transition-all duration-300 border-blue-200 hover:border-blue-400"
         onClick={handleLogin}
-        isLoading={isLoading}
+        disabled={isLoading}
       >
-        {!isLoading && "Login"}
+        {isLoading ? "Loading..." : "Login"}
       </Button>
     </motion.div>
   );
