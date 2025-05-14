@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast'; // Direct import from hooks folder
+import { useToast } from '@/hooks/use-toast'; // Ensure consistent import path
 import { ArrowRight } from 'lucide-react';
 
 export const HeroActions = () => {

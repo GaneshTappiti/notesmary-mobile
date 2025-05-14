@@ -2,7 +2,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast'; // Direct import from hooks folder
+import { useToast } from '@/hooks/use-toast'; // Ensure consistent import path
 
 interface PublicRouteProps {
   children: React.ReactNode;
