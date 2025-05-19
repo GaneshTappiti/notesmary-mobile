@@ -2,7 +2,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast'; // Ensure consistent import path
+import { useToast } from '@/hooks/use-toast';
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -49,7 +49,7 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
   }, [isLoading, adminOnly, isAuthenticated, isAdmin, toast]);
 
   // Render logic after all hooks have been called
-  if (isLoading) {
+  if (isLoading || showLoader) {
     console.log("PrivateRoute: Loading state");
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white">
