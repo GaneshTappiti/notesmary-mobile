@@ -101,52 +101,51 @@ export const Hero = () => {
               <div className="relative rounded-2xl shadow-xl overflow-hidden glass dark:bg-gray-800/50 dark:backdrop-blur-xl p-2">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-100/50 to-purple-100/30 dark:from-blue-900/20 dark:to-purple-900/10 mix-blend-multiply" />
                 
-                <div className="relative p-6 flex flex-col gap-4">
-                  <div className="flex items-center gap-4 border-b border-gray-100 dark:border-gray-700 pb-4">
-                    <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-xl">
-                      <FileUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Upload Notes</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Scan or upload your handwritten notes</p>
-                    </div>
+                {/* Features placed directly in the parent, removing the container div */}
+                <div className="flex items-center gap-4 border-b border-gray-100 dark:border-gray-700 pb-4 p-6">
+                  <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-xl">
+                    <FileUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
-                  
-                  <div className="flex items-center gap-4 border-b border-gray-100 dark:border-gray-700 pb-4">
-                    <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-xl">
-                      <BrainCircuit className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">AI Processing</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Our AI structures & enhances your notes</p>
-                    </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Upload Notes</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Scan or upload your handwritten notes</p>
                   </div>
-                  
-                  <div className="flex items-center gap-4 border-b border-gray-100 dark:border-gray-700 pb-4">
-                    <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-xl">
-                      <BookOpen className="h-6 w-6 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Study Smarter</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Access organized notes on any device</p>
-                    </div>
+                </div>
+                
+                <div className="flex items-center gap-4 border-b border-gray-100 dark:border-gray-700 pb-4 p-6 pt-4">
+                  <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-xl">
+                    <BrainCircuit className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                   </div>
-                  
-                  <div className="flex items-center gap-4">
-                    <div className="bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-xl">
-                      <Users className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Collaborative Study</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Join study rooms with peers</p>
-                    </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">AI Processing</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Our AI structures & enhances your notes</p>
                   </div>
-                  
-                  <div className="mt-4 flex justify-center">
-                    <div className="bg-gray-100 dark:bg-gray-800 rounded-xl py-3 px-6 flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">AI Demo Processing...</span>
-                    </div>
+                </div>
+                
+                <div className="flex items-center gap-4 border-b border-gray-100 dark:border-gray-700 pb-4 p-6 pt-4">
+                  <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-xl">
+                    <BookOpen className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Study Smarter</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Access organized notes on any device</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4 p-6 pt-4">
+                  <div className="bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-xl">
+                    <Users className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Collaborative Study</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Join study rooms with peers</p>
+                  </div>
+                </div>
+                
+                <div className="mt-4 flex justify-center pb-6">
+                  <div className="bg-gray-100 dark:bg-gray-800 rounded-xl py-3 px-6 flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">AI Demo Processing...</span>
                   </div>
                 </div>
               </div>
