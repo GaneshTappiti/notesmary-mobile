@@ -9,7 +9,7 @@ export const Hero = () => {
   const navigate = useNavigate();
   
   return (
-    <section className="pt-32 pb-16 overflow-hidden">
+    <section className="pt-32 pb-16 overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <motion.div 
@@ -53,14 +53,14 @@ export const Hero = () => {
           >
             <Button 
               onClick={() => navigate('/authentication')}
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-full px-8 py-6 text-lg transition-transform hover:scale-105"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-full px-8 py-6 text-lg transition-all hover:scale-105 hover:shadow-md"
             >
               Try Notex
             </Button>
             
             <Button 
               variant="outline" 
-              className="flex items-center rounded-full px-6 border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-transform hover:scale-105"
+              className="flex items-center rounded-full px-6 border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all hover:scale-105 hover:shadow-sm"
             >
               <Play className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
               Watch Demo
