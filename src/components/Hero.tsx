@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { HeroActions } from '@/components/HeroActions';
 import { FileUp, BookOpen, BrainCircuit, Users, Play, Sparkles } from 'lucide-react';
@@ -11,8 +10,8 @@ export const Hero = () => {
   return (
     <section className="pt-32 pb-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
-          <div className="mx-auto max-w-md px-4 sm:max-w-2xl sm:px-6 lg:px-0 lg:text-left lg:flex lg:items-center">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-8 items-center">
+          <div className="col-span-12 lg:col-span-6 mx-auto max-w-md px-4 sm:max-w-2xl sm:px-6 lg:px-0 lg:text-left lg:flex lg:items-center">
             <div>
               <motion.div 
                 initial={{ opacity: 0 }}
@@ -91,12 +90,7 @@ export const Hero = () => {
             </div>
           </div>
           
-          <motion.div 
-            className="mt-12 lg:relative lg:mt-0 lg:ml-10"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
+          <div className="mt-12 lg:mt-0 col-span-12 lg:col-span-6">
             <div className="mx-auto max-w-md px-4 sm:max-w-2xl sm:px-6 lg:px-0">
               <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700">
                 <div className="flex flex-col divide-y divide-gray-100 dark:divide-gray-700">
@@ -173,7 +167,7 @@ export const Hero = () => {
               }}
               className="absolute -top-4 -left-4 h-16 w-16 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full blur-xl opacity-30 dark:opacity-20"
             />
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
