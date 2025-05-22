@@ -101,7 +101,6 @@ export const Hero = () => {
               <div className="relative rounded-2xl shadow-xl overflow-hidden glass dark:bg-gray-800/50 dark:backdrop-blur-xl p-2">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-100/50 to-purple-100/30 dark:from-blue-900/20 dark:to-purple-900/10 mix-blend-multiply" />
                 
-                {/* Features placed directly in the parent, removing the container div */}
                 <div className="flex items-center gap-4 border-b border-gray-100 dark:border-gray-700 pb-4 p-6">
                   <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-xl">
                     <FileUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />

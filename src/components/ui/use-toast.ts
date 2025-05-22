@@ -1,7 +1,3 @@
 
-// This file is a direct re-export from the original hooks/use-toast.ts
-// Avoid any hook initialization here to prevent duplicate hook initialization
-
-import { useToast, toast } from "@/hooks/use-toast";
-
-export { useToast, toast };
+// Correctly re-export the toast hook from the hooks directory
+export { useToast, toast } from "@/hooks/use-toast";
