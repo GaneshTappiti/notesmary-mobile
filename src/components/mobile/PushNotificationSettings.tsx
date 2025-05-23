@@ -112,10 +112,8 @@ export const PushNotificationSettings = () => {
     try {
       // Use dynamic import
       const { App } = await import('@capacitor/app');
-      // The method is just openUrl, not openSettings
-      await App.openUrl({
-        url: 'app-settings:'
-      });
+      // Using the correct method for opening system settings
+      await App.openSettings();
     } catch (error) {
       console.error('Error opening app settings:', error);
       toast({

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { AppSidebar } from './AppSidebar';
-import { MobileDetection } from './MobileDetection';
+import MobileDetection from './MobileDetection';
 import { SidebarProvider } from './ui/sidebar';
 
 interface AppLayoutProps {
