@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Preferences } from '@capacitor/preferences';
-import { Network } from '@capacitor/network';
 import { SplashScreen } from './mobile/SplashScreen';
 import { Onboarding } from './mobile/Onboarding';
 import { MobileLayout } from './mobile/MobileLayout';
@@ -41,6 +40,7 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
     
     const checkNetwork = async () => {
       try {
+        const { Network } = await import('@capacitor/network');
         const status = await Network.getStatus();
         setIsOnline(status.connected);
         
@@ -48,17 +48,24 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
         Network.addListener('networkStatusChange', (status) => {
           setIsOnline(status.connected);
         });
+        
+        // Return cleanup function
+        return () => {
+          Network.removeAllListeners().catch(err => 
+            console.error('Error removing network listeners:', err)
+          );
+        };
       } catch (error) {
         console.error('Error checking network status:', error);
       }
     };
     
     checkOnboarding();
-    checkNetwork();
+    const cleanup = checkNetwork();
     
     // Cleanup
     return () => {
-      Network.removeAllListeners();
+      cleanup?.then(fn => fn?.());
     };
   }, []);
 

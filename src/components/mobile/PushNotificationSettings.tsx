@@ -1,185 +1,166 @@
 
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { PushNotifications } from '@capacitor/push-notifications';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
+import React, { useState, useEffect } from 'react';
 import { MobileHeader } from './MobileHeader';
 import { MobileLayout } from './MobileLayout';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Preferences } from '@capacitor/preferences';
-
-const notifications = [
-  { id: 'study_rooms', name: 'Study Rooms', description: 'New invites and messages' },
-  { id: 'notes', name: 'Notes', description: 'Comments and shares on your notes' },
-  { id: 'ai_insights', name: 'AI Insights', description: 'Study recommendations and insights' },
-  { id: 'reminders', name: 'Study Reminders', description: 'Session and assignment reminders' },
-  { id: 'system', name: 'System Updates', description: 'Important app updates and news' }
-];
+import { Bell, BellOff, ArrowRight } from 'lucide-react';
 
 export const PushNotificationSettings = () => {
   const { toast } = useToast();
+  const [pushEnabled, setPushEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [masterEnabled, setMasterEnabled] = useState(false);
-  const [notificationPrefs, setNotificationPrefs] = useState<Record<string, boolean>>({});
-  
+  const [notificationSettings, setNotificationSettings] = useState({
+    studyReminders: false,
+    newMessages: true,
+    aiUpdates: false,
+    noteUpdates: true,
+    marketingNotifications: false
+  });
+
   useEffect(() => {
-    const loadPreferences = async () => {
+    // Simulate checking if push notifications are enabled
+    const checkPushStatus = async () => {
       try {
-        // Check if push permissions are enabled
-        const permStatus = await PushNotifications.checkPermissions();
-        const masterSetting = permStatus.receive === 'granted';
-        setMasterEnabled(masterSetting);
-        
-        // Load individual notification preferences
-        const prefs: Record<string, boolean> = {};
-        
-        for (const notif of notifications) {
-          const { value } = await Preferences.get({ key: `notification-${notif.id}` });
-          prefs[notif.id] = value === 'true';
-        }
-        
-        setNotificationPrefs(prefs);
-        setLoading(false);
+        setTimeout(() => {
+          setPushEnabled(false);
+          setLoading(false);
+        }, 1000);
       } catch (error) {
-        console.error('Error loading notification preferences:', error);
+        console.error('Error checking push notification status:', error);
         setLoading(false);
       }
     };
-    
-    loadPreferences();
+
+    checkPushStatus();
   }, []);
-  
-  const handleMasterChange = async (enabled: boolean) => {
+
+  const handleTogglePush = async () => {
     try {
-      setMasterEnabled(enabled);
+      setLoading(true);
       
-      if (enabled) {
-        // Request permissions
-        const permStatus = await PushNotifications.requestPermissions();
-        
-        if (permStatus.receive === 'granted') {
-          toast({
-            title: "Notifications enabled",
-            description: "You'll now receive push notifications"
-          });
-          
-          await PushNotifications.register();
-        } else {
-          setMasterEnabled(false);
-          toast({
-            title: "Permission denied",
-            description: "Push notifications permission was denied",
-            variant: "destructive"
-          });
-        }
-      } else {
-        // Disable all notifications
-        const newPrefs = { ...notificationPrefs };
-        notifications.forEach(notif => {
-          newPrefs[notif.id] = false;
-        });
-        
-        setNotificationPrefs(newPrefs);
-        
-        // Save preferences
-        for (const notif of notifications) {
-          await Preferences.set({
-            key: `notification-${notif.id}`,
-            value: 'false'
-          });
-        }
-        
+      // Simulate enabling/disabling push notifications
+      setTimeout(() => {
+        setPushEnabled(!pushEnabled);
         toast({
-          title: "Notifications disabled",
-          description: "You won't receive any push notifications"
+          title: !pushEnabled ? "Notifications Enabled" : "Notifications Disabled",
+          description: !pushEnabled 
+            ? "You will now receive push notifications" 
+            : "You will no longer receive push notifications"
         });
-      }
+        setLoading(false);
+      }, 1000);
     } catch (error) {
-      console.error('Error managing push notifications:', error);
+      console.error('Error toggling push notifications:', error);
       toast({
         title: "Error",
-        description: "Failed to update notification settings",
+        description: "Could not update notification settings",
         variant: "destructive"
       });
+      setLoading(false);
     }
   };
-  
-  const handleNotificationChange = async (id: string, enabled: boolean) => {
-    try {
-      const newPrefs = { ...notificationPrefs, [id]: enabled };
-      setNotificationPrefs(newPrefs);
-      
-      // Save the preference
-      await Preferences.set({
-        key: `notification-${id}`,
-        value: enabled.toString()
-      });
-      
-      toast({
-        title: enabled ? "Enabled" : "Disabled",
-        description: `${notifications.find(n => n.id === id)?.name} notifications ${enabled ? 'enabled' : 'disabled'}`
-      });
-    } catch (error) {
-      console.error('Error saving notification preference:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update notification setting",
-        variant: "destructive"
-      });
-    }
+
+  const handleSettingChange = (setting: keyof typeof notificationSettings) => {
+    setNotificationSettings(prev => ({
+      ...prev,
+      [setting]: !prev[setting]
+    }));
+    
+    toast({
+      title: "Setting Updated",
+      description: `${setting} notifications ${!notificationSettings[setting] ? 'enabled' : 'disabled'}`
+    });
   };
-  
+
   return (
     <MobileLayout>
-      <MobileHeader title="Push Notifications" showBackButton />
+      <MobileHeader title="Notification Settings" showBackButton />
       
       <div className="p-4">
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="space-y-6"
-          >
-            <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden mb-4">
+          <div className="p-4 flex justify-between items-center border-b border-gray-100 dark:border-gray-700">
+            <div className="flex items-center gap-3">
+              {pushEnabled 
+                ? <Bell className="h-6 w-6 text-blue-600" /> 
+                : <BellOff className="h-6 w-6 text-gray-400" />
+              }
               <div>
-                <h3 className="font-medium text-gray-900 dark:text-white">Enable Notifications</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Master toggle for all notifications</p>
+                <h3 className="font-medium text-gray-900 dark:text-white">
+                  Push Notifications
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {pushEnabled 
+                    ? "You're receiving push notifications" 
+                    : "Push notifications are disabled"
+                  }
+                </p>
               </div>
-              <Switch 
-                checked={masterEnabled} 
-                onCheckedChange={handleMasterChange}
-                aria-label="Toggle all notifications"
-              />
             </div>
             
-            {masterEnabled && (
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm divide-y divide-gray-100 dark:divide-gray-700">
-                {notifications.map((notif) => (
-                  <div key={notif.id} className="flex items-center justify-between p-4">
-                    <div>
-                      <Label htmlFor={`notif-${notif.id}`} className="font-medium text-gray-900 dark:text-white">
-                        {notif.name}
-                      </Label>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{notif.description}</p>
-                    </div>
-                    <Switch 
-                      id={`notif-${notif.id}`}
-                      checked={notificationPrefs[notif.id] || false} 
-                      onCheckedChange={(checked) => handleNotificationChange(notif.id, checked)}
-                      disabled={!masterEnabled}
-                      aria-label={`Toggle ${notif.name} notifications`}
-                    />
-                  </div>
-                ))}
+            <Switch
+              checked={pushEnabled}
+              onCheckedChange={handleTogglePush}
+              disabled={loading}
+              className="data-[state=checked]:bg-blue-600"
+            />
+          </div>
+          
+          {pushEnabled && (
+            <div className="divide-y divide-gray-100 dark:divide-gray-700">
+              {Object.entries(notificationSettings).map(([key, value]) => (
+                <div key={key} className="p-4 flex justify-between items-center">
+                  <Label
+                    htmlFor={key}
+                    className="text-gray-700 dark:text-gray-300 cursor-pointer"
+                  >
+                    {key.replace(/([A-Z])/g, ' $1')
+                      .replace(/^./, str => str.toUpperCase())}
+                  </Label>
+                  <Switch
+                    id={key}
+                    checked={value}
+                    onCheckedChange={() => handleSettingChange(key as keyof typeof notificationSettings)}
+                    className="data-[state=checked]:bg-blue-600"
+                  />
+                </div>
+              ))}
+              
+              <div className="p-4">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-between text-blue-600"
+                  onClick={() => {
+                    toast({
+                      title: "Advanced Settings",
+                      description: "Advanced notification settings coming soon"
+                    });
+                  }}
+                >
+                  Advanced Settings
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
               </div>
-            )}
-          </motion.div>
+            </div>
+          )}
+        </div>
+        
+        {!pushEnabled && (
+          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 text-center">
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
+              Enable push notifications to stay updated about your study activities,
+              messages, and AI-powered insights.
+            </p>
+            <Button 
+              onClick={handleTogglePush}
+              disabled={loading}
+              className="w-full"
+            >
+              Enable Notifications
+            </Button>
+          </div>
         )}
       </div>
     </MobileLayout>

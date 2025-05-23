@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { WifiOff, RefreshCcw, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Network } from '@capacitor/network';
 
 interface OfflineErrorScreenProps {
   message?: string;
@@ -26,11 +25,8 @@ export const OfflineErrorScreen = ({
     }
     
     try {
-      const status = await Network.getStatus();
-      if (status.connected) {
-        // Reload the current page
-        window.location.reload();
-      }
+      // Attempt to reload the page
+      window.location.reload();
     } catch (error) {
       console.error('Error checking network status:', error);
       // Attempt reload anyway

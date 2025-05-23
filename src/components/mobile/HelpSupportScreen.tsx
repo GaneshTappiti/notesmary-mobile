@@ -10,6 +10,7 @@ import { MobileLayout } from './MobileLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useToast } from '@/hooks/use-toast';
 
@@ -201,13 +202,12 @@ export const HelpSupportScreen = () => {
                     How can we help?
                   </Label>
                   <div className="mt-1 relative">
-                    <Input
+                    <Textarea
                       id="support-message"
                       placeholder="Type your message here..."
-                      className="pr-12 h-24 pt-3 resize-none"
+                      className="min-h-24 resize-none"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      multiline
                     />
                     <Button
                       className="absolute bottom-2 right-2 h-8 w-8 p-0"
