@@ -116,10 +116,15 @@ export const PushNotificationSettings = () => {
       // Different approach for iOS vs Android
       if (Capacitor.getPlatform() === 'ios') {
         // On iOS, we use App URLs scheme
-        await Capacitor.openUrl({ url: 'app-settings:' });
+        const { App } = await import('@capacitor/app');
+        await App.openUrl({ url: 'app-settings:' });
       } else {
         // On Android, open app details settings
-        await Capacitor.openUrl({ url: 'package:' + Capacitor.getAppId() });
+        const { App } = await import('@capacitor/app');
+        // Use the proper method to get the app ID
+        const appInfo = await App.getInfo();
+        const appId = appInfo.id;
+        await App.openUrl({ url: 'package:' + appId });
       }
     } catch (error) {
       console.error('Error opening settings:', error);

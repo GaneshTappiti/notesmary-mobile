@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthService, UserProfile } from '@/services/AuthService';
@@ -208,7 +209,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       console.log("Starting login process for:", email);
       
-      const { data, error } = await AuthService.login({ email, password });
+      const { data, error } = await AuthService.login(email, password);
       
       if (error) {
         console.error("Login error:", error);
