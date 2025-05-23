@@ -232,3 +232,13 @@
     @apply w-full overflow-x-auto-safe whitespace-nowrap sm:whitespace-normal;
   }
 }
+
+/* Import mobile styles */
+@import './mobile.css';
+
+/* Additional mobile-specific styles can be added here */
+
+/* Bottom navigation height adjustments */
+.pb-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
