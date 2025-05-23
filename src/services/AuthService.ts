@@ -1,6 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
-import { AuthSession, AuthUser, User } from "@/integrations/supabase/types";
-import { toast } from "@/hooks/use-toast";
+import { supabase } from '@/integrations/supabase/client';
 
 export type SignUpCredentials = {
   email: string;

@@ -242,3 +242,16 @@
 .pb-safe-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
+
+/* Mobile-friendly adjustments */
+@media (max-width: 640px) {
+  .page-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Add extra bottom padding to accommodate horizontal nav */
+  main {
+    padding-bottom: 4rem;
+  }
+}

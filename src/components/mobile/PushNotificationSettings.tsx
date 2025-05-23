@@ -112,10 +112,14 @@ export const PushNotificationSettings = () => {
     try {
       // Use dynamic import
       const { App } = await import('@capacitor/app');
-      // Open app settings using the correct method
-      await App.openUrl({
-        url: 'app-settings:'
-      });
+      
+      // The correct way to open app settings in Capacitor
+      if (typeof App.openUrlForLinking === 'function') {
+        await App.openUrlForLinking({ url: 'app-settings:' });
+      } else {
+        // Fallback for older versions
+        await App.exitApp();
+      }
     } catch (error) {
       console.error('Error opening app settings:', error);
       toast({
