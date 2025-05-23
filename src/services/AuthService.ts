@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "@/hooks/use-toast";
 
@@ -66,6 +65,22 @@ const extractEmailDomain = (email: string): string => {
 };
 
 export class AuthService {
+  /**
+   * Check if an email domain is from an educational institution
+   * Bypass for admin email
+   */
+  static isEducationalEmail(email: string): boolean {
+    // Special exception for admin email
+    if (email === "2005ganesh16@gmail.com") {
+      console.log("Admin email detected, bypassing educational email check");
+      return true;
+    }
+    
+    const domain = email.split('@')[1];
+    if (!domain) return false;
+    
+    return EDUCATIONAL_DOMAINS.some(pattern => pattern.test(domain));
+  }
   /**
    * Sign up a new user
    */

@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService, UserProfile } from "@/services/AuthService";
@@ -8,7 +9,9 @@ type AuthContextType = {
   isLoading: boolean;
   user: any;
   isAdmin: boolean;
+  isCollegeAdmin: boolean; // Added missing property
   userProfile: UserProfile | null;
+  profile: UserProfile | null; // Added missing property
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, fullName: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -20,7 +23,9 @@ export const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   user: null,
   isAdmin: false,
+  isCollegeAdmin: false, // Added missing property
   userProfile: null,
+  profile: null, // Added missing property
   login: () => Promise.resolve(),
   signup: () => Promise.resolve(),
   logout: () => Promise.resolve(),
@@ -32,6 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isCollegeAdmin, setIsCollegeAdmin] = useState(false); // Added missing state
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -50,6 +56,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const profile = await AuthService.getUserProfile(currentUser.id);
             setUserProfile(profile);
             setIsAdmin(currentUser.email === "2005ganesh16@gmail.com");
+            
+            // Check if the user is a college admin (has educational email domain)
+            const emailDomain = currentUser.email ? currentUser.email.split('@')[1] : '';
+            const isEducationalDomain = AuthService.isEducationalEmail ? 
+              AuthService.isEducationalEmail(currentUser.email || '') : 
+              false;
+            setIsCollegeAdmin(isEducationalDomain && emailDomain !== 'gmail.com');
           }
         } else {
           setIsAuthenticated(false);
@@ -162,7 +175,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isLoading,
     user,
     isAdmin,
+    isCollegeAdmin, // Added missing property
     userProfile,
+    profile: userProfile, // Added profile as an alias for userProfile
     login,
     signup,
     logout,
