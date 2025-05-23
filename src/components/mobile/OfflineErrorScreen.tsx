@@ -9,12 +9,14 @@ interface OfflineErrorScreenProps {
   message?: string;
   isOffline?: boolean;
   onRetry?: () => void;
+  isRetrying?: boolean; // Added this prop
 }
 
 export const OfflineErrorScreen = ({
   message = "Connection error",
   isOffline = true,
   onRetry,
+  isRetrying = false, // Added default value
 }: OfflineErrorScreenProps) => {
   const navigate = useNavigate();
   
@@ -63,9 +65,10 @@ export const OfflineErrorScreen = ({
           <Button 
             onClick={handleRetry} 
             className="w-full"
+            disabled={isRetrying} // Use the isRetrying prop
           >
-            <RefreshCcw size={18} className="mr-2" />
-            Retry
+            <RefreshCcw size={18} className={`mr-2 ${isRetrying ? 'animate-spin' : ''}`} />
+            {isRetrying ? 'Retrying...' : 'Retry'}
           </Button>
           
           <Button 

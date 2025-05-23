@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Preferences } from '@capacitor/preferences';
 import { SplashScreen } from './mobile/SplashScreen';
@@ -20,6 +20,9 @@ import Settings from '@/pages/Settings';
 import Authentication from '@/pages/Authentication';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
+
+// Lazy load CollegeAdminDashboard
+const CollegeAdminDashboard = React.lazy(() => import('@/pages/college-admin/CollegeAdminDashboard'));
 
 interface MobileAppProps {
   initializing: boolean;
@@ -177,9 +180,9 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
         <Route path="/college-admin/dashboard" element={
           isAuthenticated ? (
             <MobileLayout hideBottomNav={true}>
-              <React.Suspense fallback={<div className="p-4">Loading...</div>}>
-                {React.lazy(() => import('@/pages/college-admin/CollegeAdminDashboard'))}
-              </React.Suspense>
+              <Suspense fallback={<div className="p-4">Loading...</div>}>
+                <CollegeAdminDashboard />
+              </Suspense>
             </MobileLayout>
           ) : (
             <Navigate to="/authentication" replace />
