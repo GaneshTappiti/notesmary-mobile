@@ -34,13 +34,13 @@ export const PushNotificationSettings = () => {
         );
         
         // Check if push notifications are supported
-        const { results } = await PushNotifications.checkPermissions();
+        const status = await PushNotifications.checkPermissions();
         
-        // Handle the permission status
-        if (results === 'granted') {
+        // Handle the permission status - access correct property
+        if (status.receive === 'granted') {
           setPushEnabled(true);
           setPermissionStatus('granted');
-        } else if (results === 'denied') {
+        } else if (status.receive === 'denied') {
           setPushEnabled(false);
           setPermissionStatus('denied');
         } else {
@@ -82,8 +82,6 @@ export const PushNotificationSettings = () => {
           // Map any unexpected values to our allowed types
           let status: PermissionState = 'denied';
           if (result.receive === 'prompt') status = 'prompt';
-          if (result.receive === 'granted') status = 'granted';
-          
           setPermissionStatus(status);
           setPushEnabled(false);
           

@@ -42,7 +42,6 @@ export const NotesService = {
         toast({
           title: 'You are offline',
           description: 'Your notes will be saved locally and uploaded when you reconnect.',
-          variant: 'warning',
         });
         
         // Store draft locally
@@ -116,7 +115,6 @@ export const NotesService = {
         toast({
           title: 'Offline Mode',
           description: 'Showing cached notes. Some content may not be up to date.',
-          variant: 'warning',
         });
         
         const cachedNotes = await OfflineManager.getData<Note[]>(CACHE_KEYS.NOTES);
@@ -147,7 +145,6 @@ export const NotesService = {
         toast({
           title: 'Showing Cached Data',
           description: 'Could not fetch the latest notes. Showing previously cached data.',
-          variant: 'warning',
         });
         return cachedNotes;
       }
@@ -171,9 +168,11 @@ export const NotesService = {
         
         const draftNote = drafts.find(draft => `local-${localIndex}` === noteId);
         if (draftNote) {
+          // Fix the type conversion by explicitly adding the user_id property
           return {
             ...draftNote,
             id: noteId,
+            user_id: 'offline-user', // Provide a temporary user_id for offline notes
             _isOffline: true,
             uploaded_at: new Date().toISOString()
           } as Note;
@@ -194,7 +193,6 @@ export const NotesService = {
         toast({
           title: 'Offline Mode',
           description: 'This note is not available offline.',
-          variant: 'warning',
         });
         return null;
       }
@@ -379,7 +377,6 @@ export const NotesService = {
         toast({
           title: 'Offline Mode',
           description: 'Search functionality is limited while offline.',
-          variant: 'warning',
         });
         return [];
       }
