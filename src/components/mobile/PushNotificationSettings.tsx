@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ import { ChevronLeft, Bell, BellOff, Info } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { MobileLayout } from './MobileLayout';
-import { Capacitor, App } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 
 // Define types for permission states
 type PermissionState = 'granted' | 'denied' | 'prompt' | 'unsupported';
@@ -114,11 +115,11 @@ export const PushNotificationSettings = () => {
     try {
       // Different approach for iOS vs Android
       if (Capacitor.getPlatform() === 'ios') {
-        // On iOS, we use a specific URL scheme
-        await App.openUrl({ url: 'app-settings:' });
+        // On iOS, we use App URLs scheme
+        await Capacitor.openUrl({ url: 'app-settings:' });
       } else {
         // On Android, open app details settings
-        await App.openUrl({ url: 'package:' + App.getId() });
+        await Capacitor.openUrl({ url: 'package:' + Capacitor.getAppId() });
       }
     } catch (error) {
       console.error('Error opening settings:', error);
