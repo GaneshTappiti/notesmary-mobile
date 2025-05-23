@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export type SignUpCredentials = {
   email: string;
@@ -63,11 +64,11 @@ const extractEmailDomain = (email: string): string => {
   return email.split('@')[1] || '';
 };
 
-export const AuthService = {
+export class AuthService {
   /**
    * Sign up a new user
    */
-  async signUp(credentials: SignUpCredentials) {
+  static async signUp(credentials: SignUpCredentials) {
     try {
       console.log("Starting signup process for:", credentials.email);
       
@@ -108,23 +109,23 @@ export const AuthService = {
       });
       throw error;
     }
-  },
+  }
 
   /**
    * Sign in with email and password
    */
-  async login(credentials: LoginCredentials) {
+  static async login(email: string, password: string) {
     try {
-      console.log("Starting login process for:", credentials.email);
+      console.log("Starting login process for:", email);
       
       // For admin email, add special logging
-      if (credentials.email === "2005ganesh16@gmail.com") {
-        console.log("Admin login attempt with:", credentials.email);
+      if (email === "2005ganesh16@gmail.com") {
+        console.log("Admin login attempt with:", email);
       }
       
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: credentials.email,
-        password: credentials.password,
+        email: email,
+        password: password,
       });
 
       if (error) {
@@ -142,7 +143,7 @@ export const AuthService = {
       console.error('Error logging in:', error);
       
       // Special handling for admin login attempts
-      if (credentials.email === "2005ganesh16@gmail.com") {
+      if (email === "2005ganesh16@gmail.com") {
         console.error('Admin login failed:', error);
         
         if (error.message && error.message.includes("Email not confirmed")) {
@@ -168,12 +169,12 @@ export const AuthService = {
       
       return { data: null, error };
     }
-  },
+  }
 
   /**
    * Sign out the current user
    */
-  async logout() {
+  static async logout() {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
@@ -193,12 +194,12 @@ export const AuthService = {
       });
       throw error;
     }
-  },
+  }
 
   /**
    * Get the current authenticated user
    */
-  async getCurrentUser() {
+  static async getCurrentUser() {
     try {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error) {
@@ -209,12 +210,12 @@ export const AuthService = {
       console.error('Error getting current user:', error);
       return null;
     }
-  },
+  }
 
   /**
    * Check if the user has a valid session
    */
-  async hasValidSession() {
+  static async hasValidSession() {
     try {
       // Check localStorage first for quick response
       const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -230,12 +231,12 @@ export const AuthService = {
       console.error('Error checking session:', error);
       return false;
     }
-  },
+  }
 
   /**
    * Get the user profile
    */
-  async getUserProfile(userId: string): Promise<UserProfile | null> {
+  static async getUserProfile(userId: string): Promise<UserProfile | null> {
     try {
       // First try to get the profile
       const { data, error } = await supabase
@@ -294,12 +295,12 @@ export const AuthService = {
       console.error('Error fetching user profile:', error);
       return null;
     }
-  },
+  }
 
   /**
    * Update the user profile
    */
-  async updateUserProfile(userId: string, profile: Partial<UserProfile>) {
+  static async updateUserProfile(userId: string, profile: Partial<UserProfile>) {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -327,5 +328,5 @@ export const AuthService = {
       });
       throw error;
     }
-  },
-};
+  }
+}

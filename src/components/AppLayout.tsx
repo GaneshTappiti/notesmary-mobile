@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { AppSidebar } from './AppSidebar';
-import MobileDetection from './MobileDetection';
 import { SidebarProvider } from './ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import HorizontalNavBar from './mobile/HorizontalNavBar';
@@ -17,11 +16,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         {!isMobile && <AppSidebar />}
-        <main className="flex-1 overflow-x-hidden flex flex-col">
-          {isMobile && <HorizontalNavBar />}
+        <main className={cn(
+          "flex-1 overflow-x-hidden flex flex-col",
+          isMobile && "pb-16" // Add padding at the bottom when on mobile to account for the navigation bar
+        )}>
           <div className="flex-1">
             {children}
           </div>
+          {isMobile && <HorizontalNavBar />}
         </main>
       </div>
     </SidebarProvider>

@@ -6,6 +6,7 @@ import { ChevronLeft, Bell, BellOff, Info } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { MobileLayout } from './MobileLayout';
+import { Capacitor, App } from '@capacitor/core';
 
 // Define types for permission states
 type PermissionState = 'granted' | 'denied' | 'prompt' | 'unsupported';
@@ -108,25 +109,19 @@ export const PushNotificationSettings = () => {
     }
   };
 
-  const openAppSettings = async () => {
+  // Function that handles opening app settings
+  const handleOpenAppSettings = async () => {
     try {
-      // Use dynamic import
-      const { App } = await import('@capacitor/app');
-      
-      // The correct way to open app settings in Capacitor
-      if (typeof App.openUrlForLinking === 'function') {
-        await App.openUrlForLinking({ url: 'app-settings:' });
+      // Different approach for iOS vs Android
+      if (Capacitor.getPlatform() === 'ios') {
+        // On iOS, we use a specific URL scheme
+        await App.openUrl({ url: 'app-settings:' });
       } else {
-        // Fallback for older versions
-        await App.exitApp();
+        // On Android, open app details settings
+        await App.openUrl({ url: 'package:' + App.getId() });
       }
     } catch (error) {
-      console.error('Error opening app settings:', error);
-      toast({
-        title: 'Error',
-        description: 'Could not open app settings.',
-        variant: 'destructive'
-      });
+      console.error('Error opening settings:', error);
     }
   };
 
@@ -184,7 +179,7 @@ export const PushNotificationSettings = () => {
                     variant="outline" 
                     size="sm" 
                     className="mt-2 h-8 text-xs bg-amber-100 hover:bg-amber-200 dark:bg-amber-800/40 dark:hover:bg-amber-800/60"
-                    onClick={openAppSettings}
+                    onClick={handleOpenAppSettings}
                   >
                     Open Settings
                   </Button>
