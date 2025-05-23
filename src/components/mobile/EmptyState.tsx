@@ -11,6 +11,8 @@ interface EmptyStateProps {
   actionText?: string;
   onAction?: () => void;
   className?: string;
+  isOffline?: boolean;
+  offlineText?: string;
 }
 
 export const EmptyState = ({
@@ -19,7 +21,9 @@ export const EmptyState = ({
   icon,
   actionText,
   onAction,
-  className
+  className,
+  isOffline = false,
+  offlineText = "Some content may not be available offline"
 }: EmptyStateProps) => {
   return (
     <motion.div 
@@ -31,7 +35,10 @@ export const EmptyState = ({
         className
       )}
     >
-      <div className="bg-blue-50 dark:bg-blue-900/30 w-20 h-20 rounded-full flex items-center justify-center mb-6">
+      <div className={cn(
+        "w-20 h-20 rounded-full flex items-center justify-center mb-6",
+        isOffline ? "bg-amber-50 dark:bg-amber-900/30" : "bg-blue-50 dark:bg-blue-900/30"
+      )}>
         {icon}
       </div>
       
@@ -43,8 +50,17 @@ export const EmptyState = ({
         {description}
       </p>
       
+      {isOffline && (
+        <div className="mb-4 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 p-2 px-3 rounded-md">
+          {offlineText}
+        </div>
+      )}
+      
       {actionText && onAction && (
-        <Button onClick={onAction}>
+        <Button 
+          onClick={onAction}
+          disabled={isOffline && actionText.toLowerCase().includes('create')}
+        >
           {actionText}
         </Button>
       )}

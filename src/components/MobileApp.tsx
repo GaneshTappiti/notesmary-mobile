@@ -41,7 +41,7 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
     const checkNetwork = async () => {
       try {
         // Use dynamic import to avoid issues with SSR or environments without Capacitor
-        const { Network } = await import('@capacitor/network');
+        const Network = await import('@capacitor/network').then(module => module.Network);
         const status = await Network.getStatus();
         setIsOnline(status.connected);
         

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { Upload, Search, Users, Brain, ShieldCheck, School } from 'lucide-react';
+import { Upload, Search, Users, Brain, ShieldCheck, School, WifiOff } from 'lucide-react';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { AnalyticsCard } from '@/components/dashboard/AnalyticsCard';
 import { QuickAccessCard } from '@/components/dashboard/QuickAccessCard';
@@ -13,11 +13,48 @@ import { PageContainer } from '@/components/PageContainer';
 import { StudyPulseEntryCard } from '@/components/dashboard/StudyPulseEntryCard';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { useOffline } from '@/hooks/use-offline';
+import { OfflineManager, CACHE_KEYS } from '@/utils/offlineManager';
+import { NotesService } from '@/services/NotesService';
 
 const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, logout, isAdmin, isCollegeAdmin } = useAuth();
+  const { isOnline, wasOffline } = useOffline();
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+
+  // Sync offline notes when coming back online
+  useEffect(() => {
+    const syncNotesIfNeeded = async () => {
+      if (isOnline && wasOffline && user) {
+        try {
+          // Sync any offline notes
+          const result = await NotesService.syncOfflineNotes(user.id);
+          if (result.count > 0) {
+            setLastSyncTime(new Date());
+          }
+        } catch (error) {
+          console.error('Error syncing offline notes:', error);
+        }
+      }
+    };
+    
+    syncNotesIfNeeded();
+  }, [isOnline, wasOffline, user]);
+
+  // Load last sync time
+  useEffect(() => {
+    const loadLastSyncTime = async () => {
+      const timestamp = await OfflineManager.getLastUpdated(CACHE_KEYS.NOTES);
+      if (timestamp) {
+        setLastSyncTime(timestamp);
+      }
+    };
+    
+    loadLastSyncTime();
+  }, []);
 
   const quickAccessOptions = [
     {
@@ -194,6 +231,31 @@ const Dashboard = () => {
           isAdmin={isAdmin}
           onAdminClick={() => navigate('/admin')}
         />
+        
+        {!isOnline && (
+          <Alert variant="warning" className="bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800">
+            <WifiOff className="h-4 w-4 text-amber-600 dark:text-amber-500" />
+            <AlertTitle>You're offline</AlertTitle>
+            <AlertDescription>
+              You're currently viewing cached data. Some features may be limited until you reconnect.
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {isOnline && wasOffline && (
+          <Alert variant="success" className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
+            <AlertTitle>Back online</AlertTitle>
+            <AlertDescription>
+              Your connection has been restored. Any changes made while offline have been synced.
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {lastSyncTime && (
+          <div className="text-xs text-muted-foreground mt-2 text-right">
+            Last updated: {lastSyncTime.toLocaleString()}
+          </div>
+        )}
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
           {quickAccessOptions.map((option, index) => (
@@ -237,7 +299,7 @@ const Dashboard = () => {
         </div>
 
         {/* Add the CollegeAdminSection component to the dashboard layout */}
-        {CollegeAdminSection()}
+        {CollegeAdminSection && <CollegeAdminSection />}
       </div>
     </PageContainer>
   );
