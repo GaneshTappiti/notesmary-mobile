@@ -1,313 +1,181 @@
+import { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthService, UserProfile } from "@/services/AuthService";
+import { useToast } from "@/hooks/use-toast";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { AuthService, UserProfile } from '@/services/AuthService';
-import { useToast } from '@/hooks/use-toast';
-
-interface AuthContextType {
+type AuthContextType = {
   isAuthenticated: boolean;
-  user: any | null;
-  profile: UserProfile | null;
   isLoading: boolean;
+  user: any;
   isAdmin: boolean;
-  isCollegeAdmin: boolean;
+  userProfile: UserProfile | null;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, fullName?: string) => Promise<void>;
+  signup: (email: string, password: string, fullName: string) => Promise<void>;
   logout: () => Promise<void>;
-  updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
-}
+  updateProfile: (profile: Partial<UserProfile>) => Promise<UserProfile | null>;
+};
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType>({
+  isAuthenticated: false,
+  isLoading: true,
+  user: null,
+  isAdmin: false,
+  userProfile: null,
+  login: () => Promise.resolve(),
+  signup: () => Promise.resolve(),
+  logout: () => Promise.resolve(),
+  updateProfile: () => Promise.resolve(null),
+});
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<any | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [isCollegeAdmin, setIsCollegeAdmin] = useState<boolean>(false);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Fetch user profile safely, outside of auth state change callback
-  const fetchUserProfile = async (userId: string) => {
-    try {
-      const userProfile = await AuthService.getUserProfile(userId);
-      if (userProfile) {
-        setProfile(userProfile);
-      }
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-    }
-  };
-
-  // Check admin status separately to avoid circular callbacks
-  const checkAdminStatus = async (email: string) => {
-    try {
-      // Special case for admin email
-      if (email === "2005ganesh16@gmail.com") {
-        return true;
-      }
-      
-      // For other emails, use RPC
-      const { data: isAdminUser, error } = await supabase.rpc('is_admin', { check_email: email });
-      
-      if (error) {
-        console.error('Error checking admin status:', error);
-        return false;
-      }
-      
-      return !!isAdminUser;
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-      return false;
-    }
-  };
-
-  // Check college admin status - for educational domains
-  const checkCollegeAdminStatus = (email: string) => {
-    if (!email) return false;
-    
-    // Check for educational email domains
-    const EDUCATIONAL_DOMAINS = [
-      /\.edu$/,                // .edu
-      /\.ac\.[a-z]{2,}$/,      // .ac.xx
-      /\.edu\.[a-z]{2,}$/      // .edu.xx
-    ];
-    
-    // For testing purposes, consider these domains as educational
-    const TEST_DOMAINS = [
-      'gmail.com',        // Remove in production
-      'example.com',      // Remove in production
-      'hotmail.com'       // Remove in production
-    ];
-    
-    const domain = email.split('@')[1];
-    if (!domain) return false;
-    
-    // For demo purposes, consider users with educational domains OR test domains as college admins
-    return EDUCATIONAL_DOMAINS.some(pattern => pattern.test(domain)) || 
-           TEST_DOMAINS.includes(domain);
-  };
-
   useEffect(() => {
-    let mounted = true;
-    let authSubscription: { unsubscribe: () => void } | null = null;
-    
-    const initializeAuth = async () => {
+    const checkSession = async () => {
       try {
-        // Check for persisted login first
+        setIsLoading(true);
         const hasSession = await AuthService.hasValidSession();
-        
         if (hasSession) {
-          console.log("Found persisted session, setting initial authenticated state");
-        }
-        
-        // First set up the subscription to auth state changes
-        const { data } = supabase.auth.onAuthStateChange((event, session) => {
-          if (!mounted) return;
-          
-          console.log("Auth state changed:", event, session ? "session exists" : "no session");
-          
-          if (session) {
-            setUser(session.user);
-            setIsAuthenticated(true);
-            // Store the persisted flag
-            localStorage.setItem('isLoggedIn', 'true');
-            
-            // Defer profile fetching and admin checking
-            if (session.user && session.user.email) {
-              // Use setTimeout to avoid potential circular callbacks
-              setTimeout(async () => {
-                if (!mounted) return;
-                
-                try {
-                  const adminStatus = await checkAdminStatus(session.user.email || '');
-                  if (mounted) setIsAdmin(adminStatus);
-
-                  // Check if user is a college admin (has educational domain)
-                  const collegeAdminStatus = checkCollegeAdminStatus(session.user.email || '');
-                  if (mounted) setIsCollegeAdmin(collegeAdminStatus);
-                  
-                  await fetchUserProfile(session.user.id);
-                } catch (error) {
-                  console.error("Error in deferred auth operations:", error);
-                }
-              }, 0);
-            }
-          } else {
-            // User is logged out
-            setUser(null);
-            setProfile(null);
-            setIsAdmin(false);
-            setIsCollegeAdmin(false);
-            setIsAuthenticated(false);
-            localStorage.removeItem('isLoggedIn');
-          }
-        });
-        
-        // Store the subscription object correctly
-        authSubscription = data.subscription;
-        
-        // Now check the current session
-        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          console.error("Session retrieval error:", sessionError);
-          throw sessionError;
-        }
-        
-        if (sessionData?.session) {
-          setUser(sessionData.session.user);
           setIsAuthenticated(true);
-          
-          if (sessionData.session.user && sessionData.session.user.email) {
-            const adminStatus = await checkAdminStatus(sessionData.session.user.email || '');
-            if (mounted) setIsAdmin(adminStatus);
+          const currentUser = await AuthService.getCurrentUser();
+          setUser(currentUser);
 
-            // Check if user is a college admin (has educational domain)
-            const collegeAdminStatus = checkCollegeAdminStatus(sessionData.session.user.email || '');
-            if (mounted) setIsCollegeAdmin(collegeAdminStatus);
-            
-            await fetchUserProfile(sessionData.session.user.id);
+          if (currentUser) {
+            const profile = await AuthService.getUserProfile(currentUser.id);
+            setUserProfile(profile);
+            setIsAdmin(currentUser.email === "2005ganesh16@gmail.com");
           }
         } else {
-          setUser(null);
-          setProfile(null);
-          setIsAdmin(false);
-          setIsCollegeAdmin(false);
           setIsAuthenticated(false);
         }
       } catch (error) {
-        console.error('Auth initialization error:', error);
-        if (mounted) {
-          setIsAuthenticated(false);
-          setUser(null);
-          // Clear persisted login on error
-          localStorage.removeItem('isLoggedIn');
-        }
+        console.error("Session check error:", error);
       } finally {
-        if (mounted) {
-          // Set loading to false regardless of success/failure
-          setIsLoading(false);
-        }
+        setIsLoading(false);
       }
     };
 
-    initializeAuth();
-    
-    // Clean up function to prevent memory leaks and state updates on unmounted component
-    return () => {
-      mounted = false;
-      if (authSubscription) {
-        authSubscription.unsubscribe();
-      }
-    };
-  }, []);
+    checkSession();
+  }, [navigate]);
 
+  // Login with email and password
   const login = async (email: string, password: string) => {
-    setIsLoading(true);
     try {
-      console.log("Starting login process for:", email);
-      
+      setIsLoading(true);
       const { data, error } = await AuthService.login(email, password);
       
-      if (error) {
-        console.error("Login error:", error);
-        throw error;
-      }
-      
-      if (data.session) {
-        console.log("Login successful, session established");
-        localStorage.setItem('isLoggedIn', 'true');
-        
-        // Auth state change event will update the state
-        toast({
-          title: 'Login Successful',
-          description: email === "2005ganesh16@gmail.com" ? 'Welcome back, Admin!' : 'Welcome back to Notex!',
-        });
-      }
+      if (error) throw error;
+
+      setIsAuthenticated(true);
+      setUser(data.session?.user);
+      setIsAdmin(email === "2005ganesh16@gmail.com");
+
+      // Fetch and set user profile
+      const profile = await AuthService.getUserProfile(data.session?.user.id);
+      setUserProfile(profile);
+
+      toast({
+        title: "Login Successful",
+        description: "You have successfully logged in.",
+      });
+      navigate("/dashboard");
     } catch (error: any) {
       console.error("Login error in context:", error);
-      toast({
-        title: 'Login Failed',
-        description: error.message || 'Invalid email or password. Please try again.',
-        variant: 'destructive',
-      });
+      setIsAuthenticated(false);
+      setIsLoading(false);
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const signup = async (email: string, password: string, fullName?: string) => {
-    setIsLoading(true);
+  // Signup with email, password, and full name
+  const signup = async (email: string, password: string, fullName: string) => {
     try {
-      await AuthService.signUp({ 
-        email, 
-        password, 
-        fullName 
-      });
-      
+      setIsLoading(true);
+      await AuthService.signUp({ email, password, fullName });
       toast({
-        title: 'Account Created',
-        description: 'Your account has been created. You can now log in.',
+        title: "Signup Successful",
+        description: "Please confirm your email to continue.",
       });
-    } catch (error) {
-      // Error is already handled in AuthService
+      navigate("/authentication", { state: { activeTab: 'login' } });
+    } catch (error: any) {
+      console.error("Signup error in context:", error);
+      setIsAuthenticated(false);
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Logout the user
   const logout = async () => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       await AuthService.logout();
-      // Auth state change will handle the rest
+      setIsAuthenticated(false);
+      setUser(null);
+      setIsAdmin(false);
+      setUserProfile(null);
+      toast({
+        title: "Logout Successful",
+        description: "You have been successfully logged out.",
+      });
+      navigate("/");
     } catch (error) {
-      // Error is already handled in AuthService
+      console.error("Logout error:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const updateProfile = async (profileData: Partial<UserProfile>) => {
-    if (!user) return;
-    
+  // Update user profile
+  const updateProfile = async (profile: Partial<UserProfile>) => {
     try {
-      const updatedProfile = await AuthService.updateUserProfile(user.id, profileData);
-      if (updatedProfile) {
-        setProfile(updatedProfile);
+      setIsLoading(true);
+      if (!user?.id) {
+        throw new Error("User ID not available");
       }
+      const updatedProfile = await AuthService.updateUserProfile(user.id, profile);
+      setUserProfile(updatedProfile);
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been updated successfully.",
+      });
+      return updatedProfile;
     } catch (error) {
-      // Error is already handled in AuthService
+      console.error("Profile update error:", error);
+      return null;
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const value: AuthContextType = {
+    isAuthenticated,
+    isLoading,
+    user,
+    isAdmin,
+    userProfile,
+    login,
+    signup,
+    logout,
+    updateProfile,
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        user,
-        profile,
-        isLoading,
-        isAdmin,
-        isCollegeAdmin,
-        login,
-        signup,
-        logout,
-        updateProfile,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  return useContext(AuthContext);
 };
