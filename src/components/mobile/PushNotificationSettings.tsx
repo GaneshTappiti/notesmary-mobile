@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -111,21 +110,12 @@ export const PushNotificationSettings = () => {
 
   const openAppSettings = async () => {
     try {
-      // Use dynamic import with correct method
-      const App = await import('@capacitor/app').then(module => module.App);
-      
-      // Use the correct method for opening settings
-      // The method is named differently than openUrl
-      if (App && typeof App.openSettings === 'function') {
-        await App.openSettings();
-      } else {
-        console.error('App.openSettings is not available');
-        toast({
-          title: 'Not Supported',
-          description: 'Opening app settings is not supported on this device.',
-          variant: 'destructive'
-        });
-      }
+      // Use dynamic import
+      const { App } = await import('@capacitor/app');
+      // The method is just openUrl, not openSettings
+      await App.openUrl({
+        url: 'app-settings:'
+      });
     } catch (error) {
       console.error('Error opening app settings:', error);
       toast({
