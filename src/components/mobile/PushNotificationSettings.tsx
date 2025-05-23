@@ -110,23 +110,21 @@ export const PushNotificationSettings = () => {
     }
   };
 
-  // Function that handles opening app settings
+  // Function that handles opening app settings - using the correct method
   const handleOpenAppSettings = async () => {
     try {
-      // Different approach for iOS vs Android
       if (Capacitor.getPlatform() === 'ios') {
-        // On iOS, we use App URLs scheme
-        const { App } = await import('@capacitor/app');
-        // Use the correct method for opening URLs
-        await App.openUrl({ url: 'app-settings:' });
+        // On iOS, use the Capacitor Browser plugin to open settings
+        const { Browser } = await import('@capacitor/browser');
+        await Browser.open({ url: 'app-settings:' });
       } else {
-        // On Android, open app details settings
+        // On Android, use Android-specific intent
         const { App } = await import('@capacitor/app');
-        // Use the proper method to get the app ID
-        const appInfo = await App.getInfo();
-        const appId = appInfo.id;
-        // Use the correct method for opening URLs
-        await App.openUrl({ url: `package:${appId}` });
+        const info = await App.getInfo();
+        
+        // Use the Browser plugin for consistency
+        const { Browser } = await import('@capacitor/browser');
+        await Browser.open({ url: `package:${info.id}` });
       }
     } catch (error) {
       console.error('Error opening settings:', error);
