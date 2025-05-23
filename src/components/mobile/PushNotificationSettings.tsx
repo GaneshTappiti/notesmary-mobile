@@ -1,166 +1,213 @@
 
 import React, { useState, useEffect } from 'react';
-import { MobileHeader } from './MobileHeader';
-import { MobileLayout } from './MobileLayout';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { Bell, BellOff, ArrowRight } from 'lucide-react';
+import { 
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle 
+} from '@/components/ui/card';
+import { MobileLayout } from './MobileLayout';
+import { ChevronLeft, Bell, BellOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Preferences } from '@capacitor/preferences';
+
+interface NotificationSetting {
+  id: string;
+  title: string;
+  description: string;
+  enabled: boolean;
+}
 
 export const PushNotificationSettings = () => {
-  const { toast } = useToast();
-  const [pushEnabled, setPushEnabled] = useState(false);
+  const navigate = useNavigate();
+  const [permissionStatus, setPermissionStatus] = useState<'granted' | 'denied' | 'prompt' | 'unsupported'>('prompt');
   const [loading, setLoading] = useState(true);
-  const [notificationSettings, setNotificationSettings] = useState({
-    studyReminders: false,
-    newMessages: true,
-    aiUpdates: false,
-    noteUpdates: true,
-    marketingNotifications: false
-  });
+  
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSetting[]>([
+    {
+      id: 'study_reminders',
+      title: 'Study Reminders',
+      description: 'Get notified about scheduled study sessions',
+      enabled: true
+    },
+    {
+      id: 'new_notes',
+      title: 'New Notes',
+      description: 'Notifications when new notes are available',
+      enabled: true
+    },
+    {
+      id: 'ai_answers',
+      title: 'AI Answers',
+      description: 'Get notified when AI has answered your questions',
+      enabled: true
+    },
+    {
+      id: 'updates',
+      title: 'App Updates',
+      description: 'Stay informed about new features and improvements',
+      enabled: false
+    }
+  ]);
 
   useEffect(() => {
-    // Simulate checking if push notifications are enabled
-    const checkPushStatus = async () => {
+    const loadSettings = async () => {
       try {
-        setTimeout(() => {
-          setPushEnabled(false);
-          setLoading(false);
-        }, 1000);
+        const storedSettings = await Preferences.get({ key: 'notification-settings' });
+        if (storedSettings.value) {
+          setNotificationSettings(JSON.parse(storedSettings.value));
+        }
+
+        // Check notification permission status if on native platform
+        try {
+          const { PushNotifications } = await import('@capacitor/push-notifications');
+          const status = await PushNotifications.checkPermissions();
+          setPermissionStatus(status.receive);
+        } catch (err) {
+          console.log('Push notifications not available', err);
+          setPermissionStatus('unsupported');
+        }
       } catch (error) {
-        console.error('Error checking push notification status:', error);
+        console.error('Failed to load notification settings:', error);
+      } finally {
         setLoading(false);
       }
     };
 
-    checkPushStatus();
+    loadSettings();
   }, []);
 
-  const handleTogglePush = async () => {
+  const saveSetting = async (id: string, enabled: boolean) => {
     try {
-      setLoading(true);
+      const updatedSettings = notificationSettings.map(setting => 
+        setting.id === id ? { ...setting, enabled } : setting
+      );
       
-      // Simulate enabling/disabling push notifications
-      setTimeout(() => {
-        setPushEnabled(!pushEnabled);
-        toast({
-          title: !pushEnabled ? "Notifications Enabled" : "Notifications Disabled",
-          description: !pushEnabled 
-            ? "You will now receive push notifications" 
-            : "You will no longer receive push notifications"
-        });
-        setLoading(false);
-      }, 1000);
-    } catch (error) {
-      console.error('Error toggling push notifications:', error);
-      toast({
-        title: "Error",
-        description: "Could not update notification settings",
-        variant: "destructive"
+      setNotificationSettings(updatedSettings);
+      await Preferences.set({
+        key: 'notification-settings',
+        value: JSON.stringify(updatedSettings)
       });
-      setLoading(false);
+
+      try {
+        // If enabling notifications and permission isn't granted, request it
+        if (enabled && permissionStatus !== 'granted' && permissionStatus !== 'unsupported') {
+          const { PushNotifications } = await import('@capacitor/push-notifications');
+          await PushNotifications.requestPermissions();
+          const status = await PushNotifications.checkPermissions();
+          setPermissionStatus(status.receive);
+        }
+      } catch (err) {
+        console.log('Push notifications not available:', err);
+      }
+    } catch (error) {
+      console.error('Failed to save notification setting:', error);
     }
   };
 
-  const handleSettingChange = (setting: keyof typeof notificationSettings) => {
-    setNotificationSettings(prev => ({
-      ...prev,
-      [setting]: !prev[setting]
-    }));
-    
-    toast({
-      title: "Setting Updated",
-      description: `${setting} notifications ${!notificationSettings[setting] ? 'enabled' : 'disabled'}`
-    });
+  const toggleAllNotifications = async (enabled: boolean) => {
+    try {
+      const updatedSettings = notificationSettings.map(setting => ({
+        ...setting,
+        enabled
+      }));
+      
+      setNotificationSettings(updatedSettings);
+      await Preferences.set({
+        key: 'notification-settings',
+        value: JSON.stringify(updatedSettings)
+      });
+
+      if (enabled && permissionStatus !== 'granted' && permissionStatus !== 'unsupported') {
+        try {
+          const { PushNotifications } = await import('@capacitor/push-notifications');
+          await PushNotifications.requestPermissions();
+          const status = await PushNotifications.checkPermissions();
+          setPermissionStatus(status.receive);
+        } catch (err) {
+          console.log('Push notifications not available:', err);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to toggle all notifications:', error);
+    }
   };
 
+  const areAllEnabled = notificationSettings.every(setting => setting.enabled);
+  
   return (
     <MobileLayout>
-      <MobileHeader title="Notification Settings" showBackButton />
-      
-      <div className="p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden mb-4">
-          <div className="p-4 flex justify-between items-center border-b border-gray-100 dark:border-gray-700">
-            <div className="flex items-center gap-3">
-              {pushEnabled 
-                ? <Bell className="h-6 w-6 text-blue-600" /> 
-                : <BellOff className="h-6 w-6 text-gray-400" />
-              }
-              <div>
-                <h3 className="font-medium text-gray-900 dark:text-white">
-                  Push Notifications
-                </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {pushEnabled 
-                    ? "You're receiving push notifications" 
-                    : "Push notifications are disabled"
-                  }
-                </p>
-              </div>
-            </div>
-            
-            <Switch
-              checked={pushEnabled}
-              onCheckedChange={handleTogglePush}
-              disabled={loading}
-              className="data-[state=checked]:bg-blue-600"
-            />
-          </div>
-          
-          {pushEnabled && (
-            <div className="divide-y divide-gray-100 dark:divide-gray-700">
-              {Object.entries(notificationSettings).map(([key, value]) => (
-                <div key={key} className="p-4 flex justify-between items-center">
-                  <Label
-                    htmlFor={key}
-                    className="text-gray-700 dark:text-gray-300 cursor-pointer"
-                  >
-                    {key.replace(/([A-Z])/g, ' $1')
-                      .replace(/^./, str => str.toUpperCase())}
-                  </Label>
-                  <Switch
-                    id={key}
-                    checked={value}
-                    onCheckedChange={() => handleSettingChange(key as keyof typeof notificationSettings)}
-                    className="data-[state=checked]:bg-blue-600"
-                  />
-                </div>
-              ))}
-              
-              <div className="p-4">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-between text-blue-600"
-                  onClick={() => {
-                    toast({
-                      title: "Advanced Settings",
-                      description: "Advanced notification settings coming soon"
-                    });
-                  }}
-                >
-                  Advanced Settings
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          )}
+      <div className="space-y-4 pb-6">
+        <div className="flex items-center py-2">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate(-1)} 
+            className="mr-2"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-xl font-semibold">Notification Settings</h1>
         </div>
         
-        {!pushEnabled && (
-          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 text-center">
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
-              Enable push notifications to stay updated about your study activities,
-              messages, and AI-powered insights.
-            </p>
-            <Button 
-              onClick={handleTogglePush}
-              disabled={loading}
-              className="w-full"
-            >
-              Enable Notifications
-            </Button>
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100"></div>
           </div>
+        ) : (
+          <>
+            <Card className="shadow-sm">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>All Notifications</CardTitle>
+                    <CardDescription>Enable or disable all notifications</CardDescription>
+                  </div>
+                  <Switch 
+                    checked={areAllEnabled}
+                    onCheckedChange={toggleAllNotifications}
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="text-sm text-gray-500">
+                {permissionStatus === 'denied' && (
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 px-3 py-2 rounded-md text-yellow-800 dark:text-yellow-200 text-sm mb-3">
+                    Notifications are blocked in your device settings. Please enable them to receive notifications.
+                  </div>
+                )}
+                
+                {permissionStatus === 'unsupported' && (
+                  <div className="bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-md text-sm mb-3">
+                    Push notifications may not be supported in this environment.
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            
+            <div className="space-y-3">
+              {notificationSettings.map(setting => (
+                <Card key={setting.id} className="shadow-sm">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-base">{setting.title}</CardTitle>
+                        <CardDescription className="text-sm">{setting.description}</CardDescription>
+                      </div>
+                      <Switch 
+                        checked={setting.enabled && permissionStatus !== 'denied'}
+                        onCheckedChange={(checked) => saveSetting(setting.id, checked)}
+                        disabled={permissionStatus === 'denied'}
+                      />
+                    </div>
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </MobileLayout>

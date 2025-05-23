@@ -11,6 +11,7 @@ const MobileDetection = () => {
     // Check if running on a native platform (Android/iOS)
     const checkPlatform = async () => {
       try {
+        // Use dynamic import to avoid issues with SSR or environments without Capacitor
         const { Capacitor } = await import('@capacitor/core');
         const isNative = Capacitor.isNativePlatform();
         setIsNativePlatform(isNative);
