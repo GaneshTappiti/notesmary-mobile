@@ -10,11 +10,11 @@ const HorizontalNavBar = () => {
   const location = useLocation();
   
   const navItems = [
-    { icon: <Home size={24} />, label: 'Home', path: '/dashboard' },
-    { icon: <FileText size={24} />, label: 'Notes', path: '/my-notes' },
-    { icon: <BrainCircuit size={24} />, label: 'AI', path: '/ai-answers' },
-    { icon: <Search size={24} />, label: 'Find', path: '/find-notes' },
-    { icon: <User size={24} />, label: 'Profile', path: '/settings' },
+    { icon: <Home size={22} />, label: 'Home', path: '/dashboard' },
+    { icon: <FileText size={22} />, label: 'Notes', path: '/my-notes' },
+    { icon: <BrainCircuit size={22} />, label: 'AI', path: '/ai-answers' },
+    { icon: <Search size={22} />, label: 'Find', path: '/find-notes' },
+    { icon: <User size={22} />, label: 'Profile', path: '/settings' },
   ];
   
   const isActive = (path: string) => {
@@ -22,10 +22,15 @@ const HorizontalNavBar = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] border-t dark:border-gray-800 h-16 safe-padding-bottom z-50">
+    <motion.div 
+      className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] border-t dark:border-gray-800 h-16 safe-padding-bottom z-50"
+      initial={{ y: 100 }}
+      animate={{ y: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+    >
       <nav className="flex justify-around items-center h-full px-1">
         {navItems.map((item) => (
-          <button
+          <motion.button
             key={item.path}
             className={cn(
               "flex flex-col items-center justify-center w-full h-full text-xs transition-colors", 
@@ -34,6 +39,7 @@ const HorizontalNavBar = () => {
                 : "text-gray-500 dark:text-gray-400"
             )}
             onClick={() => navigate(item.path)}
+            whileTap={{ scale: 0.9 }}
           >
             <div className="relative mb-1">
               {isActive(item.path) && (
@@ -48,10 +54,10 @@ const HorizontalNavBar = () => {
               {item.icon}
             </div>
             <span>{item.label}</span>
-          </button>
+          </motion.button>
         ))}
       </nav>
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -17,6 +18,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useOffline } from '@/hooks/use-offline';
 import { OfflineManager, CACHE_KEYS } from '@/utils/offlineManager';
 import { NotesService } from '@/services/NotesService';
+import { MobileHeader } from '@/components/mobile/MobileHeader';
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -224,7 +226,15 @@ const Dashboard = () => {
 
   return (
     <PageContainer>
-      <div className="space-y-6 animate-fade-in px-1 md:px-0">
+      {/* Mobile-optimized header */}
+      <MobileHeader
+        title="Dashboard"
+        showSearchButton={true}
+        showNotificationButton={true}
+        onSearchClick={() => navigate('/find-notes')}
+      />
+      
+      <div className="space-y-5 animate-fade-in px-4">
         <WelcomeHeader 
           userName={user?.user_metadata?.full_name}
           onLogout={handleLogout}
@@ -257,46 +267,47 @@ const Dashboard = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-          {quickAccessOptions.map((option, index) => (
-            <QuickAccessCard
-              key={index}
-              {...option}
-              className="hover:shadow-lg transition-all duration-300"
-            />
-          ))}
+        {/* Quick access cards for mobile - scrollable row */}
+        <div className="overflow-x-auto pb-2 -mx-4 px-4">
+          <div className="flex space-x-3 w-max">
+            {quickAccessOptions.map((option, index) => (
+              <QuickAccessCard
+                key={index}
+                {...option}
+                className="w-[140px] flex-shrink-0 hover:shadow-lg transition-all duration-300"
+              />
+            ))}
+          </div>
         </div>
 
         {/* Add StudyPulse Entry Card */}
         <StudyPulseEntryCard />
 
+        {/* Study rooms section - optimized for mobile */}
         <StudyRoomsSection 
           rooms={studyRooms}
           onViewAll={() => navigate('/study-rooms')}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-          <div className="lg:col-span-2">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
-              {statsCards.map((card, index) => (
-                <StatsCard key={index} {...card} />
-              ))}
-            </div>
-          </div>
-
-          <TasksSection 
-            tasks={tasks}
-            onNewTask={handleNewTask}
-          />
+        {/* Stats - simplified grid for mobile */}
+        <div className="grid grid-cols-2 gap-3">
+          {statsCards.map((card, index) => (
+            <StatsCard key={index} {...card} />
+          ))}
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
-          <AnalyticsCard
-            title="Weekly Study Activity"
-            chartType="bar"
-            filters={["This Week", "Last Week", "Month"]}
-          />
-        </div>
+        {/* Tasks section */}
+        <TasksSection 
+          tasks={tasks}
+          onNewTask={handleNewTask}
+        />
+
+        {/* Analytics card */}
+        <AnalyticsCard
+          title="Weekly Study Activity"
+          chartType="bar"
+          filters={["This Week", "Last Week", "Month"]}
+        />
 
         {/* Add the CollegeAdminSection component to the dashboard layout */}
         {CollegeAdminSection && <CollegeAdminSection />}

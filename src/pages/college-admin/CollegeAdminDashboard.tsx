@@ -13,6 +13,8 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { useAuth } from '@/contexts/AuthContext';
+import { MobileHeader } from '@/components/mobile/MobileHeader';
+import { Badge } from '@/components/ui/badge';
 
 // For demo purposes - you'll replace with real data
 const mockData = {
@@ -38,37 +40,44 @@ const CollegeAdminDashboard: React.FC = () => {
         <title>College Admin Dashboard | Notex</title>
       </Helmet>
       
-      <div className="space-y-6">
+      {/* Mobile-optimized header */}
+      <MobileHeader 
+        title="College Admin" 
+        showBackButton={true}
+        showNotificationButton={true}
+      />
+      
+      <div className="p-4 space-y-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">College Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Welcome to {collegeName} admin panel.</p>
+          <h2 className="text-lg font-semibold tracking-tight">Dashboard Overview</h2>
+          <p className="text-muted-foreground text-sm mt-1">{collegeName} Admin Panel</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {/* Stats Cards - Mobile-optimized grid */}
+        <div className="grid grid-cols-2 gap-3">
           <StatsCard
             title="Pending Notes"
             value={mockData.pendingNotes.toString()}
-            description="Notes awaiting approval"
+            description="Awaiting approval"
             icon={<FileCheck className="h-5 w-5 text-blue-600" />}
           />
           
           <StatsCard
-            title="Active Students"
+            title="Students"
             value={mockData.activeStudents.toString()}
-            description="Students currently online"
+            description="Currently active"
             icon={<Users className="h-5 w-5 text-green-600" />}
           />
           
           <StatsCard
-            title="Live Study Rooms"
+            title="Study Rooms"
             value={mockData.liveRooms.toString()}
-            description="Active study sessions"
+            description="Live sessions"
             icon={<Video className="h-5 w-5 text-purple-600" />}
           />
           
           <StatsCard
-            title="Total Study Hours"
+            title="Study Hours"
             value="127.5"
             description="This month"
             icon={<Clock className="h-5 w-5 text-amber-600" />}
@@ -79,32 +88,28 @@ const CollegeAdminDashboard: React.FC = () => {
           />
         </div>
         
-        {/* Recent Activity */}
-        <Card>
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-medium">Recent Activity</h2>
+        {/* Recent Activity - Mobile-optimized */}
+        <Card className="shadow-sm">
+          <div className="px-4 py-3 border-b border-gray-100">
+            <h2 className="text-base font-medium">Recent Activity</h2>
           </div>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Student</TableHead>
-                  <TableHead>Activity</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Time</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {mockData.recentActivities.map(activity => (
-                  <TableRow key={activity.id}>
-                    <TableCell className="font-medium">{activity.user}</TableCell>
-                    <TableCell>{activity.action}</TableCell>
-                    <TableCell>{activity.subject}</TableCell>
-                    <TableCell className="text-muted-foreground">{activity.time}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+          <CardContent className="p-0 overflow-hidden">
+            <div className="max-h-[400px] overflow-y-auto hide-scrollbar">
+              {mockData.recentActivities.map(activity => (
+                <div key={activity.id} className="px-4 py-3 border-b border-gray-100 last:border-0">
+                  <div className="flex flex-col">
+                    <div className="flex justify-between items-start">
+                      <span className="font-medium text-sm">{activity.user}</span>
+                      <span className="text-xs text-muted-foreground">{activity.time}</span>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between">
+                      <span className="text-sm">{activity.action}</span>
+                      <Badge variant="outline" className="text-xs">{activity.subject}</Badge>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>

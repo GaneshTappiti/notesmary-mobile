@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Preferences } from '@capacitor/preferences';
 import { SplashScreen } from './mobile/SplashScreen';
 import { Onboarding } from './mobile/Onboarding';
@@ -9,6 +9,7 @@ import { OfflineErrorScreen } from './mobile/OfflineErrorScreen';
 import { PushNotificationSettings } from './mobile/PushNotificationSettings';
 import { HelpSupportScreen } from './mobile/HelpSupportScreen';
 import { useAuth } from '@/contexts/AuthContext';
+import { AnimatePresence } from 'framer-motion';
 
 // Import your existing screens
 import Dashboard from '@/pages/Dashboard';
@@ -17,6 +18,8 @@ import AIAnswers from '@/pages/AIAnswers';
 import Notifications from '@/pages/Notifications';
 import Settings from '@/pages/Settings';
 import Authentication from '@/pages/Authentication';
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 
 interface MobileAppProps {
   initializing: boolean;
@@ -25,7 +28,9 @@ interface MobileAppProps {
 const MobileApp = ({ initializing }: MobileAppProps) => {
   const [onboardingComplete, setOnboardingComplete] = useState<boolean | null>(null);
   const [isOnline, setIsOnline] = useState(true);
+  const [isRetrying, setIsRetrying] = useState(false);
   const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
     const checkOnboarding = async () => {
@@ -69,6 +74,19 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
       cleanup?.then(fn => fn?.());
     };
   }, []);
+  
+  const handleRetryConnection = async () => {
+    setIsRetrying(true);
+    try {
+      const Network = await import('@capacitor/network').then(module => module.Network);
+      const status = await Network.getStatus();
+      setIsOnline(status.connected);
+    } catch (error) {
+      console.error('Error retrying connection:', error);
+    } finally {
+      setTimeout(() => setIsRetrying(false), 1000);
+    }
+  };
 
   // Handle rendering states
   if (initializing) {
@@ -76,7 +94,12 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
   }
   
   if (!isOnline) {
-    return <OfflineErrorScreen />;
+    return (
+      <OfflineErrorScreen 
+        onRetry={handleRetryConnection} 
+        isRetrying={isRetrying}
+      />
+    );
   }
   
   if (onboardingComplete === null) {
@@ -88,8 +111,8 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
   }
   
   return (
-    <>
-      <Routes>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
         {/* Authentication routes */}
         <Route path="/authentication" element={
           !isAuthenticated ? (
@@ -150,6 +173,19 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
           )
         } />
         
+        {/* New routes for College Admin */}
+        <Route path="/college-admin/dashboard" element={
+          isAuthenticated ? (
+            <MobileLayout hideBottomNav={true}>
+              <React.Suspense fallback={<div className="p-4">Loading...</div>}>
+                {React.lazy(() => import('@/pages/college-admin/CollegeAdminDashboard'))}
+              </React.Suspense>
+            </MobileLayout>
+          ) : (
+            <Navigate to="/authentication" replace />
+          )
+        } />
+        
         {/* New mobile specific screens */}
         <Route path="/push-notification-settings" element={
           isAuthenticated ? (
@@ -173,9 +209,15 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
         } />
         
         {/* Catch all route */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={
+          <div className="flex flex-col items-center justify-center h-screen p-4 text-center">
+            <h1 className="text-2xl font-bold mb-4">Page Not Found</h1>
+            <p className="mb-6 text-muted-foreground">The page you're looking for doesn't exist or has been moved.</p>
+            <Button onClick={() => window.history.back()}>Go Back</Button>
+          </div>
+        } />
       </Routes>
-    </>
+    </AnimatePresence>
   );
 };
 

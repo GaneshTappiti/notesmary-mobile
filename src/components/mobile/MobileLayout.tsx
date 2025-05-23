@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Home, FileText, BrainCircuit, Bell, User, Plus } from 'lucide-react';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,7 @@ export const MobileLayout = ({ children, hideBottomNav = false }: MobileLayoutPr
   const location = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
+  const [lastActiveTab, setLastActiveTab] = useState('/dashboard');
   
   useEffect(() => {
     // Hide the splash screen after the component mounts
@@ -37,6 +38,13 @@ export const MobileLayout = ({ children, hideBottomNav = false }: MobileLayoutPr
     
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    // Store the current tab if it's a main navigation item
+    if (navItems.some(item => item.path === location.pathname)) {
+      setLastActiveTab(location.pathname);
+    }
+  }, [location.pathname]);
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -64,7 +72,19 @@ export const MobileLayout = ({ children, hideBottomNav = false }: MobileLayoutPr
 
   return (
     <div className="flex flex-col min-h-[100dvh] pb-16 relative overflow-hidden bg-gradient-to-br from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
-      {children}
+      {/* Page content with smooth transitions */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="flex-1"
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
       
       {/* Floating Action Button */}
       <motion.div 
@@ -72,6 +92,7 @@ export const MobileLayout = ({ children, hideBottomNav = false }: MobileLayoutPr
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+        whileTap={{ scale: 0.9 }}
       >
         <Button
           onClick={handleFabClick}
@@ -84,7 +105,12 @@ export const MobileLayout = ({ children, hideBottomNav = false }: MobileLayoutPr
       
       {/* Bottom Navigation */}
       {!hideBottomNav && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] border-t dark:border-gray-800 h-16 z-30">
+        <motion.div 
+          className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] border-t dark:border-gray-800 h-16 z-30 safe-padding-bottom"
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        >
           <nav className="flex justify-around items-center h-full px-1">
             {navItems.map((item) => (
               <button
@@ -97,12 +123,25 @@ export const MobileLayout = ({ children, hideBottomNav = false }: MobileLayoutPr
                 )}
                 onClick={() => navigate(item.path)}
               >
-                <div className="mb-1">{item.icon}</div>
+                <motion.div 
+                  className="mb-1 relative"
+                  whileTap={{ scale: 0.9 }}
+                >
+                  {isActive(item.path) && (
+                    <motion.div
+                      layoutId="navHighlight"
+                      className="absolute inset-0 bg-blue-100 dark:bg-blue-900/30 rounded-full -m-2"
+                      initial={false}
+                      transition={{ type: "spring", bounce: 0.2 }}
+                    />
+                  )}
+                  {item.icon}
+                </motion.div>
                 <span>{item.label}</span>
               </button>
             ))}
           </nav>
-        </div>
+        </motion.div>
       )}
     </div>
   );
