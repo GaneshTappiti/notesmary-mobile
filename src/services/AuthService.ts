@@ -1,6 +1,5 @@
-
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { AuthError, AuthResponse } from '@supabase/supabase-js';
 
 export type SignUpCredentials = {
@@ -136,6 +135,10 @@ export const AuthService = {
       }
 
       console.log("Login successful:", data);
+      
+      // Set the persistent login flag
+      localStorage.setItem('isLoggedIn', 'true');
+      
       return { data, error: null }; // Explicitly return with this format for consistent error handling
     } catch (error: any) {
       console.error('Error logging in:', error);
@@ -179,7 +182,7 @@ export const AuthService = {
         throw error;
       }
       
-      // Remove isLoggedIn from localStorage as well
+      // Remove isLoggedIn from localStorage
       localStorage.removeItem('isLoggedIn');
       
       return true;
@@ -207,6 +210,27 @@ export const AuthService = {
     } catch (error) {
       console.error('Error getting current user:', error);
       return null;
+    }
+  },
+
+  /**
+   * Check if the user has a valid session
+   */
+  async hasValidSession() {
+    try {
+      // Check localStorage first for quick response
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      
+      if (!isLoggedIn) {
+        return false;
+      }
+      
+      // Then verify with Supabase
+      const { data } = await supabase.auth.getSession();
+      return !!data.session;
+    } catch (error) {
+      console.error('Error checking session:', error);
+      return false;
     }
   },
 

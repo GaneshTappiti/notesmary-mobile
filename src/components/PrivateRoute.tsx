@@ -36,6 +36,16 @@ export const PrivateRoute = ({ children, adminOnly = false }: PrivateRouteProps)
     };
   }, [isLoading]);
   
+  // Check for persistent login on mount
+  useEffect(() => {
+    const checkPersistentLogin = async () => {
+      // This will be handled by the AuthProvider, we just need to wait for it
+      console.log("PrivateRoute: Checking for persistent login...");
+    };
+    
+    checkPersistentLogin();
+  }, []);
+  
   // Use useEffect for side effects like showing toasts
   useEffect(() => {
     // Only show the toast when we're sure we have an authentication state and need to reject

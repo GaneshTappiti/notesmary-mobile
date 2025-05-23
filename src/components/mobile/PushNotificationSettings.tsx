@@ -4,16 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { ChevronLeft, Bell, BellOff, Info } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { MobileLayout } from './MobileLayout';
 
+// Define types for permission states
 type PermissionState = 'granted' | 'denied' | 'prompt' | 'unsupported';
 
 export const PushNotificationSettings = () => {
@@ -29,9 +24,8 @@ export const PushNotificationSettings = () => {
     const checkPermissions = async () => {
       try {
         // Use dynamic import to avoid issues with SSR
-        const PushNotifications = await import('@capacitor/push-notifications').then(
-          module => module.PushNotifications
-        );
+        const PushNotifications = await import('@capacitor/push-notifications')
+          .then((module) => module.PushNotifications);
         
         // Check if push notifications are supported
         const status = await PushNotifications.checkPermissions();
@@ -54,17 +48,17 @@ export const PushNotificationSettings = () => {
         setIsLoading(false);
       }
     };
-
+    
     checkPermissions();
   }, []);
 
   const handlePushToggle = async () => {
     try {
       setIsLoading(true);
+      
       // Use dynamic import
-      const PushNotifications = await import('@capacitor/push-notifications').then(
-        module => module.PushNotifications
-      );
+      const PushNotifications = await import('@capacitor/push-notifications')
+        .then((module) => module.PushNotifications);
       
       if (!pushEnabled) {
         // Request permissions
@@ -74,30 +68,33 @@ export const PushNotificationSettings = () => {
           await PushNotifications.register();
           setPushEnabled(true);
           setPermissionStatus('granted');
+          
           toast({
             title: 'Push Notifications Enabled',
-            description: 'You will now receive push notifications.',
+            description: 'You will now receive push notifications.'
           });
         } else {
           // Map any unexpected values to our allowed types
           let status: PermissionState = 'denied';
           if (result.receive === 'prompt') status = 'prompt';
+          
           setPermissionStatus(status);
           setPushEnabled(false);
           
           toast({
             title: 'Permission Denied',
             description: 'Push notifications permission was denied.',
-            variant: 'destructive',
+            variant: 'destructive'
           });
         }
       } else {
         // Disable push notifications
         await PushNotifications.unregister();
         setPushEnabled(false);
+        
         toast({
           title: 'Push Notifications Disabled',
-          description: 'You will no longer receive push notifications.',
+          description: 'You will no longer receive push notifications.'
         });
       }
     } catch (error) {
@@ -105,7 +102,7 @@ export const PushNotificationSettings = () => {
       toast({
         title: 'Error',
         description: 'Failed to change notification settings.',
-        variant: 'destructive',
+        variant: 'destructive'
       });
     } finally {
       setIsLoading(false);
@@ -114,15 +111,27 @@ export const PushNotificationSettings = () => {
 
   const openAppSettings = async () => {
     try {
-      // Use dynamic import
-      const { App } = await import('@capacitor/app');
-      await App.openUrl({ url: 'app-settings:' });
+      // Use dynamic import with correct method
+      const App = await import('@capacitor/app').then(module => module.App);
+      
+      // Use the correct method for opening settings
+      // The method is named differently than openUrl
+      if (App && typeof App.openSettings === 'function') {
+        await App.openSettings();
+      } else {
+        console.error('App.openSettings is not available');
+        toast({
+          title: 'Not Supported',
+          description: 'Opening app settings is not supported on this device.',
+          variant: 'destructive'
+        });
+      }
     } catch (error) {
       console.error('Error opening app settings:', error);
       toast({
         title: 'Error',
         description: 'Could not open app settings.',
-        variant: 'destructive',
+        variant: 'destructive'
       });
     }
   };

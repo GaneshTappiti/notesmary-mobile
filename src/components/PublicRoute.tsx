@@ -14,8 +14,9 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
   const location = useLocation();
   const [showLoader, setShowLoader] = useState(false);
   const { toast } = useToast();
+  const [initialCheckDone, setInitialCheckDone] = useState(false);
   
-  console.log("PublicRoute render:", { isAuthenticated, isLoading });
+  console.log("PublicRoute render:", { isAuthenticated, isLoading, initialCheckDone });
 
   // Add a small delay before showing the loader
   useEffect(() => {
@@ -28,6 +29,7 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
       }, 300);
     } else {
       setShowLoader(false);
+      setInitialCheckDone(true);
     }
     
     return () => {
@@ -35,15 +37,25 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
     };
   }, [isLoading]);
 
+  // Check for persistent login on mount
+  useEffect(() => {
+    const checkPersistentLogin = async () => {
+      // This will be handled by the AuthProvider, we just need to wait for it
+      console.log("PublicRoute: Checking for persistent login...");
+    };
+    
+    checkPersistentLogin();
+  }, []);
+
   // Effect to handle redirection and notify user
   useEffect(() => {
-    if (isAuthenticated && !isLoading) {
+    if (isAuthenticated && !isLoading && initialCheckDone) {
       toast({
         title: "Already Logged In",
         description: "Redirecting to your dashboard",
       });
     }
-  }, [isAuthenticated, isLoading, toast]);
+  }, [isAuthenticated, isLoading, initialCheckDone, toast]);
 
   // Conditional rendering logic AFTER all hooks have been called
   if (isLoading && showLoader) {

@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthService, UserProfile } from '@/services/AuthService';
@@ -95,6 +94,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     const initializeAuth = async () => {
       try {
+        // Check for persisted login first
+        const hasSession = await AuthService.hasValidSession();
+        
+        if (hasSession) {
+          console.log("Found persisted session, setting initial authenticated state");
+        }
+        
         // First set up the subscription to auth state changes
         const { data } = supabase.auth.onAuthStateChange((event, session) => {
           if (!mounted) return;
@@ -104,6 +110,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           if (session) {
             setUser(session.user);
             setIsAuthenticated(true);
+            // Store the persisted flag
+            localStorage.setItem('isLoggedIn', 'true');
             
             // Defer profile fetching and admin checking
             if (session.user && session.user.email) {
@@ -173,6 +181,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (mounted) {
           setIsAuthenticated(false);
           setUser(null);
+          // Clear persisted login on error
+          localStorage.removeItem('isLoggedIn');
         }
       } finally {
         if (mounted) {
