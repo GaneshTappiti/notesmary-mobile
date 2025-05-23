@@ -10,7 +10,7 @@ interface AppLayoutProps {
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
-    <MobileDetection>
+    <div className="min-h-screen flex w-full">
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
           <AppSidebar />
@@ -19,7 +19,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </main>
         </div>
       </SidebarProvider>
-    </MobileDetection>
+    </div>
   );
 };
 
