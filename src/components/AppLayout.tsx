@@ -4,7 +4,6 @@ import { AppSidebar } from './AppSidebar';
 import { SidebarProvider } from './ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import HorizontalNavBar from './mobile/HorizontalNavBar';
-import { cn } from '@/lib/utils';
 
 interface AppLayoutProps {
   children: React.ReactNode;

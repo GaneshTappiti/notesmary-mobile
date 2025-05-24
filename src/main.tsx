@@ -1,7 +1,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import MobileDetection from './components/MobileDetection';
+import App from './App';
 import './index.css';
 import './mobile.css';
 
@@ -19,6 +19,6 @@ if (!root) {
 
 ReactDOM.createRoot(root).render(
   <React.StrictMode>
-    <MobileDetection />
+    <App />
   </React.StrictMode>
 );
