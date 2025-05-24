@@ -9,7 +9,7 @@ interface MobileLayoutProps {
   className?: string;
 }
 
-export const MobileLayout: React.FC<MobileLayoutProps> = ({ 
+const MobileLayout: React.FC<MobileLayoutProps> = ({ 
   children, 
   hideBottomNav = false,
   className 
@@ -28,3 +28,5 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
     </div>
   );
 };
+
+export default MobileLayout;
