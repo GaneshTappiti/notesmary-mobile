@@ -79,7 +79,7 @@ const HorizontalNavBar = () => {
               </motion.button>
             ))}
           </nav>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
