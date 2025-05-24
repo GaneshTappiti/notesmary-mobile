@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Preferences } from '@capacitor/preferences';
 import { SplashScreen } from './mobile/SplashScreen';
 import { Onboarding } from './mobile/Onboarding';
 import { MobileLayout } from './mobile/MobileLayout';
+import { MobileHomeScreen } from './mobile/MobileHomeScreen';
 import { OfflineErrorScreen } from './mobile/OfflineErrorScreen';
 import { PushNotificationSettings } from './mobile/PushNotificationSettings';
 import { HelpSupportScreen } from './mobile/HelpSupportScreen';
