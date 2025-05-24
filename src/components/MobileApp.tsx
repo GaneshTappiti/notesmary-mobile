@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Preferences } from '@capacitor/preferences';
@@ -129,7 +128,7 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
         <Route path="/dashboard" element={
           isAuthenticated ? (
             <MobileLayout>
-              <Dashboard />
+              <MobileHomeScreen />
             </MobileLayout>
           ) : (
             <Navigate to="/authentication" replace />
