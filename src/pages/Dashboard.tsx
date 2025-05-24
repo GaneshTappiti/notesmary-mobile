@@ -18,6 +18,9 @@ import { useOffline } from '@/hooks/use-offline';
 import { OfflineManager, CACHE_KEYS } from '@/utils/offlineManager';
 import { NotesService } from '@/services/NotesService';
 import { MobileHeader } from '@/components/mobile/MobileHeader';
+import { useIsMobile } from '@/hooks/use-mobile';
+import AppLayout from '@/components/AppLayout';
+import { Helmet } from 'react-helmet-async';
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -25,6 +28,7 @@ const Dashboard = () => {
   const { user, logout, isAdmin, isCollegeAdmin } = useAuth();
   const { isOnline, wasOffline } = useOffline();
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+  const isMobile = useIsMobile();
 
   // Sync offline notes when coming back online
   useEffect(() => {
@@ -223,99 +227,201 @@ const Dashboard = () => {
     );
   };
 
-  return (
-    <PageContainer>
-      {/* Mobile-optimized header */}
-      <MobileHeader
-        title="Dashboard"
-        showSearchButton={true}
-        showNotificationButton={true}
-        onSearchClick={() => navigate('/find-notes')}
-      />
-      
-      <div className="space-y-6 animate-fade-in px-4">
-        <WelcomeHeader 
-          userName={user?.user_metadata?.full_name}
-          onLogout={handleLogout}
-          isAdmin={isAdmin}
-          onAdminClick={() => navigate('/admin')}
+  // Mobile layout for smaller screens
+  if (isMobile) {
+    return (
+      <PageContainer>
+        <MobileHeader
+          title="Dashboard"
+          showSearchButton={true}
+          showNotificationButton={true}
+          onSearchClick={() => navigate('/find-notes')}
         />
         
-        {!isOnline && (
-          <Alert className="bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800">
-            <WifiOff className="h-4 w-4 text-amber-600 dark:text-amber-500" />
-            <AlertTitle>You're offline</AlertTitle>
-            <AlertDescription>
-              You're currently viewing cached data. Some features may be limited until you reconnect.
-            </AlertDescription>
-          </Alert>
-        )}
-        
-        {isOnline && wasOffline && (
-          <Alert className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
-            <AlertTitle>Back online</AlertTitle>
-            <AlertDescription>
-              Your connection has been restored. Any changes made while offline have been synced.
-            </AlertDescription>
-          </Alert>
-        )}
-        
-        {lastSyncTime && (
-          <div className="text-xs text-muted-foreground mt-2 text-right">
-            Last updated: {lastSyncTime.toLocaleString()}
-          </div>
-        )}
+        <div className="space-y-6 animate-fade-in px-4">
+          <WelcomeHeader 
+            userName={user?.user_metadata?.full_name}
+            onLogout={handleLogout}
+            isAdmin={isAdmin}
+            onAdminClick={() => navigate('/admin')}
+          />
+          
+          {!isOnline && (
+            <Alert className="bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800">
+              <WifiOff className="h-4 w-4 text-amber-600 dark:text-amber-500" />
+              <AlertTitle>You're offline</AlertTitle>
+              <AlertDescription>
+                You're currently viewing cached data. Some features may be limited until you reconnect.
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {isOnline && wasOffline && (
+            <Alert className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
+              <AlertTitle>Back online</AlertTitle>
+              <AlertDescription>
+                Your connection has been restored. Any changes made while offline have been synced.
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {lastSyncTime && (
+            <div className="text-xs text-muted-foreground mt-2 text-right">
+              Last updated: {lastSyncTime.toLocaleString()}
+            </div>
+          )}
 
-        {/* Quick access cards - 2x2 grid layout like desktop */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {quickAccessOptions.map((option, index) => (
-              <QuickAccessCard
-                key={index}
-                {...option}
-                className="transition-all duration-300 hover:shadow-lg"
+          {/* Quick access cards in 2x2 grid */}
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {quickAccessOptions.map((option, index) => (
+                <QuickAccessCard
+                  key={index}
+                  {...option}
+                  className="transition-all duration-300 hover:shadow-lg"
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* StudyPulse Entry Card */}
+          <StudyPulseEntryCard />
+          
+          {/* Main content grid */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-2 space-y-6">
+              <StudyRoomsSection 
+                rooms={studyRooms}
+                onViewAll={() => navigate('/study-rooms')}
               />
-            ))}
+              
+              <AnalyticsCard
+                title="Weekly Study Activity"
+                chartType="bar"
+                filters={["This Week", "Last Week", "Month"]}
+              />
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold">Your Progress</h2>
+                <div className="space-y-3">
+                  {statsCards.map((card, index) => (
+                    <StatsCard key={index} {...card} />
+                  ))}
+                </div>
+              </div>
+
+              <TasksSection 
+                tasks={tasks}
+                onNewTask={handleNewTask}
+              />
+              
+              {CollegeAdminSection && <CollegeAdminSection />}
+            </div>
           </div>
         </div>
+      </PageContainer>
+    );
+  }
 
-        {/* Add StudyPulse Entry Card */}
-        <StudyPulseEntryCard />
+  // Desktop layout
+  return (
+    <>
+      <Helmet>
+        <title>Dashboard | StudyPulse</title>
+      </Helmet>
+      
+      <AppLayout>
+        <PageContainer className="py-6">
+          <div className="flex flex-col space-y-6">
+            <WelcomeHeader 
+              userName={user?.user_metadata?.full_name}
+              onLogout={handleLogout}
+              isAdmin={isAdmin}
+              onAdminClick={() => navigate('/admin')}
+            />
+            
+            {!isOnline && (
+              <Alert className="bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800">
+                <WifiOff className="h-4 w-4 text-amber-600 dark:text-amber-500" />
+                <AlertTitle>You're offline</AlertTitle>
+                <AlertDescription>
+                  You're currently viewing cached data. Some features may be limited until you reconnect.
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {isOnline && wasOffline && (
+              <Alert className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
+                <AlertTitle>Back online</AlertTitle>
+                <AlertDescription>
+                  Your connection has been restored. Any changes made while offline have been synced.
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {lastSyncTime && (
+              <div className="text-xs text-muted-foreground mt-2 text-right">
+                Last updated: {lastSyncTime.toLocaleString()}
+              </div>
+            )}
 
-        {/* Study rooms section */}
-        <StudyRoomsSection 
-          rooms={studyRooms}
-          onViewAll={() => navigate('/study-rooms')}
-        />
+            {/* Quick access cards in 2x2 grid */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold">Quick Actions</h2>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {quickAccessOptions.map((option, index) => (
+                  <QuickAccessCard
+                    key={index}
+                    {...option}
+                    className="transition-all duration-300 hover:shadow-lg"
+                  />
+                ))}
+              </div>
+            </div>
 
-        {/* Stats - Individual grid */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Your Progress</h2>
-          <div className="grid grid-cols-2 gap-4">
-            {statsCards.map((card, index) => (
-              <StatsCard key={index} {...card} />
-            ))}
+            {/* StudyPulse Entry Card */}
+            <StudyPulseEntryCard />
+
+            {/* Main content grid */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              <div className="lg:col-span-2 space-y-6">
+                <StudyRoomsSection 
+                  rooms={studyRooms}
+                  onViewAll={() => navigate('/study-rooms')}
+                />
+                
+                <AnalyticsCard
+                  title="Weekly Study Activity"
+                  chartType="bar"
+                  filters={["This Week", "Last Week", "Month"]}
+                />
+              </div>
+              
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <h2 className="text-lg font-semibold">Your Progress</h2>
+                  <div className="space-y-3">
+                    {statsCards.map((card, index) => (
+                      <StatsCard key={index} {...card} />
+                    ))}
+                  </div>
+                </div>
+
+                <TasksSection 
+                  tasks={tasks}
+                  onNewTask={handleNewTask}
+                />
+                
+                {CollegeAdminSection && <CollegeAdminSection />}
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* Tasks section */}
-        <TasksSection 
-          tasks={tasks}
-          onNewTask={handleNewTask}
-        />
-
-        {/* Analytics card */}
-        <AnalyticsCard
-          title="Weekly Study Activity"
-          chartType="bar"
-          filters={["This Week", "Last Week", "Month"]}
-        />
-
-        {/* College Admin Section */}
-        {CollegeAdminSection && <CollegeAdminSection />}
-      </div>
-    </PageContainer>
+        </PageContainer>
+      </AppLayout>
+    </>
   );
 };
 
