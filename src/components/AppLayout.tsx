@@ -19,13 +19,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         {!isMobile && <AppSidebar />}
         <main className={cn(
           "flex-1 overflow-x-hidden flex flex-col",
-          isMobile && "pb-20" // Increased padding for floating nav
+          isMobile && "pb-24" // Extra padding for floating nav
         )}>
           <div className="flex-1">
             {children}
           </div>
-          {isMobile && <HorizontalNavBar />}
         </main>
+        {isMobile && <HorizontalNavBar />}
       </div>
     </SidebarProvider>
   );
