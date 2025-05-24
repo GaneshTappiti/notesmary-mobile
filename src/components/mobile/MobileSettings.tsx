@@ -43,7 +43,7 @@ interface SettingSection {
 }
 
 export const MobileSettings = () => {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, logout } = useAuth();
   const { toast } = useToast();
   
   const [settings, setSettings] = useState({
@@ -68,7 +68,7 @@ export const MobileSettings = () => {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      await logout();
       toast({
         title: "Signed out",
         description: "You have been successfully signed out",

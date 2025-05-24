@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -234,7 +233,7 @@ const Dashboard = () => {
         onSearchClick={() => navigate('/find-notes')}
       />
       
-      <div className="space-y-5 animate-fade-in px-4">
+      <div className="space-y-6 animate-fade-in px-4">
         <WelcomeHeader 
           userName={user?.user_metadata?.full_name}
           onLogout={handleLogout}
@@ -267,14 +266,15 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Quick access cards for mobile - scrollable row */}
-        <div className="overflow-x-auto pb-2 -mx-4 px-4">
-          <div className="flex space-x-3 w-max">
+        {/* Quick access cards - Individual sections instead of scrolling */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h2>
+          <div className="grid grid-cols-1 gap-4">
             {quickAccessOptions.map((option, index) => (
               <QuickAccessCard
                 key={index}
                 {...option}
-                className="w-[140px] flex-shrink-0 hover:shadow-lg transition-all duration-300"
+                className="transition-all duration-300 hover:shadow-lg"
               />
             ))}
           </div>
@@ -283,17 +283,20 @@ const Dashboard = () => {
         {/* Add StudyPulse Entry Card */}
         <StudyPulseEntryCard />
 
-        {/* Study rooms section - optimized for mobile */}
+        {/* Study rooms section */}
         <StudyRoomsSection 
           rooms={studyRooms}
           onViewAll={() => navigate('/study-rooms')}
         />
 
-        {/* Stats - simplified grid for mobile */}
-        <div className="grid grid-cols-2 gap-3">
-          {statsCards.map((card, index) => (
-            <StatsCard key={index} {...card} />
-          ))}
+        {/* Stats - Individual grid */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Your Progress</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {statsCards.map((card, index) => (
+              <StatsCard key={index} {...card} />
+            ))}
+          </div>
         </div>
 
         {/* Tasks section */}
@@ -309,7 +312,7 @@ const Dashboard = () => {
           filters={["This Week", "Last Week", "Month"]}
         />
 
-        {/* Add the CollegeAdminSection component to the dashboard layout */}
+        {/* College Admin Section */}
         {CollegeAdminSection && <CollegeAdminSection />}
       </div>
     </PageContainer>
