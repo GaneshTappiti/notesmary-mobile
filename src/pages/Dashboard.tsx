@@ -266,10 +266,10 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Quick access cards - Individual sections instead of scrolling */}
+        {/* Quick access cards - 2x2 grid layout like desktop */}
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h2>
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             {quickAccessOptions.map((option, index) => (
               <QuickAccessCard
                 key={index}
