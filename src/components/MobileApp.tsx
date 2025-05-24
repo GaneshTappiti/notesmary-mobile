@@ -20,7 +20,6 @@ import Notifications from '@/pages/Notifications';
 import Settings from '@/pages/Settings';
 import Authentication from '@/pages/Authentication';
 import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
 
 // Lazy load CollegeAdminDashboard
 const CollegeAdminDashboard = React.lazy(() => import('@/pages/college-admin/CollegeAdminDashboard'));
@@ -49,17 +48,14 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
     
     const checkNetwork = async () => {
       try {
-        // Use dynamic import to avoid issues with SSR or environments without Capacitor
         const Network = await import('@capacitor/network').then(module => module.Network);
         const status = await Network.getStatus();
         setIsOnline(status.connected);
         
-        // Add network listener
         Network.addListener('networkStatusChange', (status) => {
           setIsOnline(status.connected);
         });
         
-        // Return cleanup function
         return () => {
           Network.removeAllListeners().catch(err => 
             console.error('Error removing network listeners:', err)
@@ -73,7 +69,6 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
     checkOnboarding();
     const cleanup = checkNetwork();
     
-    // Cleanup
     return () => {
       cleanup?.then(fn => fn?.());
     };
@@ -177,7 +172,7 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
           )
         } />
         
-        {/* New routes for College Admin */}
+        {/* College Admin Routes */}
         <Route path="/college-admin/dashboard" element={
           isAuthenticated ? (
             <MobileLayout hideBottomNav={true}>
@@ -190,7 +185,7 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
           )
         } />
         
-        {/* New mobile specific screens */}
+        {/* Mobile specific screens */}
         <Route path="/push-notification-settings" element={
           isAuthenticated ? (
             <PushNotificationSettings />
