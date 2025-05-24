@@ -19,7 +19,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ChevronLeft, Send, Mail, MessageSquare, HelpCircle } from 'lucide-react';
-import { MobileLayout } from './MobileLayout';
+import MobileLayout from './MobileLayout';
 import { useToast } from '@/hooks/use-toast';
 
 export const HelpSupportScreen = () => {

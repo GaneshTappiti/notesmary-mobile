@@ -6,7 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { ChevronLeft, Bell, BellOff, Info } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { MobileLayout } from './MobileLayout';
+import MobileLayout from './MobileLayout';
 import { Capacitor } from '@capacitor/core';
 
 // Define types for permission states
