@@ -42,8 +42,6 @@ const MobileDetection = () => {
     checkPlatform();
   }, []);
 
-  // For now, always render the web app since MobileApp component doesn't exist
-  // If you want native mobile support, you'll need to create the MobileApp component
   if (initializing) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white">
@@ -53,6 +51,7 @@ const MobileDetection = () => {
     );
   }
 
+  // Always render the main App component - it will handle mobile/desktop detection internally
   return <App />;
 };
 

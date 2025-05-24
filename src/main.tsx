@@ -1,8 +1,9 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import MobileDetection from './components/MobileDetection';
 import './index.css';
+import './mobile.css';
 
 // Only define custom elements if we're in a Capacitor environment
 if (window.Capacitor) {
@@ -18,6 +19,6 @@ if (!root) {
 
 ReactDOM.createRoot(root).render(
   <React.StrictMode>
-    <App />
+    <MobileDetection />
   </React.StrictMode>
 );

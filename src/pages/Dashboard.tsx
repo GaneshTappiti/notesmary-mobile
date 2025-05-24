@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -36,7 +35,6 @@ const Dashboard = () => {
     const syncNotesIfNeeded = async () => {
       if (isOnline && wasOffline && user) {
         try {
-          // Sync any offline notes
           const result = await NotesService.syncOfflineNotes(user.id);
           if (result.count > 0) {
             setLastSyncTime(new Date());
@@ -103,7 +101,6 @@ const Dashboard = () => {
       buttonVariant: 'outline' as const,
       onClick: () => navigate('/ai-answers')
     },
-    // Admin Panel QuickAccess card that is conditionally added for admin users
     ...(isAdmin ? [{
       title: 'Admin Panel',
       description: 'Access administrative controls',
@@ -198,10 +195,7 @@ const Dashboard = () => {
     }
   };
 
-  // Add a section for College Admin access if the user has educational email domain
   const CollegeAdminSection = () => {
-    const { isCollegeAdmin } = useAuth();
-    
     if (!isCollegeAdmin) return null;
     
     return (
@@ -228,69 +222,71 @@ const Dashboard = () => {
     );
   };
 
-  // Mobile layout for smaller screens
-  if (isMobile) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <MobileHeader
-          title="Dashboard"
-          showSearchButton={true}
-          showNotificationButton={true}
-          onSearchClick={() => navigate('/find-notes')}
+  const dashboardContent = (
+    <>
+      <Helmet>
+        <title>Dashboard | StudyPulse</title>
+      </Helmet>
+      
+      <div className="space-y-6 animate-fade-in">
+        {isMobile && (
+          <MobileHeader
+            title="Dashboard"
+            showSearchButton={true}
+            showNotificationButton={true}
+            onSearchClick={() => navigate('/find-notes')}
+          />
+        )}
+        
+        <WelcomeHeader 
+          userName={user?.user_metadata?.full_name}
+          onLogout={handleLogout}
+          isAdmin={isAdmin}
+          onAdminClick={() => navigate('/admin')}
         />
         
-        <div className="space-y-6 animate-fade-in px-4 pb-20">
-          <WelcomeHeader 
-            userName={user?.user_metadata?.full_name}
-            onLogout={handleLogout}
-            isAdmin={isAdmin}
-            onAdminClick={() => navigate('/admin')}
-          />
-          
-          {!isOnline && (
-            <Alert className="bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800">
-              <WifiOff className="h-4 w-4 text-amber-600 dark:text-amber-500" />
-              <AlertTitle>You're offline</AlertTitle>
-              <AlertDescription>
-                You're currently viewing cached data. Some features may be limited until you reconnect.
-              </AlertDescription>
-            </Alert>
-          )}
-          
-          {isOnline && wasOffline && (
-            <Alert className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
-              <AlertTitle>Back online</AlertTitle>
-              <AlertDescription>
-                Your connection has been restored. Any changes made while offline have been synced.
-              </AlertDescription>
-            </Alert>
-          )}
-          
-          {lastSyncTime && (
-            <div className="text-xs text-muted-foreground mt-2 text-right">
-              Last updated: {lastSyncTime.toLocaleString()}
-            </div>
-          )}
-
-          {/* Quick access cards in 2x2 grid */}
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h2>
-            <div className="grid grid-cols-2 gap-3">
-              {quickAccessOptions.map((option, index) => (
-                <QuickAccessCard
-                  key={index}
-                  {...option}
-                  className="transition-all duration-300 hover:shadow-lg"
-                />
-              ))}
-            </div>
+        {!isOnline && (
+          <Alert className="bg-amber-50 border-amber-200">
+            <WifiOff className="h-4 w-4 text-amber-600" />
+            <AlertTitle>You're offline</AlertTitle>
+            <AlertDescription>
+              You're currently viewing cached data. Some features may be limited until you reconnect.
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {isOnline && wasOffline && (
+          <Alert className="bg-green-50 border-green-200">
+            <AlertTitle>Back online</AlertTitle>
+            <AlertDescription>
+              Your connection has been restored. Any changes made while offline have been synced.
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {lastSyncTime && (
+          <div className="text-xs text-muted-foreground mt-2 text-right">
+            Last updated: {lastSyncTime.toLocaleString()}
           </div>
+        )}
 
-          {/* StudyPulse Entry Card */}
-          <StudyPulseEntryCard />
-          
-          {/* Main content grid */}
-          <div className="grid grid-cols-1 gap-6">
+        <div className="space-y-4">
+          <h2 className={`font-semibold ${isMobile ? 'text-lg' : 'text-xl'}`}>Quick Actions</h2>
+          <div className={`grid gap-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 lg:grid-cols-4'}`}>
+            {quickAccessOptions.map((option, index) => (
+              <QuickAccessCard
+                key={index}
+                {...option}
+                className="transition-all duration-300 hover:shadow-lg"
+              />
+            ))}
+          </div>
+        </div>
+
+        <StudyPulseEntryCard />
+
+        <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'}`}>
+          <div className={isMobile ? 'space-y-6' : 'lg:col-span-2 space-y-6'}>
             <StudyRoomsSection 
               rooms={studyRooms}
               onViewAll={() => navigate('/study-rooms')}
@@ -301,7 +297,9 @@ const Dashboard = () => {
               chartType="bar"
               filters={["This Week", "Last Week", "Month"]}
             />
-            
+          </div>
+          
+          <div className="space-y-6">
             <div className="space-y-4">
               <h2 className="text-lg font-semibold">Your Progress</h2>
               <div className="space-y-3">
@@ -320,105 +318,21 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    );
-  }
-
-  // Desktop layout
-  return (
-    <>
-      <Helmet>
-        <title>Dashboard | StudyPulse</title>
-      </Helmet>
-      
-      <AppLayout>
-        <PageContainer className="py-6">
-          <div className="flex flex-col space-y-6">
-            <WelcomeHeader 
-              userName={user?.user_metadata?.full_name}
-              onLogout={handleLogout}
-              isAdmin={isAdmin}
-              onAdminClick={() => navigate('/admin')}
-            />
-            
-            {!isOnline && (
-              <Alert className="bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800">
-                <WifiOff className="h-4 w-4 text-amber-600 dark:text-amber-500" />
-                <AlertTitle>You're offline</AlertTitle>
-                <AlertDescription>
-                  You're currently viewing cached data. Some features may be limited until you reconnect.
-                </AlertDescription>
-              </Alert>
-            )}
-            
-            {isOnline && wasOffline && (
-              <Alert className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
-                <AlertTitle>Back online</AlertTitle>
-                <AlertDescription>
-                  Your connection has been restored. Any changes made while offline have been synced.
-                </AlertDescription>
-              </Alert>
-            )}
-            
-            {lastSyncTime && (
-              <div className="text-xs text-muted-foreground mt-2 text-right">
-                Last updated: {lastSyncTime.toLocaleString()}
-              </div>
-            )}
-
-            {/* Quick access cards in 2x2 grid */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Quick Actions</h2>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {quickAccessOptions.map((option, index) => (
-                  <QuickAccessCard
-                    key={index}
-                    {...option}
-                    className="transition-all duration-300 hover:shadow-lg"
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* StudyPulse Entry Card */}
-            <StudyPulseEntryCard />
-
-            {/* Main content grid */}
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-              <div className="lg:col-span-2 space-y-6">
-                <StudyRoomsSection 
-                  rooms={studyRooms}
-                  onViewAll={() => navigate('/study-rooms')}
-                />
-                
-                <AnalyticsCard
-                  title="Weekly Study Activity"
-                  chartType="bar"
-                  filters={["This Week", "Last Week", "Month"]}
-                />
-              </div>
-              
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <h2 className="text-lg font-semibold">Your Progress</h2>
-                  <div className="space-y-3">
-                    {statsCards.map((card, index) => (
-                      <StatsCard key={index} {...card} />
-                    ))}
-                  </div>
-                </div>
-
-                <TasksSection 
-                  tasks={tasks}
-                  onNewTask={handleNewTask}
-                />
-                
-                <CollegeAdminSection />
-              </div>
-            </div>
-          </div>
-        </PageContainer>
-      </AppLayout>
     </>
+  );
+
+  return (
+    <AppLayout>
+      {isMobile ? (
+        <div className="px-4 py-6">
+          {dashboardContent}
+        </div>
+      ) : (
+        <PageContainer className="py-6">
+          {dashboardContent}
+        </PageContainer>
+      )}
+    </AppLayout>
   );
 };
 
