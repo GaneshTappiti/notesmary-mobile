@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -83,21 +82,17 @@ const queryClient = new QueryClient({
 });
 
 const Loading = () => (
-  <div className="h-screen flex flex-col items-center justify-center p-4">
+  <div className="h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-white">
     <div className="w-full max-w-md space-y-4">
-      <Skeleton className="h-12 w-3/4 mx-auto" />
+      <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <Skeleton className="h-4 w-3/4 mx-auto" />
       <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-2/3" />
-      <div className="flex space-x-2 pt-4">
-        <Skeleton className="h-10 w-24" />
-        <Skeleton className="h-10 w-24" />
-      </div>
+      <Skeleton className="h-4 w-2/3 mx-auto" />
     </div>
   </div>
 );
 
-// Put BrowserRouter outside of AuthProvider
+// Main App component
 const App = () => (
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
@@ -106,333 +101,333 @@ const App = () => (
           <ScrollToTop />
           <Toaster />
           <Sonner />
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={
-              <PublicRoute>
+          <ErrorBoundary>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={
+                <PublicRoute>
+                  <Suspense fallback={<Loading />}>
+                    <Index />
+                  </Suspense>
+                </PublicRoute>
+              } />
+              
+              {/* New routes for Features and Pricing */}
+              <Route path="/features" element={
                 <Suspense fallback={<Loading />}>
-                  <Index />
+                  <Features />
                 </Suspense>
-              </PublicRoute>
-            } />
-            
-            {/* New routes for Features and Pricing */}
-            <Route path="/features" element={
-              <Suspense fallback={<Loading />}>
-                <Features />
-              </Suspense>
-            } />
-            
-            <Route path="/pricing" element={
-              <Suspense fallback={<Loading />}>
-                <Pricing />
-              </Suspense>
-            } />
-            
-            {/* Authentication route */}
-            <Route path="/authentication" element={
-              <PublicRoute>
-                <Authentication />
-              </PublicRoute>
-            } />
+              } />
+              
+              <Route path="/pricing" element={
+                <Suspense fallback={<Loading />}>
+                  <Pricing />
+                </Suspense>
+              } />
+              
+              {/* Authentication route */}
+              <Route path="/authentication" element={
+                <PublicRoute>
+                  <Authentication />
+                </PublicRoute>
+              } />
 
-            {/* Protected dashboard route - Using direct import for Dashboard */}
-            <Route path="/dashboard" element={
-              <PrivateRoute>
-                <AppLayout>
+              {/* Protected dashboard route - Using direct import for Dashboard */}
+              <Route path="/dashboard" element={
+                <PrivateRoute>
                   <Dashboard />
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            {/* New routes for Settings and Subscription */}
-            <Route path="/settings" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <Settings />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/subscription" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <Subscription />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            {/* Protected User routes */}
-            <Route path="/my-notes" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <MyNotes />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/upload-notes" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <UploadNotes />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/find-notes" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <FindNotes />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/view-notes/:noteId" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <ViewNotes />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/ai-answers" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <AIAnswers />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/ai-mark-answers" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <AIMarkAnswers />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/notifications" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <Notifications />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/study-rooms" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyRooms />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            {/* Study room routes */}
-            <Route path="/study-room/:roomId" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyRoom />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            {/* Add new route for create room */}
-            <Route path="/study-rooms/create" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyRooms />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            {/* StudyPulse routes with proper navigation */}
-            <Route path="/study-pulse" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <ErrorBoundary>
-                      <StudyPulse />
-                    </ErrorBoundary>
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/study-pulse/:roomId" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <ErrorBoundary>
-                      <StudyPulseRoom />
-                    </ErrorBoundary>
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
-            
-            <Route path="/study-analytics" element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Suspense fallback={<Loading />}>
-                    <StudyAnalytics />
-                  </Suspense>
-                </AppLayout>
-              </PrivateRoute>
-            } />
+                </PrivateRoute>
+              } />
+              
+              {/* New routes for Settings and Subscription */}
+              <Route path="/settings" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <Settings />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              <Route path="/subscription" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <Subscription />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              {/* Protected User routes */}
+              <Route path="/my-notes" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <MyNotes />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              <Route path="/upload-notes" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <UploadNotes />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              <Route path="/find-notes" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <FindNotes />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              <Route path="/view-notes/:noteId" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <ViewNotes />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              <Route path="/ai-answers" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <AIAnswers />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              <Route path="/ai-mark-answers" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <AIMarkAnswers />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              <Route path="/notifications" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <Notifications />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              <Route path="/study-rooms" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <StudyRooms />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              {/* Study room routes */}
+              <Route path="/study-room/:roomId" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <StudyRoom />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              {/* Add new route for create room */}
+              <Route path="/study-rooms/create" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <StudyRooms />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              {/* StudyPulse routes with proper navigation */}
+              <Route path="/study-pulse" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <ErrorBoundary>
+                        <StudyPulse />
+                      </ErrorBoundary>
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              <Route path="/study-pulse/:roomId" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <ErrorBoundary>
+                        <StudyPulseRoom />
+                      </ErrorBoundary>
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
+              
+              <Route path="/study-analytics" element={
+                <PrivateRoute>
+                  <AppLayout>
+                    <Suspense fallback={<Loading />}>
+                      <StudyAnalytics />
+                    </Suspense>
+                  </AppLayout>
+                </PrivateRoute>
+              } />
 
-            {/* College Admin Routes */}
-            <Route path="/college-admin" element={
-              <PrivateRoute>
-                <Suspense fallback={<Loading />}>
-                  <CollegeAdminLayout />
-                </Suspense>
-              </PrivateRoute>
-            }>
-              <Route path="dashboard" element={
-                <Suspense fallback={<Loading />}>
-                  <CollegeAdminDashboard />
-                </Suspense>
-              } />
-              <Route path="notes-approval" element={
-                <Suspense fallback={<Loading />}>
-                  <NotesApproval />
-                </Suspense>
-              } />
-              <Route path="user-management" element={
-                <Suspense fallback={<Loading />}>
-                  <UserManagement />
-                </Suspense>
-              } />
-              <Route path="studyrooms" element={
-                <Suspense fallback={<Loading />}>
-                  <StudyRoomsMonitor />
-                </Suspense>
-              } />
-              <Route path="settings" element={
-                <Suspense fallback={<Loading />}>
-                  <CollegeAdminSettings />
-                </Suspense>
-              } />
-              <Route index element={<Navigate to="/college-admin/dashboard" replace />} />
-            </Route>
-            
-            {/* Admin routes - NOT wrapped in AppLayout */}
-            <Route 
-              path="/admin" 
-              element={
-                <PrivateRoute adminOnly={true}>
+              {/* College Admin Routes */}
+              <Route path="/college-admin" element={
+                <PrivateRoute>
                   <Suspense fallback={<Loading />}>
-                    <AdminDashboard />
+                    <CollegeAdminLayout />
                   </Suspense>
                 </PrivateRoute>
-              } 
-            />
-            
-            {/* Direct import for AdminMessages page to fix loading issue */}
-            <Route 
-              path="/admin/messages" 
-              element={
-                <PrivateRoute adminOnly={true}>
-                  <AdminMessages />
-                </PrivateRoute>
-              } 
-            />
-            
-            {/* College Management Routes */}
-            <Route 
-              path="/admin/colleges" 
-              element={
-                <PrivateRoute adminOnly={true}>
+              }>
+                <Route path="dashboard" element={
                   <Suspense fallback={<Loading />}>
-                    <AdminColleges />
+                    <CollegeAdminDashboard />
                   </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/admin/colleges/:id" 
-              element={
-                <PrivateRoute adminOnly={true}>
+                } />
+                <Route path="notes-approval" element={
                   <Suspense fallback={<Loading />}>
-                    <AdminCollegeDetails />
+                    <NotesApproval />
                   </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            {/* Remaining admin routes - with additional error handling */}
-            <Route 
-              path="/admin/notes" 
-              element={
-                <PrivateRoute adminOnly={true}>
+                } />
+                <Route path="user-management" element={
                   <Suspense fallback={<Loading />}>
-                    <AdminNotes />
+                    <UserManagement />
                   </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/admin/users" 
-              element={
-                <PrivateRoute adminOnly={true}>
+                } />
+                <Route path="studyrooms" element={
                   <Suspense fallback={<Loading />}>
-                    <AdminUsers />
+                    <StudyRoomsMonitor />
                   </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/admin/events" 
-              element={
-                <PrivateRoute adminOnly={true}>
+                } />
+                <Route path="settings" element={
                   <Suspense fallback={<Loading />}>
-                    <AdminEvents />
+                    <CollegeAdminSettings />
                   </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            <Route 
-              path="/admin/analytics" 
-              element={
-                <PrivateRoute adminOnly={true}>
-                  <Suspense fallback={<Loading />}>
-                    <AdminAnalytics />
-                  </Suspense>
-                </PrivateRoute>
-              } 
-            />
-            
-            {/* NotFound route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+                } />
+                <Route index element={<Navigate to="/college-admin/dashboard" replace />} />
+              </Route>
+              
+              {/* Admin routes - NOT wrapped in AppLayout */}
+              <Route 
+                path="/admin" 
+                element={
+                  <PrivateRoute adminOnly={true}>
+                    <Suspense fallback={<Loading />}>
+                      <AdminDashboard />
+                    </Suspense>
+                  </PrivateRoute>
+                } 
+              />
+              
+              {/* Direct import for AdminMessages page to fix loading issue */}
+              <Route 
+                path="/admin/messages" 
+                element={
+                  <PrivateRoute adminOnly={true}>
+                    <AdminMessages />
+                  </PrivateRoute>
+                } 
+              />
+              
+              {/* College Management Routes */}
+              <Route 
+                path="/admin/colleges" 
+                element={
+                  <PrivateRoute adminOnly={true}>
+                    <Suspense fallback={<Loading />}>
+                      <AdminColleges />
+                    </Suspense>
+                  </PrivateRoute>
+                } 
+              />
+              
+              <Route 
+                path="/admin/colleges/:id" 
+                element={
+                  <PrivateRoute adminOnly={true}>
+                    <Suspense fallback={<Loading />}>
+                      <AdminCollegeDetails />
+                    </Suspense>
+                  </PrivateRoute>
+                } 
+              />
+              
+              {/* Remaining admin routes - with additional error handling */}
+              <Route 
+                path="/admin/notes" 
+                element={
+                  <PrivateRoute adminOnly={true}>
+                    <Suspense fallback={<Loading />}>
+                      <AdminNotes />
+                    </Suspense>
+                  </PrivateRoute>
+                } 
+              />
+              
+              <Route 
+                path="/admin/users" 
+                element={
+                  <PrivateRoute adminOnly={true}>
+                    <Suspense fallback={<Loading />}>
+                      <AdminUsers />
+                    </Suspense>
+                  </PrivateRoute>
+                } 
+              />
+              
+              <Route 
+                path="/admin/events" 
+                element={
+                  <PrivateRoute adminOnly={true}>
+                    <Suspense fallback={<Loading />}>
+                      <AdminEvents />
+                    </Suspense>
+                  </PrivateRoute>
+                } 
+              />
+              
+              <Route 
+                path="/admin/analytics" 
+                element={
+                  <PrivateRoute adminOnly={true}>
+                    <Suspense fallback={<Loading />}>
+                      <AdminAnalytics />
+                    </Suspense>
+                  </PrivateRoute>
+                } 
+              />
+              
+              {/* NotFound route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </ErrorBoundary>
         </AuthProvider>
       </HelmetProvider>
     </QueryClientProvider>

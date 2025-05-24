@@ -1,16 +1,23 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import App from './App';
-import MobileDetection from './components/MobileDetection';
 import './index.css';
 
-// Define custom elements for mobile-friendly features
-defineCustomElements(window);
+// Only define custom elements if we're in a Capacitor environment
+if (window.Capacitor) {
+  import('@ionic/pwa-elements/loader').then(({ defineCustomElements }) => {
+    defineCustomElements(window);
+  });
+}
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const root = document.getElementById('root');
+if (!root) {
+  throw new Error('Root element not found');
+}
+
+ReactDOM.createRoot(root).render(
   <React.StrictMode>
-    <MobileDetection />
+    <App />
   </React.StrictMode>
 );

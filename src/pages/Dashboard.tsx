@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -230,7 +231,7 @@ const Dashboard = () => {
   // Mobile layout for smaller screens
   if (isMobile) {
     return (
-      <PageContainer>
+      <div className="min-h-screen bg-gray-50">
         <MobileHeader
           title="Dashboard"
           showSearchButton={true}
@@ -238,7 +239,7 @@ const Dashboard = () => {
           onSearchClick={() => navigate('/find-notes')}
         />
         
-        <div className="space-y-6 animate-fade-in px-4">
+        <div className="space-y-6 animate-fade-in px-4 pb-20">
           <WelcomeHeader 
             userName={user?.user_metadata?.full_name}
             onLogout={handleLogout}
@@ -289,40 +290,36 @@ const Dashboard = () => {
           <StudyPulseEntryCard />
           
           {/* Main content grid */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2 space-y-6">
-              <StudyRoomsSection 
-                rooms={studyRooms}
-                onViewAll={() => navigate('/study-rooms')}
-              />
-              
-              <AnalyticsCard
-                title="Weekly Study Activity"
-                chartType="bar"
-                filters={["This Week", "Last Week", "Month"]}
-              />
-            </div>
+          <div className="grid grid-cols-1 gap-6">
+            <StudyRoomsSection 
+              rooms={studyRooms}
+              onViewAll={() => navigate('/study-rooms')}
+            />
             
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold">Your Progress</h2>
-                <div className="space-y-3">
-                  {statsCards.map((card, index) => (
-                    <StatsCard key={index} {...card} />
-                  ))}
-                </div>
+            <AnalyticsCard
+              title="Weekly Study Activity"
+              chartType="bar"
+              filters={["This Week", "Last Week", "Month"]}
+            />
+            
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold">Your Progress</h2>
+              <div className="space-y-3">
+                {statsCards.map((card, index) => (
+                  <StatsCard key={index} {...card} />
+                ))}
               </div>
-
-              <TasksSection 
-                tasks={tasks}
-                onNewTask={handleNewTask}
-              />
-              
-              {CollegeAdminSection && <CollegeAdminSection />}
             </div>
+
+            <TasksSection 
+              tasks={tasks}
+              onNewTask={handleNewTask}
+            />
+            
+            <CollegeAdminSection />
           </div>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
@@ -415,7 +412,7 @@ const Dashboard = () => {
                   onNewTask={handleNewTask}
                 />
                 
-                {CollegeAdminSection && <CollegeAdminSection />}
+                <CollegeAdminSection />
               </div>
             </div>
           </div>
