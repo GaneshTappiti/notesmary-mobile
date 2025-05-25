@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -18,9 +19,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronLeft, Send, Mail, MessageSquare, HelpCircle } from 'lucide-react';
+import { ChevronLeft, Send, Mail, MessageSquare } from 'lucide-react';
 import MobileLayout from './MobileLayout';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedButton } from './AnimatedButton';
+import { AnimatedCard } from './AnimatedCard';
+import { AnimatedList } from './AnimatedList';
 
 export const HelpSupportScreen = () => {
   const navigate = useNavigate();
@@ -75,133 +79,149 @@ export const HelpSupportScreen = () => {
     }
   };
   
+  const faqItems = [
+    {
+      question: "How do I create a study room?",
+      answer: "To create a study room, navigate to the Study Rooms section and tap the \"Create Room\" button. Fill in the details like room name, subject, and privacy settings, then tap \"Create\"."
+    },
+    {
+      question: "Can I access my notes offline?",
+      answer: "Yes, any notes you've viewed will be cached for offline access. To ensure specific notes are available offline, open them while connected to the internet."
+    },
+    {
+      question: "How do I share my notes with classmates?",
+      answer: "Open the note you want to share, tap the share icon in the top right corner, and choose how you'd like to share it - via link, email, or directly through the app."
+    },
+    {
+      question: "How do AI answers work?",
+      answer: "Our AI system analyzes your questions and provides relevant answers based on academic sources. To get the best results, be specific with your questions and provide context when necessary."
+    },
+    {
+      question: "How do I reset my password?",
+      answer: "Go to the login screen and tap \"Forgot Password\". Enter your email address, and we'll send you instructions to reset your password."
+    }
+  ];
+  
   return (
     <MobileLayout>
       <div className="space-y-4 pb-6">
-        <div className="flex items-center py-2">
-          <Button 
+        <motion.div 
+          className="flex items-center py-2"
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <AnimatedButton 
             variant="ghost" 
             size="icon" 
             onClick={() => navigate(-1)}
             className="mr-2"
+            withBounce={true}
           >
             <ChevronLeft className="h-5 w-5" />
-          </Button>
+          </AnimatedButton>
           <h1 className="text-xl font-semibold">Help & Support</h1>
-        </div>
+        </motion.div>
         
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="faq-1">
-            <AccordionTrigger>How do I create a study room?</AccordionTrigger>
-            <AccordionContent>
-              To create a study room, navigate to the Study Rooms section and tap the "Create Room" button. 
-              Fill in the details like room name, subject, and privacy settings, then tap "Create".
-            </AccordionContent>
-          </AccordionItem>
+        <AnimatedList className="space-y-4">
+          <Accordion type="single" collapsible className="w-full">
+            {faqItems.map((item, index) => (
+              <AccordionItem key={`faq-${index + 1}`} value={`faq-${index + 1}`}>
+                <AccordionTrigger>{item.question}</AccordionTrigger>
+                <AccordionContent>
+                  {item.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
           
-          <AccordionItem value="faq-2">
-            <AccordionTrigger>Can I access my notes offline?</AccordionTrigger>
-            <AccordionContent>
-              Yes, any notes you've viewed will be cached for offline access. 
-              To ensure specific notes are available offline, open them while connected to the internet.
-            </AccordionContent>
-          </AccordionItem>
-          
-          <AccordionItem value="faq-3">
-            <AccordionTrigger>How do I share my notes with classmates?</AccordionTrigger>
-            <AccordionContent>
-              Open the note you want to share, tap the share icon in the top right corner, 
-              and choose how you'd like to share it - via link, email, or directly through the app.
-            </AccordionContent>
-          </AccordionItem>
-          
-          <AccordionItem value="faq-4">
-            <AccordionTrigger>How do AI answers work?</AccordionTrigger>
-            <AccordionContent>
-              Our AI system analyzes your questions and provides relevant answers based on academic sources. 
-              To get the best results, be specific with your questions and provide context when necessary.
-            </AccordionContent>
-          </AccordionItem>
-          
-          <AccordionItem value="faq-5">
-            <AccordionTrigger>How do I reset my password?</AccordionTrigger>
-            <AccordionContent>
-              Go to the login screen and tap "Forgot Password". Enter your email address, 
-              and we'll send you instructions to reset your password.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-        
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <MessageSquare className="w-5 h-5 mr-2" />
-              Contact Support
-            </CardTitle>
-            <CardDescription>
-              Send us a message and we'll get back to you as soon as possible
-            </CardDescription>
-          </CardHeader>
-          
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="subject" className="text-sm font-medium">
-                  Subject
-                </label>
-                <Input
-                  id="subject"
-                  placeholder="How can we help you?"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-medium">
-                  Message
-                </label>
-                <Textarea
-                  id="message"
-                  placeholder="Please describe your issue in detail"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  rows={5}
-                  required
-                />
-              </div>
-            </CardContent>
+          <AnimatedCard className="mt-6" delay={0.3}>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <MessageSquare className="w-5 h-5 mr-2" />
+                Contact Support
+              </CardTitle>
+              <CardDescription>
+                Send us a message and we'll get back to you as soon as possible
+              </CardDescription>
+            </CardHeader>
             
-            <CardFooter>
-              <Button 
-                type="submit" 
-                disabled={submitting} 
-                className="w-full"
-              >
-                {submitting ? (
-                  <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4 mr-2" />
-                    Send Message
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
-        
-        <div className="mt-6 text-center space-y-3">
-          <p className="text-sm text-gray-500">Need urgent help?</p>
-          <Button variant="outline" className="w-full">
-            <Mail className="w-4 h-4 mr-2" />
-            Email Support Team
-          </Button>
-        </div>
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-4">
+                <motion.div 
+                  className="space-y-2"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <label htmlFor="subject" className="text-sm font-medium">
+                    Subject
+                  </label>
+                  <Input
+                    id="subject"
+                    placeholder="How can we help you?"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    required
+                  />
+                </motion.div>
+                
+                <motion.div 
+                  className="space-y-2"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <label htmlFor="message" className="text-sm font-medium">
+                    Message
+                  </label>
+                  <Textarea
+                    id="message"
+                    placeholder="Please describe your issue in detail"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    rows={5}
+                    required
+                  />
+                </motion.div>
+              </CardContent>
+              
+              <CardFooter>
+                <AnimatedButton 
+                  type="submit" 
+                  disabled={submitting} 
+                  className="w-full"
+                  isLoading={submitting}
+                >
+                  {submitting ? (
+                    <>
+                      <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Send Message
+                    </>
+                  )}
+                </AnimatedButton>
+              </CardFooter>
+            </form>
+          </AnimatedCard>
+          
+          <motion.div 
+            className="mt-6 text-center space-y-3"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+          >
+            <p className="text-sm text-gray-500">Need urgent help?</p>
+            <AnimatedButton variant="outline" className="w-full">
+              <Mail className="w-4 h-4 mr-2" />
+              Email Support Team
+            </AnimatedButton>
+          </motion.div>
+        </AnimatedList>
       </div>
     </MobileLayout>
   );
