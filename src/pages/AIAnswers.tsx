@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
@@ -32,7 +31,7 @@ const AIAnswers = () => {
       try {
         const { data, error } = await supabase
           .from('notes')
-          .select('id, title, subject, branch, file_url, uploaded_at')
+          .select('id, title, branch, file_url, uploaded_at')
           .order('uploaded_at', { ascending: false });
 
         if (error) {
