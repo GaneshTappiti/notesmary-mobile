@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
@@ -9,9 +10,12 @@ import { useToast } from "@/hooks/use-toast";
 import { FileText, Upload, BookOpen, Search, AlertCircle, CheckCircle2, FileIcon } from "lucide-react";
 import { Database } from "@/types/database.types";
 import { supabase } from "@/integrations/supabase/client";
+import { AnswerCard } from "@/components/ai-answers/AnswerCard";
+import { HistorySection } from "@/components/ai-answers/HistorySection";
 
 // Define properly typed Note interface based on database.types.ts
 type Note = Database['public']['Tables']['notes']['Row'];
+type AIRequest = Database['public']['Tables']['ai_requests']['Row'];
 
 const AIAnswers = () => {
   const { toast } = useToast();
@@ -23,6 +27,9 @@ const AIAnswers = () => {
   const [status, setStatus] = useState<"idle" | "ready" | "processing" | "complete" | "error">("idle");
   const [userNotes, setUserNotes] = useState<Note[]>([]);
   const [isLoadingNotes, setIsLoadingNotes] = useState<boolean>(false);
+  const [questionHistory, setQuestionHistory] = useState<AIRequest[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(false);
+  const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(null);
 
   // Fetch user's notes from Supabase
   useEffect(() => {
@@ -56,6 +63,40 @@ const AIAnswers = () => {
     fetchUserNotes();
   }, [toast]);
 
+  // Fetch user's question history
+  useEffect(() => {
+    const fetchQuestionHistory = async () => {
+      setIsLoadingHistory(true);
+      try {
+        const { data, error } = await supabase
+          .from('ai_requests')
+          .select('*')
+          .eq('request_type', 'question_answer')
+          .order('created_at', { ascending: false })
+          .limit(20);
+
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          setQuestionHistory(data as AIRequest[]);
+        }
+      } catch (error) {
+        console.error('Error fetching question history:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load question history.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+
+    fetchQuestionHistory();
+  }, [toast]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -79,6 +120,69 @@ const AIAnswers = () => {
     }
   };
 
+  const saveToHistory = async () => {
+    if (!question || !answer) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('ai_requests')
+        .insert({
+          request_type: 'question_answer',
+          input: { question },
+          output: { answer },
+          tokens_used: answer.length
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        setCurrentQuestionId(data.id);
+        setQuestionHistory(prev => [data as AIRequest, ...prev]);
+        toast({
+          title: "Saved to history",
+          description: "Your question and answer have been saved.",
+        });
+      }
+    } catch (error) {
+      console.error('Error saving to history:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save to history. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteHistoryItem = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('ai_requests')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        throw error;
+      }
+
+      setQuestionHistory(prev => prev.filter(item => item.id !== id));
+      toast({
+        title: "Deleted",
+        description: "Question removed from history.",
+      });
+    } catch (error) {
+      console.error('Error deleting history item:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete item. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleAskQuestion = async () => {
     if (!question.trim()) {
       toast({
@@ -91,6 +195,7 @@ const AIAnswers = () => {
 
     setLoading(true);
     setStatus("processing");
+    setCurrentQuestionId(null);
 
     try {
       // In a real implementation, this would be an API call to OpenAI
@@ -276,31 +381,23 @@ const AIAnswers = () => {
 
         {/* Answer Section */}
         {status === "complete" && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mt-8 max-w-6xl mx-auto"
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle>Answer</CardTitle>
-                <CardDescription>
-                  AI-generated answer based on your study material
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <pre className="whitespace-pre-wrap text-sm">
-                    {answer}
-                  </pre>
-                </div>
-              </CardContent>
-              <CardFooter className="text-sm text-gray-500">
-                <p>Powered by AI based on your uploaded study material.</p>
-              </CardFooter>
-            </Card>
-          </motion.div>
+          <div className="mt-8">
+            <AnswerCard
+              question={question}
+              answer={answer}
+              onSave={saveToHistory}
+              isSaved={!!currentQuestionId}
+              loading={loading}
+            />
+          </div>
+        )}
+
+        {/* History Section */}
+        {!isLoadingHistory && (
+          <HistorySection
+            history={questionHistory}
+            onDeleteItem={deleteHistoryItem}
+          />
         )}
       </div>
     </div>
