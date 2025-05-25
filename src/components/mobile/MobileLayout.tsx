@@ -25,7 +25,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         "flex-1 overflow-x-hidden",
         !hideBottomNav && "pb-20" // Add bottom padding when nav is shown
       )}>
-        <div className="px-4 py-6">
+        <div className="px-4 py-4 safe-top">
           {pageTransition ? (
             <PageTransition direction={transitionDirection}>
               {children}

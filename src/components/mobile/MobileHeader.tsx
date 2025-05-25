@@ -52,21 +52,21 @@ export const MobileHeader = ({
   return (
     <motion.header 
       className={cn(
-        "sticky top-0 z-20 px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between",
+        "sticky top-0 z-20 px-6 py-4 bg-white/95 backdrop-blur-md border-b border-gray-100 flex items-center justify-between safe-top",
         className
       )}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         {showBackButton && (
           <motion.div whileTap={{ scale: 0.9 }}>
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={handleBack} 
-              className="h-9 w-9 rounded-full"
+              className="h-10 w-10 rounded-full bg-gray-50 hover:bg-gray-100"
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
@@ -79,7 +79,7 @@ export const MobileHeader = ({
               variant="ghost" 
               size="icon" 
               onClick={onMenuClick} 
-              className="h-9 w-9 rounded-full"
+              className="h-10 w-10 rounded-full bg-gray-50 hover:bg-gray-100"
             >
               <Menu className="h-5 w-5" />
             </Button>
@@ -87,25 +87,25 @@ export const MobileHeader = ({
         )}
         
         <div className="flex flex-col">
-          <h1 className="text-lg font-medium text-gray-900 dark:text-white truncate">
+          <h1 className="text-xl font-semibold text-gray-900 truncate">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-gray-500 mt-1">
               {subtitle}
             </p>
           )}
         </div>
       </div>
       
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         {showSearchButton && (
           <motion.div whileTap={{ scale: 0.9 }}>
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={handleSearch} 
-              className="h-9 w-9 rounded-full"
+              className="h-10 w-10 rounded-full bg-gray-50 hover:bg-gray-100"
             >
               <Search className="h-5 w-5" />
             </Button>
@@ -118,10 +118,10 @@ export const MobileHeader = ({
               variant="ghost" 
               size="icon" 
               onClick={handleNotifications} 
-              className="h-9 w-9 rounded-full relative"
+              className="h-10 w-10 rounded-full bg-gray-50 hover:bg-gray-100 relative"
             >
               <Bell className="h-5 w-5" />
-              <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+              <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full"></span>
             </Button>
           </motion.div>
         )}
