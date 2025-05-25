@@ -1,17 +1,17 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { FileText, Upload, BookOpen, Search, AlertCircle, CheckCircle2, FileIcon } from "lucide-react";
+import { FileText, Upload, BookOpen, Search, AlertCircle, CheckCircle2, FileIcon, Sparkles, Brain } from "lucide-react";
 import { Database } from "@/types/database.types";
 import { supabase } from "@/integrations/supabase/client";
 import { AnswerCard } from "@/components/ai-answers/AnswerCard";
 import { HistorySection } from "@/components/ai-answers/HistorySection";
+import { PageContainer } from "@/components/PageContainer";
 
 // Define properly typed Note interface based on database.types.ts
 type Note = Database['public']['Tables']['notes']['Row'];
@@ -241,137 +241,150 @@ const AIAnswers = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Navbar />
-      <div className="container mx-auto px-4 py-24">
+    <PageContainer>
+      {/* Header Section */}
+      <div className="mb-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8 text-center"
+          className="text-center"
         >
-          <h1 className="text-3xl font-bold mb-2">AI Answer Retrieval</h1>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Upload your study materials and get AI-generated answers to your questions
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl">
+              <Brain className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              AI Study Assistant
+            </h1>
+          </div>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Upload your study materials and get intelligent, AI-powered answers to help you learn better and faster
           </p>
         </motion.div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {/* Upload Section */}
+      {/* Main Content Area */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        
+        {/* Left Column - Upload & Question */}
+        <div className="xl:col-span-1 space-y-6">
+          
+          {/* File Upload Section */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <Card className="shadow-lg border-0 bg-white">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-xl">
                   <Upload className="h-5 w-5 text-blue-500" />
-                  Upload Study Material
+                  Study Material
                 </CardTitle>
-                <CardDescription>
-                  Upload your notes, textbooks, or study materials in PDF or text format
+                <CardDescription className="text-gray-600">
+                  Upload PDF or text files to get started
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div 
-                  className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 
-                  ${status === "ready" || status === "complete" ? "border-green-500 bg-green-50 dark:bg-green-900/10" : "border-gray-300 hover:border-blue-400"}`}
+                  className={`border-2 border-dashed rounded-xl p-6 text-center transition-all duration-300 cursor-pointer
+                  ${status === "ready" || status === "complete" 
+                    ? "border-green-400 bg-green-50" 
+                    : "border-gray-300 hover:border-blue-400 hover:bg-blue-50"}`}
+                  onClick={() => document.getElementById('file-upload')?.click()}
                 >
-                  <div className="mx-auto flex flex-col items-center justify-center">
+                  <input
+                    id="file-upload"
+                    type="file"
+                    className="hidden"
+                    onChange={handleFileChange}
+                    accept=".pdf,.txt"
+                  />
+                  
+                  <div className="mx-auto flex flex-col items-center">
                     {status === "ready" || status === "complete" ? (
-                      <CheckCircle2 className="h-12 w-12 text-green-500 mb-4" />
+                      <>
+                        <CheckCircle2 className="h-12 w-12 text-green-500 mb-3" />
+                        <h3 className="font-semibold text-green-700 mb-2">File Ready!</h3>
+                        <p className="text-sm text-green-600 mb-3">
+                          {selectedFile?.name}
+                        </p>
+                      </>
                     ) : (
-                      <FileText className="h-12 w-12 text-blue-500 mb-4" />
+                      <>
+                        <div className="p-3 bg-blue-100 rounded-full mb-3">
+                          <FileText className="h-8 w-8 text-blue-500" />
+                        </div>
+                        <h3 className="font-semibold text-gray-700 mb-2">Upload Your Notes</h3>
+                        <p className="text-sm text-gray-500 mb-3">
+                          Drag & drop or click to browse
+                        </p>
+                      </>
                     )}
                     
-                    <h3 className="text-lg font-medium mb-2">
-                      {status === "ready" || status === "complete" 
-                        ? "File Uploaded Successfully!" 
-                        : "Drag & drop your notes here"}
-                    </h3>
-                    
-                    {status === "ready" || status === "complete" ? (
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                        {selectedFile?.name} ({Math.round((selectedFile?.size || 0) / 1024)} KB)
-                      </p>
-                    ) : (
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                        Supported formats: PDF, TXT
-                      </p>
-                    )}
-                    
-                    <label className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md font-medium cursor-pointer transition-colors">
+                    <Button 
+                      variant={status === "ready" || status === "complete" ? "outline" : "default"}
+                      size="sm"
+                      className="mt-2"
+                    >
                       {status === "ready" || status === "complete" ? "Change File" : "Browse Files"}
-                      <input
-                        type="file"
-                        className="hidden"
-                        onChange={handleFileChange}
-                        accept=".pdf,.txt"
-                      />
-                    </label>
+                    </Button>
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between text-sm text-gray-500">
-                <div className="flex items-center">
-                  <BookOpen className="h-4 w-4 mr-1" />
-                  <span>Extract text from your materials</span>
-                </div>
-              </CardFooter>
             </Card>
           </motion.div>
 
-          {/* Question Section */}
+          {/* Question Input Section */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <Card className="shadow-lg border-0 bg-white">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-xl">
                   <Search className="h-5 w-5 text-blue-500" />
-                  Ask a Question
+                  Ask Question
                 </CardTitle>
-                <CardDescription>
-                  Ask any question related to your uploaded study material
+                <CardDescription className="text-gray-600">
+                  What would you like to know about your material?
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <Textarea
-                    placeholder="Example: What are the main components of a cell?"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    rows={3}
-                    disabled={status === "idle" || status === "processing"}
-                    className="resize-none w-full"
-                  />
-                </div>
+                <Textarea
+                  placeholder="Example: What are the main components of a cell? Explain the process of photosynthesis..."
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  rows={4}
+                  disabled={status === "idle" || status === "processing"}
+                  className="resize-none border-gray-200 focus:border-blue-400 focus:ring-blue-400"
+                />
                 
-                <div className="pt-2">
-                  <Button 
-                    onClick={handleAskQuestion} 
-                    disabled={status === "idle" || status === "processing" || !question.trim()}
-                    className="w-full"
-                  >
-                    {status === "processing" ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Processing...
-                      </>
-                    ) : "Get Answer"}
-                  </Button>
-                </div>
+                <Button 
+                  onClick={handleAskQuestion} 
+                  disabled={status === "idle" || status === "processing" || !question.trim()}
+                  className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg"
+                  size="lg"
+                >
+                  {status === "processing" ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Get AI Answer
+                    </>
+                  )}
+                </Button>
                 
                 {status === "error" && (
-                  <div className="p-3 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-800 rounded-lg flex items-center text-red-800 dark:text-red-400">
+                  <div className="p-3 bg-red-50 border border-red-100 rounded-lg flex items-center text-red-700">
                     <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                    <p className="text-sm">There was an error processing your request. Please try again.</p>
+                    <p className="text-sm">Something went wrong. Please try again.</p>
                   </div>
                 )}
               </CardContent>
@@ -379,28 +392,55 @@ const AIAnswers = () => {
           </motion.div>
         </div>
 
-        {/* Answer Section */}
-        {status === "complete" && (
-          <div className="mt-8">
-            <AnswerCard
-              question={question}
-              answer={answer}
-              onSave={saveToHistory}
-              isSaved={!!currentQuestionId}
-              loading={loading}
-            />
-          </div>
-        )}
+        {/* Right Column - Answer & History */}
+        <div className="xl:col-span-2 space-y-8">
+          
+          {/* Answer Section */}
+          {status === "complete" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <AnswerCard
+                question={question}
+                answer={answer}
+                onSave={saveToHistory}
+                isSaved={!!currentQuestionId}
+                loading={loading}
+              />
+            </motion.div>
+          )}
 
-        {/* History Section */}
-        {!isLoadingHistory && (
-          <HistorySection
-            history={questionHistory}
-            onDeleteItem={deleteHistoryItem}
-          />
-        )}
+          {/* Empty State for Answer Area */}
+          {status !== "complete" && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-16"
+            >
+              <div className="p-6 bg-gray-50 rounded-2xl max-w-md mx-auto">
+                <div className="p-4 bg-blue-100 rounded-full w-fit mx-auto mb-4">
+                  <Brain className="h-8 w-8 text-blue-500" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Ready to Help You Learn</h3>
+                <p className="text-gray-500 text-sm">
+                  Upload your study material and ask a question to get started with AI-powered learning assistance.
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* History Section */}
+          {!isLoadingHistory && (
+            <HistorySection
+              history={questionHistory}
+              onDeleteItem={deleteHistoryItem}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
