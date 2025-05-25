@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Home, FileText, BrainCircuit, Search, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
