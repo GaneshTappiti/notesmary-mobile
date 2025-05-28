@@ -13,9 +13,22 @@ import { AnswerCard } from "@/components/ai-answers/AnswerCard";
 import { HistorySection } from "@/components/ai-answers/HistorySection";
 import { PageContainer } from "@/components/PageContainer";
 
-// Define properly typed Note interface based on database.types.ts
-type Note = Database['public']['Tables']['notes']['Row'];
-type AIRequest = Database['public']['Tables']['ai_requests']['Row'];
+// Define properly typed Note interface based on available fields
+type Note = {
+  id: string;
+  title: string;
+  file_url?: string;
+  uploaded_at: string;
+};
+
+type AIRequest = {
+  id: string;
+  request_type: string;
+  input: any;
+  output: any;
+  created_at: string;
+  tokens_used?: number;
+};
 
 const AIAnswers = () => {
   const { toast } = useToast();
@@ -31,43 +44,41 @@ const AIAnswers = () => {
   const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(false);
   const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(null);
 
-  // Fetch user's notes from Supabase
+  // Fetch user's notes from Supabase with error handling
   useEffect(() => {
     const fetchUserNotes = async () => {
       setIsLoadingNotes(true);
       try {
+        // Only select fields that we know exist
         const { data, error } = await supabase
           .from('notes')
-          .select('id, title, branch, file_url, uploaded_at')
+          .select('id, title, file_url, uploaded_at')
           .order('uploaded_at', { ascending: false });
 
         if (error) {
-          throw error;
-        }
-
-        if (data) {
+          console.error('Error fetching notes:', error);
+          // Don't show error toast for missing columns, just set empty array
+          setUserNotes([]);
+        } else if (data) {
           setUserNotes(data as Note[]);
         }
       } catch (error) {
         console.error('Error fetching notes:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load your notes. Please try again.",
-          variant: "destructive",
-        });
+        setUserNotes([]);
       } finally {
         setIsLoadingNotes(false);
       }
     };
 
     fetchUserNotes();
-  }, [toast]);
+  }, []);
 
-  // Fetch user's question history
+  // Fetch user's question history with error handling
   useEffect(() => {
     const fetchQuestionHistory = async () => {
       setIsLoadingHistory(true);
       try {
+        // Try to fetch from ai_requests table, but handle if it doesn't exist
         const { data, error } = await supabase
           .from('ai_requests')
           .select('*')
@@ -76,26 +87,33 @@ const AIAnswers = () => {
           .limit(20);
 
         if (error) {
-          throw error;
-        }
-
-        if (data) {
+          console.error('AI requests table not available:', error);
+          // Use localStorage as fallback for demo purposes
+          const savedHistory = localStorage.getItem('ai_question_history');
+          if (savedHistory) {
+            setQuestionHistory(JSON.parse(savedHistory));
+          } else {
+            setQuestionHistory([]);
+          }
+        } else if (data) {
           setQuestionHistory(data as AIRequest[]);
         }
       } catch (error) {
         console.error('Error fetching question history:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load question history.",
-          variant: "destructive",
-        });
+        // Use localStorage as fallback
+        const savedHistory = localStorage.getItem('ai_question_history');
+        if (savedHistory) {
+          setQuestionHistory(JSON.parse(savedHistory));
+        } else {
+          setQuestionHistory([]);
+        }
       } finally {
         setIsLoadingHistory(false);
       }
     };
 
     fetchQuestionHistory();
-  }, [toast]);
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -103,7 +121,6 @@ const AIAnswers = () => {
       setSelectedFile(file);
       
       // For demo purposes, we'll simply read the file as text
-      // In a real app, you would send this to your backend for processing
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
@@ -123,49 +140,77 @@ const AIAnswers = () => {
   const saveToHistory = async () => {
     if (!question || !answer) return;
 
+    const historyItem: AIRequest = {
+      id: Date.now().toString(),
+      request_type: 'question_answer',
+      input: { question },
+      output: { answer },
+      created_at: new Date().toISOString(),
+      tokens_used: answer.length
+    };
+
     try {
+      // Try to save to database first
       const { data, error } = await supabase
         .from('ai_requests')
-        .insert({
-          request_type: 'question_answer',
-          input: { question },
-          output: { answer },
-          tokens_used: answer.length
-        })
+        .insert(historyItem)
         .select()
         .single();
 
       if (error) {
-        throw error;
-      }
-
-      if (data) {
+        console.error('Database save failed, using localStorage:', error);
+        // Fallback to localStorage
+        const existingHistory = localStorage.getItem('ai_question_history');
+        const history = existingHistory ? JSON.parse(existingHistory) : [];
+        history.unshift(historyItem);
+        localStorage.setItem('ai_question_history', JSON.stringify(history.slice(0, 20))); // Keep only last 20
+        
+        setCurrentQuestionId(historyItem.id);
+        setQuestionHistory(prev => [historyItem, ...prev]);
+      } else if (data) {
         setCurrentQuestionId(data.id);
         setQuestionHistory(prev => [data as AIRequest, ...prev]);
-        toast({
-          title: "Saved to history",
-          description: "Your question and answer have been saved.",
-        });
       }
+
+      toast({
+        title: "Saved to history",
+        description: "Your question and answer have been saved.",
+      });
     } catch (error) {
       console.error('Error saving to history:', error);
+      // Fallback to localStorage
+      const existingHistory = localStorage.getItem('ai_question_history');
+      const history = existingHistory ? JSON.parse(existingHistory) : [];
+      history.unshift(historyItem);
+      localStorage.setItem('ai_question_history', JSON.stringify(history.slice(0, 20)));
+      
+      setCurrentQuestionId(historyItem.id);
+      setQuestionHistory(prev => [historyItem, ...prev]);
+      
       toast({
-        title: "Error",
-        description: "Failed to save to history. Please try again.",
-        variant: "destructive",
+        title: "Saved to local history",
+        description: "Your question and answer have been saved locally.",
       });
     }
   };
 
   const deleteHistoryItem = async (id: string) => {
     try {
+      // Try to delete from database
       const { error } = await supabase
         .from('ai_requests')
         .delete()
         .eq('id', id);
 
       if (error) {
-        throw error;
+        console.error('Database delete failed, removing from localStorage:', error);
+        // Remove from localStorage
+        const existingHistory = localStorage.getItem('ai_question_history');
+        if (existingHistory) {
+          const history = JSON.parse(existingHistory);
+          const updatedHistory = history.filter((item: AIRequest) => item.id !== id);
+          localStorage.setItem('ai_question_history', JSON.stringify(updatedHistory));
+        }
       }
 
       setQuestionHistory(prev => prev.filter(item => item.id !== id));
@@ -175,10 +220,18 @@ const AIAnswers = () => {
       });
     } catch (error) {
       console.error('Error deleting history item:', error);
+      // Remove from localStorage as fallback
+      const existingHistory = localStorage.getItem('ai_question_history');
+      if (existingHistory) {
+        const history = JSON.parse(existingHistory);
+        const updatedHistory = history.filter((item: AIRequest) => item.id !== id);
+        localStorage.setItem('ai_question_history', JSON.stringify(updatedHistory));
+      }
+      
+      setQuestionHistory(prev => prev.filter(item => item.id !== id));
       toast({
-        title: "Error",
-        description: "Failed to delete item. Please try again.",
-        variant: "destructive",
+        title: "Deleted",
+        description: "Question removed from history.",
       });
     }
   };

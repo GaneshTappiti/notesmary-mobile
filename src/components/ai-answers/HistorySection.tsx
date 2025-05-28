@@ -5,9 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Calendar, Eye, Trash2, Clock, MessageSquare, Brain } from "lucide-react";
-import { Database } from "@/types/database.types";
 
-type AIRequest = Database['public']['Tables']['ai_requests']['Row'];
+type AIRequest = {
+  id: string;
+  request_type: string;
+  input: any;
+  output: any;
+  created_at: string;
+  tokens_used?: number;
+};
 
 interface HistorySectionProps {
   history: AIRequest[];
