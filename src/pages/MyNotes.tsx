@@ -249,8 +249,8 @@ const MyNotes = () => {
   };
   
   return (
-    <PageContainer className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <PageContainer className="space-y-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">My Notes</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm md:text-base">
@@ -259,34 +259,34 @@ const MyNotes = () => {
         </div>
         <Button 
           onClick={() => navigate('/upload-notes')} 
-          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 font-medium"
+          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 font-medium px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
         >
-          <Plus size={16} />
+          <Plus size={18} />
           <span>Upload New Note</span>
         </Button>
       </div>
       
-      <div className="mb-8 relative">
+      <div className="relative mb-8">
         <Input
           type="text"
           placeholder="Search your notes..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+          className="w-full pl-12 pr-32 py-4 border-gray-300 dark:border-gray-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-base"
         />
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <Search className="h-5 w-5 text-gray-400" />
         </div>
-        <div className="absolute inset-y-0 right-0 pr-3 flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="h-8 text-gray-500">
-            <Filter size={16} className="mr-1" />
+        <div className="absolute inset-y-0 right-0 pr-4 flex items-center gap-3">
+          <Button variant="ghost" size="sm" className="h-10 px-4 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg">
+            <Filter size={16} className="mr-2" />
             <span className="hidden sm:inline">Filters</span>
           </Button>
           {searchQuery && (
             <Button
               variant="ghost"
               size="sm"
-              className="h-8"
+              className="h-10 px-3 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg"
               onClick={() => setSearchQuery('')}
             >
               Clear
