@@ -27,28 +27,19 @@ const HorizontalNavBar = () => {
           <button
             key={item.path}
             className={cn(
-              "flex flex-col items-center justify-center flex-1 h-full text-xs transition-all duration-200 relative rounded-xl",
+              "flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 relative rounded-xl",
               "min-w-0 active:scale-95 py-2"
             )}
             onClick={() => navigate(item.path)}
           >
             <div className={cn(
-              "mb-2 transition-all duration-200 p-2 rounded-lg",
+              "transition-all duration-200 p-3 rounded-lg",
               isActive(item.path) 
                 ? "text-blue-600 bg-blue-50" 
                 : "text-gray-500"
             )}>
               {item.icon}
             </div>
-            
-            <span className={cn(
-              "transition-colors duration-200 font-medium text-xs leading-none truncate px-1",
-              isActive(item.path) 
-                ? "text-blue-600 font-semibold" 
-                : "text-gray-500"
-            )}>
-              {item.label}
-            </span>
 
             {isActive(item.path) && (
               <div className="absolute bottom-1 h-1 w-8 bg-blue-500 rounded-full transition-opacity duration-200" />
