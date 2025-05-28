@@ -122,14 +122,25 @@ const MyNotes = () => {
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
   
+  const getFileTypeBadgeColor = (fileType: string) => {
+    switch (fileType.toLowerCase()) {
+      case 'pdf':
+        return 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-400';
+      case 'docx':
+        return 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400';
+      default:
+        return 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-400';
+    }
+  };
+  
   const renderNoteList = (notes: Note[], isUploaded: boolean) => {
     if (notes.length === 0) {
       return (
-        <div className="text-center py-12">
-          <FileText className="h-12 w-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
+        <div className="text-center py-16">
+          <FileText className="h-16 w-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
           {isUploaded ? (
             <>
-              <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">You haven't uploaded any notes yet</p>
+              <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">You haven't uploaded any notes yet</p>
               <Button onClick={() => navigate('/upload-notes')} className="mt-2">
                 <Upload className="mr-2 h-4 w-4" />
                 Upload Notes
@@ -137,7 +148,7 @@ const MyNotes = () => {
             </>
           ) : (
             <>
-              <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">You haven't saved any notes yet</p>
+              <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">You haven't saved any notes yet</p>
               <Button onClick={() => navigate('/find-notes')} className="mt-2">
                 <Search className="mr-2 h-4 w-4" />
                 Find Notes
@@ -149,55 +160,84 @@ const MyNotes = () => {
     }
     
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-24 md:pb-6">
         {notes.map((note) => (
-          <Card key={note.id} className="border shadow-sm hover:shadow-md transition-all duration-200 hover:border-blue-300 dark:hover:border-blue-700">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-lg line-clamp-2 hover:line-clamp-none transition-all cursor-pointer" onClick={() => handleViewNote(note.id)}>
+          <Card key={note.id} className="border shadow-sm hover:shadow-lg transition-all duration-300 hover:border-blue-300 dark:hover:border-blue-700 hover:-translate-y-1">
+            <CardHeader className="pb-3 px-6 pt-6">
+              <div className="flex justify-between items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <CardTitle 
+                    className="text-lg font-semibold line-clamp-2 hover:line-clamp-none transition-all cursor-pointer text-gray-900 dark:text-gray-100 leading-snug mb-2" 
+                    onClick={() => handleViewNote(note.id)}
+                  >
                     {note.title}
                   </CardTitle>
-                  <CardDescription className="mt-1 flex items-center gap-1">
-                    <span>{note.subject}</span>
-                    <span className="mx-1">•</span>
-                    <span>{note.semester}</span>
+                  <CardDescription className="flex items-center gap-2 text-sm">
+                    <span className="font-medium">{note.subject}</span>
+                    <span className="text-gray-400">•</span>
+                    <span className="text-gray-500 text-xs">{note.semester}</span>
                   </CardDescription>
                 </div>
-                <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400">
+                <Badge 
+                  variant="outline" 
+                  className={`${getFileTypeBadgeColor(note.fileType)} font-medium text-xs px-2 py-1 ml-2 flex-shrink-0`}
+                >
                   {note.fileType}
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="pb-2">
+            
+            <CardContent className="pb-4 px-6">
               <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
                   <Download className="h-3.5 w-3.5" />
-                  <span>{note.downloads}</span>
+                  <span className="font-medium">{note.downloads}</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
                   <FileText className="h-3.5 w-3.5" />
-                  <span>{note.views} views</span>
+                  <span className="font-medium">{note.views}</span>
                 </div>
-                <div>
-                  <span>Uploaded {formatDate(note.uploadDate)}</span>
+                <div className="text-xs">
+                  <span>{formatDate(note.uploadDate)}</span>
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex justify-between pt-2 border-t">
-              <Button variant="ghost" size="sm" onClick={() => handleToggleStar(note.id, isUploaded)}>
-                <Star className={`h-4 w-4 ${note.isStarred ? 'fill-yellow-400 text-yellow-400' : ''}`} />
+            
+            <CardFooter className="flex justify-between items-center pt-4 border-t bg-gray-50/50 dark:bg-gray-900/50 px-6 pb-6">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleToggleStar(note.id, isUploaded)}
+                className="hover:bg-yellow-50 dark:hover:bg-yellow-900/20"
+              >
+                <Star className={`h-4 w-4 ${note.isStarred ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`} />
               </Button>
-              <div className="flex gap-1">
-                <Button variant="ghost" size="sm" onClick={() => handleViewNote(note.id)}>
+              
+              <div className="flex gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => handleViewNote(note.id)}
+                  className="hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                >
                   <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 </Button>
                 {isUploaded && (
-                  <Button variant="ghost" size="sm" onClick={() => navigate(`/upload-notes?edit=${note.id}`)}>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => navigate(`/upload-notes?edit=${note.id}`)}
+                    className="hover:bg-green-50 dark:hover:bg-green-900/20"
+                  >
                     <Edit className="h-4 w-4 text-green-600 dark:text-green-400" />
                   </Button>
                 )}
-                <Button variant="ghost" size="sm" onClick={() => handleDelete(note.id)}>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => handleDelete(note.id)}
+                  className="hover:bg-red-50 dark:hover:bg-red-900/20"
+                >
                   <Trash className="h-4 w-4 text-red-600 dark:text-red-400" />
                 </Button>
               </div>
@@ -219,20 +259,20 @@ const MyNotes = () => {
         </div>
         <Button 
           onClick={() => navigate('/upload-notes')} 
-          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 font-medium"
         >
           <Plus size={16} />
           <span>Upload New Note</span>
         </Button>
       </div>
       
-      <div className="mb-6 relative">
+      <div className="mb-8 relative">
         <Input
           type="text"
           placeholder="Search your notes..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+          className="w-full pl-10 pr-4 py-3 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500"
         />
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <Search className="h-5 w-5 text-gray-400" />
@@ -256,14 +296,22 @@ const MyNotes = () => {
       </div>
       
       <Tabs defaultValue="uploaded" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="uploaded" className="flex-1">
-            Uploaded Notes ({filteredUploadedNotes.length})
-          </TabsTrigger>
-          <TabsTrigger value="saved" className="flex-1">
-            Saved Notes ({filteredSavedNotes.length})
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex justify-center mb-6">
+          <TabsList className="bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+            <TabsTrigger 
+              value="uploaded" 
+              className="px-6 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-gray-100"
+            >
+              Uploaded Notes ({filteredUploadedNotes.length})
+            </TabsTrigger>
+            <TabsTrigger 
+              value="saved" 
+              className="px-6 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-gray-100"
+            >
+              Saved Notes ({filteredSavedNotes.length})
+            </TabsTrigger>
+          </TabsList>
+        </div>
         
         <TabsContent value="uploaded" className="mt-2">
           {renderNoteList(filteredUploadedNotes, true)}
