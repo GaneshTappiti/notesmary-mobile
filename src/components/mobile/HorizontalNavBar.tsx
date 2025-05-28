@@ -1,50 +1,33 @@
 
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, FileText, BrainCircuit, Search, User } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { NavItem } from './NavItem';
+import { useNavigation } from '@/hooks/useNavigation';
 
-const HorizontalNavBar = () => {
+const HorizontalNavBar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { navItems } = useNavigation();
   
-  const navItems = [
-    { icon: <Home size={20} />, label: 'Home', path: '/dashboard' },
-    { icon: <FileText size={20} />, label: 'Notes', path: '/my-notes' },
-    { icon: <BrainCircuit size={20} />, label: 'AI', path: '/ai-answers' },
-    { icon: <Search size={20} />, label: 'Find', path: '/find-notes' },
-    { icon: <User size={20} />, label: 'Profile', path: '/settings' },
-  ];
-  
-  const isActive = (path: string) => {
+  const isActive = (path: string): boolean => {
     return location.pathname === path;
+  };
+
+  const handleNavigation = (path: string): void => {
+    navigate(path);
   };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/98 backdrop-blur-lg border-t border-gray-200 safe-bottom">
-      <nav className="flex justify-around items-center h-16 px-4">
+      <nav className="flex justify-around items-center h-16 px-4" role="navigation" aria-label="Main navigation">
         {navItems.map((item) => (
-          <button
-            key={item.path}
-            className={cn(
-              "flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 relative rounded-xl",
-              "min-w-0 active:scale-95 py-1"
-            )}
-            onClick={() => navigate(item.path)}
-          >
-            <div className={cn(
-              "transition-all duration-200 p-2 rounded-lg",
-              isActive(item.path) 
-                ? "text-blue-600 bg-blue-50" 
-                : "text-gray-500"
-            )}>
-              {item.icon}
-            </div>
-
-            {isActive(item.path) && (
-              <div className="absolute bottom-1 h-1 w-6 bg-blue-500 rounded-full transition-opacity duration-200" />
-            )}
-          </button>
+          <NavItem
+            key={item.id}
+            icon={item.icon}
+            label={item.label}
+            isActive={isActive(item.path)}
+            onClick={() => handleNavigation(item.path)}
+          />
         ))}
       </nav>
     </div>
