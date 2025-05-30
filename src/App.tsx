@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -21,44 +22,66 @@ import AdminMessages from "@/pages/AdminMessages";
 // Import NotFound page
 import NotFound from "@/pages/NotFound";
 
-// Lazy load all other page components with proper error boundaries
-const Index = lazy(() => import("@/pages/Index"));
-const MyNotes = lazy(() => import("@/pages/MyNotes"));
-const UploadNotes = lazy(() => import("@/pages/UploadNotes"));
-const FindNotes = lazy(() => import("@/pages/FindNotes"));
-const ViewNotes = lazy(() => import("@/pages/ViewNotes"));
-const AIAnswers = lazy(() => import("@/pages/AIAnswers"));
-const AIMarkAnswers = lazy(() => import("@/pages/AIMarkAnswers"));
-const StudyRooms = lazy(() => import("@/pages/StudyRooms"));
-const StudyRoom = lazy(() => import("@/pages/StudyRoom"));
-const StudyAnalytics = lazy(() => import("@/pages/StudyAnalytics"));
-const Notifications = lazy(() => import("@/pages/Notifications"));
-const Features = lazy(() => import("@/pages/Features"));
-const Pricing = lazy(() => import("@/pages/Pricing"));
-const Settings = lazy(() => import("@/pages/Settings"));
-const Subscription = lazy(() => import("@/pages/Subscription"));
+// Enhanced lazy loading with error boundaries
+const createLazyComponent = (importFunc: () => Promise<{ default: React.ComponentType<any> }>) => {
+  return lazy(() => 
+    importFunc().catch(() => ({
+      default: () => (
+        <div className="h-screen flex flex-col items-center justify-center p-4">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold mb-2">Loading Error</h2>
+            <p className="text-gray-600 mb-4">Failed to load this page.</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      )
+    }))
+  );
+};
+
+// Lazy load all other page components with enhanced error handling
+const Index = createLazyComponent(() => import("@/pages/Index"));
+const MyNotes = createLazyComponent(() => import("@/pages/MyNotes"));
+const UploadNotes = createLazyComponent(() => import("@/pages/UploadNotes"));
+const FindNotes = createLazyComponent(() => import("@/pages/FindNotes"));
+const ViewNotes = createLazyComponent(() => import("@/pages/ViewNotes"));
+const AIAnswers = createLazyComponent(() => import("@/pages/AIAnswers"));
+const AIMarkAnswers = createLazyComponent(() => import("@/pages/AIMarkAnswers"));
+const StudyRooms = createLazyComponent(() => import("@/pages/StudyRooms"));
+const StudyRoom = createLazyComponent(() => import("@/pages/StudyRoom"));
+const StudyAnalytics = createLazyComponent(() => import("@/pages/StudyAnalytics"));
+const Notifications = createLazyComponent(() => import("@/pages/Notifications"));
+const Features = createLazyComponent(() => import("@/pages/Features"));
+const Pricing = createLazyComponent(() => import("@/pages/Pricing"));
+const Settings = createLazyComponent(() => import("@/pages/Settings"));
+const Subscription = createLazyComponent(() => import("@/pages/Subscription"));
 
 // Admin dashboard pages
-const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
-const AdminNotes = lazy(() => import("@/pages/AdminNotes"));
-const AdminUsers = lazy(() => import("@/pages/AdminUsers"));
-const AdminEvents = lazy(() => import("@/pages/AdminEvents"));
-const AdminAnalytics = lazy(() => import("@/pages/AdminAnalytics"));
+const AdminDashboard = createLazyComponent(() => import("@/pages/AdminDashboard"));
+const AdminNotes = createLazyComponent(() => import("@/pages/AdminNotes"));
+const AdminUsers = createLazyComponent(() => import("@/pages/AdminUsers"));
+const AdminEvents = createLazyComponent(() => import("@/pages/AdminEvents"));
+const AdminAnalytics = createLazyComponent(() => import("@/pages/AdminAnalytics"));
 
 // New College Management pages
-const AdminColleges = lazy(() => import("@/pages/AdminColleges"));
-const AdminCollegeDetails = lazy(() => import("@/pages/AdminCollegeDetails"));
+const AdminColleges = createLazyComponent(() => import("@/pages/AdminColleges"));
+const AdminCollegeDetails = createLazyComponent(() => import("@/pages/AdminCollegeDetails"));
 
 // College Admin dashboard pages
-const CollegeAdminDashboard = lazy(() => import("@/pages/college-admin/CollegeAdminDashboard"));
-const NotesApproval = lazy(() => import("@/pages/college-admin/NotesApproval"));
-const UserManagement = lazy(() => import("@/pages/college-admin/UserManagement"));
-const StudyRoomsMonitor = lazy(() => import("@/pages/college-admin/StudyRoomsMonitor"));
-const CollegeAdminSettings = lazy(() => import("@/pages/college-admin/CollegeAdminSettings"));
+const CollegeAdminDashboard = createLazyComponent(() => import("@/pages/college-admin/CollegeAdminDashboard"));
+const NotesApproval = createLazyComponent(() => import("@/pages/college-admin/NotesApproval"));
+const UserManagement = createLazyComponent(() => import("@/pages/college-admin/UserManagement"));
+const StudyRoomsMonitor = createLazyComponent(() => import("@/pages/college-admin/StudyRoomsMonitor"));
+const CollegeAdminSettings = createLazyComponent(() => import("@/pages/college-admin/CollegeAdminSettings"));
 
 // Add StudyPulse imports
-const StudyPulse = lazy(() => import("@/pages/StudyPulse"));
-const StudyPulseRoom = lazy(() => import("@/pages/StudyPulseRoom"));
+const StudyPulse = createLazyComponent(() => import("@/pages/StudyPulse"));
+const StudyPulseRoom = createLazyComponent(() => import("@/pages/StudyPulseRoom"));
 
 // Create a component to handle scroll restoration
 const ScrollToTop = () => {
@@ -81,6 +104,7 @@ const queryClient = new QueryClient({
   },
 });
 
+// Enhanced loading component
 const Loading = () => (
   <div className="h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-white">
     <div className="w-full max-w-md space-y-4">
@@ -88,11 +112,21 @@ const Loading = () => (
       <Skeleton className="h-4 w-3/4 mx-auto" />
       <Skeleton className="h-4 w-full" />
       <Skeleton className="h-4 w-2/3 mx-auto" />
+      <p className="text-center text-sm text-gray-500 mt-4">Loading application...</p>
     </div>
   </div>
 );
 
-// Main App component
+// Enhanced Suspense wrapper with better error handling
+const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
+  <ErrorBoundary>
+    <Suspense fallback={<Loading />}>
+      {children}
+    </Suspense>
+  </ErrorBoundary>
+);
+
+// Main App component with enhanced error handling
 const App = () => (
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
@@ -106,23 +140,23 @@ const App = () => (
               {/* Public routes */}
               <Route path="/" element={
                 <PublicRoute>
-                  <Suspense fallback={<Loading />}>
+                  <SuspenseWrapper>
                     <Index />
-                  </Suspense>
+                  </SuspenseWrapper>
                 </PublicRoute>
               } />
               
               {/* New routes for Features and Pricing */}
               <Route path="/features" element={
-                <Suspense fallback={<Loading />}>
+                <SuspenseWrapper>
                   <Features />
-                </Suspense>
+                </SuspenseWrapper>
               } />
               
               <Route path="/pricing" element={
-                <Suspense fallback={<Loading />}>
+                <SuspenseWrapper>
                   <Pricing />
-                </Suspense>
+                </SuspenseWrapper>
               } />
               
               {/* Authentication route */}
@@ -143,9 +177,9 @@ const App = () => (
               <Route path="/settings" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <Settings />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -153,9 +187,9 @@ const App = () => (
               <Route path="/subscription" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <Subscription />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -164,9 +198,9 @@ const App = () => (
               <Route path="/my-notes" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <MyNotes />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -174,9 +208,9 @@ const App = () => (
               <Route path="/upload-notes" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <UploadNotes />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -184,9 +218,9 @@ const App = () => (
               <Route path="/find-notes" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <FindNotes />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -194,9 +228,9 @@ const App = () => (
               <Route path="/view-notes/:noteId" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <ViewNotes />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -204,9 +238,9 @@ const App = () => (
               <Route path="/ai-answers" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <AIAnswers />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -214,9 +248,9 @@ const App = () => (
               <Route path="/ai-mark-answers" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <AIMarkAnswers />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -224,9 +258,9 @@ const App = () => (
               <Route path="/notifications" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <Notifications />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -234,9 +268,9 @@ const App = () => (
               <Route path="/study-rooms" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <StudyRooms />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -245,9 +279,9 @@ const App = () => (
               <Route path="/study-room/:roomId" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <StudyRoom />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -256,9 +290,9 @@ const App = () => (
               <Route path="/study-rooms/create" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <StudyRooms />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -267,11 +301,9 @@ const App = () => (
               <Route path="/study-pulse" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
-                      <ErrorBoundary>
-                        <StudyPulse />
-                      </ErrorBoundary>
-                    </Suspense>
+                    <SuspenseWrapper>
+                      <StudyPulse />
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -279,11 +311,9 @@ const App = () => (
               <Route path="/study-pulse/:roomId" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
-                      <ErrorBoundary>
-                        <StudyPulseRoom />
-                      </ErrorBoundary>
-                    </Suspense>
+                    <SuspenseWrapper>
+                      <StudyPulseRoom />
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -291,9 +321,9 @@ const App = () => (
               <Route path="/study-analytics" element={
                 <PrivateRoute>
                   <AppLayout>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <StudyAnalytics />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </AppLayout>
                 </PrivateRoute>
               } />
@@ -301,35 +331,35 @@ const App = () => (
               {/* College Admin Routes */}
               <Route path="/college-admin" element={
                 <PrivateRoute>
-                  <Suspense fallback={<Loading />}>
+                  <SuspenseWrapper>
                     <CollegeAdminLayout />
-                  </Suspense>
+                  </SuspenseWrapper>
                 </PrivateRoute>
               }>
                 <Route path="dashboard" element={
-                  <Suspense fallback={<Loading />}>
+                  <SuspenseWrapper>
                     <CollegeAdminDashboard />
-                  </Suspense>
+                  </SuspenseWrapper>
                 } />
                 <Route path="notes-approval" element={
-                  <Suspense fallback={<Loading />}>
+                  <SuspenseWrapper>
                     <NotesApproval />
-                  </Suspense>
+                  </SuspenseWrapper>
                 } />
                 <Route path="user-management" element={
-                  <Suspense fallback={<Loading />}>
+                  <SuspenseWrapper>
                     <UserManagement />
-                  </Suspense>
+                  </SuspenseWrapper>
                 } />
                 <Route path="studyrooms" element={
-                  <Suspense fallback={<Loading />}>
+                  <SuspenseWrapper>
                     <StudyRoomsMonitor />
-                  </Suspense>
+                  </SuspenseWrapper>
                 } />
                 <Route path="settings" element={
-                  <Suspense fallback={<Loading />}>
+                  <SuspenseWrapper>
                     <CollegeAdminSettings />
-                  </Suspense>
+                  </SuspenseWrapper>
                 } />
                 <Route index element={<Navigate to="/college-admin/dashboard" replace />} />
               </Route>
@@ -339,9 +369,9 @@ const App = () => (
                 path="/admin" 
                 element={
                   <PrivateRoute adminOnly={true}>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <AdminDashboard />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </PrivateRoute>
                 } 
               />
@@ -361,9 +391,9 @@ const App = () => (
                 path="/admin/colleges" 
                 element={
                   <PrivateRoute adminOnly={true}>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <AdminColleges />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </PrivateRoute>
                 } 
               />
@@ -372,9 +402,9 @@ const App = () => (
                 path="/admin/colleges/:id" 
                 element={
                   <PrivateRoute adminOnly={true}>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <AdminCollegeDetails />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </PrivateRoute>
                 } 
               />
@@ -384,9 +414,9 @@ const App = () => (
                 path="/admin/notes" 
                 element={
                   <PrivateRoute adminOnly={true}>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <AdminNotes />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </PrivateRoute>
                 } 
               />
@@ -395,9 +425,9 @@ const App = () => (
                 path="/admin/users" 
                 element={
                   <PrivateRoute adminOnly={true}>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <AdminUsers />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </PrivateRoute>
                 } 
               />
@@ -406,9 +436,9 @@ const App = () => (
                 path="/admin/events" 
                 element={
                   <PrivateRoute adminOnly={true}>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <AdminEvents />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </PrivateRoute>
                 } 
               />
@@ -417,9 +447,9 @@ const App = () => (
                 path="/admin/analytics" 
                 element={
                   <PrivateRoute adminOnly={true}>
-                    <Suspense fallback={<Loading />}>
+                    <SuspenseWrapper>
                       <AdminAnalytics />
-                    </Suspense>
+                    </SuspenseWrapper>
                   </PrivateRoute>
                 } 
               />

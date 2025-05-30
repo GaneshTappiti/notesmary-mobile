@@ -3,6 +3,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import HorizontalNavBar from './HorizontalNavBar';
 import { PageTransition } from './PageTransition';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -26,16 +27,22 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         !hideBottomNav && "pb-20" // Add bottom padding when nav is shown
       )}>
         <div className="px-4 py-4 safe-top">
-          {pageTransition ? (
-            <PageTransition direction={transitionDirection}>
-              {children}
-            </PageTransition>
-          ) : (
-            children
-          )}
+          <ErrorBoundary>
+            {pageTransition ? (
+              <PageTransition direction={transitionDirection}>
+                {children}
+              </PageTransition>
+            ) : (
+              children
+            )}
+          </ErrorBoundary>
         </div>
       </main>
-      {!hideBottomNav && <HorizontalNavBar />}
+      {!hideBottomNav && (
+        <ErrorBoundary>
+          <HorizontalNavBar />
+        </ErrorBoundary>
+      )}
     </div>
   );
 };
