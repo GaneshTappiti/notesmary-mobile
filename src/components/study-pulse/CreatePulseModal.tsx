@@ -1,332 +1,164 @@
 
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
-import { X, ArrowRight, ArrowLeft, Check } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface CreatePulseModalProps {
   open: boolean;
   onClose: () => void;
-  onCreate: (roomData: any) => void;
+  onCreate: (data: any) => void;
 }
 
-export const CreatePulseModal: React.FC<CreatePulseModalProps> = ({
-  open,
-  onClose,
-  onCreate
-}) => {
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    isPublic: true,
-    duration: '1hr',
-    tags: [] as string[],
-    currentTag: ''
-  });
-  
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-  
-  const handleSwitchChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, isPublic: checked }));
-  };
-  
-  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && formData.currentTag.trim()) {
-      e.preventDefault();
-      const newTag = formData.currentTag.trim().startsWith('#') 
-        ? formData.currentTag.trim() 
-        : `#${formData.currentTag.trim()}`;
-        
-      if (!formData.tags.includes(newTag)) {
-        setFormData(prev => ({
-          ...prev,
-          tags: [...prev.tags, newTag],
-          currentTag: ''
-        }));
-      }
+export const CreatePulseModal = ({ open, onClose, onCreate }: CreatePulseModalProps) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [type, setType] = useState('public');
+  const [tags, setTags] = useState<string[]>([]);
+  const [currentTag, setCurrentTag] = useState('');
+
+  const suggestedTags = ['#Math', '#Physics', '#Chemistry', '#Biology', '#ComputerScience', '#Literature', '#History'];
+
+  const addTag = (tag: string) => {
+    const formattedTag = tag.startsWith('#') ? tag : `#${tag}`;
+    if (!tags.includes(formattedTag) && tags.length < 5) {
+      setTags([...tags, formattedTag]);
     }
+    setCurrentTag('');
   };
-  
-  const handleRemoveTag = (tagToRemove: string) => {
-    setFormData(prev => ({
-      ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
-    }));
+
+  const removeTag = (tagToRemove: string) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
   };
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+
+  const handleSubmit = () => {
+    if (!title.trim() || !description.trim()) return;
     
-    // Only proceed with submission if we're on the final step
-    if (step === 3) {
-      const roomData = {
-        title: formData.title,
-        description: formData.description,
-        type: formData.isPublic ? 'public' : 'private',
-        duration: formData.duration,
-        tags: formData.tags,
-        createdAt: new Date().toISOString()
-      };
-      onCreate(roomData);
-      
-      // Reset form
-      setFormData({
-        title: '',
-        description: '',
-        isPublic: true,
-        duration: '1hr',
-        tags: [],
-        currentTag: ''
-      });
-      setStep(1);
-    }
-  };
-  
-  const nextStep = () => {
-    if (step < 3) setStep(step + 1);
-  };
-  
-  const prevStep = () => {
-    if (step > 1) setStep(step - 1);
-  };
-  
-  // Handle key presses globally within the form
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Prevent form submission on Enter key unless we're on the final step
-    if (e.key === 'Enter' && step !== 3) {
-      e.preventDefault();
-      
-      // If in the title field and it has content, go to next step
-      if (step === 1 && formData.title.trim()) {
-        nextStep();
-      }
-      // If adding tags, don't do anything as it's handled by handleAddTag
-    }
-  };
-  
-  const predefinedTags = ['#DSA', '#Math', '#Physics', '#AI', '#CSE', '#Chemistry', '#Biology', '#ExamPrep', '#LateNightStudy'];
-  
-  const handleClose = () => {
-    onClose();
-    setStep(1);
-    setFormData({
-      title: '',
-      description: '',
-      isPublic: true,
-      duration: '1hr',
-      tags: [],
-      currentTag: ''
+    onCreate({
+      title,
+      description,
+      type,
+      tags
     });
+    
+    // Reset form
+    setTitle('');
+    setDescription('');
+    setType('public');
+    setTags([]);
+    setCurrentTag('');
   };
-  
+
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Create StudyPulse Room</DialogTitle>
-          <DialogDescription>
-            Create a new live study room to collaborate with others
-          </DialogDescription>
+          <DialogTitle>Start a Live StudyPulse</DialogTitle>
         </DialogHeader>
         
-        <div className="mb-6 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium ${step === 1 ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'}`}>1</div>
-            <div className="h-1 w-8 bg-gray-200">
-              <div className={`h-full bg-purple-600 ${step >= 2 ? 'w-full' : 'w-0'} transition-all duration-300`}></div>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="title">Room Title</Label>
+            <Input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter room title..."
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Describe what you'll be studying..."
+              rows={3}
+            />
+          </div>
+          
+          <div>
+            <Label>Room Type</Label>
+            <RadioGroup value={type} onValueChange={setType}>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="public" id="public" />
+                <Label htmlFor="public">Public - Anyone can join</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="private" id="private" />
+                <Label htmlFor="private">Private - Invite only</Label>
+              </div>
+            </RadioGroup>
+          </div>
+          
+          <div>
+            <Label>Tags (max 5)</Label>
+            <div className="flex gap-2 mb-2">
+              <Input
+                value={currentTag}
+                onChange={(e) => setCurrentTag(e.target.value)}
+                placeholder="Add a tag..."
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTag(currentTag);
+                  }
+                }}
+              />
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => addTag(currentTag)}
+                disabled={!currentTag.trim() || tags.length >= 5}
+              >
+                Add
+              </Button>
             </div>
-            <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium ${step === 2 ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'}`}>2</div>
-            <div className="h-1 w-8 bg-gray-200">
-              <div className={`h-full bg-purple-600 ${step >= 3 ? 'w-full' : 'w-0'} transition-all duration-300`}></div>
+            
+            <div className="flex flex-wrap gap-1 mb-2">
+              {tags.map(tag => (
+                <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                  {tag}
+                  <X 
+                    className="h-3 w-3 cursor-pointer" 
+                    onClick={() => removeTag(tag)}
+                  />
+                </Badge>
+              ))}
             </div>
-            <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium ${step === 3 ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'}`}>3</div>
+            
+            <div className="flex flex-wrap gap-1">
+              {suggestedTags.map(tag => (
+                <Badge 
+                  key={tag}
+                  variant="outline" 
+                  className="cursor-pointer hover:bg-gray-100"
+                  onClick={() => addTag(tag)}
+                >
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSubmit}
+              disabled={!title.trim() || !description.trim()}
+            >
+              Create Room
+            </Button>
           </div>
         </div>
-        
-        <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-4 py-2">
-          {/* Step 1: Room Info */}
-          {step === 1 && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="space-y-2">
-                <Label htmlFor="title">Room Title</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  placeholder="E.g., DSA Doubt Solving Session"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  placeholder="What will you be studying or discussing?"
-                  className="resize-none h-20"
-                  maxLength={120}
-                />
-                <div className="text-xs text-right text-gray-500">
-                  {formData.description.length}/120 characters
-                </div>
-              </div>
-              
-              <div className="pt-4 flex justify-end">
-                <Button 
-                  type="button" 
-                  onClick={nextStep} 
-                  disabled={!formData.title.trim()}
-                  className="bg-purple-600 hover:bg-purple-700"
-                >
-                  Next
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          )}
-          
-          {/* Step 2: Tags & Type */}
-          {step === 2 && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="space-y-2">
-                <Label htmlFor="tags">Tags</Label>
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {formData.tags.map((tag, index) => (
-                    <Badge 
-                      key={index} 
-                      variant="secondary"
-                      className="flex items-center gap-1 bg-purple-50"
-                    >
-                      {tag}
-                      <X 
-                        className="h-3 w-3 cursor-pointer" 
-                        onClick={() => handleRemoveTag(tag)}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-                <Input
-                  id="currentTag"
-                  name="currentTag"
-                  value={formData.currentTag}
-                  onChange={handleInputChange}
-                  onKeyDown={handleAddTag}
-                  placeholder="Type a tag and press Enter"
-                />
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {predefinedTags.map((tag, index) => (
-                    <Badge 
-                      key={index} 
-                      variant="outline"
-                      className={`cursor-pointer hover:bg-purple-50 ${formData.tags.includes(tag) ? 'bg-purple-100' : ''}`}
-                      onClick={() => {
-                        if (!formData.tags.includes(tag)) {
-                          setFormData(prev => ({
-                            ...prev,
-                            tags: [...prev.tags, tag]
-                          }));
-                        }
-                      }}
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="flex justify-between items-center mt-4">
-                <div className="space-y-1">
-                  <Label htmlFor="public-switch">Public Room</Label>
-                  <p className="text-xs text-gray-500">
-                    {formData.isPublic 
-                      ? 'Anyone can discover and join your room' 
-                      : 'Only people with the link can join'}
-                  </p>
-                </div>
-                <Switch 
-                  id="public-switch"
-                  checked={formData.isPublic}
-                  onCheckedChange={handleSwitchChange}
-                />
-              </div>
-              
-              <div className="pt-4 flex justify-between">
-                <Button 
-                  type="button" 
-                  variant="outline"
-                  onClick={prevStep}
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
-                </Button>
-                
-                <Button 
-                  type="button" 
-                  onClick={nextStep}
-                  disabled={formData.tags.length === 0}
-                  className="bg-purple-600 hover:bg-purple-700"
-                >
-                  Next
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          )}
-          
-          {/* Step 3: Room Duration */}
-          {step === 3 && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="space-y-2">
-                <Label htmlFor="duration">Room Duration</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  {['30min', '1hr', '2hr', 'Until Closed'].map(duration => (
-                    <Button
-                      key={duration}
-                      type="button"
-                      variant={formData.duration === duration ? 'default' : 'outline'}
-                      className={`flex items-center justify-center py-6 ${formData.duration === duration ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
-                      onClick={() => setFormData(prev => ({ ...prev, duration }))}
-                    >
-                      {duration}
-                      {formData.duration === duration && <Check className="ml-2 h-4 w-4" />}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="pt-4 flex justify-between">
-                <Button 
-                  type="button" 
-                  variant="outline"
-                  onClick={prevStep}
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
-                </Button>
-                
-                <Button 
-                  type="submit" 
-                  className="bg-purple-600 hover:bg-purple-700 gap-2"
-                >
-                  <span>Create & Start Room</span>
-                </Button>
-              </div>
-            </div>
-          )}
-        </form>
       </DialogContent>
     </Dialog>
   );

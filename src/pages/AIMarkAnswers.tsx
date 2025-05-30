@@ -1,258 +1,317 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { FileText, Copy, Download, Upload, X, Loader2 } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
-import { PageContainer } from '@/components/PageContainer';
 
-type AnswerType = '2marks' | '5marks' | '10marks' | 'all';
-type GeneratedAnswer = {
-  twoMarks?: string;
-  fiveMarks?: string;
-  tenMarks?: string;
-};
+import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { Brain, Upload, FileText, CheckCircle2, AlertTriangle, Star } from 'lucide-react';
+import { PageContainer } from '@/components/PageContainer';
 
 const AIMarkAnswers = () => {
   const { toast } = useToast();
-  const [file, setFile] = useState<File | null>(null);
-  const [answerType, setAnswerType] = useState<AnswerType>('all');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedAnswer, setGeneratedAnswer] = useState<GeneratedAnswer | null>(null);
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [rubric, setRubric] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isMarking, setIsMarking] = useState(false);
+  const [markingResult, setMarkingResult] = useState<any>(null);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile) {
-      const fileType = selectedFile.type;
-      if (
-        fileType === 'application/pdf' ||
-        fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      ) {
-        if (selectedFile.size <= 10 * 1024 * 1024) {
-          setFile(selectedFile);
-        } else {
-          toast({
-            title: "File too large",
-            description: "Maximum file size is 10MB",
-            variant: "destructive",
-          });
-        }
-      } else {
-        toast({
-          title: "Invalid file format",
-          description: "Please upload PDF or DOCX files only",
-          variant: "destructive",
-        });
-      }
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
     }
   };
 
-  const removeFile = () => {
-    setFile(null);
-  };
-
-  const generateAnswer = () => {
-    if (!file) return;
-    
-    setIsGenerating(true);
-    
-    setTimeout(() => {
-      setGeneratedAnswer({
-        twoMarks: "A transformer is an electrical device that transfers energy between two or more circuits through electromagnetic induction. It consists of two or more coils of wire wound around a core, and it's used to increase (step up) or decrease (step down) AC voltages.",
-        fiveMarks: "A transformer is a static electrical device that transfers electrical energy between two or more circuits through electromagnetic induction. It consists of a core made of laminated iron sheets and two or more windings.\n\nKey principles:\n1. Mutual induction: When alternating current flows through the primary winding, it creates a changing magnetic field\n2. Core function: The iron core concentrates the magnetic flux\n3. Voltage transformation: The ratio of secondary to primary voltage is equal to the ratio of secondary to primary turns\n4. Power conservation: In an ideal transformer, input power equals output power\n\nTransformers are essential in power distribution systems for changing voltage levels efficiently.",
-        tenMarks: "# Working Principle of a Transformer\n\n## Basic Structure\nA transformer consists of:\n- An iron core made of laminated sheets to reduce eddy current losses\n- Primary winding connected to the input AC source\n- Secondary winding connected to the load\n- Sometimes a tertiary winding for special applications\n\n## Working Principle\n\n### 1. Electromagnetic Induction\nWhen an alternating current flows through the primary winding, it produces a changing magnetic flux in the core. This changing flux links with the secondary winding and induces an EMF (electromotive force) according to Faraday's law of electromagnetic induction.\n\n### 2. Flux Linkage\nThe iron core provides a path for the magnetic flux, ensuring most of the flux produced by the primary winding links with the secondary winding. This maximizes energy transfer efficiency.\n\n### 3. Voltage Transformation\nThe voltage transformation ratio is given by:\nVs/Vp = Ns/Np\nWhere:\n- Vs = Secondary voltage\n- Vp = Primary voltage\n- Ns = Number of turns in secondary\n- Np = Number of turns in primary\n\n### 4. Current Transformation\nThe current transformation follows an inverse relationship:\nIs/Ip = Np/Ns\n\n### 5. Power Conservation\nIn an ideal transformer: Input power = Output power\nVp × Ip = Vs × Is\n\n## Types of Transformers\n1. Step-up transformer: Increases voltage (Ns > Np)\n2. Step-down transformer: Decreases voltage (Ns < Np)\n3. Isolation transformer: Same voltage (Ns = Np)\n\n## Losses in Transformers\n1. Copper losses (I²R losses)\n2. Eddy current losses\n3. Hysteresis losses\n4. Flux leakage\n\n## Efficiency\nTransformer efficiency = (Output power / Input power) × 100%\n\n## Applications\n1. Power distribution systems\n2. Electronic circuits\n3. Voltage stabilization\n4. Impedance matching"
+  const handleMarkAnswer = async () => {
+    if (!question || !answer) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide both a question and answer to mark.",
+        variant: "destructive",
       });
-      setIsGenerating(false);
+      return;
+    }
+
+    setIsMarking(true);
+    
+    try {
+      // Simulate AI marking process
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // Mock marking result
+      const mockResult = {
+        score: 85,
+        maxScore: 100,
+        grade: 'B+',
+        feedback: [
+          {
+            type: 'strength',
+            text: 'Excellent understanding of the core concepts and clear explanation of the methodology.'
+          },
+          {
+            type: 'improvement',
+            text: 'Could benefit from more specific examples to support your arguments.'
+          },
+          {
+            type: 'suggestion',
+            text: 'Consider expanding on the implications of your findings in the conclusion.'
+          }
+        ],
+        breakdown: [
+          { criterion: 'Understanding', score: 9, maxScore: 10 },
+          { criterion: 'Analysis', score: 8, maxScore: 10 },
+          { criterion: 'Communication', score: 7, maxScore: 10 },
+          { criterion: 'Evidence', score: 6, maxScore: 10 }
+        ]
+      };
+      
+      setMarkingResult(mockResult);
       
       toast({
-        title: "Answer generated successfully",
-        description: "We've generated answers based on your material",
+        title: "Answer Marked Successfully",
+        description: `Your answer received a score of ${mockResult.score}/${mockResult.maxScore} (${mockResult.grade})`,
       });
-    }, 2000);
+      
+    } catch (error) {
+      toast({
+        title: "Marking Failed",
+        description: "There was an error marking your answer. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsMarking(false);
+    }
   };
 
-  const copyAnswer = (answer: string) => {
-    navigator.clipboard.writeText(answer);
-    toast({
-      title: "Copied to clipboard",
-      description: "Answer has been copied to clipboard",
-    });
-  };
-
-  const downloadAnswer = (answer: string, markType: string) => {
-    const element = document.createElement('a');
-    const file = new Blob([answer], {type: 'text/plain'});
-    element.href = URL.createObjectURL(file);
-    element.download = `${markType}_answer_${new Date().toISOString().slice(0, 10)}.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+  const resetForm = () => {
+    setQuestion('');
+    setAnswer('');
+    setRubric('');
+    setSelectedFile(null);
+    setMarkingResult(null);
   };
 
   return (
-    <PageContainer>
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">AI-Powered Answer Generator</h1>
-        <p className="text-gray-600 dark:text-gray-400">Upload study material and get structured answers based on mark distribution.</p>
-      </div>
-
-      <div className="grid gap-6 grid-cols-1">
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle>Upload Study Material</CardTitle>
-            <CardDescription>Supported formats: PDF, DOCX (Max 10MB)</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {!file ? (
-              <div 
-                className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                onClick={() => document.getElementById('file-upload')?.click()}
-              >
-                <input
-                  id="file-upload"
-                  type="file"
-                  className="hidden"
-                  accept=".pdf,.docx"
-                  onChange={handleFileUpload}
-                />
-                <Upload className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-                <p className="text-sm text-gray-500 dark:text-gray-400">Drag & Drop or Click to Browse</p>
-                <p className="text-xs text-gray-400 mt-2">Upload a study material to generate AI-powered structured answers!</p>
+    <>
+      <Helmet>
+        <title>AI Mark Answers | Notex</title>
+      </Helmet>
+      
+      <PageContainer>
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-6 text-center">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl">
+                <Brain className="h-8 w-8 text-white" />
               </div>
-            ) : (
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div className="flex items-center">
-                  <FileText className="h-5 w-5 text-blue-500 mr-2" />
-                  <span className="text-sm font-medium truncate max-w-xs">{file.name}</span>
-                </div>
-                <Button variant="ghost" size="sm" onClick={removeFile} className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20">
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle>Select Answer Type</CardTitle>
-            <CardDescription>Choose the mark distribution for your answer</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Select 
-              value={answerType} 
-              onValueChange={(value) => setAnswerType(value as AnswerType)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Choose Answer Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="2marks">2 Marks - Short & concise explanation</SelectItem>
-                <SelectItem value="5marks">5 Marks - Detailed explanation with key points</SelectItem>
-                <SelectItem value="10marks">10 Marks - In-depth breakdown with stepwise explanation</SelectItem>
-                <SelectItem value="all">All Formats (Generate all three types)</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Button 
-              className="w-full mt-6 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
-              disabled={!file || isGenerating}
-              onClick={generateAnswer}
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing with AI...
-                </>
-              ) : (
-                "Generate Answer"
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {generatedAnswer && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-center">Generated Answers</h2>
-
-            {(answerType === '2marks' || answerType === 'all') && generatedAnswer.twoMarks && (
-              <Card className="shadow-md border-l-4 border-green-500">
-                <CardHeader>
-                  <CardTitle className="flex justify-between items-center">
-                    <span>2 Marks Answer</span>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => copyAnswer(generatedAnswer.twoMarks!)}>
-                        <Copy className="h-4 w-4 mr-1" />
-                        Copy
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => downloadAnswer(generatedAnswer.twoMarks!, '2marks')}>
-                        <Download className="h-4 w-4 mr-1" />
-                        Download
-                      </Button>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose dark:prose-invert max-w-none">
-                    <p>{generatedAnswer.twoMarks}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {(answerType === '5marks' || answerType === 'all') && generatedAnswer.fiveMarks && (
-              <Card className="shadow-md border-l-4 border-blue-500">
-                <CardHeader>
-                  <CardTitle className="flex justify-between items-center">
-                    <span>5 Marks Answer</span>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => copyAnswer(generatedAnswer.fiveMarks!)}>
-                        <Copy className="h-4 w-4 mr-1" />
-                        Copy
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => downloadAnswer(generatedAnswer.fiveMarks!, '5marks')}>
-                        <Download className="h-4 w-4 mr-1" />
-                        Download
-                      </Button>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose dark:prose-invert max-w-none whitespace-pre-line">
-                    <p>{generatedAnswer.fiveMarks}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {(answerType === '10marks' || answerType === 'all') && generatedAnswer.tenMarks && (
-              <Card className="shadow-md border-l-4 border-purple-500">
-                <CardHeader>
-                  <CardTitle className="flex justify-between items-center">
-                    <span>10 Marks Answer</span>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => copyAnswer(generatedAnswer.tenMarks!)}>
-                        <Copy className="h-4 w-4 mr-1" />
-                        Copy
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => downloadAnswer(generatedAnswer.tenMarks!, '10marks')}>
-                        <Download className="h-4 w-4 mr-1" />
-                        Download
-                      </Button>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose dark:prose-invert max-w-none">
-                    <pre className="whitespace-pre-wrap text-sm font-sans">{generatedAnswer.tenMarks}</pre>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                AI Answer Marking
+              </h1>
+            </div>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Get instant, detailed feedback on your answers with AI-powered marking and personalized improvement suggestions
+            </p>
           </div>
-        )}
-      </div>
-    </PageContainer>
+
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Input Section */}
+            <div className="xl:col-span-2 space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Question & Answer
+                  </CardTitle>
+                  <CardDescription>
+                    Enter the question and your answer for AI marking
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor="question">Question</Label>
+                    <Textarea
+                      id="question"
+                      value={question}
+                      onChange={(e) => setQuestion(e.target.value)}
+                      placeholder="Enter the question you're answering..."
+                      rows={3}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="answer">Your Answer</Label>
+                    <Textarea
+                      id="answer"
+                      value={answer}
+                      onChange={(e) => setAnswer(e.target.value)}
+                      placeholder="Enter your answer here..."
+                      rows={8}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="rubric">Marking Rubric (Optional)</Label>
+                    <Textarea
+                      id="rubric"
+                      value={rubric}
+                      onChange={(e) => setRubric(e.target.value)}
+                      placeholder="Provide specific marking criteria or rubric..."
+                      rows={3}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="file">Upload Answer File (Optional)</Label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-colors">
+                      <input
+                        id="file"
+                        type="file"
+                        className="hidden"
+                        onChange={handleFileChange}
+                        accept=".pdf,.doc,.docx,.txt"
+                      />
+                      
+                      {selectedFile ? (
+                        <div>
+                          <CheckCircle2 className="h-8 w-8 text-green-500 mx-auto mb-2" />
+                          <p className="font-medium">{selectedFile.name}</p>
+                        </div>
+                      ) : (
+                        <div>
+                          <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                          <p className="text-sm text-gray-600">Upload answer document</p>
+                        </div>
+                      )}
+                      
+                      <Button 
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="mt-2"
+                        onClick={() => document.getElementById('file')?.click()}
+                      >
+                        {selectedFile ? "Change File" : "Browse Files"}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button 
+                      onClick={handleMarkAnswer}
+                      disabled={isMarking || (!question || !answer)}
+                      className="flex-1"
+                    >
+                      {isMarking ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                          Marking Answer...
+                        </>
+                      ) : (
+                        <>
+                          <Brain className="h-4 w-4 mr-2" />
+                          Mark My Answer
+                        </>
+                      )}
+                    </Button>
+                    
+                    <Button variant="outline" onClick={resetForm}>
+                      Clear
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Results Section */}
+            <div className="xl:col-span-1">
+              {markingResult ? (
+                <div className="space-y-4">
+                  <Card>
+                    <CardHeader className="text-center">
+                      <div className="mx-auto w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center mb-3">
+                        <span className="text-2xl font-bold text-white">
+                          {markingResult.grade}
+                        </span>
+                      </div>
+                      <CardTitle>Score: {markingResult.score}/{markingResult.maxScore}</CardTitle>
+                    </CardHeader>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Detailed Breakdown</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {markingResult.breakdown.map((item: any, index: number) => (
+                        <div key={index} className="flex justify-between items-center">
+                          <span className="text-sm font-medium">{item.criterion}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="flex">
+                              {[...Array(item.maxScore)].map((_, i) => (
+                                <Star 
+                                  key={i} 
+                                  className={`h-3 w-3 ${
+                                    i < item.score ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                                  }`} 
+                                />
+                              ))}
+                            </div>
+                            <span className="text-sm text-gray-600">
+                              {item.score}/{item.maxScore}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Feedback</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {markingResult.feedback.map((item: any, index: number) => (
+                        <div 
+                          key={index}
+                          className={`p-3 rounded-lg border-l-4 ${
+                            item.type === 'strength' 
+                              ? 'bg-green-50 border-green-400' 
+                              : item.type === 'improvement'
+                              ? 'bg-yellow-50 border-yellow-400'
+                              : 'bg-blue-50 border-blue-400'
+                          }`}
+                        >
+                          <div className="flex items-start gap-2">
+                            {item.type === 'strength' && <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5" />}
+                            {item.type === 'improvement' && <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5" />}
+                            {item.type === 'suggestion' && <Brain className="h-4 w-4 text-blue-500 mt-0.5" />}
+                            <p className="text-sm">{item.text}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                <Card className="text-center py-12">
+                  <CardContent>
+                    <Brain className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">Ready to Mark</h3>
+                    <p className="text-gray-500 text-sm">
+                      Enter your question and answer to get detailed AI feedback and scoring
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+        </div>
+      </PageContainer>
+    </>
   );
 };
 
