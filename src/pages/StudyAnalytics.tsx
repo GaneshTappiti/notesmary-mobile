@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,42 +25,52 @@ const StudyAnalytics = () => {
   };
   
   const weeklyData = [
-    { day: 'Mon', hours: 3.5, subject: 'Physics' },
-    { day: 'Tue', hours: 2.8, subject: 'Math' },
-    { day: 'Wed', hours: 4.2, subject: 'Chemistry' },
-    { day: 'Thu', hours: 1.9, subject: 'Biology' },
-    { day: 'Fri', hours: 3.7, subject: 'Physics' },
-    { day: 'Sat', hours: 5.1, subject: 'Math' },
-    { day: 'Sun', hours: 2.3, subject: 'Review' }
+    { name: 'Mon', hours: 3.5 },
+    { name: 'Tue', hours: 2.8 },
+    { name: 'Wed', hours: 4.2 },
+    { name: 'Thu', hours: 1.9 },
+    { name: 'Fri', hours: 3.7 },
+    { name: 'Sat', hours: 5.1 },
+    { name: 'Sun', hours: 2.3 }
+  ];
+  
+  const heatmapData = [
+    { date: '2024-01-01', value: 1 },
+    { date: '2024-01-02', value: 3 },
+    { date: '2024-01-03', value: 0 },
+    { date: '2024-01-04', value: 2 },
+    { date: '2024-01-05', value: 4 },
+    { date: '2024-01-06', value: 1 },
+    { date: '2024-01-07', value: 5 }
   ];
   
   const achievements = [
-    { id: 1, title: 'Study Streak Master', description: '7 days in a row', icon: '🔥', earned: true },
-    { id: 2, title: 'Night Owl', description: 'Studied after 10 PM', icon: '🦉', earned: true },
-    { id: 3, title: 'Early Bird', description: 'Studied before 7 AM', icon: '🌅', earned: false },
-    { id: 4, title: 'Subject Explorer', description: 'Studied 5+ subjects', icon: '🎯', earned: true },
-    { id: 5, title: 'Focus Champion', description: '3+ hour session', icon: '⚡', earned: true },
-    { id: 6, title: 'Weekend Warrior', description: 'Studied on weekends', icon: '🛡️', earned: true }
+    { id: 1, title: 'Study Streak Master', description: '7 days in a row', type: 'streakMaster' as const, unlocked: true },
+    { id: 2, title: 'Night Owl', description: 'Studied after 10 PM', type: 'nightOwl' as const, unlocked: true },
+    { id: 3, title: 'Early Bird', description: 'Studied before 7 AM', type: 'consistency' as const, unlocked: false },
+    { id: 4, title: 'Subject Explorer', description: 'Studied 5+ subjects', type: 'noteTaker' as const, unlocked: true },
+    { id: 5, title: 'Focus Champion', description: '3+ hour session', type: 'topLearner' as const, unlocked: true },
+    { id: 6, title: 'Weekend Warrior', description: 'Studied on weekends', type: 'collaborator' as const, unlocked: true }
   ];
   
   const insights = [
     {
       title: 'Best Study Time',
       description: 'You\'re most productive between 2-4 PM',
-      type: 'positive' as const,
-      action: 'Schedule more sessions during this time'
+      type: 'tip' as const,
+      actionText: 'Schedule more sessions during this time'
     },
     {
       title: 'Consistency Opportunity',
       description: 'Try studying for shorter periods more frequently',
-      type: 'suggestion' as const,
-      action: 'Aim for 30-45 minute focused sessions'
+      type: 'tip' as const,
+      actionText: 'Aim for 30-45 minute focused sessions'
     },
     {
       title: 'Subject Balance',
       description: 'Great balance across different subjects this week',
-      type: 'positive' as const,
-      action: 'Keep up the varied study approach'
+      type: 'achievement' as const,
+      actionText: 'Keep up the varied study approach'
     }
   ];
   
@@ -93,7 +102,6 @@ const StudyAnalytics = () => {
           </div>
         </div>
         
-        {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <Card>
             <CardContent className="p-4">
@@ -166,7 +174,11 @@ const StudyAnalytics = () => {
                 <StudyTimeChart data={weeklyData} />
               </div>
               <div className="space-y-4">
-                <StudyStreakCard streak={studyStats.streak} />
+                <StudyStreakCard 
+                  streakDays={studyStats.streak} 
+                  currentStreak={studyStats.streak}
+                  heatmapData={heatmapData}
+                />
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg">Quick Actions</CardTitle>
@@ -194,20 +206,23 @@ const StudyAnalytics = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <ProgressCard 
                 title="Weekly Goal" 
-                current={studyStats.totalHours} 
-                target={40} 
+                value={studyStats.totalHours} 
+                goal={40} 
+                icon={<Clock className="h-4 w-4" />}
                 unit="hours"
               />
               <ProgressCard 
                 title="Monthly Streak" 
-                current={studyStats.streak} 
-                target={30} 
+                value={studyStats.streak} 
+                goal={30} 
+                icon={<Target className="h-4 w-4" />}
                 unit="days"
               />
               <ProgressCard 
                 title="Subject Mastery" 
-                current={12} 
-                target={20} 
+                value={12} 
+                goal={20} 
+                icon={<Brain className="h-4 w-4" />}
                 unit="topics"
               />
             </div>
