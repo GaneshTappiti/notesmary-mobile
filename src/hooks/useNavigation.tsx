@@ -1,5 +1,5 @@
 
-import { Home, FileText, BrainCircuit, Search, User, Bell, BarChart3, Users, Upload } from 'lucide-react';
+import { Home, FileText, Users, BrainCircuit, Settings } from 'lucide-react';
 
 export interface NavItemData {
   id: string;
@@ -12,13 +12,9 @@ export const useNavigation = () => {
   const navItems: NavItemData[] = [
     { id: 'dashboard', icon: <Home size={20} />, label: 'Home', path: '/dashboard' },
     { id: 'my-notes', icon: <FileText size={20} />, label: 'Notes', path: '/my-notes' },
+    { id: 'study-rooms', icon: <Users size={20} />, label: 'Rooms', path: '/study-rooms' },
     { id: 'ai-answers', icon: <BrainCircuit size={20} />, label: 'AI', path: '/ai-answers' },
-    { id: 'find-notes', icon: <Search size={20} />, label: 'Find', path: '/find-notes' },
-    { id: 'upload-notes', icon: <Upload size={20} />, label: 'Upload', path: '/upload-notes' },
-    { id: 'study-pulse', icon: <Users size={20} />, label: 'Pulse', path: '/study-pulse' },
-    { id: 'study-analytics', icon: <BarChart3 size={20} />, label: 'Analytics', path: '/study-analytics' },
-    { id: 'notifications', icon: <Bell size={20} />, label: 'Alerts', path: '/notifications' },
-    { id: 'settings', icon: <User size={20} />, label: 'Profile', path: '/settings' },
+    { id: 'settings', icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
   ];
 
   return { navItems };
