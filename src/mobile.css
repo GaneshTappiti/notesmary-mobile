@@ -25,34 +25,6 @@
   padding-right: env(safe-area-inset-right, 0);
 }
 
-/* Prevent body scroll when sidebar is open */
-body.sidebar-open {
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-}
-
-/* Hardware acceleration for smooth animations */
-.transform-gpu {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-}
-
-/* Touch manipulation for better responsiveness */
-.touch-manipulation {
-  touch-action: manipulation;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-/* Overscroll behavior for better mobile experience */
-.overscroll-contain {
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-}
-
 /* Mobile optimizations with better spacing */
 @media (max-width: 768px) {
   /* Prevent iOS zoom on input focus */
@@ -202,29 +174,4 @@ body.sidebar-open {
 
 .category-item:active {
   transform: scale(0.95);
-}
-
-/* Sidebar specific optimizations */
-@media (max-width: 360px) {
-  .mobile-sidebar {
-    width: 85vw !important;
-    max-width: 85vw !important;
-  }
-}
-
-/* Z-index management */
-.z-overlay { z-index: 999; }
-.z-sidebar { z-index: 1000; }
-.z-toggle { z-index: 1101; }
-.z-bottom-nav { z-index: 1100; }
-
-/* Gesture support indicators */
-@keyframes bounce-hint {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-4px); }
-  60% { transform: translateY(-2px); }
-}
-
-.gesture-hint {
-  animation: bounce-hint 1s ease-in-out;
 }
