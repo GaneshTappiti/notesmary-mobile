@@ -26,7 +26,7 @@ export const MobileHeader = ({
   showBackButton = false,
   showSearchButton = false,
   showNotificationButton = false,
-  showMenuButton = true, // Default to true for new hybrid system
+  showMenuButton = true,
   onSearchClick,
   onMenuClick,
   className,
@@ -58,12 +58,17 @@ export const MobileHeader = ({
       setSidebarOpen(true);
     }
   };
+
+  const handleSidebarClose = () => {
+    setSidebarOpen(false);
+  };
   
   return (
     <>
       <motion.header 
         className={cn(
-          "sticky top-0 z-20 px-6 py-4 bg-white/95 backdrop-blur-md border-b border-gray-100 flex items-center justify-between safe-top",
+          "sticky top-0 z-[50] px-6 py-4 bg-white/95 backdrop-blur-md border-b border-gray-100",
+          "flex items-center justify-between safe-top",
           className
         )}
         initial={{ opacity: 0, y: -10 }}
@@ -77,7 +82,8 @@ export const MobileHeader = ({
                 variant="ghost" 
                 size="icon" 
                 onClick={handleBack} 
-                className="h-10 w-10 rounded-full bg-gray-50 hover:bg-gray-100"
+                className="h-11 w-11 rounded-full bg-gray-50 hover:bg-gray-100 touch-manipulation"
+                aria-label="Go back"
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
@@ -90,34 +96,37 @@ export const MobileHeader = ({
                 variant="ghost" 
                 size="icon" 
                 onClick={handleMenuClick} 
-                className="h-10 w-10 rounded-full bg-gray-50 hover:bg-gray-100"
-                aria-label="Main menu"
+                className="h-11 w-11 rounded-full bg-gray-50 hover:bg-gray-100 touch-manipulation z-[1101]"
+                aria-label="Open navigation menu"
+                aria-expanded={sidebarOpen}
+                aria-controls="mobile-sidebar"
               >
                 <Menu className="h-5 w-5" />
               </Button>
             </motion.div>
           )}
           
-          <div className="flex flex-col">
+          <div className="flex flex-col min-w-0 flex-1">
             <h1 className="text-xl font-semibold text-gray-900 truncate">
               {title}
             </h1>
             {subtitle && (
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1 truncate">
                 {subtitle}
               </p>
             )}
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-shrink-0">
           {showSearchButton && (
             <motion.div whileTap={{ scale: 0.9 }}>
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={handleSearch} 
-                className="h-10 w-10 rounded-full bg-gray-50 hover:bg-gray-100"
+                className="h-11 w-11 rounded-full bg-gray-50 hover:bg-gray-100 touch-manipulation"
+                aria-label="Search"
               >
                 <Search className="h-5 w-5" />
               </Button>
@@ -130,10 +139,11 @@ export const MobileHeader = ({
                 variant="ghost" 
                 size="icon" 
                 onClick={handleNotifications} 
-                className="h-10 w-10 rounded-full bg-gray-50 hover:bg-gray-100 relative"
+                className="h-11 w-11 rounded-full bg-gray-50 hover:bg-gray-100 relative touch-manipulation"
+                aria-label="Notifications"
               >
                 <Bell className="h-5 w-5" />
-                <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full"></span>
+                <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full" aria-hidden="true"></span>
               </Button>
             </motion.div>
           )}
@@ -142,7 +152,10 @@ export const MobileHeader = ({
         </div>
       </motion.header>
 
-      <MobileSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <MobileSidebar 
+        isOpen={sidebarOpen} 
+        onClose={handleSidebarClose}
+      />
     </>
   );
 };
