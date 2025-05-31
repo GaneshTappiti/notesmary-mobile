@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -11,6 +12,7 @@ import { HelmetProvider } from "react-helmet-async";
 import AppLayout from "@/components/AppLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { CollegeAdminLayout } from "@/components/college-admin/CollegeAdminLayout";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 
 // Import Authentication page directly without lazy loading to avoid issues
 import Authentication from "@/pages/Authentication";
@@ -409,95 +411,86 @@ const App = () => (
                 <Route index element={<Navigate to="/college-admin/dashboard" replace />} />
               </Route>
               
-              {/* Admin routes - NOT wrapped in AppLayout */}
-              <Route 
-                path="/admin" 
-                element={
-                  <PrivateRoute adminOnly={true}>
-                    <SuspenseWrapper>
+              {/* Admin routes - properly wrapped with AdminLayout */}
+              <Route path="/admin" element={
+                <PrivateRoute adminOnly={true}>
+                  <SuspenseWrapper>
+                    <AdminLayout>
                       <AdminDashboard />
-                    </SuspenseWrapper>
-                  </PrivateRoute>
-                } 
-              />
+                    </AdminLayout>
+                  </SuspenseWrapper>
+                </PrivateRoute>
+              } />
               
-              {/* Direct import for AdminMessages page to fix loading issue */}
-              <Route 
-                path="/admin/messages" 
-                element={
-                  <PrivateRoute adminOnly={true}>
-                    <AdminMessages />
-                  </PrivateRoute>
-                } 
-              />
+              <Route path="/admin/messages" element={
+                <PrivateRoute adminOnly={true}>
+                  <SuspenseWrapper>
+                    <AdminLayout>
+                      <AdminMessages />
+                    </AdminLayout>
+                  </SuspenseWrapper>
+                </PrivateRoute>
+              } />
               
-              {/* College Management Routes */}
-              <Route 
-                path="/admin/colleges" 
-                element={
-                  <PrivateRoute adminOnly={true}>
-                    <SuspenseWrapper>
+              <Route path="/admin/colleges" element={
+                <PrivateRoute adminOnly={true}>
+                  <SuspenseWrapper>
+                    <AdminLayout>
                       <AdminColleges />
-                    </SuspenseWrapper>
-                  </PrivateRoute>
-                } 
-              />
+                    </AdminLayout>
+                  </SuspenseWrapper>
+                </PrivateRoute>
+              } />
               
-              <Route 
-                path="/admin/colleges/:id" 
-                element={
-                  <PrivateRoute adminOnly={true}>
-                    <SuspenseWrapper>
+              <Route path="/admin/colleges/:id" element={
+                <PrivateRoute adminOnly={true}>
+                  <SuspenseWrapper>
+                    <AdminLayout>
                       <AdminCollegeDetails />
-                    </SuspenseWrapper>
-                  </PrivateRoute>
-                } 
-              />
+                    </AdminLayout>
+                  </SuspenseWrapper>
+                </PrivateRoute>
+              } />
               
-              {/* Remaining admin routes - with additional error handling */}
-              <Route 
-                path="/admin/notes" 
-                element={
-                  <PrivateRoute adminOnly={true}>
-                    <SuspenseWrapper>
+              <Route path="/admin/notes" element={
+                <PrivateRoute adminOnly={true}>
+                  <SuspenseWrapper>
+                    <AdminLayout>
                       <AdminNotes />
-                    </SuspenseWrapper>
-                  </PrivateRoute>
-                } 
-              />
+                    </AdminLayout>
+                  </SuspenseWrapper>
+                </PrivateRoute>
+              } />
               
-              <Route 
-                path="/admin/users" 
-                element={
-                  <PrivateRoute adminOnly={true}>
-                    <SuspenseWrapper>
+              <Route path="/admin/users" element={
+                <PrivateRoute adminOnly={true}>
+                  <SuspenseWrapper>
+                    <AdminLayout>
                       <AdminUsers />
-                    </SuspenseWrapper>
-                  </PrivateRoute>
-                } 
-              />
+                    </AdminLayout>
+                  </SuspenseWrapper>
+                </PrivateRoute>
+              } />
               
-              <Route 
-                path="/admin/events" 
-                element={
-                  <PrivateRoute adminOnly={true}>
-                    <SuspenseWrapper>
+              <Route path="/admin/events" element={
+                <PrivateRoute adminOnly={true}>
+                  <SuspenseWrapper>
+                    <AdminLayout>
                       <AdminEvents />
-                    </SuspenseWrapper>
-                  </PrivateRoute>
-                } 
-              />
+                    </AdminLayout>
+                  </SuspenseWrapper>
+                </PrivateRoute>
+              } />
               
-              <Route 
-                path="/admin/analytics" 
-                element={
-                  <PrivateRoute adminOnly={true}>
-                    <SuspenseWrapper>
+              <Route path="/admin/analytics" element={
+                <PrivateRoute adminOnly={true}>
+                  <SuspenseWrapper>
+                    <AdminLayout>
                       <AdminAnalytics />
-                    </SuspenseWrapper>
-                  </PrivateRoute>
-                } 
-              />
+                    </AdminLayout>
+                  </SuspenseWrapper>
+                </PrivateRoute>
+              } />
               
               {/* NotFound route */}
               <Route path="*" element={<NotFound />} />
