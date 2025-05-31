@@ -338,43 +338,14 @@ const Login = () => {
               )}
             />
             
-            <Dialog open={isPasswordResetOpen} onOpenChange={setIsPasswordResetOpen}>
-              <DialogTrigger asChild>
-                <button type="button" className="text-sm text-blue-600 hover:text-blue-700">
-                  Forgot password?
-                </button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Reset your password</DialogTitle>
-                  <DialogDescription>
-                    Enter your college email address and we'll send you a link to reset your password.
-                  </DialogDescription>
-                </DialogHeader>
-                <Form {...resetForm}>
-                  <form onSubmit={resetForm.handleSubmit(onResetSubmit)} className="space-y-4">
-                    <FormField
-                      control={resetForm.control}
-                      name="collegeEmail"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>College Email</FormLabel>
-                          <FormControl>
-                            <Input placeholder="your.name@college.edu" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <DialogFooter>
-                      <Button type="submit">
-                        Send Reset Link
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
+            {/* Updated forgot password link to navigate to new screen */}
+            <button 
+              type="button" 
+              className="text-sm text-blue-600 hover:text-blue-700"
+              onClick={() => navigate('/forgot-password')}
+            >
+              Forgot password?
+            </button>
           </div>
           
           <Button type="submit" className="w-full">
@@ -464,7 +435,7 @@ const Login = () => {
               className="mx-auto mb-4"
             >
               <span className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
-                Notex
+                StudyPulse
               </span>
             </motion.div>
             <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>

@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -126,6 +125,9 @@ const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
   </ErrorBoundary>
 );
 
+// Add the lazy import at the top with other lazy imports
+const ForgotPassword = createLazyComponent(() => import("@/pages/ForgotPassword"));
+
 // Main App component with enhanced error handling
 const App = () => (
   <BrowserRouter>
@@ -163,6 +165,15 @@ const App = () => (
               <Route path="/authentication" element={
                 <PublicRoute>
                   <Authentication />
+                </PublicRoute>
+              } />
+
+              {/* Forgot Password route */}
+              <Route path="/forgot-password" element={
+                <PublicRoute>
+                  <SuspenseWrapper>
+                    <ForgotPassword />
+                  </SuspenseWrapper>
                 </PublicRoute>
               } />
 
