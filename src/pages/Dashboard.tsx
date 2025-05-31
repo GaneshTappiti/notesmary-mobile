@@ -85,11 +85,7 @@ const Dashboard = () => {
   }, []);
 
   const handleNavigation = (path: string) => {
-    try {
-      navigate(path);
-    } catch (error) {
-      console.error('Navigation error:', error);
-    }
+    navigate(path);
   };
 
   const quickAccessOptions = [

@@ -23,11 +23,7 @@ export const WelcomeHeader: React.FC<WelcomeHeaderProps> = ({
   const isMobile = useIsMobile();
 
   const handleProfileClick = () => {
-    try {
-      navigate('/profile');
-    } catch (error) {
-      console.error('Navigation error:', error);
-    }
+    navigate('/profile');
   };
 
   const handleAdminClick = () => {

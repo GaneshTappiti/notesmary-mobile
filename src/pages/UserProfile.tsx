@@ -144,19 +144,11 @@ const UserProfile = () => {
   };
 
   const handleBackToDashboard = () => {
-    try {
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Navigation error:', error);
-    }
+    navigate('/dashboard');
   };
 
   const handleOpenSettings = () => {
-    try {
-      navigate('/settings');
-    } catch (error) {
-      console.error('Navigation error:', error);
-    }
+    navigate('/settings');
   };
 
   const profileContent = (
