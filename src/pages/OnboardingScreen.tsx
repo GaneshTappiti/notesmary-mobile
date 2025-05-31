@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -11,7 +10,7 @@ import {
   Target,
   Sparkles,
   ArrowRight,
-  Skip
+  SkipForward
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -121,7 +120,7 @@ const OnboardingScreen = () => {
         {/* Skip Button */}
         <div className="absolute top-6 right-6 z-40">
           <Button variant="ghost" onClick={handleSkip} className="text-gray-600 hover:text-gray-800">
-            <Skip className="h-4 w-4 mr-2" />
+            <SkipForward className="h-4 w-4 mr-2" />
             Skip Tour
           </Button>
         </div>
