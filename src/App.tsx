@@ -128,9 +128,6 @@ const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
 // Add the lazy import at the top with other lazy imports
 const ForgotPassword = createLazyComponent(() => import("@/pages/ForgotPassword"));
 
-// New lazy import
-const SavedSummaries = createLazyComponent(() => import("@/pages/SavedSummaries"));
-
 // Main App component with enhanced error handling
 const App = () => (
   <BrowserRouter>
@@ -341,18 +338,7 @@ const App = () => (
                   </AppLayout>
                 </PrivateRoute>
               } />
-              
-              {/* Add the new route before the NotFound route */}
-              <Route path="/saved-summaries" element={
-                <PrivateRoute>
-                  <AppLayout>
-                    <SuspenseWrapper>
-                      <SavedSummaries />
-                    </SuspenseWrapper>
-                  </AppLayout>
-                </PrivateRoute>
-              } />
-              
+
               {/* College Admin Routes */}
               <Route path="/college-admin" element={
                 <PrivateRoute>
