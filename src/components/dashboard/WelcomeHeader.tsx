@@ -22,16 +22,6 @@ export const WelcomeHeader: React.FC<WelcomeHeaderProps> = ({
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const handleProfileClick = () => {
-    navigate('/profile');
-  };
-
-  const handleAdminClick = () => {
-    if (onAdminClick) {
-      onAdminClick();
-    }
-  };
-
   return (
     <Card className="shadow-sm transition-all hover:shadow-md">
       <CardContent className="pt-6">
@@ -50,7 +40,7 @@ export const WelcomeHeader: React.FC<WelcomeHeaderProps> = ({
             <Button
               variant="ghost"
               size={isMobile ? "sm" : "default"}
-              onClick={handleProfileClick}
+              onClick={() => navigate('/profile')}
               className="flex items-center gap-2"
             >
               <User size={isMobile ? 16 : 18} />
@@ -61,7 +51,7 @@ export const WelcomeHeader: React.FC<WelcomeHeaderProps> = ({
               <Button
                 variant="outline"
                 size={isMobile ? "sm" : "default"}
-                onClick={handleAdminClick}
+                onClick={onAdminClick}
                 className="flex items-center gap-2"
               >
                 <Settings size={isMobile ? 16 : 18} />
