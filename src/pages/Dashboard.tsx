@@ -1,338 +1,100 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
-import { Upload, Search, Users, Brain, ShieldCheck, School, WifiOff } from 'lucide-react';
-import { StatsCard } from '@/components/dashboard/StatsCard';
-import { AnalyticsCard } from '@/components/dashboard/AnalyticsCard';
-import { QuickAccessCard } from '@/components/dashboard/QuickAccessCard';
-import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
-import { TasksSection } from '@/components/dashboard/TasksSection';
-import { StudyRoomsSection } from '@/components/dashboard/StudyRoomsSection';
-import { PageContainer } from '@/components/PageContainer';
-import { StudyPulseEntryCard } from '@/components/dashboard/StudyPulseEntryCard';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { useOffline } from '@/hooks/use-offline';
-import { OfflineManager, CACHE_KEYS } from '@/utils/offlineManager';
-import { NotesService } from '@/services/NotesService';
-import { MobileHeader } from '@/components/mobile/MobileHeader';
-import { useIsMobile } from '@/hooks/use-mobile';
-import AppLayout from '@/components/AppLayout';
-import { Helmet } from 'react-helmet-async';
+import {
+  Upload,
+  Search,
+  BrainCircuit,
+  Users,
+  BookOpen,
+} from 'lucide-react';
+import { DashboardEmptyState } from '@/components/dashboard/DashboardEmptyState';
 
 const Dashboard = () => {
-  const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, logout, isAdmin, isCollegeAdmin } = useAuth();
-  const { isOnline, wasOffline } = useOffline();
-  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
-  const isMobile = useIsMobile();
 
-  // Sync offline notes when coming back online
-  useEffect(() => {
-    const syncNotesIfNeeded = async () => {
-      if (isOnline && wasOffline && user) {
-        try {
-          const result = await NotesService.syncOfflineNotes(user.id);
-          if (result.count > 0) {
-            setLastSyncTime(new Date());
-          }
-        } catch (error) {
-          console.error('Error syncing offline notes:', error);
-        }
-      }
-    };
-    
-    syncNotesIfNeeded();
-  }, [isOnline, wasOffline, user]);
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
 
-  // Load last sync time
-  useEffect(() => {
-    const loadLastSyncTime = async () => {
-      const timestamp = await OfflineManager.getLastUpdated(CACHE_KEYS.NOTES);
-      if (timestamp) {
-        setLastSyncTime(timestamp);
-      }
-    };
-    
-    loadLastSyncTime();
-  }, []);
-
-  const quickAccessOptions = [
+  const quickAccessItems = [
     {
-      title: 'Upload Notes',
-      description: 'Share your study materials',
+      title: "Upload Notes",
+      description: "Share your study materials",
       icon: <Upload className="h-6 w-6" />,
-      bgColor: 'bg-blue-50',
-      isPrimary: true,
-      buttonText: 'Upload',
-      buttonVariant: 'default' as const,
-      onClick: () => navigate('/upload-notes')
+      path: "/upload-notes",
+      color: "bg-blue-500"
     },
     {
-      title: 'Find Notes',
-      description: 'Discover study resources',
+      title: "Find Notes", 
+      description: "Discover study resources",
       icon: <Search className="h-6 w-6" />,
-      bgColor: 'bg-purple-50',
-      isPrimary: false,
-      buttonText: 'Search',
-      buttonVariant: 'outline' as const,
-      onClick: () => navigate('/find-notes')
+      path: "/find-notes",
+      color: "bg-green-500"
     },
     {
-      title: 'Join Study Room',
-      description: 'Study with peers in real-time',
+      title: "AI Answers",
+      description: "Get instant help",
+      icon: <BrainCircuit className="h-6 w-6" />,
+      path: "/ai-answers", 
+      color: "bg-purple-500"
+    },
+    {
+      title: "Study Rooms",
+      description: "Join study sessions",
       icon: <Users className="h-6 w-6" />,
-      bgColor: 'bg-green-50',
-      isPrimary: false,
-      buttonText: 'Join',
-      buttonVariant: 'outline' as const,
-      onClick: () => navigate('/study-rooms')
+      path: "/study-rooms",
+      color: "bg-orange-500"
     },
     {
-      title: 'Ask AI',
-      description: 'Get instant help with questions',
-      icon: <Brain className="h-6 w-6" />,
-      bgColor: 'bg-amber-50',
-      isPrimary: false,
-      buttonText: 'Ask Now',
-      buttonVariant: 'outline' as const,
-      onClick: () => navigate('/ai-answers')
-    },
-    ...(isAdmin ? [{
-      title: 'Admin Panel',
-      description: 'Access administrative controls',
-      icon: <ShieldCheck className="h-6 w-6" />,
-      bgColor: 'bg-red-50',
-      isPrimary: false,
-      buttonText: 'Access Admin',
-      buttonVariant: 'default' as const,
-      onClick: () => navigate('/admin')
-    }] : [])
-  ];
-
-  const statsCards = [
-    {
-      title: 'Total Notes',
-      value: '53',
-      icon: <Upload className="h-5 w-5 text-blue-500" />,
-      trend: { value: '10%', isPositive: true }
-    },
-    {
-      title: 'Study Sessions',
-      value: '28',
-      icon: <Users className="h-5 w-5 text-green-500" />,
-      trend: { value: '5%', isPositive: true }
-    },
-    {
-      title: 'AI Answers',
-      value: '152',
-      icon: <Brain className="h-5 w-5 text-purple-500" />,
-      trend: { value: '8%', isPositive: true }
+      title: "Saved Summaries",
+      description: "View your saved summaries",
+      icon: <BookOpen className="h-6 w-6" />,
+      path: "/saved-summaries",
+      color: "bg-indigo-500"
     }
   ];
-
-  const studyRooms = [
-    {
-      id: '1',
-      title: 'Physics Study Session',
-      participants: 5,
-      date: 'Today 2:00 PM',
-      status: 'active',
-      duration: '1h 30m',
-      avatars: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg']
-    },
-    {
-      id: '2',
-      title: 'Math Group',
-      participants: 3,
-      date: 'Today 4:00 PM',
-      status: 'scheduled',
-      duration: '45m',
-      avatars: ['/placeholder.svg', '/placeholder.svg']
-    },
-    {
-      id: '3',
-      title: 'Biology Discussion',
-      participants: 7,
-      date: 'Today 6:30 PM',
-      status: 'scheduled',
-      duration: '2h',
-      avatars: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg']
-    }
-  ];
-
-  const tasks = [
-    { id: 1, title: 'Physics Assignment Due', time: '2:00 PM Today', subject: 'Physics', priority: 'high', completed: false },
-    { id: 2, title: 'Math Group Study', time: '4:30 PM Tomorrow', subject: 'Math', priority: 'medium', completed: false },
-    { id: 3, title: 'Chemistry Lab Report', time: 'Friday, 10:00 AM', subject: 'Chemistry', priority: 'low', completed: true },
-    { id: 4, title: 'Biology Research Paper', time: 'Next Monday', subject: 'Biology', priority: 'medium', completed: false }
-  ];
-
-  const handleNewTask = () => {
-    toast({
-      title: "Add New Task",
-      description: "Task creation modal will be implemented in the next update."
-    });
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/');
-      toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to log out. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const CollegeAdminSection = () => {
-    if (!isCollegeAdmin) return null;
-    
-    return (
-      <Card className="shadow-sm transition-all hover:shadow-md">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-medium">College Admin Panel</CardTitle>
-            <School className="h-5 w-5 text-blue-600" />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            You have access to the college administrator dashboard.
-          </p>
-          <Button 
-            onClick={() => navigate('/college-admin/dashboard')} 
-            variant="outline" 
-            className="w-full mt-2"
-          >
-            Access Admin Panel
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const dashboardContent = (
-    <>
-      <Helmet>
-        <title>Dashboard | StudyPulse</title>
-      </Helmet>
-      
-      <div className="space-y-6 animate-fade-in">
-        {isMobile && (
-          <MobileHeader
-            title="Dashboard"
-            showSearchButton={true}
-            showNotificationButton={true}
-            onSearchClick={() => navigate('/find-notes')}
-          />
-        )}
-        
-        <WelcomeHeader 
-          userName={user?.user_metadata?.full_name}
-          onLogout={handleLogout}
-          isAdmin={isAdmin}
-          onAdminClick={() => navigate('/admin')}
-        />
-        
-        {!isOnline && (
-          <Alert className="bg-amber-50 border-amber-200">
-            <WifiOff className="h-4 w-4 text-amber-600" />
-            <AlertTitle>You're offline</AlertTitle>
-            <AlertDescription>
-              You're currently viewing cached data. Some features may be limited until you reconnect.
-            </AlertDescription>
-          </Alert>
-        )}
-        
-        {isOnline && wasOffline && (
-          <Alert className="bg-green-50 border-green-200">
-            <AlertTitle>Back online</AlertTitle>
-            <AlertDescription>
-              Your connection has been restored. Any changes made while offline have been synced.
-            </AlertDescription>
-          </Alert>
-        )}
-        
-        {lastSyncTime && (
-          <div className="text-xs text-muted-foreground mt-2 text-right">
-            Last updated: {lastSyncTime.toLocaleString()}
-          </div>
-        )}
-
-        <div className="space-y-4">
-          <h2 className={`font-semibold ${isMobile ? 'text-lg' : 'text-xl'}`}>Quick Actions</h2>
-          <div className={`grid gap-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 lg:grid-cols-4'}`}>
-            {quickAccessOptions.map((option, index) => (
-              <QuickAccessCard
-                key={index}
-                {...option}
-                className="transition-all duration-300 hover:shadow-lg"
-              />
-            ))}
-          </div>
-        </div>
-
-        <StudyPulseEntryCard />
-
-        <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'}`}>
-          <div className={isMobile ? 'space-y-6' : 'lg:col-span-2 space-y-6'}>
-            <StudyRoomsSection 
-              rooms={studyRooms}
-              onViewAll={() => navigate('/study-rooms')}
-            />
-            
-            <AnalyticsCard
-              title="Weekly Study Activity"
-              chartType="bar"
-              filters={["This Week", "Last Week", "Month"]}
-            />
-          </div>
-          
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold">Your Progress</h2>
-              <div className="space-y-3">
-                {statsCards.map((card, index) => (
-                  <StatsCard key={index} {...card} />
-                ))}
-              </div>
-            </div>
-
-            <TasksSection 
-              tasks={tasks}
-              onNewTask={handleNewTask}
-            />
-            
-            <CollegeAdminSection />
-          </div>
-        </div>
-      </div>
-    </>
-  );
 
   return (
-    <AppLayout>
-      {isMobile ? (
-        <div className="px-4 py-6">
-          {dashboardContent}
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-semibold mb-4">Dashboard</h1>
+      
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">Quick Access</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {quickAccessItems.map((item) => (
+            <div 
+              key={item.title} 
+              className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-200"
+              onClick={() => handleNavigation(item.path)}
+            >
+              <div className={`p-4 ${item.color} text-white`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex-shrink-0">
+                    {item.icon}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">{item.title}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="p-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">{item.description}</p>
+              </div>
+            </div>
+          ))}
         </div>
-      ) : (
-        <PageContainer className="py-6">
-          {dashboardContent}
-        </PageContainer>
-      )}
-    </AppLayout>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold mb-2">Recent Activity</h2>
+        <DashboardEmptyState 
+          icon={<BookOpen className="h-6 w-6" />}
+          title="No Recent Activity"
+          description="Your recent activity will be displayed here."
+          compact={true}
+        />
+      </section>
+    </div>
   );
 };
 
