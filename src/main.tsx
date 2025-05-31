@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import './mobile.css';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 // Safely handle Capacitor environment check
 const initializePWAElements = async () => {
@@ -29,7 +30,9 @@ if (!root) {
 const AppWithErrorBoundary = () => {
   return (
     <React.StrictMode>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </React.StrictMode>
   );
 };
