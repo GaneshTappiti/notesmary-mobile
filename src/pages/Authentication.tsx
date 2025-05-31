@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,6 +26,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 // Special admin email for direct access
 const ADMIN_EMAIL = "2005ganesh16@gmail.com";
@@ -69,13 +71,19 @@ const signupSchema = z.object({
   path: ["confirmPassword"],
 });
 
+const resetRequestSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" }),
+});
+
 const Authentication = () => {
   const location = useLocation();
-  // Get the activeTab from location state, default to "login" if not provided
   const initialTab = location.state?.activeTab || "login";
   const [activeTab, setActiveTab] = useState(initialTab);
+  const [showResetForm, setShowResetForm] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [signupError, setSignupError] = useState("");
+  const [resetError, setResetError] = useState("");
+  const [resetSuccess, setResetSuccess] = useState(false);
   const { login, signup, isAuthenticated, isLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -115,6 +123,13 @@ const Authentication = () => {
       email: "",
       password: "",
       confirmPassword: "",
+    },
+  });
+
+  const resetRequestForm = useForm<z.infer<typeof resetRequestSchema>>({
+    resolver: zodResolver(resetRequestSchema),
+    defaultValues: {
+      email: "",
     },
   });
 
@@ -169,6 +184,28 @@ const Authentication = () => {
     }
   };
 
+  const onResetRequestSubmit = async (values: z.infer<typeof resetRequestSchema>) => {
+    setResetError("");
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      setResetSuccess(true);
+      toast({
+        title: "Password Reset Email Sent",
+        description: "Please check your email for password reset instructions.",
+      });
+    } catch (error: any) {
+      console.error("Password reset error:", error);
+      setResetError(error.message || "Failed to send password reset email. Please try again.");
+    }
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
       const from = location.state?.from?.pathname || "/dashboard";
@@ -191,6 +228,91 @@ const Authentication = () => {
       }
     }
   }, [isAuthenticated, isAdmin, navigate, location, toast]);
+
+  if (showResetForm) {
+    return (
+      <div className="min-h-[100dvh] w-full bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+              Notex
+            </h1>
+            <p className="text-base text-slate-600 mt-2">
+              Reset your password
+            </p>
+          </div>
+
+          <Card className="border-slate-200 shadow-lg">
+            <CardHeader className="text-center pb-2">
+              <CardTitle className="text-2xl">Reset Password</CardTitle>
+              <CardDescription>
+                {resetSuccess 
+                  ? "Check your email for reset instructions"
+                  : "Enter your email to receive reset instructions"}
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent className="space-y-4 pt-4">
+              {resetSuccess ? (
+                <div className="text-center space-y-4">
+                  <Alert className="bg-green-50 border-green-200">
+                    <AlertDescription className="text-green-800">
+                      Password reset email sent successfully! Please check your inbox and follow the instructions.
+                    </AlertDescription>
+                  </Alert>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setShowResetForm(false);
+                      setResetSuccess(false);
+                    }}
+                    className="w-full"
+                  >
+                    Back to Login
+                  </Button>
+                </div>
+              ) : (
+                <Form {...resetRequestForm}>
+                  <form onSubmit={resetRequestForm.handleSubmit(onResetRequestSubmit)} className="space-y-4">
+                    {resetError && (
+                      <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-800">
+                        <AlertCircle className="h-4 w-4 mr-2" />
+                        <AlertDescription>{resetError}</AlertDescription>
+                      </Alert>
+                    )}
+                    <FormField
+                      control={resetRequestForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter your email address" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
+                      {isLoading ? "Sending..." : "Send Reset Link"}
+                    </Button>
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      onClick={() => setShowResetForm(false)}
+                      className="w-full"
+                    >
+                      Back to Login
+                    </Button>
+                  </form>
+                </Form>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[100dvh] w-full bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center p-4">
@@ -263,6 +385,15 @@ const Authentication = () => {
                     <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
                       {isLoading ? "Logging in..." : "Log In"}
                     </Button>
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        className="text-sm text-blue-600 hover:text-blue-700 underline"
+                        onClick={() => setShowResetForm(true)}
+                      >
+                        Forgot Password?
+                      </button>
+                    </div>
                     <p className="text-center text-sm text-gray-600 mt-4">
                       Don't have an account?{" "}
                       <button

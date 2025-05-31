@@ -81,6 +81,7 @@ export class AuthService {
     
     return EDUCATIONAL_DOMAINS.some(pattern => pattern.test(domain));
   }
+
   /**
    * Sign up a new user
    */
@@ -184,6 +185,70 @@ export class AuthService {
       }
       
       return { data: null, error };
+    }
+  }
+
+  /**
+   * Request password reset for email
+   */
+  static async requestPasswordReset(email: string) {
+    try {
+      console.log("Requesting password reset for:", email);
+      
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: 'Password Reset Email Sent',
+        description: 'Please check your email for password reset instructions.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      console.error('Password reset request error:', error);
+      toast({
+        title: 'Password Reset Failed',
+        description: error.message || 'Failed to send password reset email. Please try again.',
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Update user password (used during password reset flow)
+   */
+  static async updatePassword(newPassword: string) {
+    try {
+      console.log("Updating user password");
+      
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: 'Password Updated',
+        description: 'Your password has been updated successfully.',
+      });
+
+      return { success: true };
+    } catch (error: any) {
+      console.error('Password update error:', error);
+      toast({
+        title: 'Password Update Failed',
+        description: error.message || 'Failed to update password. Please try again.',
+        variant: 'destructive',
+      });
+      throw error;
     }
   }
 
