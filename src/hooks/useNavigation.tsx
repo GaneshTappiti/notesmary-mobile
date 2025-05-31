@@ -1,5 +1,5 @@
 
-import { Home, FileText, Users, BrainCircuit, Settings } from 'lucide-react';
+import { Home, FileText, Users, BrainCircuit, User } from 'lucide-react';
 
 export interface NavItemData {
   id: string;
@@ -14,7 +14,7 @@ export const useNavigation = () => {
     { id: 'my-notes', icon: <FileText size={20} />, label: 'Notes', path: '/my-notes' },
     { id: 'study-rooms', icon: <Users size={20} />, label: 'Rooms', path: '/study-rooms' },
     { id: 'ai-answers', icon: <BrainCircuit size={20} />, label: 'AI', path: '/ai-answers' },
-    { id: 'settings', icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
+    { id: 'profile', icon: <User size={20} />, label: 'Profile', path: '/profile' },
   ];
 
   return { navItems };
