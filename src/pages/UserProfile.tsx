@@ -143,6 +143,14 @@ const UserProfile = () => {
     }
   };
 
+  const handleBackToDashboard = () => {
+    try {
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
+  };
+
   const profileContent = (
     <div className="space-y-6 max-w-2xl mx-auto">
       <Helmet>
@@ -154,7 +162,7 @@ const UserProfile = () => {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate('/dashboard')}
+          onClick={handleBackToDashboard}
           className="flex items-center gap-2"
         >
           <ArrowLeft size={16} />

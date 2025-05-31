@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -85,6 +84,14 @@ const Dashboard = () => {
     loadLastSyncTime();
   }, []);
 
+  const handleNavigation = (path: string) => {
+    try {
+      navigate(path);
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
+  };
+
   const quickAccessOptions = [
     {
       title: 'Upload Notes',
@@ -94,7 +101,7 @@ const Dashboard = () => {
       isPrimary: true,
       buttonText: 'Upload',
       buttonVariant: 'default' as const,
-      onClick: () => navigate('/upload-notes')
+      onClick: () => handleNavigation('/upload-notes')
     },
     {
       title: 'Find Notes',
@@ -104,7 +111,7 @@ const Dashboard = () => {
       isPrimary: false,
       buttonText: 'Search',
       buttonVariant: 'outline' as const,
-      onClick: () => navigate('/find-notes')
+      onClick: () => handleNavigation('/find-notes')
     },
     {
       title: 'Join Study Room',
@@ -114,7 +121,7 @@ const Dashboard = () => {
       isPrimary: false,
       buttonText: 'Join',
       buttonVariant: 'outline' as const,
-      onClick: () => navigate('/study-rooms')
+      onClick: () => handleNavigation('/study-rooms')
     },
     {
       title: 'Ask AI',
@@ -124,7 +131,7 @@ const Dashboard = () => {
       isPrimary: false,
       buttonText: 'Ask Now',
       buttonVariant: 'outline' as const,
-      onClick: () => navigate('/ai-answers')
+      onClick: () => handleNavigation('/ai-answers')
     },
     ...(isAdmin ? [{
       title: 'Admin Panel',
@@ -134,7 +141,7 @@ const Dashboard = () => {
       isPrimary: false,
       buttonText: 'Access Admin',
       buttonVariant: 'default' as const,
-      onClick: () => navigate('/admin')
+      onClick: () => handleNavigation('/admin')
     }] : [])
   ];
 
@@ -236,7 +243,7 @@ const Dashboard = () => {
             You have access to the college administrator dashboard.
           </p>
           <Button 
-            onClick={() => navigate('/college-admin/dashboard')} 
+            onClick={() => handleNavigation('/college-admin/dashboard')} 
             variant="outline" 
             className="w-full mt-2"
           >
@@ -262,7 +269,7 @@ const Dashboard = () => {
                   title="Dashboard"
                   showSearchButton={true}
                   showNotificationButton={true}
-                  onSearchClick={() => navigate('/find-notes')}
+                  onSearchClick={() => handleNavigation('/find-notes')}
                 />
               )}
               
@@ -307,7 +314,7 @@ const Dashboard = () => {
             title="Dashboard"
             showSearchButton={true}
             showNotificationButton={true}
-            onSearchClick={() => navigate('/find-notes')}
+            onSearchClick={() => handleNavigation('/find-notes')}
           />
         )}
         
@@ -315,7 +322,7 @@ const Dashboard = () => {
           userName={user?.user_metadata?.full_name}
           onLogout={() => setShowLogoutDialog(true)}
           isAdmin={isAdmin}
-          onAdminClick={() => navigate('/admin')}
+          onAdminClick={() => handleNavigation('/admin')}
         />
         
         {/* Logout Confirmation Dialog */}
@@ -381,7 +388,7 @@ const Dashboard = () => {
             {studyRooms.length > 0 ? (
               <StudyRoomsSection 
                 rooms={studyRooms}
-                onViewAll={() => navigate('/study-rooms')}
+                onViewAll={() => handleNavigation('/study-rooms')}
               />
             ) : (
               <Card>
@@ -394,7 +401,7 @@ const Dashboard = () => {
                     title="No active study rooms"
                     description="Join or create a study room to collaborate with peers"
                     actionLabel="Browse Rooms"
-                    onAction={() => navigate('/study-rooms')}
+                    onAction={() => handleNavigation('/study-rooms')}
                     compact={true}
                   />
                 </CardContent>

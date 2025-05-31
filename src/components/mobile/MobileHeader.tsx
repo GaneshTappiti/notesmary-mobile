@@ -34,18 +34,31 @@ export const MobileHeader = ({
   const navigate = useNavigate();
   
   const handleBack = () => {
-    navigate(-1);
+    try {
+      navigate(-1);
+    } catch (error) {
+      console.error('Navigation error:', error);
+      navigate('/dashboard');
+    }
   };
   
   const handleNotifications = () => {
-    navigate('/notifications');
+    try {
+      navigate('/notifications');
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
   };
   
   const handleSearch = () => {
-    if (onSearchClick) {
-      onSearchClick();
-    } else {
-      navigate('/find-notes');
+    try {
+      if (onSearchClick) {
+        onSearchClick();
+      } else {
+        navigate('/find-notes');
+      }
+    } catch (error) {
+      console.error('Navigation error:', error);
     }
   };
   
