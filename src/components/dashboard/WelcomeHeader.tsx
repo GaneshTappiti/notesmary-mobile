@@ -1,6 +1,10 @@
 
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, ShieldCheck } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { LogOut, Settings, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface WelcomeHeaderProps {
   userName?: string;
@@ -9,37 +13,54 @@ interface WelcomeHeaderProps {
   onAdminClick?: () => void;
 }
 
-export const WelcomeHeader = ({ 
+export const WelcomeHeader: React.FC<WelcomeHeaderProps> = ({ 
   userName, 
   onLogout, 
-  isAdmin = false,
-  onAdminClick
-}: WelcomeHeaderProps) => {
+  isAdmin, 
+  onAdminClick 
+}) => {
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+
   return (
-    <div className="flex justify-between items-center mb-6">
-      <h1 className="text-2xl font-semibold">
-        Welcome back, {userName || 'Student'}!
-      </h1>
-      <div className="flex items-center gap-2">
-        {isAdmin && (
-          <Button 
-            variant="default" 
-            onClick={onAdminClick}
-            className="gap-2 bg-amber-600 hover:bg-amber-700"
-          >
-            <ShieldCheck className="h-4 w-4" />
-            Admin Panel
-          </Button>
-        )}
-        <Button 
-          variant="outline" 
-          onClick={onLogout}
-          className="gap-2"
-        >
-          <LogOut className="h-4 w-4" />
-          Logout
-        </Button>
-      </div>
-    </div>
+    <Card className="shadow-sm transition-all hover:shadow-md">
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <h1 className={`font-bold ${isMobile ? 'text-xl' : 'text-2xl'} text-gray-900 dark:text-gray-100`}>
+              Welcome back{userName ? `, ${userName.split(' ')[0]}` : ''}! 👋
+            </h1>
+            <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-600 dark:text-gray-400 mt-1`}>
+              Ready to dive into your studies today?
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {/* Profile Button */}
+            <Button
+              variant="ghost"
+              size={isMobile ? "sm" : "default"}
+              onClick={() => navigate('/profile')}
+              className="flex items-center gap-2"
+            >
+              <User size={isMobile ? 16 : 18} />
+              {!isMobile && "Profile"}
+            </Button>
+            
+            {isAdmin && onAdminClick && (
+              <Button
+                variant="outline"
+                size={isMobile ? "sm" : "default"}
+                onClick={onAdminClick}
+                className="flex items-center gap-2"
+              >
+                <Settings size={isMobile ? 16 : 18} />
+                {!isMobile && "Admin"}
+              </Button>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };

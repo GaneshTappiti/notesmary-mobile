@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -11,9 +12,22 @@ import { TasksSection } from '@/components/dashboard/TasksSection';
 import { StudyRoomsSection } from '@/components/dashboard/StudyRoomsSection';
 import { PageContainer } from '@/components/PageContainer';
 import { StudyPulseEntryCard } from '@/components/dashboard/StudyPulseEntryCard';
+import { DashboardLoadingState } from '@/components/dashboard/DashboardLoadingState';
+import { DashboardEmptyState } from '@/components/dashboard/DashboardEmptyState';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useOffline } from '@/hooks/use-offline';
 import { OfflineManager, CACHE_KEYS } from '@/utils/offlineManager';
 import { NotesService } from '@/services/NotesService';
@@ -28,7 +42,18 @@ const Dashboard = () => {
   const { user, logout, isAdmin, isCollegeAdmin } = useAuth();
   const { isOnline, wasOffline } = useOffline();
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const isMobile = useIsMobile();
+
+  // Simulate loading for demo purposes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Sync offline notes when coming back online
   useEffect(() => {
@@ -222,6 +247,54 @@ const Dashboard = () => {
     );
   };
 
+  if (isLoading) {
+    return (
+      <AppLayout>
+        <div className={isMobile ? "px-4 py-6" : ""}>
+          <PageContainer className={isMobile ? "p-0" : "py-6"}>
+            <div className="space-y-6">
+              <Helmet>
+                <title>Dashboard | StudyPulse</title>
+              </Helmet>
+              
+              {isMobile && (
+                <MobileHeader
+                  title="Dashboard"
+                  showSearchButton={true}
+                  showNotificationButton={true}
+                  onSearchClick={() => navigate('/find-notes')}
+                />
+              )}
+              
+              <DashboardLoadingState type="general" count={1} />
+              
+              <div className="space-y-4">
+                <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                <div className={`grid gap-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 lg:grid-cols-4'}`}>
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <div key={index} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+                  ))}
+                </div>
+              </div>
+
+              <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'}`}>
+                <div className={isMobile ? 'space-y-6' : 'lg:col-span-2 space-y-6'}>
+                  <DashboardLoadingState type="rooms" count={3} />
+                  <DashboardLoadingState type="general" count={1} />
+                </div>
+                
+                <div className="space-y-6">
+                  <DashboardLoadingState type="stats" count={3} />
+                  <DashboardLoadingState type="general" count={1} />
+                </div>
+              </div>
+            </div>
+          </PageContainer>
+        </div>
+      </AppLayout>
+    );
+  }
+
   const dashboardContent = (
     <>
       <Helmet>
@@ -240,10 +313,28 @@ const Dashboard = () => {
         
         <WelcomeHeader 
           userName={user?.user_metadata?.full_name}
-          onLogout={handleLogout}
+          onLogout={() => setShowLogoutDialog(true)}
           isAdmin={isAdmin}
           onAdminClick={() => navigate('/admin')}
         />
+        
+        {/* Logout Confirmation Dialog */}
+        <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Sign Out</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to sign out? You'll need to enter your credentials again to access your account.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleLogout}>
+                Sign Out
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         
         {!isOnline && (
           <Alert className="bg-amber-50 border-amber-200">
@@ -287,10 +378,28 @@ const Dashboard = () => {
 
         <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'}`}>
           <div className={isMobile ? 'space-y-6' : 'lg:col-span-2 space-y-6'}>
-            <StudyRoomsSection 
-              rooms={studyRooms}
-              onViewAll={() => navigate('/study-rooms')}
-            />
+            {studyRooms.length > 0 ? (
+              <StudyRoomsSection 
+                rooms={studyRooms}
+                onViewAll={() => navigate('/study-rooms')}
+              />
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Study Rooms</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DashboardEmptyState
+                    icon={<Users />}
+                    title="No active study rooms"
+                    description="Join or create a study room to collaborate with peers"
+                    actionLabel="Browse Rooms"
+                    onAction={() => navigate('/study-rooms')}
+                    compact={true}
+                  />
+                </CardContent>
+              </Card>
+            )}
             
             <AnalyticsCard
               title="Weekly Study Activity"
