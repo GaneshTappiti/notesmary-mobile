@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -52,7 +51,8 @@ import {
   Trash2, 
   ArrowLeft,
   Shield,
-  AlertCircle 
+  AlertCircle,
+  Settings
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import AppLayout from "@/components/AppLayout";
@@ -151,6 +151,14 @@ const UserProfile = () => {
     }
   };
 
+  const handleOpenSettings = () => {
+    try {
+      navigate('/settings');
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
+  };
+
   const profileContent = (
     <div className="space-y-6 max-w-2xl mx-auto">
       <Helmet>
@@ -158,17 +166,29 @@ const UserProfile = () => {
       </Helmet>
 
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleBackToDashboard}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft size={16} />
+            {!isMobile && "Back to Dashboard"}
+          </Button>
+          <h1 className="text-2xl font-bold">Profile Settings</h1>
+        </div>
+        
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
-          onClick={handleBackToDashboard}
+          onClick={handleOpenSettings}
           className="flex items-center gap-2"
         >
-          <ArrowLeft size={16} />
-          {!isMobile && "Back to Dashboard"}
+          <Settings size={16} />
+          {!isMobile && "App Settings"}
         </Button>
-        <h1 className="text-2xl font-bold">Profile Settings</h1>
       </div>
 
       {/* User Information Card */}
