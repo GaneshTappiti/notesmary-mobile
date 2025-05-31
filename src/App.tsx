@@ -128,6 +128,9 @@ const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
 // Add the lazy import at the top with other lazy imports
 const ForgotPassword = createLazyComponent(() => import("@/pages/ForgotPassword"));
 
+// Add the ErrorScreen lazy import with other imports
+const ErrorScreen = createLazyComponent(() => import("@/pages/ErrorScreen"));
+
 // Main App component with enhanced error handling
 const App = () => (
   <BrowserRouter>
@@ -175,6 +178,13 @@ const App = () => (
                     <ForgotPassword />
                   </SuspenseWrapper>
                 </PublicRoute>
+              } />
+
+              {/* Error Screen route */}
+              <Route path="/error" element={
+                <SuspenseWrapper>
+                  <ErrorScreen />
+                </SuspenseWrapper>
               } />
 
               {/* Protected dashboard route - Using direct import for Dashboard */}
