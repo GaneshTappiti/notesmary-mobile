@@ -141,7 +141,6 @@ const ProfileScreen = () => {
           <MobileHeader
             title="Profile"
             showBackButton={true}
-            onBackClick={() => navigate('/dashboard')}
           />
         )}
         

@@ -134,6 +134,9 @@ const ErrorScreen = createLazyComponent(() => import("@/pages/ErrorScreen"));
 // Add the ProfileScreen lazy import with other imports
 const ProfileScreen = createLazyComponent(() => import("@/pages/ProfileScreen"));
 
+// Add the OnboardingScreen lazy import with other imports
+const OnboardingScreen = createLazyComponent(() => import("@/pages/OnboardingScreen"));
+
 // Main App component with enhanced error handling
 const App = () => (
   <BrowserRouter>
@@ -181,6 +184,15 @@ const App = () => (
                     <ForgotPassword />
                   </SuspenseWrapper>
                 </PublicRoute>
+              } />
+
+              {/* Onboarding route */}
+              <Route path="/onboarding" element={
+                <PrivateRoute>
+                  <SuspenseWrapper>
+                    <OnboardingScreen />
+                  </SuspenseWrapper>
+                </PrivateRoute>
               } />
 
               {/* Error Screen route */}
