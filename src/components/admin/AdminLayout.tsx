@@ -24,7 +24,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   }, [isAuthenticated, isAdmin, navigate]);
 
   return (
-    <div className="h-screen flex overflow-hidden bg-gray-50 dark:bg-gray-900 w-full">
+    <div className="h-screen flex overflow-hidden bg-gray-50 w-full">
       <AdminSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
       
       <div className="flex flex-col w-full flex-1 overflow-hidden">
