@@ -3,25 +3,13 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard,
-  FileText,
-  MessageSquare,
-  Users,
   School,
-  BarChart3,
   Calendar,
-  Settings,
+  Activity,
   ChevronRight,
   X,
   Search,
-  Menu,
-  Layers,
-  FileStack,
-  PieChart,
-  Grid3X3,
-  Palette,
-  UserCheck,
-  AlertCircle,
-  BookOpen
+  FileText
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -73,45 +61,24 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ open, setOpen }) => 
     {
       to: "/admin",
       icon: <LayoutDashboard size={20} />,
-      label: "Dashboard",
+      label: "Dashboard Overview",
       isNew: true
-    },
-    {
-      to: "/admin/notes",
-      icon: <FileText size={20} />,
-      label: "Uploaded Notes"
-    },
-    {
-      to: "/admin/messages",
-      icon: <MessageSquare size={20} />,
-      label: "Messages"
-    },
-    {
-      to: "/admin/users",
-      icon: <Users size={20} />,
-      label: "Users Management"
     },
     {
       to: "/admin/colleges",
       icon: <School size={20} />,
-      label: "Colleges"
+      label: "College List"
     },
     {
-      to: "/admin/analytics",
-      icon: <BarChart3 size={20} />,
-      label: "Analytics"
+      to: "/admin/events-announcements",
+      icon: <Calendar size={20} />,
+      label: "Events & Announcements"
+    },
+    {
+      to: "/admin/audit-logs",
+      icon: <Activity size={20} />,
+      label: "Audit Logs"
     }
-  ];
-
-  const uiElements = [
-    { label: "UI Elements", icon: <Layers size={18} /> },
-    { label: "Form elements", icon: <FileStack size={18} /> },
-    { label: "Charts", icon: <PieChart size={18} /> },
-    { label: "Tables", icon: <Grid3X3 size={18} /> },
-    { label: "Icons", icon: <Palette size={18} /> },
-    { label: "User Pages", icon: <UserCheck size={18} /> },
-    { label: "Error pages", icon: <AlertCircle size={18} /> },
-    { label: "Documentation", icon: <BookOpen size={18} /> }
   ];
 
   return (
@@ -135,12 +102,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ open, setOpen }) => 
           {/* Sidebar header */}
           <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
-                <span className="text-gray-700 font-semibold text-sm">KO</span>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">SA</span>
               </div>
               <div>
-                <div className="text-sm font-medium text-gray-900">Kenneth Osborne</div>
-                <div className="text-xs text-gray-500">Welcome</div>
+                <div className="text-sm font-medium text-gray-900">Super Admin</div>
+                <div className="text-xs text-gray-500">Control Panel</div>
               </div>
             </div>
             <button
@@ -157,7 +124,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ open, setOpen }) => 
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 type="search"
-                placeholder="Type to search..."
+                placeholder="Search..."
                 className="pl-10 bg-gray-50 border-gray-200"
               />
             </div>
@@ -165,10 +132,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ open, setOpen }) => 
 
           {/* Sidebar content */}
           <div className="flex-1 px-4 overflow-y-auto">
-            {/* Dash menu */}
             <div className="mb-6">
               <h3 className="px-3 text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
-                Dash menu
+                Super Admin Menu
               </h3>
               <nav className="space-y-1">
                 {sidebarLinks.map((link) => (
@@ -181,43 +147,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ open, setOpen }) => 
                   />
                 ))}
               </nav>
-            </div>
-
-            {/* UI Elements */}
-            <div className="mb-6">
-              <nav className="space-y-1">
-                {uiElements.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="p-1 text-gray-600">
-                        {item.icon}
-                      </div>
-                      <span className="text-sm">{item.label}</span>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                ))}
-              </nav>
-            </div>
-
-            {/* Category */}
-            <div>
-              <h3 className="px-3 text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
-                Category
-              </h3>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 px-3 py-1">
-                  <div className="w-2 h-2 rounded-full bg-pink-500"></div>
-                  <span className="text-sm text-gray-700">#Sales</span>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1">
-                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                  <span className="text-sm text-gray-700">#Marketing</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
