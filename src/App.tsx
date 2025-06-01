@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -414,81 +413,81 @@ const App = () => (
               {/* Admin routes - properly wrapped with AdminLayout */}
               <Route path="/admin" element={
                 <PrivateRoute adminOnly={true}>
-                  <SuspenseWrapper>
-                    <AdminLayout>
+                  <AdminLayout>
+                    <SuspenseWrapper>
                       <AdminDashboard />
-                    </AdminLayout>
-                  </SuspenseWrapper>
+                    </SuspenseWrapper>
+                  </AdminLayout>
                 </PrivateRoute>
               } />
               
               <Route path="/admin/messages" element={
                 <PrivateRoute adminOnly={true}>
-                  <SuspenseWrapper>
-                    <AdminLayout>
+                  <AdminLayout>
+                    <SuspenseWrapper>
                       <AdminMessages />
-                    </AdminLayout>
-                  </SuspenseWrapper>
+                    </SuspenseWrapper>
+                  </AdminLayout>
                 </PrivateRoute>
               } />
               
               <Route path="/admin/colleges" element={
                 <PrivateRoute adminOnly={true}>
-                  <SuspenseWrapper>
-                    <AdminLayout>
+                  <AdminLayout>
+                    <SuspenseWrapper>
                       <AdminColleges />
-                    </AdminLayout>
-                  </SuspenseWrapper>
+                    </SuspenseWrapper>
+                  </AdminLayout>
                 </PrivateRoute>
               } />
               
               <Route path="/admin/colleges/:id" element={
                 <PrivateRoute adminOnly={true}>
-                  <SuspenseWrapper>
-                    <AdminLayout>
+                  <AdminLayout>
+                    <SuspenseWrapper>
                       <AdminCollegeDetails />
-                    </AdminLayout>
-                  </SuspenseWrapper>
+                    </SuspenseWrapper>
+                  </AdminLayout>
                 </PrivateRoute>
               } />
               
               <Route path="/admin/notes" element={
                 <PrivateRoute adminOnly={true}>
-                  <SuspenseWrapper>
-                    <AdminLayout>
+                  <AdminLayout>
+                    <SuspenseWrapper>
                       <AdminNotes />
-                    </AdminLayout>
-                  </SuspenseWrapper>
+                    </SuspenseWrapper>
+                  </AdminLayout>
                 </PrivateRoute>
               } />
               
               <Route path="/admin/users" element={
                 <PrivateRoute adminOnly={true}>
-                  <SuspenseWrapper>
-                    <AdminLayout>
+                  <AdminLayout>
+                    <SuspenseWrapper>
                       <AdminUsers />
-                    </AdminLayout>
-                  </SuspenseWrapper>
+                    </SuspenseWrapper>
+                  </AdminLayout>
                 </PrivateRoute>
               } />
               
               <Route path="/admin/events" element={
                 <PrivateRoute adminOnly={true}>
-                  <SuspenseWrapper>
-                    <AdminLayout>
+                  <AdminLayout>
+                    <SuspenseWrapper>
                       <AdminEvents />
-                    </AdminLayout>
-                  </SuspenseWrapper>
+                    </SuspenseWrapper>
+                  </AdminLayout>
                 </PrivateRoute>
               } />
               
               <Route path="/admin/analytics" element={
                 <PrivateRoute adminOnly={true}>
-                  <SuspenseWrapper>
-                    <AdminLayout>
+                  <AdminLayout>
+                    <SuspenseWrapper>
                       <AdminAnalytics />
-                    </AdminLayout>
-                  </SuspenseWrapper>
+                    </SuspenseWrapper>
+                  </AdminLayout>
                 </PrivateRoute>
               } />
               

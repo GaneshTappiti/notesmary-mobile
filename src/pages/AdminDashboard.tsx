@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { PageContainer } from '@/components/PageContainer';
 import { StatsCards } from '@/components/admin/StatsCards';
 import { RecentActivity } from '@/components/admin/RecentActivity';
 import { UsageCharts } from '@/components/admin/UsageCharts';
