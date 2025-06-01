@@ -1,173 +1,227 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { cn } from '@/lib/utils';
 import { 
-  LayoutDashboard, 
-  FileText, 
-  MessageSquare, 
-  CalendarDays, 
-  Users, 
-  BarChart3, 
-  LogOut,
-  School
+  LayoutDashboard,
+  FileText,
+  MessageSquare,
+  Users,
+  School,
+  BarChart3,
+  Calendar,
+  Settings,
+  ChevronRight,
+  X,
+  Search,
+  Menu,
+  Layers,
+  FileStack,
+  PieChart,
+  Grid3X3,
+  Palette,
+  UserCheck,
+  AlertCircle,
+  BookOpen
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 
 interface AdminSidebarProps {
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-export const AdminSidebar: React.FC<AdminSidebarProps> = ({ 
-  open, 
-  setOpen 
-}) => {
-  const { logout } = useAuth();
-  const { toast } = useToast();
-  const location = useLocation();
-  
-  const handleLogout = async () => {
-    try {
-      await logout();
-      toast({
-        title: "Logged out successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error logging out",
-        variant: "destructive",
-      });
-    }
-  };
+interface SidebarLinkProps {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+  isNew?: boolean;
+}
 
-  const navigation = [
-    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-    { name: 'Uploaded Notes', href: '/admin/notes', icon: FileText },
-    { name: 'Messages', href: '/admin/messages', icon: MessageSquare },
-    { name: 'Events & Announcements', href: '/admin/events', icon: CalendarDays },
-    { name: 'Users Management', href: '/admin/users', icon: Users },
-    { name: 'Colleges', href: '/admin/colleges', icon: School },
-    { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+const SidebarLink: React.FC<SidebarLinkProps> = ({ to, icon, label, isNew }) => {
+  const location = useLocation();
+  const isActive = location.pathname === to || location.pathname.startsWith(`${to}/`);
+  
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) => cn(
+        "flex items-center justify-between px-3 py-2 rounded-lg transition-colors group",
+        isActive 
+          ? "bg-pink-50 text-pink-700 font-medium"
+          : "text-gray-700 hover:bg-gray-100"
+      )}
+    >
+      <div className="flex items-center gap-3">
+        <div className={cn("p-1", isActive ? "text-pink-600" : "text-gray-600")}>
+          {icon}
+        </div>
+        <span>{label}</span>
+      </div>
+      <div className="flex items-center gap-1">
+        {isNew && <Badge className="bg-pink-500 text-white text-xs px-2 py-0.5">New</Badge>}
+        <ChevronRight className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+      </div>
+    </NavLink>
+  );
+};
+
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({ open, setOpen }) => {
+  const sidebarLinks = [
+    {
+      to: "/admin",
+      icon: <LayoutDashboard size={20} />,
+      label: "Dashboard",
+      isNew: true
+    },
+    {
+      to: "/admin/notes",
+      icon: <FileText size={20} />,
+      label: "Uploaded Notes"
+    },
+    {
+      to: "/admin/messages",
+      icon: <MessageSquare size={20} />,
+      label: "Messages"
+    },
+    {
+      to: "/admin/users",
+      icon: <Users size={20} />,
+      label: "Users Management"
+    },
+    {
+      to: "/admin/colleges",
+      icon: <School size={20} />,
+      label: "Colleges"
+    },
+    {
+      to: "/admin/analytics",
+      icon: <BarChart3 size={20} />,
+      label: "Analytics"
+    }
   ];
 
-  // Close sidebar on route change on mobile
-  React.useEffect(() => {
-    if (open && window.innerWidth < 768) {
-      setOpen(false);
-    }
-  }, [location.pathname]);
-  
-  // Handle click outside to close sidebar on mobile
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (open && window.innerWidth < 768) {
-        // If clicked element is not part of the sidebar, close it
-        const sidebarEl = document.getElementById('admin-sidebar');
-        if (sidebarEl && !sidebarEl.contains(event.target as Node)) {
-          setOpen(false);
-        }
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [open, setOpen]);
+  const uiElements = [
+    { label: "UI Elements", icon: <Layers size={18} /> },
+    { label: "Form elements", icon: <FileStack size={18} /> },
+    { label: "Charts", icon: <PieChart size={18} /> },
+    { label: "Tables", icon: <Grid3X3 size={18} /> },
+    { label: "Icons", icon: <Palette size={18} /> },
+    { label: "User Pages", icon: <UserCheck size={18} /> },
+    { label: "Error pages", icon: <AlertCircle size={18} /> },
+    { label: "Documentation", icon: <BookOpen size={18} /> }
+  ];
 
   return (
     <>
-      {/* Mobile sidebar overlay */}
-      <div 
-        className={cn(
-          "fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity md:hidden",
-          open ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
-        onClick={() => setOpen(false)}
-        aria-hidden="true"
-      />
+      {/* Mobile backdrop */}
+      {open && (
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setOpen(false)}
+        />
+      )}
 
-      {/* Mobile sidebar */}
-      <div 
-        id="admin-sidebar"
+      {/* Sidebar */}
+      <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 transform transition-transform ease-in-out duration-300 md:hidden shadow-lg",
+          "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 transform lg:translate-x-0 lg:static lg:inset-auto",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center">
-            <span className="text-xl font-semibold text-purple-600 dark:text-purple-400">
-              Notex Admin
-            </span>
-          </div>
-          <button
-            type="button"
-            className="text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            onClick={() => setOpen(false)}
-            aria-label="Close sidebar"
-          >
-            <span className="sr-only">Close sidebar</span>
-            <svg 
-              className="h-6 w-6" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
+        <div className="flex flex-col h-full">
+          {/* Sidebar header */}
+          <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                <span className="text-gray-700 font-semibold text-sm">KO</span>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-gray-900">Kenneth Osborne</div>
+                <div className="text-xs text-gray-500">Welcome</div>
+              </div>
+            </div>
+            <button
+              onClick={() => setOpen(false)}
+              className="p-1 rounded-md text-gray-500 hover:bg-gray-100 lg:hidden"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        {renderSidebarContent()}
-      </div>
+              <X size={20} />
+            </button>
+          </div>
 
-      {/* Desktop sidebar */}
-      <div className="hidden md:flex md:flex-shrink-0">
-        <div className="flex flex-col w-64">
-          <div className="flex flex-col h-0 flex-1 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
-            <div className="flex items-center h-16 flex-shrink-0 px-4 border-b border-gray-200 dark:border-gray-700">
-              <span className="text-xl font-semibold text-purple-600 dark:text-purple-400">
-                Notex Admin
-              </span>
+          {/* Search */}
+          <div className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                type="search"
+                placeholder="Type to search..."
+                className="pl-10 bg-gray-50 border-gray-200"
+              />
             </div>
-            <div className="flex-1 flex flex-col overflow-y-auto">
-              {renderSidebarContent()}
+          </div>
+
+          {/* Sidebar content */}
+          <div className="flex-1 px-4 overflow-y-auto">
+            {/* Dash menu */}
+            <div className="mb-6">
+              <h3 className="px-3 text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
+                Dash menu
+              </h3>
+              <nav className="space-y-1">
+                {sidebarLinks.map((link) => (
+                  <SidebarLink
+                    key={link.to}
+                    to={link.to}
+                    icon={link.icon}
+                    label={link.label}
+                    isNew={link.isNew}
+                  />
+                ))}
+              </nav>
+            </div>
+
+            {/* UI Elements */}
+            <div className="mb-6">
+              <nav className="space-y-1">
+                {uiElements.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-1 text-gray-600">
+                        {item.icon}
+                      </div>
+                      <span className="text-sm">{item.label}</span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                ))}
+              </nav>
+            </div>
+
+            {/* Category */}
+            <div>
+              <h3 className="px-3 text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
+                Category
+              </h3>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 px-3 py-1">
+                  <div className="w-2 h-2 rounded-full bg-pink-500"></div>
+                  <span className="text-sm text-gray-700">#Sales</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1">
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <span className="text-sm text-gray-700">#Marketing</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </aside>
     </>
   );
-
-  function renderSidebarContent() {
-    return (
-      <nav className="mt-5 px-2 space-y-1">
-        {navigation.map((item) => (
-          <NavLink
-            key={item.name}
-            to={item.href}
-            className={({ isActive }) => cn(
-              isActive
-                ? "bg-purple-100 text-purple-900 dark:bg-purple-900 dark:text-white"
-                : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700",
-              "group flex items-center px-2 py-2 text-base font-medium rounded-md"
-            )}
-            onClick={() => setOpen(false)}
-          >
-            <item.icon className="mr-3 flex-shrink-0 h-6 w-6" />
-            {item.name}
-          </NavLink>
-        ))}
-        <button
-          onClick={handleLogout}
-          className="w-full text-left text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 group flex items-center px-2 py-2 text-base font-medium rounded-md"
-        >
-          <LogOut className="mr-3 flex-shrink-0 h-6 w-6" />
-          Logout
-        </button>
-      </nav>
-    );
-  }
 };

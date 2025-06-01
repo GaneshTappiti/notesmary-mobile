@@ -15,7 +15,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is authenticated and is an admin
     if (!isAuthenticated) {
       navigate('/authentication', { state: { from: window.location.pathname } });
     } else if (!isAdmin) {
@@ -24,16 +23,14 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   }, [isAuthenticated, isAdmin, navigate]);
 
   return (
-    <div className="h-screen flex overflow-hidden bg-gray-50 w-full">
+    <div className="h-screen flex overflow-hidden bg-white w-full">
       <AdminSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
       
       <div className="flex flex-col w-full flex-1 overflow-hidden">
         <AdminTopbar onMenuClick={() => setSidebarOpen(true)} />
         
-        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none pb-10">
-          <div className="py-6 px-4 sm:px-6 lg:px-8">
-            {children}
-          </div>
+        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
+          {children}
         </main>
       </div>
     </div>
