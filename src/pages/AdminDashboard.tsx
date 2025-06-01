@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
@@ -482,7 +481,7 @@ const AdminDashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={320}>
-                    {chartType === 'area' && (
+                    {chartType === 'area' ? (
                       <AreaChart data={userGrowthData}>
                         <defs>
                           <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
@@ -502,8 +501,7 @@ const AdminDashboard = () => {
                           strokeWidth={3}
                         />
                       </AreaChart>
-                    )}
-                    {chartType === 'line' && (
+                    ) : chartType === 'line' ? (
                       <LineChart data={userGrowthData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                         <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
@@ -517,8 +515,7 @@ const AdminDashboard = () => {
                           activeDot={{ r: 7, stroke: '#3b82f6', strokeWidth: 2, fill: '#fff' }}
                         />
                       </LineChart>
-                    )}
-                    {chartType === 'bar' && (
+                    ) : (
                       <BarChart data={userGrowthData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                         <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
