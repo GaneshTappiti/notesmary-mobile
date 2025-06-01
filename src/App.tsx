@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -67,6 +68,8 @@ const AdminNotes = createLazyComponent(() => import("@/pages/AdminNotes"));
 const AdminUsers = createLazyComponent(() => import("@/pages/AdminUsers"));
 const AdminEvents = createLazyComponent(() => import("@/pages/AdminEvents"));
 const AdminAnalytics = createLazyComponent(() => import("@/pages/AdminAnalytics"));
+const AdminAuditLogs = createLazyComponent(() => import("@/pages/AdminAuditLogs"));
+const AdminEventsAnnouncements = createLazyComponent(() => import("@/pages/AdminEventsAnnouncements"));
 
 // New College Management pages
 const AdminColleges = createLazyComponent(() => import("@/pages/AdminColleges"));
@@ -410,7 +413,7 @@ const App = () => (
                 <Route index element={<Navigate to="/college-admin/dashboard" replace />} />
               </Route>
               
-              {/* Admin routes - properly wrapped with AdminLayout */}
+              {/* Admin routes - properly structured with proper paths */}
               <Route path="/admin" element={
                 <PrivateRoute adminOnly={true}>
                   <AdminLayout>
@@ -486,6 +489,27 @@ const App = () => (
                   <AdminLayout>
                     <SuspenseWrapper>
                       <AdminAnalytics />
+                    </SuspenseWrapper>
+                  </AdminLayout>
+                </PrivateRoute>
+              } />
+
+              {/* Add missing admin routes that match the sidebar */}
+              <Route path="/admin/events-announcements" element={
+                <PrivateRoute adminOnly={true}>
+                  <AdminLayout>
+                    <SuspenseWrapper>
+                      <AdminEventsAnnouncements />
+                    </SuspenseWrapper>
+                  </AdminLayout>
+                </PrivateRoute>
+              } />
+
+              <Route path="/admin/audit-logs" element={
+                <PrivateRoute adminOnly={true}>
+                  <AdminLayout>
+                    <SuspenseWrapper>
+                      <AdminAuditLogs />
                     </SuspenseWrapper>
                   </AdminLayout>
                 </PrivateRoute>
