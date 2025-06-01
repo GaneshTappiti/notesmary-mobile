@@ -10,310 +10,281 @@ import {
   MessageSquare, 
   TrendingUp, 
   Calendar,
-  Export,
+  Download,
   Info,
   ChevronRight,
   Activity,
   Database,
   Clock,
-  HardDrive
+  HardDrive,
+  School,
+  Shield,
+  BarChart3,
+  Eye,
+  Plus
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 const AdminDashboard = () => {
-  // Sample data for charts
-  const sessionsData = [
-    { name: 'Firewalls', value: 3, percentage: 100 },
-    { name: 'Ports', value: 12, percentage: 100 },
-    { name: 'Servers', value: 233, percentage: 100 },
+  // Sample data for the new dashboard
+  const kpiData = {
+    totalColleges: 24,
+    activeAdmins: 18,
+    notesShared: 15432,
+    activeRooms: 127
+  };
+
+  const userGrowthData = [
+    { month: 'Jan', users: 1200, newUsers: 120 },
+    { month: 'Feb', users: 1350, newUsers: 150 },
+    { month: 'Mar', users: 1580, newUsers: 230 },
+    { month: 'Apr', users: 1820, newUsers: 240 },
+    { month: 'May', users: 2100, newUsers: 280 },
+    { month: 'Jun', users: 2450, newUsers: 350 },
+    { month: 'Jul', users: 2800, newUsers: 350 },
+    { month: 'Aug', users: 3200, newUsers: 400 },
   ];
 
-  const eventsData = [
-    { month: 'Jan', critical: 12, error: 8, warning: 15 },
-    { month: 'Feb', critical: 8, error: 12, warning: 10 },
-    { month: 'Mar', critical: 15, error: 6, warning: 18 },
-    { month: 'Apr', critical: 10, error: 14, warning: 12 },
-    { month: 'May', critical: 18, error: 9, warning: 20 },
-    { month: 'Jun', critical: 6, error: 16, warning: 8 },
+  const recentEvents = [
+    { id: 1, event: 'New college registration', college: 'MIT', time: '2 hours ago', type: 'success' },
+    { id: 2, event: 'Admin access granted', college: 'Stanford', time: '4 hours ago', type: 'info' },
+    { id: 3, event: 'High usage alert', college: 'Harvard', time: '6 hours ago', type: 'warning' },
+    { id: 4, event: 'System maintenance completed', college: 'All Colleges', time: '1 day ago', type: 'success' },
+    { id: 5, event: 'Storage limit reached', college: 'Cambridge', time: '2 days ago', type: 'error' },
   ];
 
-  const salesData = [
-    { month: 'Feb', online: 15000, offline: 8000, marketing: 12000 },
-    { month: 'Mar', online: 18000, offline: 12000, marketing: 8000 },
-    { month: 'Apr', online: 12000, offline: 15000, marketing: 18000 },
-    { month: 'May', online: 22000, offline: 8000, marketing: 15000 },
-    { month: 'Jun', online: 16000, offline: 18000, marketing: 12000 },
-    { month: 'Jul', online: 25000, offline: 10000, marketing: 20000 },
-    { month: 'Aug', online: 20000, offline: 14000, marketing: 16000 },
-  ];
-
-  const pieData = [
-    { name: 'Online', value: 23342, color: '#ef4444' },
-    { name: 'Offline', value: 13221, color: '#8b5cf6' },
-    { name: 'Marketing', value: 1542, color: '#f97316' },
-  ];
-
-  const employeeData = [
-    { name: 'Connor Chandler', amount: 4909 },
-    { name: 'Russell Floyd', amount: 857 },
-    { name: 'Douglas White', amount: 612 },
-    { name: 'Alta Fletcher', amount: 233 },
-    { name: 'Marguerite Pearson', amount: 233 },
-    { name: 'Leonard Gutierrez', amount: 35 },
-    { name: 'Helen Benson', amount: 43 },
-  ];
+  const getEventBadgeColor = (type: string) => {
+    switch (type) {
+      case 'success': return 'bg-green-100 text-green-800';
+      case 'warning': return 'bg-yellow-100 text-yellow-800';
+      case 'error': return 'bg-red-100 text-red-800';
+      default: return 'bg-blue-100 text-blue-800';
+    }
+  };
 
   return (
     <>
       <Helmet>
-        <title>Dashboard Overview | Notex Admin</title>
+        <title>Super Admin Dashboard | Notex</title>
       </Helmet>
       
-      <div className="space-y-6 p-6 bg-gray-50 min-h-screen">
+      <div className="min-h-screen bg-gray-50/30">
         {/* Header Section */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <span className="text-white font-semibold text-lg">KO</span>
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <span className="text-white font-semibold text-lg">SA</span>
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">Kenneth Osborne</h1>
-                <p className="text-sm text-gray-500">Your last login: 21h ago from newzealand.</p>
+                <h1 className="text-2xl font-bold text-gray-900">Super Admin</h1>
+                <p className="text-sm text-gray-500">Last login: 2 hours ago from San Francisco, CA</p>
               </div>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Calendar className="w-4 h-4 mr-2" />
-              Last 7 days
-            </Button>
-            <Button variant="outline" size="sm">
-              <Export className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-            <Button variant="outline" size="sm">
-              <Info className="w-4 h-4 mr-2" />
-              Info
-            </Button>
+            
+            <div className="flex items-center gap-3">
+              <Button variant="outline" size="sm">
+                <Calendar className="w-4 h-4 mr-2" />
+                Last 30 days
+              </Button>
+              <Button variant="outline" size="sm">
+                <Download className="w-4 h-4 mr-2" />
+                Export
+              </Button>
+              <Button variant="outline" size="sm">
+                <Info className="w-4 h-4 mr-2" />
+                System Info
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Sessions By Channel - Left */}
-          <Card className="bg-white shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">Sessions By Channel</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center mb-6">
-                <div className="relative w-32 h-32">
-                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                    <circle cx="60" cy="60" r="54" fill="none" stroke="#e5e7eb" strokeWidth="12"/>
-                    <circle 
-                      cx="60" 
-                      cy="60" 
-                      r="54" 
-                      fill="none" 
-                      stroke="#3b82f6" 
-                      strokeWidth="12"
-                      strokeDasharray={`${75 * 3.39} 339.292`}
-                      className="transition-all duration-1000 ease-in-out"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-xs text-gray-500 mb-1">Score</div>
-                      <div className="text-2xl font-bold text-gray-900">75%</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                {sessionsData.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                      <span className="text-sm text-gray-600">{item.name}({item.value})</span>
-                    </div>
-                    <span className="text-sm font-medium">{item.value}({item.percentage}%)</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        <div className="p-6 space-y-6">
+          {/* KPI Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <KPICard
+              title="Total Colleges"
+              value={kpiData.totalColleges}
+              icon={<School className="h-6 w-6 text-blue-500" />}
+              trend="+2 this month"
+              trendUp={true}
+            />
+            <KPICard
+              title="Active Admins"
+              value={kpiData.activeAdmins}
+              icon={<Shield className="h-6 w-6 text-green-500" />}
+              trend="+3 this week"
+              trendUp={true}
+            />
+            <KPICard
+              title="Notes Shared"
+              value={kpiData.notesShared.toLocaleString()}
+              icon={<FileText className="h-6 w-6 text-purple-500" />}
+              trend="+12% this month"
+              trendUp={true}
+            />
+            <KPICard
+              title="Active Rooms"
+              value={kpiData.activeRooms}
+              icon={<Users className="h-6 w-6 text-orange-500" />}
+              trend="+5 today"
+              trendUp={true}
+            />
+          </div>
 
-          {/* Events - Center */}
-          <Card className="bg-white shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">Events</CardTitle>
-              <div className="flex gap-4 text-xs">
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                  <span>Critical</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-                  <span>Error</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                  <span>Warning</span>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={eventsData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                  <YAxis hide />
-                  <Line type="monotone" dataKey="critical" stroke="#ef4444" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="error" stroke="#8b5cf6" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="warning" stroke="#f97316" strokeWidth={2} dot={false} />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Device Stats - Right */}
-          <Card className="bg-white shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">Device Stats</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Uptime</span>
-                </div>
-                <span className="text-sm font-medium">195 Days, 8 hours</span>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">First Seen</span>
-                </div>
-                <span className="text-sm font-medium">23 Sep 2019, 2:04PM</span>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Database className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Collected time</span>
-                </div>
-                <span className="text-sm font-medium">23 Sep 2019, 2:04PM</span>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <HardDrive className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Memory space</span>
-                </div>
-                <span className="text-sm font-medium">168.3GB</span>
-              </div>
-              
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                <div className="bg-green-500 h-2 rounded-full" style={{width: '68%'}}></div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Bottom Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Sessions By Channel - Employee Data */}
-          <Card className="bg-white shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">Sessions By Channel</CardTitle>
-              <div className="flex gap-4 text-sm text-gray-500">
-                <span>Employee Name</span>
-                <span className="ml-auto">This Month</span>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {employeeData.map((employee, index) => (
-                <div key={index} className="flex items-center justify-between py-2">
-                  <span className="text-sm text-blue-600 hover:underline cursor-pointer">
-                    {employee.name}
-                  </span>
-                  <span className="text-sm font-medium">${employee.amount}</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Sales Analytics */}
-          <Card className="bg-white shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">Sales Analytics</CardTitle>
-              <div className="grid grid-cols-3 gap-4 mt-4">
-                <div className="text-center">
-                  <div className="text-xs text-gray-500 mb-1">Online</div>
-                  <div className="text-lg font-bold text-red-500">23,342</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xs text-gray-500 mb-1">Offline</div>
-                  <div className="text-lg font-bold text-purple-500">13,221</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xs text-gray-500 mb-1">Marketing</div>
-                  <div className="text-lg font-bold text-orange-500">1,542</div>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={180}>
-                <LineChart data={salesData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                  <YAxis hide />
-                  <Line type="monotone" dataKey="online" stroke="#ef4444" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="offline" stroke="#8b5cf6" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="marketing" stroke="#f97316" strokeWidth={2} dot={false} />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Card Title - Earnings */}
-          <div className="space-y-6">
-            <Card className="bg-white shadow-sm">
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* User Growth Chart */}
+            <Card className="lg:col-span-2">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900">Card Title</CardTitle>
+                <CardTitle className="flex items-center justify-between">
+                  <span>User Growth Over Time</span>
+                  <Button variant="ghost" size="sm">
+                    <BarChart3 className="h-4 w-4" />
+                  </Button>
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center mb-4">
-                  <div className="text-xs text-blue-500 mb-1">Total Earning</div>
-                  <div className="text-2xl font-bold text-gray-900">287,493$</div>
-                  <div className="text-xs text-gray-500">1.4% Since Last Month</div>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-xs text-blue-500 mb-1">Total Earning</div>
-                  <div className="text-xl font-bold text-gray-900">87,493</div>
-                  <div className="text-xs text-gray-500">5.43% Since Last Month</div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white shadow-sm">
-              <CardContent className="pt-6">
-                <ResponsiveContainer width="100%" height={120}>
-                  <BarChart data={salesData.slice(-6)}>
-                    <Bar dataKey="online" fill="#3b82f6" radius={[2, 2, 0, 0]} />
-                  </BarChart>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={userGrowthData}>
+                    <defs>
+                      <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} />
+                    <YAxis axisLine={false} tickLine={false} />
+                    <Area 
+                      type="monotone" 
+                      dataKey="users" 
+                      stroke="#3b82f6" 
+                      fillOpacity={1} 
+                      fill="url(#colorUsers)"
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
+
+            {/* Recent Events */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Recent Events</span>
+                  <Button variant="ghost" size="sm">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4 max-h-[300px] overflow-y-auto">
+                  {recentEvents.map((event) => (
+                    <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">{event.event}</p>
+                        <p className="text-xs text-gray-500">{event.college}</p>
+                        <p className="text-xs text-gray-400 mt-1">{event.time}</p>
+                      </div>
+                      <Badge className={`text-xs ${getEventBadgeColor(event.type)}`}>
+                        {event.type}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Action Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <ActionCard
+              title="Manage Colleges"
+              description="View and manage all registered colleges"
+              actionText="Go to Colleges"
+              href="/admin/colleges"
+              icon={<School className="h-6 w-6 text-blue-500" />}
+            />
+            <ActionCard
+              title="System Analytics"
+              description="View detailed system analytics and reports"
+              actionText="View Analytics"
+              href="/admin/analytics"
+              icon={<BarChart3 className="h-6 w-6 text-green-500" />}
+            />
+            <ActionCard
+              title="Audit Logs"
+              description="Monitor all system activities and changes"
+              actionText="View All Logs"
+              href="/admin/logs"
+              icon={<Activity className="h-6 w-6 text-purple-500" />}
+            />
           </div>
         </div>
       </div>
     </>
+  );
+};
+
+interface KPICardProps {
+  title: string;
+  value: number | string;
+  icon: React.ReactNode;
+  trend: string;
+  trendUp: boolean;
+}
+
+const KPICard: React.FC<KPICardProps> = ({ title, value, icon, trend, trendUp }) => {
+  return (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-600">{title}</p>
+            <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
+            <p className={`text-sm mt-2 flex items-center gap-1 ${trendUp ? 'text-green-600' : 'text-red-600'}`}>
+              <TrendingUp className={`h-4 w-4 ${trendUp ? 'rotate-0' : 'rotate-180'}`} />
+              {trend}
+            </p>
+          </div>
+          <div className="p-3 rounded-full bg-gray-100">
+            {icon}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+interface ActionCardProps {
+  title: string;
+  description: string;
+  actionText: string;
+  href: string;
+  icon: React.ReactNode;
+}
+
+const ActionCard: React.FC<ActionCardProps> = ({ title, description, actionText, href, icon }) => {
+  return (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardContent className="p-6">
+        <div className="flex items-start gap-4">
+          <div className="p-3 rounded-full bg-gray-100">
+            {icon}
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-900">{title}</h3>
+            <p className="text-sm text-gray-600 mt-1">{description}</p>
+            <Button variant="outline" size="sm" className="mt-3">
+              {actionText}
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
