@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { PageContainer } from '@/components/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -22,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, Filter, Download, Calendar, FileText } from 'lucide-react';
+import { Search, Filter, Download, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // Enhanced mock data with more realistic audit logs
@@ -240,7 +239,7 @@ const AdminAuditLogs = () => {
       </Helmet>
       
       <AdminLayout>
-        <PageContainer className="py-6">
+        <div className="p-6">
           <div className="flex flex-col space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
@@ -406,7 +405,7 @@ const AdminAuditLogs = () => {
               </CardContent>
             </Card>
           </div>
-        </PageContainer>
+        </div>
       </AdminLayout>
     </>
   );
