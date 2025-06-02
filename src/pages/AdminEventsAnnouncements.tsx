@@ -1,7 +1,5 @@
-
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -253,121 +251,119 @@ const AdminEventsAnnouncements = () => {
         <title>Events & Announcements | Super Admin</title>
       </Helmet>
       
-      <AdminLayout>
-        <div className="p-6">
-          <div className="flex flex-col space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight">Events & Announcements</h1>
-                <p className="text-muted-foreground">Manage system events and announcements</p>
-              </div>
-              <Button onClick={handleExport} variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </Button>
+      <div className="p-6">
+        <div className="flex flex-col space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Events & Announcements</h1>
+              <p className="text-muted-foreground">Manage system events and announcements</p>
             </div>
-
-            {/* Search and Filters */}
-            <div className="flex items-center gap-4 flex-wrap">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search events and announcements..."
-                  className="pl-8"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-48">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Filter by category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="update">Update</SelectItem>
-                  <SelectItem value="system_notice">System Notice</SelectItem>
-                  <SelectItem value="info">Information</SelectItem>
-                  <SelectItem value="warning">Warning</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="published">Published</SelectItem>
-                  <SelectItem value="scheduled">Scheduled</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="archived">Archived</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Tabs */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="mb-4">
-                <TabsTrigger value="events" className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Events
-                </TabsTrigger>
-                <TabsTrigger value="announcements" className="flex items-center gap-2">
-                  <Megaphone className="h-4 w-4" />
-                  Announcements
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="events">
-                <div className="grid gap-6">
-                  {filteredEvents.map((event) => (
-                    <ItemCard key={event.id} item={event} />
-                  ))}
-                  {filteredEvents.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No events found matching your criteria.
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="announcements">
-                <div className="grid gap-6">
-                  {filteredAnnouncements.map((announcement) => (
-                    <ItemCard key={announcement.id} item={announcement} />
-                  ))}
-                  {filteredAnnouncements.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No announcements found matching your criteria.
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-            </Tabs>
+            <Button onClick={handleExport} variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
           </div>
+
+          {/* Search and Filters */}
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search events and announcements..."
+                className="pl-8"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-48">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Filter by category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="update">Update</SelectItem>
+                <SelectItem value="system_notice">System Notice</SelectItem>
+                <SelectItem value="info">Information</SelectItem>
+                <SelectItem value="warning">Warning</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="published">Published</SelectItem>
+                <SelectItem value="scheduled">Scheduled</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="events" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Events
+              </TabsTrigger>
+              <TabsTrigger value="announcements" className="flex items-center gap-2">
+                <Megaphone className="h-4 w-4" />
+                Announcements
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="events">
+              <div className="grid gap-6">
+                {filteredEvents.map((event) => (
+                  <ItemCard key={event.id} item={event} />
+                ))}
+                {filteredEvents.length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No events found matching your criteria.
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="announcements">
+              <div className="grid gap-6">
+                {filteredAnnouncements.map((announcement) => (
+                  <ItemCard key={announcement.id} item={announcement} />
+                ))}
+                {filteredAnnouncements.length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No announcements found matching your criteria.
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
+      </div>
 
-        {/* Floating Action Button */}
-        <Button
-          onClick={() => setCreateModalOpen(true)}
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg"
-          size="icon"
-        >
-          <Plus className="h-6 w-6" />
-        </Button>
+      {/* Floating Action Button */}
+      <Button
+        onClick={() => setCreateModalOpen(true)}
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg"
+        size="icon"
+      >
+        <Plus className="h-6 w-6" />
+      </Button>
 
-        {/* Create Modal */}
-        <CreateEventAnnouncementModal
-          open={createModalOpen}
-          onOpenChange={setCreateModalOpen}
-          onSubmit={handleCreateNew}
-          type={activeTab as 'event' | 'announcement'}
-        />
-      </AdminLayout>
+      {/* Create Modal */}
+      <CreateEventAnnouncementModal
+        open={createModalOpen}
+        onOpenChange={setCreateModalOpen}
+        onSubmit={handleCreateNew}
+        type={activeTab as 'event' | 'announcement'}
+      />
     </>
   );
 };
