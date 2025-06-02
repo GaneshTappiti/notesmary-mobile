@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
-  // All hook calls at the top level
   const navigate = useNavigate();
   const { isAuthenticated, isLoading } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -29,7 +28,6 @@ const Index = () => {
   const bgOpacity2 = useTransform(scrollYProgress, [0, 1], [0.5, 0.8]);
   const bgPosition = useTransform(scrollYProgress, [0, 1], ['0% 0%', '100% 100%']);
   const parallaxY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
-
   const backToTopOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
   
   useEffect(() => {
@@ -40,7 +38,6 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Render content based on loading state AFTER all hooks are called
   if (isLoading) {
     return (
       <div className="min-h-screen grid place-items-center">
