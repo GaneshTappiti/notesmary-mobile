@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -238,175 +237,173 @@ const AdminAuditLogs = () => {
         <title>Audit Logs | Super Admin</title>
       </Helmet>
       
-      <AdminLayout>
-        <div className="p-6">
-          <div className="flex flex-col space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight">Audit Logs</h1>
-                <p className="text-muted-foreground">Monitor all system activities and user actions</p>
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={handleExportCSV} variant="outline" size="sm">
-                  <Download className="mr-2 h-4 w-4" />
-                  Export CSV
-                </Button>
-                <Button onClick={handleExportPDF} variant="outline" size="sm">
-                  <FileText className="mr-2 h-4 w-4" />
-                  Export PDF
-                </Button>
-              </div>
+      <div className="p-6">
+        <div className="flex flex-col space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Audit Logs</h1>
+              <p className="text-muted-foreground">Monitor all system activities and user actions</p>
             </div>
+            <div className="flex gap-2">
+              <Button onClick={handleExportCSV} variant="outline" size="sm">
+                <Download className="mr-2 h-4 w-4" />
+                Export CSV
+              </Button>
+              <Button onClick={handleExportPDF} variant="outline" size="sm">
+                <FileText className="mr-2 h-4 w-4" />
+                Export PDF
+              </Button>
+            </div>
+          </div>
 
-            {/* Enhanced Filters */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Search & Filters</CardTitle>
-                  <Button variant="ghost" size="sm" onClick={clearFilters}>
-                    Clear All
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                  {/* Enhanced Search */}
-                  <div className="relative lg:col-span-2">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search by name, email, or action..."
-                      className="pl-8"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                  
-                  {/* Action Type Filter */}
-                  <Select value={actionTypeFilter} onValueChange={setActionTypeFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Action Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Actions</SelectItem>
-                      <SelectItem value="login">Login</SelectItem>
-                      <SelectItem value="logout">Logout</SelectItem>
-                      <SelectItem value="data_update">Data Update</SelectItem>
-                      <SelectItem value="error">Error</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  {/* Role Filter */}
-                  <Select value={roleFilter} onValueChange={setRoleFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Roles</SelectItem>
-                      <SelectItem value="Super Admin">Super Admin</SelectItem>
-                      <SelectItem value="College Admin">College Admin</SelectItem>
-                      <SelectItem value="Student">Student</SelectItem>
-                      <SelectItem value="System">System</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  {/* Date Range Filters */}
+          {/* Enhanced Filters */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">Search & Filters</CardTitle>
+                <Button variant="ghost" size="sm" onClick={clearFilters}>
+                  Clear All
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {/* Enhanced Search */}
+                <div className="relative lg:col-span-2">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    type="date"
-                    placeholder="From Date"
-                    value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
-                  />
-                  
-                  <Input
-                    type="date"
-                    placeholder="To Date"
-                    value={dateTo}
-                    onChange={(e) => setDateeTo(e.target.value)}
+                    placeholder="Search by name, email, or action..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
                 
-                {/* Filter Summary */}
-                <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-                  <Filter className="h-4 w-4" />
-                  Showing {filteredLogs.length} of {mockAuditLogs.length} audit logs
-                  {(searchTerm || actionTypeFilter !== 'all' || roleFilter !== 'all' || dateFrom || dateTo) && (
-                    <span className="text-blue-600">with active filters</span>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                {/* Action Type Filter */}
+                <Select value={actionTypeFilter} onValueChange={setActionTypeFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Action Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Actions</SelectItem>
+                    <SelectItem value="login">Login</SelectItem>
+                    <SelectItem value="logout">Logout</SelectItem>
+                    <SelectItem value="data_update">Data Update</SelectItem>
+                    <SelectItem value="error">Error</SelectItem>
+                  </SelectContent>
+                </Select>
 
-            {/* Enhanced Audit Logs Table */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Activity Logs</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
+                {/* Role Filter */}
+                <Select value={roleFilter} onValueChange={setRoleFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Roles</SelectItem>
+                    <SelectItem value="Super Admin">Super Admin</SelectItem>
+                    <SelectItem value="College Admin">College Admin</SelectItem>
+                    <SelectItem value="Student">Student</SelectItem>
+                    <SelectItem value="System">System</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Date Range Filters */}
+                <Input
+                  type="date"
+                  placeholder="From Date"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                />
+                
+                <Input
+                  type="date"
+                  placeholder="To Date"
+                  value={dateTo}
+                  onChange={(e) => setDateeTo(e.target.value)}
+                />
+              </div>
+              
+              {/* Filter Summary */}
+              <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                <Filter className="h-4 w-4" />
+                Showing {filteredLogs.length} of {mockAuditLogs.length} audit logs
+                {(searchTerm || actionTypeFilter !== 'all' || roleFilter !== 'all' || dateFrom || dateTo) && (
+                  <span className="text-blue-600">with active filters</span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Enhanced Audit Logs Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Activity Logs</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Username</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Action</TableHead>
+                      <TableHead>Details</TableHead>
+                      <TableHead>Timestamp</TableHead>
+                      <TableHead>Device Info</TableHead>
+                      <TableHead>IP Address</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredLogs.length === 0 ? (
                       <TableRow>
-                        <TableHead>Username</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Action</TableHead>
-                        <TableHead>Details</TableHead>
-                        <TableHead>Timestamp</TableHead>
-                        <TableHead>Device Info</TableHead>
-                        <TableHead>IP Address</TableHead>
-                        <TableHead>Status</TableHead>
+                        <TableCell colSpan={9} className="h-24 text-center">
+                          No audit logs found matching your criteria.
+                        </TableCell>
                       </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredLogs.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={9} className="h-24 text-center">
-                            No audit logs found matching your criteria.
+                    ) : (
+                      filteredLogs.map((log) => (
+                        <TableRow key={log.id}>
+                          <TableCell className="font-medium">{log.username}</TableCell>
+                          <TableCell className="text-sm">{log.email}</TableCell>
+                          <TableCell>
+                            <Badge className={getRoleColor(log.role)}>
+                              {log.role}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col gap-1">
+                              <span className="font-medium">{log.action}</span>
+                              <Badge className={getActionTypeColor(log.actionType)} variant="outline">
+                                {log.actionType.replace('_', ' ')}
+                              </Badge>
+                            </div>
+                          </TableCell>
+                          <TableCell className="max-w-xs">
+                            <div className="truncate" title={log.details}>
+                              {log.details}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-sm font-mono">{log.timestamp}</TableCell>
+                          <TableCell className="text-sm">{log.device}</TableCell>
+                          <TableCell className="text-sm font-mono">{log.ip}</TableCell>
+                          <TableCell>
+                            <Badge className={getStatusColor(log.status)}>
+                              {log.status}
+                            </Badge>
                           </TableCell>
                         </TableRow>
-                      ) : (
-                        filteredLogs.map((log) => (
-                          <TableRow key={log.id}>
-                            <TableCell className="font-medium">{log.username}</TableCell>
-                            <TableCell className="text-sm">{log.email}</TableCell>
-                            <TableCell>
-                              <Badge className={getRoleColor(log.role)}>
-                                {log.role}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex flex-col gap-1">
-                                <span className="font-medium">{log.action}</span>
-                                <Badge className={getActionTypeColor(log.actionType)} variant="outline">
-                                  {log.actionType.replace('_', ' ')}
-                                </Badge>
-                              </div>
-                            </TableCell>
-                            <TableCell className="max-w-xs">
-                              <div className="truncate" title={log.details}>
-                                {log.details}
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-sm font-mono">{log.timestamp}</TableCell>
-                            <TableCell className="text-sm">{log.device}</TableCell>
-                            <TableCell className="text-sm font-mono">{log.ip}</TableCell>
-                            <TableCell>
-                              <Badge className={getStatusColor(log.status)}>
-                                {log.status}
-                              </Badge>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </AdminLayout>
+      </div>
     </>
   );
 };

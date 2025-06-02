@@ -2,7 +2,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -60,7 +59,10 @@ const AdminCollegeDetails = () => {
   
   if (!college) {
     return (
-      <AdminLayout>
+      <>
+        <Helmet>
+          <title>College Not Found | Notex Admin</title>
+        </Helmet>
         <div className="p-6">
           <div className="flex flex-col items-center justify-center h-[60vh]">
             <School className="h-16 w-16 text-gray-300 mb-4" />
@@ -72,7 +74,7 @@ const AdminCollegeDetails = () => {
             </Button>
           </div>
         </div>
-      </AdminLayout>
+      </>
     );
   }
 
@@ -102,164 +104,162 @@ const AdminCollegeDetails = () => {
         <title>{college.name} | College Details | Notex Admin</title>
       </Helmet>
       
-      <AdminLayout>
-        <div className="p-6">
-          <div className="flex flex-col space-y-6">
-            {/* Header with back button and edit */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => navigate('/admin/colleges')}
-                  className="mr-4"
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Colleges
-                </Button>
-                <div>
-                  <div className="flex items-center gap-3">
-                    <h1 className="text-2xl font-bold tracking-tight">{college.name}</h1>
-                    <Badge 
-                      variant={college.status === 'active' ? 'outline' : 'destructive'}
-                      className={
-                        college.status === 'active' 
-                          ? 'bg-green-100 text-green-800 hover:bg-green-100' 
-                          : 'bg-red-100 text-red-800 hover:bg-red-100'
-                      }
-                    >
-                      {college.status === 'active' ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </div>
-                  <p className="text-muted-foreground mt-1">{college.domain}</p>
-                </div>
-              </div>
-              <Button onClick={() => setIsEditModalOpen(true)}>
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit College
+      <div className="p-6">
+        <div className="flex flex-col space-y-6">
+          {/* Header with back button and edit */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate('/admin/colleges')}
+                className="mr-4"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Colleges
               </Button>
+              <div>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl font-bold tracking-tight">{college.name}</h1>
+                  <Badge 
+                    variant={college.status === 'active' ? 'outline' : 'destructive'}
+                    className={
+                      college.status === 'active' 
+                        ? 'bg-green-100 text-green-800 hover:bg-green-100' 
+                        : 'bg-red-100 text-red-800 hover:bg-red-100'
+                    }
+                  >
+                    {college.status === 'active' ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
+                <p className="text-muted-foreground mt-1">{college.domain}</p>
+              </div>
             </div>
+            <Button onClick={() => setIsEditModalOpen(true)}>
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit College
+            </Button>
+          </div>
+          
+          {/* College overview section */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <Card className="md:col-span-2">
+              <CardHeader>
+                <CardTitle>College Overview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CollegeStats collegeId={college.id} />
+              </CardContent>
+            </Card>
             
-            {/* College overview section */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <Card className="md:col-span-2">
-                <CardHeader>
-                  <CardTitle>College Overview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CollegeStats collegeId={college.id} />
-                </CardContent>
-              </Card>
-              
+            <Card>
+              <CardHeader>
+                <CardTitle>College Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="text-sm text-gray-500">Domain</div>
+                    <div className="col-span-2 text-sm font-medium">{college.domain}</div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="text-sm text-gray-500">Created</div>
+                    <div className="col-span-2 text-sm font-medium">{new Date(college.createdAt).toLocaleDateString()}</div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="text-sm text-gray-500">Admin</div>
+                    <div className="col-span-2 text-sm font-medium">{college.adminName}</div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="text-sm text-gray-500">Email</div>
+                    <div className="col-span-2 text-sm font-medium">{college.adminEmail}</div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="text-sm text-gray-500">Phone</div>
+                    <div className="col-span-2 text-sm font-medium">{college.adminPhone}</div>
+                  </div>
+                  <div className="pt-4">
+                    <Button 
+                      className="w-full" 
+                      onClick={handleAccessCollegeAdminView}
+                    >
+                      <School className="mr-2 h-4 w-4" />
+                      Access Admin View
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Tabs for different data views */}
+          <Tabs defaultValue="activity" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="activity">Recent Activity</TabsTrigger>
+              <TabsTrigger value="students">Students</TabsTrigger>
+              <TabsTrigger value="notes">Notes</TabsTrigger>
+              <TabsTrigger value="rooms">Study Rooms</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="activity">
               <Card>
                 <CardHeader>
-                  <CardTitle>College Information</CardTitle>
+                  <CardTitle>Recent Activity</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="text-sm text-gray-500">Domain</div>
-                      <div className="col-span-2 text-sm font-medium">{college.domain}</div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="text-sm text-gray-500">Created</div>
-                      <div className="col-span-2 text-sm font-medium">{new Date(college.createdAt).toLocaleDateString()}</div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="text-sm text-gray-500">Admin</div>
-                      <div className="col-span-2 text-sm font-medium">{college.adminName}</div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="text-sm text-gray-500">Email</div>
-                      <div className="col-span-2 text-sm font-medium">{college.adminEmail}</div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="text-sm text-gray-500">Phone</div>
-                      <div className="col-span-2 text-sm font-medium">{college.adminPhone}</div>
-                    </div>
-                    <div className="pt-4">
-                      <Button 
-                        className="w-full" 
-                        onClick={handleAccessCollegeAdminView}
-                      >
-                        <School className="mr-2 h-4 w-4" />
-                        Access Admin View
-                      </Button>
-                    </div>
-                  </div>
+                  <CollegeActivityFeed collegeId={college.id} />
                 </CardContent>
               </Card>
-            </div>
+            </TabsContent>
             
-            {/* Tabs for different data views */}
-            <Tabs defaultValue="activity" className="w-full">
-              <TabsList className="mb-4">
-                <TabsTrigger value="activity">Recent Activity</TabsTrigger>
-                <TabsTrigger value="students">Students</TabsTrigger>
-                <TabsTrigger value="notes">Notes</TabsTrigger>
-                <TabsTrigger value="rooms">Study Rooms</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="activity">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recent Activity</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CollegeActivityFeed collegeId={college.id} />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="students">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Students</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">
-                      This tab would display a list of students for {college.name} with filtering and sorting options.
-                    </p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="notes">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Notes</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">
-                      This tab would display a list of notes uploaded by {college.name} users.
-                    </p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="rooms">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Study Rooms</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">
-                      This tab would display a list of active and scheduled study rooms for {college.name}.
-                    </p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+            <TabsContent value="students">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Students</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    This tab would display a list of students for {college.name} with filtering and sorting options.
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
             
-            {/* Edit College Modal */}
-            <AddEditCollegeModal 
-              isOpen={isEditModalOpen}
-              onClose={() => setIsEditModalOpen(false)}
-              collegeData={college}
-            />
-          </div>
+            <TabsContent value="notes">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Notes</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    This tab would display a list of notes uploaded by {college.name} users.
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="rooms">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Study Rooms</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    This tab would display a list of active and scheduled study rooms for {college.name}.
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+          
+          {/* Edit College Modal */}
+          <AddEditCollegeModal 
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            collegeData={college}
+          />
         </div>
-      </AdminLayout>
+      </div>
     </>
   );
 };
