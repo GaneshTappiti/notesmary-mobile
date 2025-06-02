@@ -3,7 +3,6 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { PageContainer } from '@/components/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -62,7 +61,7 @@ const AdminCollegeDetails = () => {
   if (!college) {
     return (
       <AdminLayout>
-        <PageContainer className="py-6">
+        <div className="p-6">
           <div className="flex flex-col items-center justify-center h-[60vh]">
             <School className="h-16 w-16 text-gray-300 mb-4" />
             <h2 className="text-2xl font-bold mb-2">College Not Found</h2>
@@ -72,7 +71,7 @@ const AdminCollegeDetails = () => {
               Back to Colleges
             </Button>
           </div>
-        </PageContainer>
+        </div>
       </AdminLayout>
     );
   }
@@ -104,7 +103,7 @@ const AdminCollegeDetails = () => {
       </Helmet>
       
       <AdminLayout>
-        <PageContainer className="py-6">
+        <div className="p-6">
           <div className="flex flex-col space-y-6">
             {/* Header with back button and edit */}
             <div className="flex items-center justify-between">
@@ -259,7 +258,7 @@ const AdminCollegeDetails = () => {
               collegeData={college}
             />
           </div>
-        </PageContainer>
+        </div>
       </AdminLayout>
     </>
   );

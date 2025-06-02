@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
@@ -209,7 +210,7 @@ const AdminDashboard = () => {
       </Helmet>
       
       <AdminLayout>
-        <div className="flex flex-col h-full bg-gray-50/30">
+        <div className="h-full bg-gray-50/30">
           {/* Enhanced Header Section */}
           <div className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
             <div className="flex items-center justify-between gap-4">
@@ -411,7 +412,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+          <div className="p-6 space-y-6 overflow-y-auto">
             {/* Enhanced Interactive KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <KPICard

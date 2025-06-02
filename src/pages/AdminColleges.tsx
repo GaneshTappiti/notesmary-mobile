@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { PageContainer } from '@/components/PageContainer';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Helmet } from 'react-helmet-async';
 import { CollegeList } from '@/components/admin/colleges/CollegeList';
@@ -24,7 +23,7 @@ const AdminColleges = () => {
       </Helmet>
       
       <AdminLayout>
-        <PageContainer className="py-6">
+        <div className="p-6">
           <div className="flex flex-col space-y-6">
             <div className="flex items-center justify-between">
               <div>
@@ -44,7 +43,7 @@ const AdminColleges = () => {
               onClose={() => setIsAddCollegeModalOpen(false)}
             />
           </div>
-        </PageContainer>
+        </div>
       </AdminLayout>
     </>
   );

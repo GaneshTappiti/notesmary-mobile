@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { PageContainer } from '@/components/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -255,7 +254,7 @@ const AdminEventsAnnouncements = () => {
       </Helmet>
       
       <AdminLayout>
-        <PageContainer className="py-6">
+        <div className="p-6">
           <div className="flex flex-col space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
@@ -350,7 +349,7 @@ const AdminEventsAnnouncements = () => {
               </TabsContent>
             </Tabs>
           </div>
-        </PageContainer>
+        </div>
 
         {/* Floating Action Button */}
         <Button
