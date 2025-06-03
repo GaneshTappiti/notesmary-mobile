@@ -84,7 +84,8 @@ const AdminCollegeDetails = () => {
     if (user) {
       sessionStorage.setItem('adminViewingAs', JSON.stringify({
         originalUser: user.email,
-        viewingCollege: college.domain
+        viewingCollege: college.domain,
+        originalRole: 'super_admin'
       }));
     }
     
@@ -96,6 +97,34 @@ const AdminCollegeDetails = () => {
     
     // Navigate to college admin dashboard
     navigate('/college-admin/dashboard');
+  };
+
+  const handleEditCollege = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const handleViewStudents = () => {
+    toast({
+      title: "Students View",
+      description: `Opening student management for ${college.name}`,
+    });
+    // TODO: Navigate to students management page
+  };
+
+  const handleViewNotes = () => {
+    toast({
+      title: "Notes View", 
+      description: `Opening notes management for ${college.name}`,
+    });
+    // TODO: Navigate to notes management page
+  };
+
+  const handleViewRooms = () => {
+    toast({
+      title: "Study Rooms View",
+      description: `Opening study rooms for ${college.name}`,
+    });
+    // TODO: Navigate to study rooms management page
   };
 
   return (
@@ -135,7 +164,7 @@ const AdminCollegeDetails = () => {
                 <p className="text-muted-foreground mt-1">{college.domain}</p>
               </div>
             </div>
-            <Button onClick={() => setIsEditModalOpen(true)}>
+            <Button onClick={handleEditCollege}>
               <Pencil className="mr-2 h-4 w-4" />
               Edit College
             </Button>
@@ -215,7 +244,12 @@ const AdminCollegeDetails = () => {
             <TabsContent value="students">
               <Card>
                 <CardHeader>
-                  <CardTitle>Students</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Students</CardTitle>
+                    <Button onClick={handleViewStudents}>
+                      View All Students
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
@@ -228,7 +262,12 @@ const AdminCollegeDetails = () => {
             <TabsContent value="notes">
               <Card>
                 <CardHeader>
-                  <CardTitle>Notes</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Notes</CardTitle>
+                    <Button onClick={handleViewNotes}>
+                      View All Notes
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
@@ -241,7 +280,12 @@ const AdminCollegeDetails = () => {
             <TabsContent value="rooms">
               <Card>
                 <CardHeader>
-                  <CardTitle>Study Rooms</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Study Rooms</CardTitle>
+                    <Button onClick={handleViewRooms}>
+                      View All Rooms
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">

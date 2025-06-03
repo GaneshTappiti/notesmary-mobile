@@ -19,6 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
 interface CreateEventAnnouncementModalProps {
   open: boolean;
@@ -37,28 +46,30 @@ export const CreateEventAnnouncementModal: React.FC<CreateEventAnnouncementModal
     title: '',
     description: '',
     category: '',
-    date: '',
-    time: '',
     location: '',
-    importance: 'medium'
+    importance: 'medium',
+    date: undefined as Date | undefined,
+    time: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({
+      ...formData,
+      type
+    });
     setFormData({
       title: '',
       description: '',
       category: '',
-      date: '',
-      time: '',
       location: '',
-      importance: 'medium'
+      importance: 'medium',
+      date: undefined,
+      time: ''
     });
-    onOpenChange(false);
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -67,105 +78,99 @@ export const CreateEventAnnouncementModal: React.FC<CreateEventAnnouncementModal
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            Create New {type === 'event' ? 'Event' : 'Announcement'}
+            Create {type === 'event' ? 'Event' : 'Announcement'}
           </DialogTitle>
           <DialogDescription>
-            Add a new {type} for your users.
+            {type === 'event' 
+              ? 'Create a new event for the platform.'
+              : 'Create a new announcement for all users.'
+            }
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="title">Title</Label>
             <Input
               id="title"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
-              placeholder={`Enter ${type} title`}
+              placeholder={`${type === 'event' ? 'Event' : 'Announcement'} title...`}
               required
             />
           </div>
-
-          <div className="space-y-2">
+          
+          <div>
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
-              placeholder={`Enter ${type} description`}
+              placeholder="Enter description..."
               required
             />
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="date">Date</Label>
-              <Input
-                id="date"
-                type="date"
-                value={formData.date}
-                onChange={(e) => handleInputChange('date', e.target.value)}
-                required
-              />
-            </div>
-
-            {type === 'event' && (
-              <div className="space-y-2">
-                <Label htmlFor="time">Time</Label>
-                <Input
-                  id="time"
-                  type="time"
-                  value={formData.time}
-                  onChange={(e) => handleInputChange('time', e.target.value)}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-2">
+          
+          <div>
             <Label htmlFor="category">Category</Label>
             <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                {type === 'event' ? (
-                  <>
-                    <SelectItem value="academic">Academic</SelectItem>
-                    <SelectItem value="workshop">Workshop</SelectItem>
-                    <SelectItem value="meetup">Meetup</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </>
-                ) : (
-                  <>
-                    <SelectItem value="system">System</SelectItem>
-                    <SelectItem value="feature">Feature</SelectItem>
-                    <SelectItem value="policy">Policy</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </>
-                )}
+                <SelectItem value="academic">Academic</SelectItem>
+                <SelectItem value="system">System</SelectItem>
+                <SelectItem value="update">Update</SelectItem>
+                <SelectItem value="info">Information</SelectItem>
+                <SelectItem value="warning">Warning</SelectItem>
               </SelectContent>
             </Select>
           </div>
-
+          
+          <div>
+            <Label>Date</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !formData.date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.date ? format(formData.date, "PPP") : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={formData.date}
+                  onSelect={(date) => handleInputChange('date', date)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          
           {type === 'event' && (
-            <div className="space-y-2">
+            <div>
               <Label htmlFor="location">Location</Label>
               <Input
                 id="location"
                 value={formData.location}
                 onChange={(e) => handleInputChange('location', e.target.value)}
-                placeholder="Enter event location"
+                placeholder="Event location..."
               />
             </div>
           )}
-
+          
           {type === 'announcement' && (
-            <div className="space-y-2">
-              <Label htmlFor="importance">Importance</Label>
+            <div>
+              <Label htmlFor="importance">Priority</Label>
               <Select value={formData.importance} onValueChange={(value) => handleInputChange('importance', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select importance" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="low">Low</SelectItem>
@@ -175,7 +180,7 @@ export const CreateEventAnnouncementModal: React.FC<CreateEventAnnouncementModal
               </Select>
             </div>
           )}
-
+          
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
