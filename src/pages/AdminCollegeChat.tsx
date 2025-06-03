@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,9 @@ import {
   MessageCircle,
   Clock,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  Menu,
+  X
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -46,6 +47,7 @@ const AdminCollegeChat = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCollegeAdmin, setSelectedCollegeAdmin] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Mock data for college admins
   const [collegeAdmins] = useState<CollegeAdmin[]>([
@@ -201,13 +203,25 @@ const AdminCollegeChat = () => {
       
       <div className="h-screen flex flex-col">
         <div className="p-6 border-b">
-          <h1 className="text-2xl font-bold tracking-tight">College Admin Chat</h1>
-          <p className="text-gray-600">Communicate with college administrators</p>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden"
+            >
+              {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">College Admin Chat</h1>
+              <p className="text-gray-600">Communicate with college administrators</p>
+            </div>
+          </div>
         </div>
         
         <div className="flex-1 flex overflow-hidden">
           {/* Sidebar - College Admin List */}
-          <div className="w-80 border-r bg-gray-50 flex flex-col">
+          <div className={`${sidebarOpen ? 'w-80' : 'w-0'} transition-all duration-300 border-r bg-gray-50 flex flex-col overflow-hidden`}>
             <div className="p-4 border-b bg-white">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -265,6 +279,20 @@ const AdminCollegeChat = () => {
               </div>
             </ScrollArea>
           </div>
+          
+          {/* Toggle button for desktop */}
+          {!sidebarOpen && (
+            <div className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setSidebarOpen(true)}
+                className="rounded-r-md rounded-l-none border-l-0 bg-white shadow-md"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
           
           {/* Main Chat Area */}
           <div className="flex-1 flex flex-col">
