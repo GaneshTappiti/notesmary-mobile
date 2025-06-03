@@ -9,7 +9,7 @@ import {
   ChevronRight,
   X,
   Search,
-  FileText
+  MessageCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -73,6 +73,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ open, setOpen }) => 
       to: "/admin/events-announcements",
       icon: <Calendar size={20} />,
       label: "Events & Announcements"
+    },
+    {
+      to: "/admin/college-chat",
+      icon: <MessageCircle size={20} />,
+      label: "College Admin Chat",
+      isNew: true
     },
     {
       to: "/admin/audit-logs",

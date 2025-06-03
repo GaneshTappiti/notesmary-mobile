@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -17,9 +16,8 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 // Import Authentication page directly without lazy loading to avoid issues
 import Authentication from "@/pages/Authentication";
 
-// Directly import Dashboard and AdminMessages to avoid loading issues
+// Directly import Dashboard to avoid loading issues
 import Dashboard from "@/pages/Dashboard";
-import AdminMessages from "@/pages/AdminMessages";
 // Import NotFound page
 import NotFound from "@/pages/NotFound";
 
@@ -64,12 +62,12 @@ const Subscription = createLazyComponent(() => import("@/pages/Subscription"));
 
 // Admin dashboard pages
 const AdminDashboard = createLazyComponent(() => import("@/pages/AdminDashboard"));
-const AdminNotes = createLazyComponent(() => import("@/pages/AdminNotes"));
 const AdminUsers = createLazyComponent(() => import("@/pages/AdminUsers"));
 const AdminEvents = createLazyComponent(() => import("@/pages/AdminEvents"));
 const AdminAnalytics = createLazyComponent(() => import("@/pages/AdminAnalytics"));
 const AdminAuditLogs = createLazyComponent(() => import("@/pages/AdminAuditLogs"));
 const AdminEventsAnnouncements = createLazyComponent(() => import("@/pages/AdminEventsAnnouncements"));
+const AdminCollegeChat = createLazyComponent(() => import("@/pages/AdminCollegeChat"));
 
 // New College Management pages
 const AdminColleges = createLazyComponent(() => import("@/pages/AdminColleges"));
@@ -243,7 +241,7 @@ const App = () => (
                 </PrivateRoute>
               } />
               
-              {/* Protected User routes */}
+              {/* ... keep existing code (all user routes) */}
               <Route path="/my-notes" element={
                 <PrivateRoute>
                   <AppLayout>
@@ -324,7 +322,6 @@ const App = () => (
                 </PrivateRoute>
               } />
               
-              {/* Study room routes */}
               <Route path="/study-room/:roomId" element={
                 <PrivateRoute>
                   <AppLayout>
@@ -335,7 +332,6 @@ const App = () => (
                 </PrivateRoute>
               } />
               
-              {/* Add new route for create room */}
               <Route path="/study-rooms/create" element={
                 <PrivateRoute>
                   <AppLayout>
@@ -346,7 +342,6 @@ const App = () => (
                 </PrivateRoute>
               } />
               
-              {/* StudyPulse routes with proper navigation */}
               <Route path="/study-pulse" element={
                 <PrivateRoute>
                   <AppLayout>
@@ -424,16 +419,6 @@ const App = () => (
                 </PrivateRoute>
               } />
               
-              <Route path="/admin/messages" element={
-                <PrivateRoute adminOnly={true}>
-                  <AdminLayout>
-                    <SuspenseWrapper>
-                      <AdminMessages />
-                    </SuspenseWrapper>
-                  </AdminLayout>
-                </PrivateRoute>
-              } />
-              
               <Route path="/admin/colleges" element={
                 <PrivateRoute adminOnly={true}>
                   <AdminLayout>
@@ -449,16 +434,6 @@ const App = () => (
                   <AdminLayout>
                     <SuspenseWrapper>
                       <AdminCollegeDetails />
-                    </SuspenseWrapper>
-                  </AdminLayout>
-                </PrivateRoute>
-              } />
-              
-              <Route path="/admin/notes" element={
-                <PrivateRoute adminOnly={true}>
-                  <AdminLayout>
-                    <SuspenseWrapper>
-                      <AdminNotes />
                     </SuspenseWrapper>
                   </AdminLayout>
                 </PrivateRoute>
@@ -494,12 +469,21 @@ const App = () => (
                 </PrivateRoute>
               } />
 
-              {/* Add missing admin routes that match the sidebar */}
               <Route path="/admin/events-announcements" element={
                 <PrivateRoute adminOnly={true}>
                   <AdminLayout>
                     <SuspenseWrapper>
                       <AdminEventsAnnouncements />
+                    </SuspenseWrapper>
+                  </AdminLayout>
+                </PrivateRoute>
+              } />
+
+              <Route path="/admin/college-chat" element={
+                <PrivateRoute adminOnly={true}>
+                  <AdminLayout>
+                    <SuspenseWrapper>
+                      <AdminCollegeChat />
                     </SuspenseWrapper>
                   </AdminLayout>
                 </PrivateRoute>
