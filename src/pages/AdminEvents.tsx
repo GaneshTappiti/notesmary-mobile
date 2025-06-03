@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/PageContainer';
-import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +17,17 @@ import { format } from 'date-fns';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 // Define interfaces for our data structures
 interface BaseItem {
@@ -162,6 +172,14 @@ const AdminEvents = () => {
     setIsCreateDialogOpen(false);
   };
 
+  const handleEdit = (id: string, type: string) => {
+    toast({
+      title: "Edit Item",
+      description: `Opening editor for ${type} ${id}`,
+    });
+    // In a real app, this would open an edit modal with pre-filled data
+  };
+
   const handleDelete = (id: string, type: string) => {
     if (type === 'event') {
       setEvents(events.filter(event => event.id !== id));
@@ -172,6 +190,7 @@ const AdminEvents = () => {
     toast({
       title: "Item Deleted",
       description: `The ${type} has been successfully deleted.`,
+      variant: "destructive"
     });
   };
 
@@ -180,13 +199,45 @@ const AdminEvents = () => {
     return format(date, "PPP 'at' p");
   };
 
+  const getCategoryBadge = (category: string) => {
+    const colors: Record<string, string> = {
+      academic: 'bg-blue-100 text-blue-800',
+      workshop: 'bg-purple-100 text-purple-800',
+      meetup: 'bg-green-100 text-green-800',
+      system: 'bg-red-100 text-red-800',
+      feature: 'bg-cyan-100 text-cyan-800',
+      policy: 'bg-orange-100 text-orange-800',
+      other: 'bg-gray-100 text-gray-800'
+    };
+    
+    return (
+      <Badge className={colors[category] || colors.other}>
+        {category}
+      </Badge>
+    );
+  };
+
+  const getImportanceBadge = (importance: string) => {
+    const colors: Record<string, string> = {
+      high: 'bg-red-100 text-red-800',
+      medium: 'bg-yellow-100 text-yellow-800',
+      low: 'bg-green-100 text-green-800'
+    };
+    
+    return (
+      <Badge className={colors[importance] || colors.medium}>
+        {importance} priority
+      </Badge>
+    );
+  };
+
   return (
     <>
       <Helmet>
         <title>Events & Announcements | Admin Dashboard</title>
       </Helmet>
       
-      <AdminLayout>
+      <div className="p-6">
         <PageContainer className="py-6">
           <div className="flex flex-col space-y-6">
             <div className="flex items-center justify-between">
@@ -239,6 +290,7 @@ const AdminEvents = () => {
                         value={formData.title}
                         onChange={handleInputChange}
                         className="col-span-3"
+                        placeholder="Enter title"
                       />
                     </div>
                     
@@ -314,6 +366,7 @@ const AdminEvents = () => {
                           value={formData.location}
                           onChange={handleInputChange}
                           className="col-span-3"
+                          placeholder="Enter location"
                         />
                       </div>
                     )}
@@ -321,14 +374,14 @@ const AdminEvents = () => {
                     {formData.type === 'announcement' && (
                       <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="importance" className="text-right">
-                          Importance
+                          Priority
                         </Label>
                         <Select 
                           value={formData.importance} 
                           onValueChange={(value) => handleSelectChange('importance', value)}
                         >
                           <SelectTrigger className="col-span-3">
-                            <SelectValue placeholder="Select importance" />
+                            <SelectValue placeholder="Select priority" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="low">Low</SelectItem>
@@ -348,156 +401,170 @@ const AdminEvents = () => {
                         name="description"
                         value={formData.description}
                         onChange={handleInputChange}
-                        className="col-span-3 min-h-[100px]"
+                        className="col-span-3"
+                        placeholder="Enter description"
                       />
                     </div>
                   </div>
                   
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={handleCreateItem}>Create</Button>
+                    <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button type="button" onClick={handleCreateItem}>
+                      Create {formData.type === 'event' ? 'Event' : 'Announcement'}
+                    </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
-            
-            <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="events" className="w-full">
-              <TabsList className="grid grid-cols-2 w-[400px]">
+
+            {/* Tabs */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="mb-4">
                 <TabsTrigger value="events" className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  <span>Events</span>
+                  Events ({events.length})
                 </TabsTrigger>
                 <TabsTrigger value="announcements" className="flex items-center gap-2">
                   <Bell className="h-4 w-4" />
-                  <span>Announcements</span>
+                  Announcements ({announcements.length})
                 </TabsTrigger>
               </TabsList>
-              
-              <TabsContent value="events" className="mt-6">
-                {events.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center p-8 border border-dashed rounded-lg">
-                    <Calendar className="h-12 w-12 text-muted-foreground mb-2" />
-                    <h3 className="text-lg font-medium">No events</h3>
-                    <p className="text-sm text-muted-foreground mb-4">You haven't created any events yet.</p>
-                    <Button onClick={() => setIsCreateDialogOpen(true)} variant="outline">
-                      <Plus className="h-4 w-4 mr-2" /> Create Event
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="grid gap-4">
-                    {events.map((event) => (
-                      <Card key={event.id} className="overflow-hidden">
-                        <CardHeader className="pb-2">
+
+              <TabsContent value="events">
+                <div className="grid gap-6">
+                  {events.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No events found. Create your first event!
+                    </div>
+                  ) : (
+                    events.map((event) => (
+                      <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                        <CardHeader>
                           <div className="flex items-start justify-between">
-                            <div>
-                              <CardTitle>{event.title}</CardTitle>
-                              <CardDescription className="flex items-center gap-2 mt-1">
-                                <CalendarIcon className="h-4 w-4" />
-                                <span>{formatDate(event.date)}</span>
-                                {event.category && (
-                                  <Badge variant="secondary" className="ml-2">
-                                    {event.category}
-                                  </Badge>
-                                )}
-                              </CardDescription>
+                            <div className="flex-1">
+                              <CardTitle className="text-lg">{event.title}</CardTitle>
+                              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="h-4 w-4" />
+                                  {formatDate(event.date)}
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  📍 {event.location}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2 mt-2">
+                                {getCategoryBadge(event.category)}
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button variant="ghost" size="sm" onClick={() => handleEdit(event.id, 'event')}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="sm">
+                                    <Trash className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This action cannot be undone. This will permanently delete the event.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      className="bg-red-500 hover:bg-red-600"
+                                      onClick={() => handleDelete(event.id, 'event')}
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                             </div>
                           </div>
                         </CardHeader>
                         <CardContent>
-                          <p className="text-sm text-muted-foreground">{event.description}</p>
-                          {event.location && (
-                            <div className="mt-2 text-sm flex items-center gap-2">
-                              <span className="font-medium">Location:</span>
-                              <span>{event.location}</span>
-                            </div>
-                          )}
+                          <p className="text-muted-foreground">{event.description}</p>
                         </CardContent>
-                        <CardFooter className="border-t px-6 py-4 bg-muted/50 flex justify-end gap-2">
-                          <Button variant="ghost" size="sm">
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                            onClick={() => handleDelete(event.id, 'event')}
-                          >
-                            <Trash className="h-4 w-4 mr-2" />
-                            Delete
-                          </Button>
-                        </CardFooter>
                       </Card>
-                    ))}
-                  </div>
-                )}
+                    ))
+                  )}
+                </div>
               </TabsContent>
-              
-              <TabsContent value="announcements" className="mt-6">
-                {announcements.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center p-8 border border-dashed rounded-lg">
-                    <Bell className="h-12 w-12 text-muted-foreground mb-2" />
-                    <h3 className="text-lg font-medium">No announcements</h3>
-                    <p className="text-sm text-muted-foreground mb-4">You haven't created any announcements yet.</p>
-                    <Button onClick={() => setIsCreateDialogOpen(true)} variant="outline">
-                      <Plus className="h-4 w-4 mr-2" /> Create Announcement
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="grid gap-4">
-                    {announcements.map((announcement) => (
-                      <Card key={announcement.id}>
-                        <CardHeader className="pb-2">
+
+              <TabsContent value="announcements">
+                <div className="grid gap-6">
+                  {announcements.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No announcements found. Create your first announcement!
+                    </div>
+                  ) : (
+                    announcements.map((announcement) => (
+                      <Card key={announcement.id} className="hover:shadow-lg transition-shadow">
+                        <CardHeader>
                           <div className="flex items-start justify-between">
-                            <div>
-                              <CardTitle className="flex items-center gap-2">
-                                {announcement.title}
-                                {announcement.importance === 'high' && (
-                                  <Badge variant="destructive">High Priority</Badge>
-                                )}
-                                {announcement.importance === 'medium' && (
-                                  <Badge variant="secondary">Medium Priority</Badge>
-                                )}
-                              </CardTitle>
-                              <CardDescription className="flex items-center gap-2 mt-1">
-                                <CalendarIcon className="h-4 w-4" />
-                                <span>{formatDate(announcement.date)}</span>
-                                {announcement.category && (
-                                  <Badge variant="outline" className="ml-2">
-                                    {announcement.category}
-                                  </Badge>
-                                )}
-                              </CardDescription>
+                            <div className="flex-1">
+                              <CardTitle className="text-lg">{announcement.title}</CardTitle>
+                              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="h-4 w-4" />
+                                  {formatDate(announcement.date)}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2 mt-2">
+                                {getCategoryBadge(announcement.category)}
+                                {getImportanceBadge(announcement.importance)}
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button variant="ghost" size="sm" onClick={() => handleEdit(announcement.id, 'announcement')}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="sm">
+                                    <Trash className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This action cannot be undone. This will permanently delete the announcement.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      className="bg-red-500 hover:bg-red-600"
+                                      onClick={() => handleDelete(announcement.id, 'announcement')}
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                             </div>
                           </div>
                         </CardHeader>
                         <CardContent>
-                          <p className="text-sm text-muted-foreground">{announcement.description}</p>
+                          <p className="text-muted-foreground">{announcement.description}</p>
                         </CardContent>
-                        <CardFooter className="border-t px-6 py-4 bg-muted/50 flex justify-end gap-2">
-                          <Button variant="ghost" size="sm">
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                            onClick={() => handleDelete(announcement.id, 'announcement')}
-                          >
-                            <Trash className="h-4 w-4 mr-2" />
-                            Delete
-                          </Button>
-                        </CardFooter>
                       </Card>
-                    ))}
-                  </div>
-                )}
+                    ))
+                  )}
+                </div>
               </TabsContent>
             </Tabs>
           </div>
         </PageContainer>
-      </AdminLayout>
+      </div>
     </>
   );
 };

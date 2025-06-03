@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { AdminLayout } from '@/components/admin/AdminLayout';
 import { 
   Table, 
   TableBody, 
@@ -40,13 +39,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useToast } from '@/hooks/use-toast';
 
 const AdminNotes = () => {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   
   // Mock data for uploaded notes
-  const notes = [
+  const [notes, setNotes] = useState([
     {
       id: '1',
       title: 'Advanced Calculus Notes',
@@ -97,7 +98,7 @@ const AdminNotes = () => {
       type: 'PDF',
       size: '4.7 MB'
     },
-  ];
+  ]);
 
   // Filter notes based on search and status filter
   const filteredNotes = notes.filter(note => {
@@ -125,23 +126,52 @@ const AdminNotes = () => {
   };
   
   const handleApprove = (id: string) => {
-    console.log(`Approving note with id: ${id}`);
-    // In a real app, this would make an API call to update the status
+    setNotes(prevNotes =>
+      prevNotes.map(note =>
+        note.id === id ? { ...note, status: 'approved' } : note
+      )
+    );
+    
+    const note = notes.find(n => n.id === id);
+    toast({
+      title: "Note Approved",
+      description: `"${note?.title}" has been approved successfully.`,
+    });
   };
   
   const handleReject = (id: string) => {
-    console.log(`Rejecting note with id: ${id}`);
-    // In a real app, this would make an API call to update the status
+    setNotes(prevNotes =>
+      prevNotes.map(note =>
+        note.id === id ? { ...note, status: 'rejected' } : note
+      )
+    );
+    
+    const note = notes.find(n => n.id === id);
+    toast({
+      title: "Note Rejected",
+      description: `"${note?.title}" has been rejected.`,
+      variant: "destructive"
+    });
   };
   
   const handleDelete = (id: string) => {
-    console.log(`Deleting note with id: ${id}`);
-    // In a real app, this would make an API call to delete the note
+    setNotes(prevNotes => prevNotes.filter(note => note.id !== id));
+    
+    const note = notes.find(n => n.id === id);
+    toast({
+      title: "Note Deleted",
+      description: `"${note?.title}" has been permanently deleted.`,
+      variant: "destructive"
+    });
   };
   
   const handleViewNote = (id: string) => {
-    console.log(`Viewing note with id: ${id}`);
-    // In a real app, this would open the note for viewing
+    const note = notes.find(n => n.id === id);
+    toast({
+      title: "Viewing Note",
+      description: `Opening "${note?.title}" for review.`,
+    });
+    // In a real app, this would open the note for viewing/downloading
   };
 
   return (
@@ -150,191 +180,192 @@ const AdminNotes = () => {
         <title>Manage Notes | Admin Dashboard</title>
       </Helmet>
       
-      <AdminLayout>
-        <div className="p-6">
-          <div className="flex flex-col space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <h1 className="text-2xl font-bold tracking-tight">Uploaded Notes</h1>
-              
-              <div className="flex items-center gap-2">
-                <div className="relative w-full sm:w-64">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Search notes..."
-                    className="pl-8 w-full"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline">
-                      {statusFilter === 'all' ? 'All Status' : 
-                       statusFilter === 'pending' ? 'Pending' :
-                       statusFilter === 'approved' ? 'Approved' : 'Rejected'}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setStatusFilter('all')}>
-                      All Status
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setStatusFilter('pending')}>
-                      Pending
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setStatusFilter('approved')}>
-                      Approved
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setStatusFilter('rejected')}>
-                      Rejected
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
+      <div className="p-6">
+        <div className="flex flex-col space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h1 className="text-2xl font-bold tracking-tight">Uploaded Notes</h1>
             
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[250px]">Title</TableHead>
-                    <TableHead>Course</TableHead>
-                    <TableHead>Uploader</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Type/Size</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredNotes.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                        No notes found matching your criteria
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredNotes.map((note) => (
-                      <TableRow key={note.id}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-muted-foreground" />
-                            <span>{note.title}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>{note.course}</TableCell>
-                        <TableCell>{note.uploader}</TableCell>
-                        <TableCell>{new Date(note.uploadDate).toLocaleDateString()}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="text-xs font-medium">{note.type}</span>
-                            <span className="text-xs text-muted-foreground">{note.size}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>{getStatusBadge(note.status)}</TableCell>
-                        <TableCell className="text-right">
-                          {note.status === 'pending' ? (
-                            <div className="flex items-center justify-end gap-1">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleViewNote(note.id)}
-                                title="View"
-                              >
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-green-500 hover:text-green-600 hover:bg-green-50"
-                                onClick={() => handleApprove(note.id)}
-                                title="Approve"
-                              >
-                                <Check className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                                onClick={() => handleReject(note.id)}
-                                title="Reject"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center justify-end">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleViewNote(note.id)}
-                                title="View"
-                              >
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                  >
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  {note.status === 'approved' ? (
-                                    <DropdownMenuItem onClick={() => handleReject(note.id)}>
-                                      Reject
-                                    </DropdownMenuItem>
-                                  ) : (
-                                    <DropdownMenuItem onClick={() => handleApprove(note.id)}>
-                                      Approve
-                                    </DropdownMenuItem>
-                                  )}
-                                  <DropdownMenuSeparator />
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      <DropdownMenuItem
-                                        className="text-red-500 focus:text-red-500"
-                                        onSelect={(e) => e.preventDefault()}
-                                      >
-                                        Delete
-                                      </DropdownMenuItem>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          This action cannot be undone. This will permanently delete the notes
-                                          and remove the data from the server.
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction
-                                          className="bg-red-500 hover:bg-red-600"
-                                          onClick={() => handleDelete(note.id)}
-                                        >
-                                          Delete
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+            <div className="flex items-center gap-2">
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search notes..."
+                  className="pl-8 w-full"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    {statusFilter === 'all' ? 'All Status' : 
+                     statusFilter === 'pending' ? 'Pending' :
+                     statusFilter === 'approved' ? 'Approved' : 'Rejected'}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setStatusFilter('all')}>
+                    All Status
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter('pending')}>
+                    Pending
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter('approved')}>
+                    Approved
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter('rejected')}>
+                    Rejected
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
+          
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[250px]">Title</TableHead>
+                  <TableHead>Course</TableHead>
+                  <TableHead>Uploader</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Type/Size</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredNotes.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                      No notes found matching your criteria
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredNotes.map((note) => (
+                    <TableRow key={note.id}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-muted-foreground" />
+                          <span>{note.title}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{note.course}</TableCell>
+                      <TableCell>{note.uploader}</TableCell>
+                      <TableCell>{new Date(note.uploadDate).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="text-xs font-medium">{note.type}</span>
+                          <span className="text-xs text-muted-foreground">{note.size}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(note.status)}</TableCell>
+                      <TableCell className="text-right">
+                        {note.status === 'pending' ? (
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleViewNote(note.id)}
+                              title="View"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-green-500 hover:text-green-600 hover:bg-green-50"
+                              onClick={() => handleApprove(note.id)}
+                              title="Approve"
+                            >
+                              <Check className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                              onClick={() => handleReject(note.id)}
+                              title="Reject"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-end">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleViewNote(note.id)}
+                              title="View"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                >
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                {note.status === 'approved' ? (
+                                  <DropdownMenuItem onClick={() => handleReject(note.id)}>
+                                    <X className="mr-2 h-4 w-4" />
+                                    Reject
+                                  </DropdownMenuItem>
+                                ) : (
+                                  <DropdownMenuItem onClick={() => handleApprove(note.id)}>
+                                    <Check className="mr-2 h-4 w-4" />
+                                    Approve
+                                  </DropdownMenuItem>
+                                )}
+                                <DropdownMenuSeparator />
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem
+                                      className="text-red-500 focus:text-red-500"
+                                      onSelect={(e) => e.preventDefault()}
+                                    >
+                                      <Trash className="mr-2 h-4 w-4" />
+                                      Delete
+                                    </DropdownMenuItem>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the notes
+                                        and remove the data from the server.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        className="bg-red-500 hover:bg-red-600"
+                                        onClick={() => handleDelete(note.id)}
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
-      </AdminLayout>
+      </div>
     </>
   );
 };

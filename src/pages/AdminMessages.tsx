@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { 
@@ -46,6 +47,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useToast } from '@/hooks/use-toast';
 
 interface Sender {
   id: string;
@@ -65,12 +67,13 @@ interface Message {
 }
 
 const AdminMessages = () => {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [flagStatusFilter, setFlagStatusFilter] = useState<'all' | 'flagged' | 'cleared'>('all');
   const [viewMessageId, setViewMessageId] = useState<string | null>(null);
   
   // Mock data for messages
-  const messages: Message[] = [
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       content: "Can anyone share their notes from yesterday's lecture on differential equations?",
@@ -141,7 +144,7 @@ const AdminMessages = () => {
       flagReason: 'Potential academic dishonesty',
       flaggedBy: 'Emma Thompson'
     }
-  ];
+  ]);
 
   // Find the currently viewed message
   const currentMessage = messages.find(message => message.id === viewMessageId);
@@ -160,6 +163,51 @@ const AdminMessages = () => {
     
     return matchesSearch && matchesFlagStatus;
   });
+
+  const handleViewMessage = (id: string) => {
+    setViewMessageId(id);
+  };
+  
+  const handleClearFlag = (id: string) => {
+    setMessages(prevMessages =>
+      prevMessages.map(message =>
+        message.id === id
+          ? { ...message, flagged: false, flagReason: null, flaggedBy: null }
+          : message
+      )
+    );
+    
+    toast({
+      title: "Flag Cleared",
+      description: "Message flag has been cleared successfully.",
+    });
+  };
+  
+  const handleFlagMessage = (id: string) => {
+    setMessages(prevMessages =>
+      prevMessages.map(message =>
+        message.id === id
+          ? { ...message, flagged: true, flagReason: 'Manually flagged by admin', flaggedBy: 'Admin' }
+          : message
+      )
+    );
+    
+    toast({
+      title: "Message Flagged",
+      description: "Message has been flagged for review.",
+      variant: "destructive"
+    });
+  };
+  
+  const handleDeleteMessage = (id: string) => {
+    setMessages(prevMessages => prevMessages.filter(message => message.id !== id));
+    
+    toast({
+      title: "Message Deleted",
+      description: "Message has been permanently deleted.",
+      variant: "destructive"
+    });
+  };
   
   const getFlagStatusBadge = (flagged: boolean) => {
     return flagged ? 
@@ -189,25 +237,6 @@ const AdminMessages = () => {
     if (content.length <= maxLength) return content;
     return `${content.substring(0, maxLength)}...`;
   };
-  
-  const handleViewMessage = (id: string) => {
-    setViewMessageId(id);
-  };
-  
-  const handleClearFlag = (id: string) => {
-    console.log(`Clearing flag on message with id: ${id}`);
-    // In a real app, this would make an API call to update the message
-  };
-  
-  const handleFlagMessage = (id: string) => {
-    console.log(`Flagging message with id: ${id}`);
-    // In a real app, this would open a dialog to enter flag reason
-  };
-  
-  const handleDeleteMessage = (id: string) => {
-    console.log(`Deleting message with id: ${id}`);
-    // In a real app, this would make an API call to delete the message
-  };
 
   return (
     <>
@@ -215,247 +244,249 @@ const AdminMessages = () => {
         <title>Message Moderation | Admin Dashboard</title>
       </Helmet>
       
-      <div className="flex flex-col space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <h1 className="text-2xl font-bold tracking-tight">Messages</h1>
-          
-          <div className="flex items-center gap-2">
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search messages..."
-                className="pl-8 w-full"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+      <div className="p-6">
+        <div className="flex flex-col space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h1 className="text-2xl font-bold tracking-tight">Messages</h1>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  {flagStatusFilter === 'all' ? 'All Messages' : 
-                   flagStatusFilter === 'flagged' ? 'Flagged' : 'Cleared'}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setFlagStatusFilter('all')}>
-                  All Messages
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFlagStatusFilter('flagged')}>
-                  Flagged Only
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFlagStatusFilter('cleared')}>
-                  Cleared Only
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center gap-2">
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search messages..."
+                  className="pl-8 w-full"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    {flagStatusFilter === 'all' ? 'All Messages' : 
+                     flagStatusFilter === 'flagged' ? 'Flagged' : 'Cleared'}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setFlagStatusFilter('all')}>
+                    All Messages
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFlagStatusFilter('flagged')}>
+                    Flagged Only
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFlagStatusFilter('cleared')}>
+                    Cleared Only
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+          
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[300px]">Message</TableHead>
+                  <TableHead>Sender</TableHead>
+                  <TableHead>Room</TableHead>
+                  <TableHead>Time</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredMessages.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                      No messages found matching your criteria
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredMessages.map((message) => (
+                    <TableRow key={message.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <MessageSquare className="h-4 w-4 text-muted-foreground shrink-0" />
+                          <span>{formatMessagePreview(message.content)}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-6 w-6">
+                            <AvatarImage src={message.sender.avatar} alt={message.sender.name} />
+                            <AvatarFallback>{getInitials(message.sender.name)}</AvatarFallback>
+                          </Avatar>
+                          <span>{message.sender.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{message.roomName}</TableCell>
+                      <TableCell>{formatDateTime(message.timestamp)}</TableCell>
+                      <TableCell>{getFlagStatusBadge(message.flagged)}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            title="View Message"
+                            onClick={() => handleViewMessage(message.id)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              {message.flagged ? (
+                                <DropdownMenuItem onClick={() => handleClearFlag(message.id)}>
+                                  <CheckSquare className="mr-2 h-4 w-4" />
+                                  Clear Flag
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem onClick={() => handleFlagMessage(message.id)}>
+                                  <Flag className="mr-2 h-4 w-4" />
+                                  Flag Message
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuSeparator />
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <DropdownMenuItem
+                                    className="text-red-500 focus:text-red-500"
+                                    onSelect={(e) => e.preventDefault()}
+                                  >
+                                    <Trash className="mr-2 h-4 w-4" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This action cannot be undone. This will permanently delete the message
+                                      and remove it from the study room.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      className="bg-red-500 hover:bg-red-600"
+                                      onClick={() => handleDeleteMessage(message.id)}
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
         </div>
         
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[300px]">Message</TableHead>
-                <TableHead>Sender</TableHead>
-                <TableHead>Room</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredMessages.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    No messages found matching your criteria
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredMessages.map((message) => (
-                  <TableRow key={message.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <MessageSquare className="h-4 w-4 text-muted-foreground shrink-0" />
-                        <span>{formatMessagePreview(message.content)}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage src={message.sender.avatar} alt={message.sender.name} />
-                          <AvatarFallback>{getInitials(message.sender.name)}</AvatarFallback>
-                        </Avatar>
-                        <span>{message.sender.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{message.roomName}</TableCell>
-                    <TableCell>{formatDateTime(message.timestamp)}</TableCell>
-                    <TableCell>{getFlagStatusBadge(message.flagged)}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          title="View Message"
-                          onClick={() => handleViewMessage(message.id)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {message.flagged ? (
-                              <DropdownMenuItem onClick={() => handleClearFlag(message.id)}>
-                                <CheckSquare className="mr-2 h-4 w-4" />
-                                Clear Flag
-                              </DropdownMenuItem>
-                            ) : (
-                              <DropdownMenuItem onClick={() => handleFlagMessage(message.id)}>
-                                <Flag className="mr-2 h-4 w-4" />
-                                Flag Message
-                              </DropdownMenuItem>
-                            )}
-                            <DropdownMenuSeparator />
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <DropdownMenuItem
-                                  className="text-red-500 focus:text-red-500"
-                                  onSelect={(e) => e.preventDefault()}
-                                >
-                                  <Trash className="mr-2 h-4 w-4" />
-                                  Delete
-                                </DropdownMenuItem>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete the message
-                                    and remove it from the study room.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    className="bg-red-500 hover:bg-red-600"
-                                    onClick={() => handleDeleteMessage(message.id)}
-                                  >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-      
-      {/* Message View Dialog */}
-      <Dialog open={!!viewMessageId} onOpenChange={(open) => !open && setViewMessageId(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Message Details</DialogTitle>
-            <DialogDescription>
-              Sent in {currentMessage?.roomName}
-            </DialogDescription>
-          </DialogHeader>
-          
-          {currentMessage && (
-            <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={currentMessage.sender.avatar} alt={currentMessage.sender.name} />
-                  <AvatarFallback>{getInitials(currentMessage.sender.name)}</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{currentMessage.sender.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {formatDateTime(currentMessage.timestamp)}
-                    </span>
+        {/* Message View Dialog */}
+        <Dialog open={!!viewMessageId} onOpenChange={(open) => !open && setViewMessageId(null)}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Message Details</DialogTitle>
+              <DialogDescription>
+                Sent in {currentMessage?.roomName}
+              </DialogDescription>
+            </DialogHeader>
+            
+            {currentMessage && (
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={currentMessage.sender.avatar} alt={currentMessage.sender.name} />
+                    <AvatarFallback>{getInitials(currentMessage.sender.name)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{currentMessage.sender.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDateTime(currentMessage.timestamp)}
+                      </span>
+                    </div>
+                    <p className="text-sm">{currentMessage.content}</p>
                   </div>
-                  <p className="text-sm">{currentMessage.content}</p>
                 </div>
-              </div>
-              
-              {currentMessage.flagged && (
-                <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-md border border-red-200 dark:border-red-900/50">
-                  <div className="flex items-center gap-2 text-sm font-medium text-red-600 dark:text-red-400">
-                    <Flag className="h-4 w-4" />
-                    <span>Flagged Message</span>
+                
+                {currentMessage.flagged && (
+                  <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-md border border-red-200 dark:border-red-900/50">
+                    <div className="flex items-center gap-2 text-sm font-medium text-red-600 dark:text-red-400">
+                      <Flag className="h-4 w-4" />
+                      <span>Flagged Message</span>
+                    </div>
+                    <p className="text-sm mt-1 text-red-600 dark:text-red-400">
+                      <span className="font-medium">Reason:</span> {currentMessage.flagReason}
+                    </p>
+                    <p className="text-xs mt-1 text-red-600 dark:text-red-400">
+                      Flagged by: {currentMessage.flaggedBy}
+                    </p>
                   </div>
-                  <p className="text-sm mt-1 text-red-600 dark:text-red-400">
-                    <span className="font-medium">Reason:</span> {currentMessage.flagReason}
-                  </p>
-                  <p className="text-xs mt-1 text-red-600 dark:text-red-400">
-                    Flagged by: {currentMessage.flaggedBy}
-                  </p>
-                </div>
-              )}
-              
-              <div className="flex justify-between pt-4">
-                {currentMessage.flagged ? (
-                  <Button variant="outline" onClick={() => handleClearFlag(currentMessage.id)}>
-                    <CheckSquare className="mr-2 h-4 w-4" />
-                    Clear Flag
-                  </Button>
-                ) : (
-                  <Button variant="outline" onClick={() => handleFlagMessage(currentMessage.id)}>
-                    <Flag className="mr-2 h-4 w-4" />
-                    Flag Message
-                  </Button>
                 )}
                 
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive">
-                      <Trash className="mr-2 h-4 w-4" />
-                      Delete
+                <div className="flex justify-between pt-4">
+                  {currentMessage.flagged ? (
+                    <Button variant="outline" onClick={() => handleClearFlag(currentMessage.id)}>
+                      <CheckSquare className="mr-2 h-4 w-4" />
+                      Clear Flag
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete the message
-                        and remove it from the study room.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        className="bg-red-500 hover:bg-red-600"
-                        onClick={() => {
-                          handleDeleteMessage(currentMessage.id);
-                          setViewMessageId(null);
-                        }}
-                      >
+                  ) : (
+                    <Button variant="outline" onClick={() => handleFlagMessage(currentMessage.id)}>
+                      <Flag className="mr-2 h-4 w-4" />
+                      Flag Message
+                    </Button>
+                  )}
+                  
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive">
+                        <Trash className="mr-2 h-4 w-4" />
                         Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete the message
+                          and remove it from the study room.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-red-500 hover:bg-red-600"
+                          onClick={() => {
+                            handleDeleteMessage(currentMessage.id);
+                            setViewMessageId(null);
+                          }}
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
     </>
   );
 };
