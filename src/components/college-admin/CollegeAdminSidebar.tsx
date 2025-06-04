@@ -64,8 +64,18 @@ export const CollegeAdminSidebar: React.FC = () => {
       label: "User Management"
     },
     {
+      to: "/college-admin/events-announcements",
+      icon: <Calendar size={20} />,
+      label: "Events & Announcements"
+    },
+    {
+      to: "/college-admin/analytics",
+      icon: <BarChart3 size={20} />,
+      label: "Analytics"
+    },
+    {
       to: "/college-admin/studyrooms",
-      icon: <Video size={20} />,
+      icon: <Users size={20} />,
       label: "Study Rooms"
     },
     {

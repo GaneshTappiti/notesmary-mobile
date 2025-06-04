@@ -79,6 +79,8 @@ const NotesApproval = createLazyComponent(() => import("@/pages/college-admin/No
 const UserManagement = createLazyComponent(() => import("@/pages/college-admin/UserManagement"));
 const StudyRoomsMonitor = createLazyComponent(() => import("@/pages/college-admin/StudyRoomsMonitor"));
 const CollegeAdminSettings = createLazyComponent(() => import("@/pages/college-admin/CollegeAdminSettings"));
+const EventsAnnouncements = createLazyComponent(() => import("@/pages/college-admin/EventsAnnouncements"));
+const Analytics = createLazyComponent(() => import("@/pages/college-admin/Analytics"));
 
 // Add StudyPulse imports
 const StudyPulse = createLazyComponent(() => import("@/pages/StudyPulse"));
@@ -403,6 +405,16 @@ const App = () => (
                 <Route path="settings" element={
                   <SuspenseWrapper>
                     <CollegeAdminSettings />
+                  </SuspenseWrapper>
+                } />
+                <Route path="events-announcements" element={
+                  <SuspenseWrapper>
+                    <EventsAnnouncements />
+                  </SuspenseWrapper>
+                } />
+                <Route path="analytics" element={
+                  <SuspenseWrapper>
+                    <Analytics />
                   </SuspenseWrapper>
                 } />
                 <Route index element={<Navigate to="/college-admin/dashboard" replace />} />
