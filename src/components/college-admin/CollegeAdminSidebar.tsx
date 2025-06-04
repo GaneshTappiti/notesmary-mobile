@@ -12,7 +12,9 @@ import {
   School,
   BookOpen,
   FileText,
-  GraduationCap
+  GraduationCap,
+  Calendar,
+  BarChart3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
