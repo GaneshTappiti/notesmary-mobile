@@ -10,10 +10,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Bell, Menu, Settings, LogOut, User } from 'lucide-react';
+import { Menu, Settings, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { NotificationPanel } from '@/components/shared/NotificationPanel';
 
 interface AdminTopbarProps {
   onMenuClick: () => void;
@@ -31,14 +32,6 @@ export const AdminTopbar: React.FC<AdminTopbarProps> = ({ onMenuClick }) => {
       description: "You have been successfully logged out.",
     });
     navigate('/authentication');
-  };
-
-  const handleNotifications = () => {
-    toast({
-      title: "Notifications",
-      description: "Opening notifications panel...",
-    });
-    // TODO: Implement notifications panel
   };
 
   const handleSettings = () => {
@@ -75,13 +68,7 @@ export const AdminTopbar: React.FC<AdminTopbarProps> = ({ onMenuClick }) => {
       </div>
       
       <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleNotifications}
-        >
-          <Bell className="h-5 w-5" />
-        </Button>
+        <NotificationPanel adminType="super" />
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

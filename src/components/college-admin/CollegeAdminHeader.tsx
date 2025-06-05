@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Bell, MessageSquare, Search, User, Settings, LogOut } from 'lucide-react';
+import { MessageSquare, Search, User, Settings, LogOut } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { NotificationPanel } from '@/components/shared/NotificationPanel';
 
 export const CollegeAdminHeader: React.FC = () => {
   const { user, logout, profile, isAdmin } = useAuth();
@@ -86,10 +87,7 @@ export const CollegeAdminHeader: React.FC = () => {
             </h1>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
-            </Button>
+            <NotificationPanel adminType="college" />
             <Button variant="ghost" size="icon">
               <MessageSquare size={20} />
             </Button>
