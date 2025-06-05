@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -84,7 +83,7 @@ const Authentication = () => {
   const [signupError, setSignupError] = useState("");
   const [resetError, setResetError] = useState("");
   const [resetSuccess, setResetSuccess] = useState(false);
-  const { login, signup, isAuthenticated, isLoading, isAdmin } = useAuth();
+  const { isAuthenticated, isLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [debugInfo, setDebugInfo] = useState<any>({});
@@ -140,11 +139,40 @@ const Authentication = () => {
       const isAdminLogin = values.email === ADMIN_EMAIL;
       
       if (isAdminLogin) {
-        console.log("Admin login detected, special handling");
+        console.log("Admin login detected, will redirect to admin dashboard");
       }
       
-      await login(values.email, values.password);
-      // The redirect will be handled in the useEffect below
+      // Login through Supabase directly to handle redirection manually
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (error) {
+        console.error("Supabase login error:", error);
+        throw error;
+      }
+
+      console.log("Login successful:", data);
+      
+      // Handle redirection based on user type
+      if (values.email === ADMIN_EMAIL) {
+        console.log("Admin user detected, redirecting to admin dashboard");
+        navigate("/admin");
+        toast({
+          title: "Welcome back, Admin!",
+          description: "You've been redirected to the admin dashboard.",
+        });
+      } else {
+        // Regular user redirection
+        const from = location.state?.from?.pathname || "/dashboard";
+        console.log("Regular user detected, redirecting to:", from);
+        navigate(from);
+        toast({
+          title: "Login successful",
+          description: "Welcome back to Notex!",
+        });
+      }
     } catch (error: any) {
       console.error("Login error:", error);
       let errorMsg = error.message || "Failed to login. Please check your credentials.";
@@ -166,7 +194,20 @@ const Authentication = () => {
     setSignupError("");
     try {
       console.log("Attempting signup with:", values.email);
-      await signup(values.email, values.password, values.fullName);
+      
+      const { error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          data: {
+            full_name: values.fullName,
+          },
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
       
       // Special message for admin signup
       const successMessage = values.email === ADMIN_EMAIL ? 
@@ -206,28 +247,7 @@ const Authentication = () => {
     }
   };
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      const from = location.state?.from?.pathname || "/dashboard";
-      
-      // Check if user is admin and redirect accordingly
-      if (isAdmin) {
-        console.log("Admin user detected, redirecting to admin dashboard");
-        navigate("/admin");
-        toast({
-          title: "Welcome back, Admin!",
-          description: "You've been redirected to the admin dashboard.",
-        });
-      } else {
-        console.log("Regular user detected, redirecting to dashboard");
-        navigate(from);
-        toast({
-          title: "Login successful",
-          description: "Welcome back to Notex!",
-        });
-      }
-    }
-  }, [isAuthenticated, isAdmin, navigate, location, toast]);
+  // Remove the useEffect that was handling redirection since we're now handling it manually in onLoginSubmit
 
   if (showResetForm) {
     return (

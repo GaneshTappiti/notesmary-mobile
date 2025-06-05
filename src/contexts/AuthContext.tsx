@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService, UserProfile } from "@/services/AuthService";
@@ -9,9 +8,9 @@ type AuthContextType = {
   isLoading: boolean;
   user: any;
   isAdmin: boolean;
-  isCollegeAdmin: boolean; // Added missing property
+  isCollegeAdmin: boolean;
   userProfile: UserProfile | null;
-  profile: UserProfile | null; // Added missing property
+  profile: UserProfile | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, fullName: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -23,9 +22,9 @@ export const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   user: null,
   isAdmin: false,
-  isCollegeAdmin: false, // Added missing property
+  isCollegeAdmin: false,
   userProfile: null,
-  profile: null, // Added missing property
+  profile: null,
   login: () => Promise.resolve(),
   signup: () => Promise.resolve(),
   logout: () => Promise.resolve(),
@@ -37,7 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isCollegeAdmin, setIsCollegeAdmin] = useState(false); // Added missing state
+  const [isCollegeAdmin, setIsCollegeAdmin] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -77,7 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     checkSession();
   }, [navigate]);
 
-  // Login with email and password
+  // Login with email and password - removed automatic navigation
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
@@ -93,11 +92,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const profile = await AuthService.getUserProfile(data.session?.user.id);
       setUserProfile(profile);
 
-      toast({
-        title: "Login Successful",
-        description: "You have successfully logged in.",
-      });
-      navigate("/dashboard");
+      // Don't navigate here - let the Authentication component handle it
+      console.log("Login successful in context, navigation will be handled by Authentication component");
     } catch (error: any) {
       console.error("Login error in context:", error);
       setIsAuthenticated(false);
@@ -175,9 +171,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isLoading,
     user,
     isAdmin,
-    isCollegeAdmin, // Added missing property
+    isCollegeAdmin,
     userProfile,
-    profile: userProfile, // Added profile as an alias for userProfile
+    profile: userProfile,
     login,
     signup,
     logout,
