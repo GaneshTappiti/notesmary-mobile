@@ -10,9 +10,6 @@ import {
   Menu, 
   X,
   School,
-  BookOpen,
-  FileText,
-  GraduationCap,
   Calendar,
   BarChart3
 } from 'lucide-react';
@@ -147,33 +144,6 @@ export const CollegeAdminSidebar: React.FC = () => {
                 />
               ))}
             </nav>
-
-            {/* Education section */}
-            <div className="mt-8 pt-4 border-t border-gray-200">
-              <h3 className="px-3 text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                Learning Resources
-              </h3>
-              <nav className="space-y-1">
-                <a href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
-                  <div className="p-1 text-gray-600">
-                    <FileText size={20} />
-                  </div>
-                  <span>Admin Guide</span>
-                </a>
-                <a href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
-                  <div className="p-1 text-gray-600">
-                    <BookOpen size={20} />
-                  </div>
-                  <span>Documentation</span>
-                </a>
-                <a href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
-                  <div className="p-1 text-gray-600">
-                    <GraduationCap size={20} />
-                  </div>
-                  <span>Training Videos</span>
-                </a>
-              </nav>
-            </div>
           </div>
 
           {/* Sidebar footer */}
