@@ -54,14 +54,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (currentUser) {
             const profile = await AuthService.getUserProfile(currentUser.id);
             setUserProfile(profile);
-            setIsAdmin(currentUser.email === "2005ganesh16@gmail.com");
             
-            // Check if the user is a college admin (has educational email domain)
+            const isAdminUser = currentUser.email === "2005ganesh16@gmail.com";
+            setIsAdmin(isAdminUser);
+            
+            // Check if the user is a college admin (has educational email domain and is not admin)
             const emailDomain = currentUser.email ? currentUser.email.split('@')[1] : '';
             const isEducationalDomain = AuthService.isEducationalEmail ? 
               AuthService.isEducationalEmail(currentUser.email || '') : 
               false;
-            setIsCollegeAdmin(isEducationalDomain && emailDomain !== 'gmail.com');
+            
+            // User is college admin if they have educational email and are not the super admin
+            const isCollegeAdminUser = isEducationalDomain && !isAdminUser && emailDomain !== 'gmail.com';
+            setIsCollegeAdmin(isCollegeAdminUser);
+            
+            console.log("User role detection:", {
+              email: currentUser.email,
+              emailDomain,
+              isEducationalDomain,
+              isAdminUser,
+              isCollegeAdminUser
+            });
           }
         } else {
           setIsAuthenticated(false);
@@ -86,14 +99,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       setIsAuthenticated(true);
       setUser(data.session?.user);
-      setIsAdmin(email === "2005ganesh16@gmail.com");
+      
+      const isAdminUser = email === "2005ganesh16@gmail.com";
+      setIsAdmin(isAdminUser);
 
       // Fetch and set user profile
       const profile = await AuthService.getUserProfile(data.session?.user.id);
       setUserProfile(profile);
 
-      // Don't navigate here - let the Authentication component handle it
-      console.log("Login successful in context, navigation will be handled by Authentication component");
+      // Determine if user is college admin
+      const emailDomain = email ? email.split('@')[1] : '';
+      const isEducationalDomain = AuthService.isEducationalEmail ? 
+        AuthService.isEducationalEmail(email || '') : 
+        false;
+      
+      // User is college admin if they have educational email and are not the super admin
+      const isCollegeAdminUser = isEducationalDomain && !isAdminUser && emailDomain !== 'gmail.com';
+      setIsCollegeAdmin(isCollegeAdminUser);
+      
+      console.log("Login successful in context. User type:", {
+        email,
+        isAdminUser,
+        isCollegeAdminUser,
+        emailDomain
+      });
     } catch (error: any) {
       console.error("Login error in context:", error);
       setIsAuthenticated(false);
@@ -131,6 +160,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false);
       setUser(null);
       setIsAdmin(false);
+      setIsCollegeAdmin(false);
       setUserProfile(null);
       toast({
         title: "Logout Successful",

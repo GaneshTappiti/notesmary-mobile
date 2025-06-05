@@ -25,7 +25,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 // Special admin email for direct access
 const ADMIN_EMAIL = "2005ganesh16@gmail.com";
@@ -83,22 +82,9 @@ const Authentication = () => {
   const [signupError, setSignupError] = useState("");
   const [resetError, setResetError] = useState("");
   const [resetSuccess, setResetSuccess] = useState(false);
-  const { isAuthenticated, isLoading, isAdmin } = useAuth();
+  const { login, isLoading, isAuthenticated, isAdmin, isCollegeAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [debugInfo, setDebugInfo] = useState<any>({});
-
-  // Debug info updates
-  useEffect(() => {
-    setDebugInfo({
-      isAuthenticated,
-      isAdmin,
-      isLoading,
-      location: location.state
-    });
-    console.log("Auth state:", { isAuthenticated, isAdmin, isLoading });
-    console.log("Location state:", location.state);
-  }, [isAuthenticated, isAdmin, isLoading, location]);
 
   // Listen for location state changes to update the active tab
   useEffect(() => {
@@ -106,6 +92,37 @@ const Authentication = () => {
       setActiveTab(location.state.activeTab);
     }
   }, [location.state]);
+
+  // Handle redirection after authentication state changes
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      console.log("User authenticated, checking user type:", { isAdmin, isCollegeAdmin });
+      
+      if (isAdmin) {
+        console.log("Admin user detected, redirecting to admin dashboard");
+        navigate("/admin");
+        toast({
+          title: "Welcome back, Admin!",
+          description: "You've been redirected to the admin dashboard.",
+        });
+      } else if (isCollegeAdmin) {
+        console.log("College admin detected, redirecting to college admin dashboard");
+        navigate("/college-admin/dashboard");
+        toast({
+          title: "Welcome back!",
+          description: "You've been redirected to your college admin dashboard.",
+        });
+      } else {
+        console.log("Regular user detected, redirecting to user dashboard");
+        const from = location.state?.from?.pathname || "/dashboard";
+        navigate(from);
+        toast({
+          title: "Login successful",
+          description: "Welcome back to Notex!",
+        });
+      }
+    }
+  }, [isAuthenticated, isLoading, isAdmin, isCollegeAdmin, navigate, location.state, toast]);
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -136,43 +153,8 @@ const Authentication = () => {
     setLoginError("");
     try {
       console.log("Attempting login with:", values.email);
-      const isAdminLogin = values.email === ADMIN_EMAIL;
-      
-      if (isAdminLogin) {
-        console.log("Admin login detected, will redirect to admin dashboard");
-      }
-      
-      // Login through Supabase directly to handle redirection manually
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      });
-
-      if (error) {
-        console.error("Supabase login error:", error);
-        throw error;
-      }
-
-      console.log("Login successful:", data);
-      
-      // Handle redirection based on user type
-      if (values.email === ADMIN_EMAIL) {
-        console.log("Admin user detected, redirecting to admin dashboard");
-        navigate("/admin");
-        toast({
-          title: "Welcome back, Admin!",
-          description: "You've been redirected to the admin dashboard.",
-        });
-      } else {
-        // Regular user redirection
-        const from = location.state?.from?.pathname || "/dashboard";
-        console.log("Regular user detected, redirecting to:", from);
-        navigate(from);
-        toast({
-          title: "Login successful",
-          description: "Welcome back to Notex!",
-        });
-      }
+      await login(values.email, values.password);
+      // Navigation will be handled by the useEffect above
     } catch (error: any) {
       console.error("Login error:", error);
       let errorMsg = error.message || "Failed to login. Please check your credentials.";
@@ -246,8 +228,6 @@ const Authentication = () => {
       setResetError(error.message || "Failed to send password reset email. Please try again.");
     }
   };
-
-  // Remove the useEffect that was handling redirection since we're now handling it manually in onLoginSubmit
 
   if (showResetForm) {
     return (
