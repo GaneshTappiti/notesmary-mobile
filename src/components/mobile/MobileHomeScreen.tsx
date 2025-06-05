@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -152,21 +151,31 @@ export const MobileHomeScreen = () => {
 
   return (
     <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900">
-      {/* Top Header */}
-      <MobileHeader
-        title="StudyPulse"
-        showSearchButton={true}
-        onSearchClick={handleSearchClick}
-        rightElement={
-          <div className="flex items-center gap-2">
+      {/* Top Header - Simplified without menu button */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 px-4 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              StudyPulse
+            </h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleSearchClick}
+              className="h-10 w-10"
+            >
+              <Search size={20} />
+            </Button>
             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
               <span className="text-white text-sm font-semibold">
                 {user?.user_metadata?.full_name?.charAt(0) || 'U'}
               </span>
             </div>
           </div>
-        }
-      />
+        </div>
+      </div>
 
       {/* Content Container */}
       <div className="flex-1 overflow-hidden">

@@ -115,7 +115,9 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
         {/* Authentication routes */}
         <Route path="/authentication" element={
           !isAuthenticated ? (
-            <Authentication />
+            <MobileLayout hideSidebar={true} showSidebarTrigger={false}>
+              <Authentication />
+            </MobileLayout>
           ) : (
             <Navigate to="/dashboard" replace />
           )
@@ -175,7 +177,7 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
         {/* College Admin Routes */}
         <Route path="/college-admin/dashboard" element={
           isAuthenticated ? (
-            <MobileLayout hideBottomNav={true}>
+            <MobileLayout hideSidebar={true} showSidebarTrigger={false}>
               <Suspense fallback={<div className="p-4">Loading...</div>}>
                 <CollegeAdminDashboard />
               </Suspense>
@@ -188,14 +190,18 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
         {/* Mobile specific screens */}
         <Route path="/push-notification-settings" element={
           isAuthenticated ? (
-            <PushNotificationSettings />
+            <MobileLayout>
+              <PushNotificationSettings />
+            </MobileLayout>
           ) : (
             <Navigate to="/authentication" replace />
           )
         } />
         
         <Route path="/help-support" element={
-          <HelpSupportScreen />
+          <MobileLayout>
+            <HelpSupportScreen />
+          </MobileLayout>
         } />
         
         {/* Default route */}
@@ -209,11 +215,13 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
         
         {/* Catch all route */}
         <Route path="*" element={
-          <div className="flex flex-col items-center justify-center h-screen p-4 text-center">
-            <h1 className="text-2xl font-bold mb-4">Page Not Found</h1>
-            <p className="mb-6 text-muted-foreground">The page you're looking for doesn't exist or has been moved.</p>
-            <Button onClick={() => window.history.back()}>Go Back</Button>
-          </div>
+          <MobileLayout>
+            <div className="flex flex-col items-center justify-center h-screen p-4 text-center">
+              <h1 className="text-2xl font-bold mb-4">Page Not Found</h1>
+              <p className="mb-6 text-muted-foreground">The page you're looking for doesn't exist or has been moved.</p>
+              <Button onClick={() => window.history.back()}>Go Back</Button>
+            </div>
+          </MobileLayout>
         } />
       </Routes>
     </AnimatePresence>
