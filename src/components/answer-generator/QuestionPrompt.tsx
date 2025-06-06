@@ -13,7 +13,7 @@ interface QuestionPromptProps {
 export const QuestionPrompt: React.FC<QuestionPromptProps> = ({ value, onChange }) => {
   return (
     <div className="space-y-2">
-      <Label htmlFor="question-prompt" className="text-base font-semibold flex items-center gap-2">
+      <Label htmlFor="question-prompt" className="text-sm sm:text-base font-semibold flex items-center gap-2">
         <Lightbulb className="h-4 w-4 text-purple-600" />
         Question or Topic (Optional)
         <Tooltip>

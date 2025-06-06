@@ -23,7 +23,7 @@ export const AnswerFormatSelector: React.FC<AnswerFormatSelectorProps> = ({
 
   return (
     <div className="space-y-3">
-      <Label className="text-base font-semibold flex items-center gap-2">
+      <Label className="text-sm sm:text-base font-semibold flex items-center gap-2">
         <Zap className="h-4 w-4 text-purple-600" />
         Answer Format
         <Tooltip>
@@ -36,23 +36,23 @@ export const AnswerFormatSelector: React.FC<AnswerFormatSelectorProps> = ({
         </Tooltip>
       </Label>
       
-      <RadioGroup value={value} onValueChange={onValueChange} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <RadioGroup value={value} onValueChange={onValueChange} className="grid grid-cols-1 gap-2">
         {formats.map((format) => (
           <motion.div
             key={format.value}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`relative border-2 rounded-xl p-4 cursor-pointer transition-all ${
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            className={`relative border-2 rounded-lg p-3 cursor-pointer transition-all ${
               value === format.value ? format.color : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
             }`}
           >
             <div className="flex items-center space-x-3">
-              <RadioGroupItem value={format.value} id={format.value} />
-              <div className="flex-1">
-                <Label htmlFor={format.value} className="font-medium cursor-pointer text-sm sm:text-base">
+              <RadioGroupItem value={format.value} id={format.value} className="mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <Label htmlFor={format.value} className="font-medium cursor-pointer text-sm block leading-tight">
                   {format.label}
                 </Label>
-                <p className="text-xs text-gray-500 mt-1">{format.description}</p>
+                <p className="text-xs text-gray-500 mt-0.5 leading-tight">{format.description}</p>
               </div>
             </div>
           </motion.div>

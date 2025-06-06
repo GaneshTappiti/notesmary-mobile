@@ -10,7 +10,6 @@ import { Brain, Target, RefreshCw, FileText } from 'lucide-react';
 import { PageContainer } from '@/components/PageContainer';
 import { QuestionPrompt } from '@/components/answer-generator/QuestionPrompt';
 import { AnswerFormatSelector } from '@/components/answer-generator/AnswerFormatSelector';
-import { ContextInput } from '@/components/answer-generator/ContextInput';
 import { DocumentUpload } from '@/components/answer-generator/DocumentUpload';
 import { AnswerPreview } from '@/components/answer-generator/AnswerPreview';
 import { EmptyState } from '@/components/answer-generator/EmptyState';
@@ -18,7 +17,6 @@ import { EmptyState } from '@/components/answer-generator/EmptyState';
 const AIMarkAnswers = () => {
   const { toast } = useToast();
   const [questionPrompt, setQuestionPrompt] = useState('');
-  const [context, setContext] = useState('');
   const [markType, setMarkType] = useState('5');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -117,7 +115,6 @@ const AIMarkAnswers = () => {
 
   const resetForm = () => {
     setQuestionPrompt('');
-    setContext('');
     setSelectedFile(null);
     setGeneratedAnswer(null);
     setMarkType('5');
@@ -188,18 +185,17 @@ const AIMarkAnswers = () => {
                     </CardDescription>
                   </CardHeader>
                   
-                  <CardContent className="p-4 sm:p-6 space-y-6">
+                  <CardContent className="p-4 sm:p-6 space-y-5">
                     <DocumentUpload selectedFile={selectedFile} onFileChange={handleFileChange} />
                     <AnswerFormatSelector value={markType} onValueChange={setMarkType} />
                     <QuestionPrompt value={questionPrompt} onChange={setQuestionPrompt} />
-                    <ContextInput value={context} onChange={setContext} />
 
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-3 pt-4">
                       <Button 
                         onClick={handleGenerateAnswer}
                         disabled={isGenerating || !selectedFile}
-                        className="flex-1 h-12 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all duration-300"
+                        className="flex-1 h-11 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all duration-300"
                       >
                         {isGenerating ? (
                           <motion.div
@@ -218,7 +214,7 @@ const AIMarkAnswers = () => {
                       <Button 
                         variant="outline" 
                         onClick={resetForm} 
-                        className="h-12 hover:bg-gray-50 transition-colors"
+                        className="h-11 hover:bg-gray-50 transition-colors"
                       >
                         <RefreshCw className="h-4 w-4 mr-2" />
                         Clear
