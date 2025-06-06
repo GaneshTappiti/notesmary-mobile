@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -132,7 +131,7 @@ export const PushNotificationSettings = () => {
   };
 
   return (
-    <MobileLayout hideBottomNav>
+    <MobileLayout>
       <div className="space-y-4 pb-6">
         <div className="flex items-center py-2">
           <Button 
