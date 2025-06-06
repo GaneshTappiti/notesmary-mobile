@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-import { Brain, Sparkles } from 'lucide-react';
+import { FileText, Sparkles } from 'lucide-react';
 
 export const EmptyState: React.FC = () => {
   return (
@@ -26,21 +26,21 @@ export const EmptyState: React.FC = () => {
             }}
             className="mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full flex items-center justify-center"
           >
-            <Brain className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600" />
+            <FileText className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600" />
           </motion.div>
           <div>
             <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-2 flex items-center justify-center gap-2">
-              Ready to Generate
+              Ready to Analyze
               <Sparkles className="h-4 w-4 text-purple-500" />
             </h3>
             <p className="text-gray-500 text-xs sm:text-sm leading-relaxed max-w-xs mx-auto">
-              Enter your question and select the mark value to get a perfectly structured exam answer
+              Upload your study materials to get perfectly structured exam answers
             </p>
           </div>
           <div className="space-y-1 text-xs text-gray-400">
+            <p>✓ AI-powered document analysis</p>
             <p>✓ Structured format based on mark value</p>
-            <p>✓ Key points and logical flow</p>
-            <p>✓ AI feedback and scoring</p>
+            <p>✓ Instant feedback and scoring</p>
           </div>
         </motion.div>
       </CardContent>

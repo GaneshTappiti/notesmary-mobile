@@ -6,18 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useToast } from '@/hooks/use-toast';
-import { Brain, Target, RefreshCw } from 'lucide-react';
+import { Brain, Target, RefreshCw, FileText } from 'lucide-react';
 import { PageContainer } from '@/components/PageContainer';
-import { QuestionInput } from '@/components/answer-generator/QuestionInput';
+import { QuestionPrompt } from '@/components/answer-generator/QuestionPrompt';
 import { AnswerFormatSelector } from '@/components/answer-generator/AnswerFormatSelector';
 import { ContextInput } from '@/components/answer-generator/ContextInput';
-import { FileUpload } from '@/components/answer-generator/FileUpload';
+import { DocumentUpload } from '@/components/answer-generator/DocumentUpload';
 import { AnswerPreview } from '@/components/answer-generator/AnswerPreview';
 import { EmptyState } from '@/components/answer-generator/EmptyState';
 
 const AIMarkAnswers = () => {
   const { toast } = useToast();
-  const [question, setQuestion] = useState('');
+  const [questionPrompt, setQuestionPrompt] = useState('');
   const [context, setContext] = useState('');
   const [markType, setMarkType] = useState('5');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -27,14 +27,18 @@ const AIMarkAnswers = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
+      toast({
+        title: "Document Uploaded! 📄",
+        description: `${e.target.files[0].name} is ready for processing`,
+      });
     }
   };
 
   const handleGenerateAnswer = async () => {
-    if (!question.trim()) {
+    if (!selectedFile) {
       toast({
-        title: "Question Required",
-        description: "Please provide a question to generate a structured answer.",
+        title: "Document Required",
+        description: "Please upload your study materials to generate structured answers.",
         variant: "destructive",
       });
       return;
@@ -43,40 +47,41 @@ const AIMarkAnswers = () => {
     setIsGenerating(true);
     
     try {
-      // Simulate AI generation process with more realistic timing
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      // Simulate AI processing with document analysis
+      await new Promise(resolve => setTimeout(resolve, 3000));
       
-      // Enhanced mock answer based on mark type
+      const topic = questionPrompt || "comprehensive study material analysis";
       const mockAnswer = {
-        question,
+        question: questionPrompt || `Comprehensive analysis of ${selectedFile.name}`,
         markType: parseInt(markType),
+        documentName: selectedFile.name,
         structuredAnswer: {
-          introduction: `This response addresses the key concepts of ${question.split(' ').slice(0, 3).join(' ')}...`,
+          introduction: `Based on the analysis of ${selectedFile.name}, this response provides a structured examination of ${topic}...`,
           mainPoints: [
-            `First critical aspect with detailed analysis and supporting evidence from recent studies`,
-            `Second important element demonstrating comprehensive understanding of the topic`, 
-            `Third key point with practical examples and real-world applications`,
+            `Primary concept derived from the study materials with detailed explanation and supporting evidence`,
+            `Secondary important element demonstrating comprehensive understanding from the uploaded content`, 
+            `Third key point with practical applications and real-world examples from your materials`,
             ...(parseInt(markType) >= 10 ? [
-              `Fourth advanced concept with comparative analysis`,
-              `Fifth dimension exploring implications and future considerations`
+              `Advanced analysis showing deeper insights from the document content`,
+              `Critical evaluation and synthesis of multiple concepts from your study materials`
             ] : [])
           ].slice(0, parseInt(markType) === 2 ? 2 : parseInt(markType) === 5 ? 3 : 5),
-          conclusion: `In conclusion, the analysis demonstrates a comprehensive understanding of the topic with clear connections between concepts...`,
-          keyTerms: ["Key Term 1", "Key Term 2", "Key Term 3"]
+          conclusion: `In conclusion, the analysis of your study materials demonstrates comprehensive coverage of the topic with well-structured insights...`,
+          keyTerms: ["Key Term 1", "Key Term 2", "Key Term 3", "Key Term 4"]
         },
-        estimatedScore: Math.floor(parseInt(markType) * (0.8 + Math.random() * 0.15)),
+        estimatedScore: Math.floor(parseInt(markType) * (0.85 + Math.random() * 0.1)),
         feedback: [
           {
             type: 'strength',
-            text: 'Excellent structure with clear logical progression between main points.'
+            text: 'Excellent use of source material with clear structure and logical progression.'
           },
           {
             type: 'improvement', 
-            text: 'Consider adding more specific examples to strengthen your arguments.'
+            text: 'Consider expanding on specific examples mentioned in your uploaded materials.'
           },
           ...(parseInt(markType) >= 10 ? [{
             type: 'strength',
-            text: 'Demonstrates advanced critical thinking and analysis skills.'
+            text: 'Demonstrates advanced synthesis of multiple concepts from the study materials.'
           }] : [])
         ]
       };
@@ -85,13 +90,13 @@ const AIMarkAnswers = () => {
       
       toast({
         title: "Answer Generated Successfully! 🎉",
-        description: `Structured ${markType}-mark answer ready for review`,
+        description: `Structured ${markType}-mark answer ready based on your materials`,
       });
       
     } catch (error) {
       toast({
         title: "Generation Failed",
-        description: "There was an error generating your answer. Please try again.",
+        description: "There was an error processing your document. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -111,7 +116,7 @@ const AIMarkAnswers = () => {
   };
 
   const resetForm = () => {
-    setQuestion('');
+    setQuestionPrompt('');
     setContext('');
     setSelectedFile(null);
     setGeneratedAnswer(null);
@@ -119,14 +124,14 @@ const AIMarkAnswers = () => {
     
     toast({
       title: "Form Reset",
-      description: "Ready for a new question",
+      description: "Ready for new study materials",
     });
   };
 
   return (
     <>
       <Helmet>
-        <title>Structured Answer Generator | Notex</title>
+        <title>AI Study Material Analyzer | Notex</title>
       </Helmet>
       
       <PageContainer>
@@ -151,14 +156,14 @@ const AIMarkAnswers = () => {
                   }}
                   className="p-3 sm:p-4 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl shadow-lg"
                 >
-                  <Brain className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
+                  <FileText className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
                 </motion.div>
                 <div className="text-center sm:text-left">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                    Structured Answer Generator
+                    AI Study Material Analyzer
                   </h1>
                   <p className="text-sm sm:text-base lg:text-lg text-gray-600 mt-1">
-                    Get exam-ready answers in your preferred format
+                    Upload your notes and get exam-ready structured answers
                   </p>
                 </div>
               </div>
@@ -176,24 +181,24 @@ const AIMarkAnswers = () => {
                   <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
                     <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                       <Target className="h-5 w-5 text-purple-600" />
-                      Answer Configuration
+                      Document Analysis Setup
                     </CardTitle>
                     <CardDescription className="text-sm sm:text-base">
-                      Configure your question and get a perfectly structured exam answer
+                      Upload your study materials and configure your answer format
                     </CardDescription>
                   </CardHeader>
                   
                   <CardContent className="p-4 sm:p-6 space-y-6">
-                    <QuestionInput value={question} onChange={setQuestion} />
+                    <DocumentUpload selectedFile={selectedFile} onFileChange={handleFileChange} />
                     <AnswerFormatSelector value={markType} onValueChange={setMarkType} />
+                    <QuestionPrompt value={questionPrompt} onChange={setQuestionPrompt} />
                     <ContextInput value={context} onChange={setContext} />
-                    <FileUpload selectedFile={selectedFile} onFileChange={handleFileChange} />
 
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-3 pt-4">
                       <Button 
                         onClick={handleGenerateAnswer}
-                        disabled={isGenerating || !question.trim()}
+                        disabled={isGenerating || !selectedFile}
                         className="flex-1 h-12 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all duration-300"
                       >
                         {isGenerating ? (
@@ -207,7 +212,7 @@ const AIMarkAnswers = () => {
                         ) : (
                           <Brain className="h-5 w-5 mr-2" />
                         )}
-                        {isGenerating ? "Generating Answer..." : "Generate Structured Answer"}
+                        {isGenerating ? "Analyzing Document..." : "Generate Structured Answer"}
                       </Button>
                       
                       <Button 
