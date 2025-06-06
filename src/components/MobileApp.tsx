@@ -19,6 +19,12 @@ import AIAnswers from '@/pages/AIAnswers';
 import Notifications from '@/pages/Notifications';
 import Settings from '@/pages/Settings';
 import Authentication from '@/pages/Authentication';
+import UploadNotes from '@/pages/UploadNotes';
+import FindNotes from '@/pages/FindNotes';
+import AIMarkAnswers from '@/pages/AIMarkAnswers';
+import StudyAnalytics from '@/pages/StudyAnalytics';
+import StudyPulse from '@/pages/StudyPulse';
+import StudyRooms from '@/pages/StudyRooms';
 import { Button } from '@/components/ui/button';
 
 // Lazy load CollegeAdminDashboard
@@ -134,6 +140,26 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
           )
         } />
         
+        <Route path="/upload-notes" element={
+          isAuthenticated ? (
+            <MobileLayout>
+              <UploadNotes />
+            </MobileLayout>
+          ) : (
+            <Navigate to="/authentication" replace />
+          )
+        } />
+        
+        <Route path="/find-notes" element={
+          isAuthenticated ? (
+            <MobileLayout>
+              <FindNotes />
+            </MobileLayout>
+          ) : (
+            <Navigate to="/authentication" replace />
+          )
+        } />
+        
         <Route path="/my-notes" element={
           isAuthenticated ? (
             <MobileLayout>
@@ -148,6 +174,46 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
           isAuthenticated ? (
             <MobileLayout>
               <AIAnswers />
+            </MobileLayout>
+          ) : (
+            <Navigate to="/authentication" replace />
+          )
+        } />
+        
+        <Route path="/ai-mark-answers" element={
+          isAuthenticated ? (
+            <MobileLayout>
+              <AIMarkAnswers />
+            </MobileLayout>
+          ) : (
+            <Navigate to="/authentication" replace />
+          )
+        } />
+        
+        <Route path="/study-analytics" element={
+          isAuthenticated ? (
+            <MobileLayout>
+              <StudyAnalytics />
+            </MobileLayout>
+          ) : (
+            <Navigate to="/authentication" replace />
+          )
+        } />
+        
+        <Route path="/study-pulse" element={
+          isAuthenticated ? (
+            <MobileLayout>
+              <StudyPulse />
+            </MobileLayout>
+          ) : (
+            <Navigate to="/authentication" replace />
+          )
+        } />
+        
+        <Route path="/study-rooms" element={
+          isAuthenticated ? (
+            <MobileLayout>
+              <StudyRooms />
             </MobileLayout>
           ) : (
             <Navigate to="/authentication" replace />
@@ -190,9 +256,7 @@ const MobileApp = ({ initializing }: MobileAppProps) => {
         {/* Mobile specific screens */}
         <Route path="/push-notification-settings" element={
           isAuthenticated ? (
-            <MobileLayout>
-              <PushNotificationSettings />
-            </MobileLayout>
+            <PushNotificationSettings />
           ) : (
             <Navigate to="/authentication" replace />
           )
