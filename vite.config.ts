@@ -11,36 +11,92 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   build: {
-    sourcemap: true,
+    sourcemap: mode === 'development',
+    minify: 'terser',
+    target: 'es2015',
+    cssCodeSplit: true,
+    terserOptions: {
+      compress: {
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production',
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Create separate vendor chunks
+          // Create separate vendor chunks for better caching
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+            // Core React bundle
+            if (id.includes('react') || id.includes('react-dom')) {
               return 'react-vendor';
             }
             
-            // Group shadcn UI components
-            if (id.includes('@radix-ui') || id.includes('@/components/ui')) {
-              return 'ui';
+            // Router bundle
+            if (id.includes('react-router-dom')) {
+              return 'router';
+            }
+            
+            // UI library bundle
+            if (id.includes('@radix-ui') || id.includes('lucide-react')) {
+              return 'ui-vendor';
+            }
+            
+            // Animation libraries
+            if (id.includes('framer-motion')) {
+              return 'animation';
+            }
+            
+            // Chart libraries
+            if (id.includes('recharts') || id.includes('@nivo')) {
+              return 'charts';
+            }
+            
+            // Authentication and data
+            if (id.includes('@supabase') || id.includes('@tanstack')) {
+              return 'data-vendor';
             }
             
             return 'vendor'; // Other dependencies
           }
           
-          // Create separate chunks for admin pages
-          if (id.includes('/src/pages/Admin')) {
+          // Admin pages bundle
+          if (id.includes('/src/pages/Admin') || id.includes('/src/components/admin/')) {
             return 'admin';
           }
           
-          // Create separate chunks for user pages
-          if (id.includes('/src/pages/') && !id.includes('Admin')) {
-            return 'pages';
+          // College admin bundle
+          if (id.includes('/src/pages/college-admin/') || id.includes('/src/components/college-admin/')) {
+            return 'college-admin';
           }
+          
+          // Answer generator bundle
+          if (id.includes('/src/components/answer-generator/')) {
+            return 'answer-generator';
+          }
+          
+          // Dashboard and core pages
+          if (id.includes('/src/pages/Dashboard') || id.includes('/src/components/dashboard/')) {
+            return 'dashboard';
+          }
+          
+          // Mobile components
+          if (id.includes('/src/components/mobile/')) {
+            return 'mobile';
+          }
+        },
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
+          return `assets/[name]-[hash].js`;
+        },
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'assets/css/[name]-[hash][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
         },
       },
     },
+    chunkSizeWarningLimit: 1000,
   },
   plugins: [
     react(),
@@ -53,9 +109,20 @@ export default defineConfig(({ mode }) => ({
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
+    include: [
+      'react', 
+      'react-dom', 
+      'react-router-dom',
+      '@radix-ui/react-slot',
+      'lucide-react',
+      'clsx',
+      'tailwind-merge'
+    ],
+    exclude: ['@supabase/supabase-js']
   },
   esbuild: {
-    logOverride: { 'this-is-undefined-in-esm': 'silent' }
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
+    target: 'es2015',
+    legalComments: 'none',
   },
 }));

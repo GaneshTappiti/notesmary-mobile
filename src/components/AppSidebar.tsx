@@ -1,4 +1,5 @@
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -29,8 +30,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-  SidebarRail,
-  SidebarTrigger
+  SidebarRail
 } from "@/components/ui/sidebar";
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -38,7 +38,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useAuth } from '@/contexts/AuthContext';
@@ -49,17 +49,17 @@ export const AppSidebar = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { logout } = useAuth();
-  const [isStudyRoomOpen, setIsStudyRoomOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   
-  const isActive = (path: string) => {
+  const isActive = useCallback((path: string) => {
     if (path.includes(':')) {
       const basePath = path.split('/:')[0];
       return location.pathname.startsWith(basePath);
     }
     return location.pathname === path;
-  };
+  }, [location.pathname]);
   
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     try {
       await logout();
       toast({
@@ -75,19 +75,18 @@ export const AppSidebar = () => {
         variant: "destructive",
       });
     }
-  };
+  }, [logout, toast, navigate]);
 
-  // Handle click to navigate on mobile
-  const handleNavigation = (path: string) => {
+  const handleNavigation = useCallback((path: string) => {
     navigate(path);
-    // Close any mobile drawer/sheet containing the sidebar
+    // Close mobile drawer if open
     const drawerCloseBtn = document.querySelector('[data-drawer-close="true"]');
     if (drawerCloseBtn && drawerCloseBtn instanceof HTMLElement) {
       drawerCloseBtn.click();
     }
-  };
+  }, [navigate]);
   
-  const mainMenuItems = [
+  const mainMenuItems = useMemo(() => [
     {
       title: "Dashboard",
       path: "/dashboard",
@@ -123,7 +122,6 @@ export const AppSidebar = () => {
       path: "/study-analytics",
       icon: <BarChart size={20} />,
     },
-    // Add StudyPulse link here
     {
       title: "StudyPulse",
       path: "/study-pulse",
@@ -134,10 +132,9 @@ export const AppSidebar = () => {
       path: "/study-rooms",
       icon: <Users size={20} />,
     },
-  ];
+  ], []);
   
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const settingsItems = [
+  const settingsItems = useMemo(() => [
     {
       title: "Account Settings",
       path: "/settings",
@@ -148,7 +145,7 @@ export const AppSidebar = () => {
       path: "/subscription",
       icon: <CreditCard size={18} />,
     },
-  ];
+  ], []);
 
   return (
     <Sidebar 
@@ -165,12 +162,12 @@ export const AppSidebar = () => {
           </span>
         </div>
         
-        {/* Improved toggle button for desktop */}
         <div className="hidden md:block">
           <button
             onClick={toggleSidebar}
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors duration-100 ease-in-out focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-7 px-1 rounded-md py-1 aspect-square hover:bg-gray-100"
             data-state={state}
+            aria-label="Toggle sidebar"
           >
             <PanelLeft className="shrink-0 h-4 w-4" />
           </button>
@@ -325,7 +322,10 @@ export const AppSidebar = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 rounded-xl border-2 border-white">
-              <AvatarImage src="https://ui-avatars.com/api/?name=Student&background=0D8ABC&color=fff" />
+              <AvatarImage 
+                src="https://ui-avatars.com/api/?name=Student&background=0D8ABC&color=fff" 
+                loading="lazy"
+              />
               <AvatarFallback className="bg-blue-600 text-white">S</AvatarFallback>
             </Avatar>
             <div>
