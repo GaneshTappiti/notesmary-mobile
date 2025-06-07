@@ -1,4 +1,3 @@
-
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -16,8 +15,7 @@ import {
   ChevronDown,
   User,
   Radar,
-  Menu,
-  X
+  PanelLeft
 } from 'lucide-react';
 import {
   Sidebar,
@@ -44,7 +42,6 @@ import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from "@/components/ui/button";
 
 export const AppSidebar = () => {
   const location = useLocation();
@@ -168,16 +165,15 @@ export const AppSidebar = () => {
           </span>
         </div>
         
-        {/* Toggle button for desktop */}
+        {/* Improved toggle button for desktop */}
         <div className="hidden md:block">
-          <Button
-            variant="ghost"
-            size="icon"
+          <button
             onClick={toggleSidebar}
-            className="h-8 w-8 rounded-lg hover:bg-gray-100"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors duration-100 ease-in-out focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-7 px-1 rounded-md py-1 aspect-square hover:bg-gray-100"
+            data-state={state}
           >
-            {state === "expanded" ? <X size={16} /> : <Menu size={16} />}
-          </Button>
+            <PanelLeft className="shrink-0 h-4 w-4" />
+          </button>
         </div>
       </SidebarHeader>
       
