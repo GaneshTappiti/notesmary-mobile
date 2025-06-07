@@ -10,37 +10,42 @@
     <meta property="og:image" content="/og-image.png" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     
-    <!-- Performance optimizations -->
+    <!-- Critical resource hints for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.gpteng.co" crossorigin>
-    <link rel="dns-prefetch" href="https://applesocial.s3.amazonaws.com">
+    <link rel="preconnect" href="https://applesocial.s3.amazonaws.com" crossorigin>
+    <link rel="dns-prefetch" href="https://ui-avatars.com">
     
-    <!-- Optimized font loading with display swap -->
+    <!-- Optimized font loading with display swap and preload -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"></noscript>
     
-    <!-- Preload critical modules -->
+    <!-- Preload critical modules for faster initial load -->
     <link rel="modulepreload" href="/src/main.tsx">
     <link rel="modulepreload" href="/src/App.tsx">
     <link rel="modulepreload" href="/src/contexts/AuthContext.tsx">
+    <link rel="modulepreload" href="/src/components/AppLayout.tsx">
     
-    <!-- Critical CSS for faster first paint -->
+    <!-- Optimized critical CSS for faster first paint -->
     <style>
+      /* CSS containment for better performance */
       body {
         margin: 0;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        contain: layout style;
       }
       
       #root {
         min-height: 100vh;
         display: flex;
         flex-direction: column;
+        contain: layout style;
       }
       
-      /* Loading spinner */
+      /* Optimized loading spinner with hardware acceleration */
       .loading-spinner {
         width: 40px;
         height: 40px;
@@ -49,18 +54,30 @@
         border-radius: 50%;
         animation: spin 1s linear infinite;
         margin: 20px auto;
+        transform: translateZ(0);
+        will-change: transform;
+        contain: layout style;
       }
       
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% { transform: rotate(0deg) translateZ(0); }
+        100% { transform: rotate(360deg) translateZ(0); }
+      }
+      
+      /* Prevent layout shifts */
+      .loading-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        contain: layout style;
       }
     </style>
   </head>
 
   <body>
     <div id="root">
-      <div style="display: flex; align-items: center; justify-content: center; height: 100vh;">
+      <div class="loading-container">
         <div class="loading-spinner"></div>
       </div>
     </div>

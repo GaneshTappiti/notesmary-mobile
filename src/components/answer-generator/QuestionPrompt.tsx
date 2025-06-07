@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { HelpCircle, Lightbulb } from 'lucide-react';
@@ -10,7 +10,12 @@ interface QuestionPromptProps {
   onChange: (value: string) => void;
 }
 
-export const QuestionPrompt: React.FC<QuestionPromptProps> = ({ value, onChange }) => {
+export const QuestionPrompt: React.FC<QuestionPromptProps> = React.memo(({ value, onChange }) => {
+  // Memoize the onChange handler to prevent unnecessary re-renders
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange(e.target.value);
+  }, [onChange]);
+
   return (
     <div className="space-y-2">
       <Label htmlFor="question-prompt" className="text-sm sm:text-base font-semibold flex items-center gap-2">
@@ -28,7 +33,7 @@ export const QuestionPrompt: React.FC<QuestionPromptProps> = ({ value, onChange 
       <Textarea
         id="question-prompt"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={handleChange}
         placeholder="e.g., 'Explain photosynthesis process' or 'Climate change effects' or leave blank for general summary"
         rows={3}
         className="text-sm sm:text-base resize-none focus:ring-2 focus:ring-purple-500 border-2"
@@ -38,4 +43,6 @@ export const QuestionPrompt: React.FC<QuestionPromptProps> = ({ value, onChange 
       </p>
     </div>
   );
-};
+});
+
+QuestionPrompt.displayName = 'QuestionPrompt';

@@ -6,19 +6,24 @@ import './index.css';
 import './mobile.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
-// Safely handle Capacitor environment check
+// Optimized PWA elements initialization
 const initializePWAElements = async () => {
   try {
     if (typeof window !== 'undefined' && window.Capacitor) {
       const { defineCustomElements } = await import('@ionic/pwa-elements/loader');
-      defineCustomElements(window);
+      // Use requestIdleCallback for non-critical initialization
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => defineCustomElements(window));
+      } else {
+        setTimeout(() => defineCustomElements(window), 0);
+      }
     }
   } catch (err) {
     console.warn('PWA elements not available:', err);
   }
 };
 
-// Initialize PWA elements if needed
+// Initialize PWA elements if needed (non-blocking)
 initializePWAElements();
 
 const root = document.getElementById('root');
@@ -26,8 +31,8 @@ if (!root) {
   throw new Error('Root element not found');
 }
 
-// Enhanced error boundary for the entire app
-const AppWithErrorBoundary = () => {
+// Enhanced error boundary with performance optimizations
+const AppWithErrorBoundary = React.memo(() => {
   return (
     <React.StrictMode>
       <ThemeProvider>
@@ -35,6 +40,10 @@ const AppWithErrorBoundary = () => {
       </ThemeProvider>
     </React.StrictMode>
   );
-};
+});
 
-ReactDOM.createRoot(root).render(<AppWithErrorBoundary />);
+AppWithErrorBoundary.displayName = 'AppWithErrorBoundary';
+
+// Use concurrent features for better performance
+const reactRoot = ReactDOM.createRoot(root);
+reactRoot.render(<AppWithErrorBoundary />);

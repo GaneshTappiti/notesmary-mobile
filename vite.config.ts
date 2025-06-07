@@ -13,12 +13,20 @@ export default defineConfig(({ mode }) => ({
   build: {
     sourcemap: mode === 'development',
     minify: 'terser',
-    target: 'es2015',
+    target: 'es2020',
     cssCodeSplit: true,
     terserOptions: {
       compress: {
         drop_console: mode === 'production',
         drop_debugger: mode === 'production',
+        pure_funcs: mode === 'production' ? ['console.log', 'console.info', 'console.debug'] : [],
+        passes: 2,
+      },
+      mangle: {
+        safari10: true,
+      },
+      format: {
+        comments: false,
       },
     },
     rollupOptions: {
@@ -85,18 +93,20 @@ export default defineConfig(({ mode }) => ({
           }
         },
         chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
-          return `assets/[name]-[hash].js`;
+          return `assets/js/[name]-[hash].js`;
         },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) {
             return 'assets/css/[name]-[hash][extname]';
           }
+          if (assetInfo.name?.endsWith('.woff2') || assetInfo.name?.endsWith('.woff')) {
+            return 'assets/fonts/[name]-[hash][extname]';
+          }
           return 'assets/[name]-[hash][extname]';
         },
       },
     },
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 500,
   },
   plugins: [
     react(),
@@ -118,11 +128,13 @@ export default defineConfig(({ mode }) => ({
       'clsx',
       'tailwind-merge'
     ],
-    exclude: ['@supabase/supabase-js']
+    exclude: ['@supabase/supabase-js'],
+    force: true,
   },
   esbuild: {
     logOverride: { 'this-is-undefined-in-esm': 'silent' },
-    target: 'es2015',
+    target: 'es2020',
     legalComments: 'none',
+    treeShaking: true,
   },
 }));
