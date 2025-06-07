@@ -15,7 +15,9 @@ import {
   LogOut,
   ChevronDown,
   User,
-  Radar
+  Radar,
+  Menu,
+  X
 } from 'lucide-react';
 import {
   Sidebar,
@@ -29,7 +31,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-  SidebarRail
+  SidebarRail,
+  SidebarTrigger
 } from "@/components/ui/sidebar";
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -41,6 +44,7 @@ import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from "@/components/ui/button";
 
 export const AppSidebar = () => {
   const location = useLocation();
@@ -162,6 +166,18 @@ export const AppSidebar = () => {
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-500">
             Notex
           </span>
+        </div>
+        
+        {/* Toggle button for desktop */}
+        <div className="hidden md:block">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            className="h-8 w-8 rounded-lg hover:bg-gray-100"
+          >
+            {state === "expanded" ? <X size={16} /> : <Menu size={16} />}
+          </Button>
         </div>
       </SidebarHeader>
       
